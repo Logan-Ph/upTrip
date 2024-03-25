@@ -4,13 +4,17 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'loginbackground': "url('https://ik.imagekit.io/Uptrip/CoverPhoto.jpg?updatedAt=1711371962548')",
+      }
+    },
   },
   plugins: [require("daisyui")],
 
     // daisyUI config (optional - here are the default values)
     daisyui: {
-      themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
+      themes: ["light"], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
       base: true, // applies background color and foreground color for root element by default
       styled: true, // include daisyUI colors and design decisions for all components
       utils: true, // adds responsive and modifier utility classes

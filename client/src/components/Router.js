@@ -2,6 +2,7 @@ import {createBrowserRouter, RouterProvider, Outlet} from 'react-router-dom'
 import Header from './Header'
 import Footer from './Footer'
 import Homepage from '../pages/Homepage'
+import Login from '../pages/Login'
 
 export default function Router(){
     const UserLayout = ({header, footer}) => {
@@ -26,9 +27,15 @@ export default function Router(){
                 {
                     path: '*',
                     element: <h1>404</h1>
-                }
+                },
+               
             ]
-        }
+        },
+        {
+            path: '/login',
+            element: <Login />
+        },
+
     ])
 
     return (
