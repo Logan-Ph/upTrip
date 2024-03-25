@@ -1,12 +1,11 @@
 export default function Login() {
     return (
-    
         <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
             <div className="flex flex-col md:flex-row w-full max-w-sm md:max-w-3xl mx-auto p-6 bg-[#CDEAE1] bg-opacity-60 backdrop-filter backdrop-blur-md rounded-lg shadow-md">
                 
                 <div className="hidden md:flex md:w-1/2 justify-center items-center p-4 ">
                     <div className="border-1 h-full shadow-lg rounded-lg">
-                        <img src="https://ik.imagekit.io/Uptrip/decorativeimg.jpg?updatedAt=1711379599343" alt="decorative image" className="w-full h-full object-fill rounded-lg"/>
+                        <img src="https://ik.imagekit.io/Uptrip/newdecorativeimg.jpg?updatedAt=1711383997767" alt="decorative image" className="w-full h-full object-fill rounded-lg"/>
                     </div>
                 </div>
 
