@@ -84,7 +84,7 @@ export default function Login() {
                         </div>
 
                         <div className="flex">
-                            <p className="mx-auto">Don't have an account ? <a className="items-center hover:underline font-bold" href="#">Signup</a></p>
+                            <p className="mx-auto">Don't have an account ? <a className="items-center hover:underline font-bold" href="#">Sign up</a></p>
                             
                         </div>
 
