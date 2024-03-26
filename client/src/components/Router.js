@@ -4,6 +4,7 @@ import Footer from './Footer'
 import Homepage from '../pages/Homepage'
 import Login from '../pages/Login'
 import VerifyEmail from '../pages/VerifyEmail'
+import PageNotFound from '../pages/PageNotFound'
 
 export default function Router(){
     const UserLayout = ({header, footer}) => {
@@ -39,6 +40,10 @@ export default function Router(){
         {
             path: '/verify-email',
             element: <VerifyEmail />
+        },
+        {
+            path: '/page-not-found',
+            element: <PageNotFound />
         },
 
 
