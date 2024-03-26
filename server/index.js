@@ -19,15 +19,15 @@ app.use(cors({
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
-app.use(cookieParser('upTrip'));
+app.use(cookieParser('UpTrip'));
 app.use(session({
   secret: process.env.ACCESS_TOKEN,
   saveUninitialized: false,
   resave: false
 }));
+app.use(flash());
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(flash());
 app.use(methodOverride('_method'))
 app.use('/', routes);
 
