@@ -4,6 +4,7 @@ const passport = require("passport");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { generateToken, generateRefreshToken } = require("../utils/helper");
+const jwt = require("jsonwebtoken")
 
 exports.homePage = (req, res) => {
 	res.send("This is homepage");
@@ -26,7 +27,7 @@ exports.postLogin = async (req, res) => {
 	await User.findByIdAndUpdate(user._id, {refreshToken})
 
 	const userToken = generateToken(user);
-	res.cookie("refreshToken", refreshToken, {httpOnly: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000}) // 1 day
+	res.cookie("refreshToken", refreshToken, {httpOnly: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000, secure: true}) // 1 day
 	
 	return res.status(200).json({
 		success: true,
@@ -46,8 +47,11 @@ exports.refreshToken = async (req, res) => {
 		const user = await User.findById(decoded.id)
 		if (!user) return res.status(404).send("User not found")
 		const accessToken = generateToken(user)
-		res.status(200).json({accessToken: accessToken})
+		res.status(200).json({accessToken: accessToken, roles: [2001]})
 	})
-
 }
 
+exports.logout = async (req, res) => {
+    res.clearCookie("refreshToken", {httpOnly: true, sameSite: "None", secure: true})
+    res.status(200).send("Logged out")
+}

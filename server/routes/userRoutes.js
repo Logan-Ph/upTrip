@@ -42,5 +42,9 @@ router.post('/login', userController.postLogin);
 // user login success - get new token
 router.get('/refresh', userController.refreshToken)
 
+// user logout
+router.get('/logout', userController.logout)
+
+
 
 module.exports = router;
