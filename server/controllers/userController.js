@@ -30,6 +30,7 @@ exports.postLogin = async (req, res) => {
 	
 	return res.status(200).json({
 		success: true,
+		roles: [2001],
 		username,
 		email: user.email,
 		_id: user._id,

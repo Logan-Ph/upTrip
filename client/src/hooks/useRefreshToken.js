@@ -1,21 +1,21 @@
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
-import axios from "../api/axios";
+import axios from '../api/axios';
+import useAuth from './useAuth';
 
-export default function useRefreshToken() {
-  const { setUser } = useContext(UserContext);
+const useRefreshToken = () => {
+    const { setAuth } = useAuth();
 
-  const refresh = async () => {
-        const response = await axios.get("/refresh", {
-            withCredentials: true,
-        })
-        .then((res) => {
-            setUser((prev) => {
-                return { ...prev, accessToken: res.data.accessToken };
-            });
+    const refresh = async () => {
+        const response = await axios.get('/refresh', {
+            withCredentials: true
         });
-        
+        setAuth(prev => {
+            console.log(JSON.stringify(prev));
+            console.log(response.data.accessToken);
+            return { ...prev, accessToken: response.data.accessToken }
+        });
         return response.data.accessToken;
-    };
-  return refresh;
-}
+    }
+    return refresh;
+};
+
+export default useRefreshToken;

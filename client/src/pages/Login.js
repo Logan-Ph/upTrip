@@ -1,69 +1,104 @@
-import { useContext, useState } from "react";
-import axios from "../api/axios";
-import { UserContext } from "../context/UserContext";
-import useRefreshToken from "../hooks/useRefreshToken";
+import { useRef, useState, useEffect } from 'react';
+import useAuth from '../hooks/useAuth';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-export default function Login() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const {setUser} = useContext(UserContext)
+import axios from '../api/axios';
+const LOGIN_URL = '/login';
 
-	const googleLogin = async (e) => {
-		e.preventDefault();
-		const handleMessage = (event) => {
-			console.log(event);
-			if (event.origin !== "http://localhost:4000") {
-				return;
-			}
+const Login = () => {
+    const { setAuth, persist, setPersist } = useAuth(); // get the setAuth function
 
-			if (event.data.userToken) {
-				console.log("User login success");
-				console.log("User token", event.data.userToken);
-			} else {
-				console.log("User login failed");
-			}
-			window.removeEventListener("message", handleMessage);
-		};
+    const navigate = useNavigate(); // get the navigate function
+    const location = useLocation(); // get the location object
+    const from = location.state?.from?.pathname || "/"; // default to home
 
-		window.addEventListener("message", handleMessage, { once: true });
-		window.open("http://localhost:4000/auth/google", "_blank");
-	};
+    const userRef = useRef(); // create a reference to the username input
+    const errRef = useRef(); // create a reference to the error message
 
-	const login = async (e) => {
-		e.preventDefault();
+    const [username, setUsername] = useState(''); // create state for the username
+    const [password, setPassword] = useState(''); // create state for the password
+    const [errMsg, setErrMsg] = useState(''); // create state for the error message
 
-		const userData = {
-							username,
-							password,}
+    useEffect(() => {
+        setErrMsg('');
+    }, [username, password])
 
-		await axios.post("/login", userData, {withCredentials: true})
-		.then(res => {
-			setUser(res.data)
-			console.log(res.data)
-		})
-		.catch(err => {
-			console.log(err.response.data)
-		})
+	const togglePersist = () => {
+        setPersist(prev => !prev);
+    }
 
-	};
+    useEffect(() => {
+        localStorage.setItem("persist", persist);
+    }, [persist])
 
-	return (
-		<>
-			<h1>Login</h1>
-			<button onClick={googleLogin}>Login with Google</button>
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-			<input
-				type="text"
-				value={username}
-				onChange={(e) => setUsername(e.target.value)}
-			/>
-			<input
-				type="text"
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
-			/>
-			<button onClick={login}>Login</button>
-			<button onClick={useRefreshToken}>refresh</button>
-		</>
-	);
+        try {
+            const response = await axios.post(LOGIN_URL,
+                JSON.stringify({ username, password }),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true
+                }
+            );
+            const {accessToken, roles} = response?.data;
+            setAuth({ username, roles, password, accessToken });
+            setUsername('');
+            setPassword('');
+            navigate(from, { replace: true });
+        } catch (err) {
+            if (!err?.response) {
+                setErrMsg('No Server Response');
+            } else if (err.response?.status === 400) {
+                setErrMsg('Missing Username or Password');
+            } else if (err.response?.status === 401) {
+                setErrMsg('Unauthorized');
+            } else {
+                setErrMsg('Login Failed');
+            }
+        }
+    }
+
+    return (
+
+        <section>
+            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+            <h1>Sign In</h1>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="username">Username:</label>
+                <input
+                    type="text"
+                    id="username"
+                    ref={userRef}
+                    autoComplete="off"
+                    onChange={(e) => setUsername(e.target.value)}
+                    value={username}
+                    required
+                />
+
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    required
+                />
+                <button>Sign In</button>
+
+				<div className="persistCheck">
+                    <input
+                        type="checkbox"
+                        id="persist"
+                        onChange={togglePersist}
+                        checked={persist}
+                    />
+                    <label htmlFor="persist">Trust This Device</label>
+                </div>
+            </form>
+        </section>
+    )
 }
+
+export default Login
