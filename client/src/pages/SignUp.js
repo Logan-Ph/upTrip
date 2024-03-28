@@ -1,7 +1,37 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../components/images/UptripLogo.png";
+import failedNotify from "../utils/failedNotify";
+import useAuth from "../hooks/useAuth";
+import { useGoogleLogin } from "@react-oauth/google";
+import googleAxios from "../api/googleAxios";
+import axios from "../api/axios";
 
 export default function SignUp() {
+    const { setAuth } = useAuth(); // get the setAuth function
+
+	const navigate = useNavigate(); // get the navigate function
+    const location = useLocation(); // get the location object
+    const from = location.state?.from?.pathname || "/"; // default to home
+
+	const signIn = useGoogleLogin({
+		onSuccess: async (response) => {
+			try{
+				const googleRes = await googleAxios.get("/oauth2/v3/userinfo",
+				{
+					headers: {
+						Authorization: `Bearer ${response.access_token}`
+					},
+				})
+				const serverRes = await axios.post('/google/auth/login', googleRes.data, {withCredentials: true})
+				const {accessToken, roles} = serverRes?.data;
+				setAuth({ roles, accessToken });
+				navigate(from, { replace: true });
+			}catch (err){
+				failedNotify(err.response.data)
+			}
+		}
+	})
+
   return (
     <>
       <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
@@ -210,13 +240,13 @@ export default function SignUp() {
               </div>
 
               <div className="divider my-6">Or</div>
-              <div className="group relative flex w-full justify-center rounded-md border-[#8DD3BB] border-2 bg-white py-2 px-4 text-sm font-medium text-black hover:bg-[#CDEAE1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#CDEAE1] hover:text-black hover:border-[#CDEAE1]">
+              <div onClick={signIn} className="group relative flex w-full justify-center rounded-md border-[#8DD3BB] border-2 bg-white py-2 px-4 text-sm font-medium text-black hover:bg-[#CDEAE1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#CDEAE1] hover:text-black hover:border-[#CDEAE1]">
                 <img
                   className="w-5 h-5"
                   src="https://ik.imagekit.io/Uptrip/google.png?updatedAt=1711371495172"
                 />
                 <a type="submit" target="_blank" className="ml-2">
-                  Sign Up with Google
+                  Sign in with Google
                 </a>
               </div>
             </div>

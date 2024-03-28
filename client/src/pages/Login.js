@@ -170,7 +170,7 @@ const Login = () => {
                   Don't have an account?{" "}
                   <Link
                     className="items-center font-bold"
-                    href="#"
+                    to="/signup"
                   >
                     Sign up
                   </Link>

@@ -59,6 +59,14 @@ export default function Router() {
             element: <VerifyEmail />,
           },
           {
+            path: "/signup",
+            element: <SignUp />,
+          },
+          {
+            path: "/login",
+            element: <Login />,
+          },
+          {
             path: "/",
             element: <PersistAndRequireAuth />,
             children: [
@@ -70,14 +78,7 @@ export default function Router() {
           },
         ],
       },
-      {
-        path: "/signup",
-        element: <SignUp />,
-      },
-      {
-        path: "/login",
-        element: <Login />,
-      },
+      
     ]);
 
     return (
