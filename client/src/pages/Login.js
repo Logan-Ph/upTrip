@@ -36,7 +36,7 @@ const Login = () => {
                 }
             );
             const {accessToken, roles} = response?.data;
-            setAuth({ username, roles, password, accessToken });
+            setAuth({ roles, accessToken });
             setUsername('');
             setPassword('');
             navigate(from, { replace: true });
@@ -53,7 +53,7 @@ const Login = () => {
         }
     }
 
-    const handleGoogleLogin = useGoogleLogin({
+    const signIn = useGoogleLogin({
         onSuccess: async (response) => {
             try{
                 const googleRes = await googleAxios.get("/oauth2/v3/userinfo",
@@ -62,19 +62,24 @@ const Login = () => {
                         Authorization: `Bearer ${response.access_token}`
                     },
                 })
+                console.log("haha")
                 const serverRes = await axios.post('/google/auth/login', googleRes.data, {withCredentials: true})
-                console.log(serverRes)
+                const {accessToken, roles} = serverRes?.data;
+                console.log(accessToken, roles)
+                setAuth({ roles, accessToken });
+                setUsername('');
+                setPassword('');
+                navigate(from, { replace: true });
             }catch (err){
                 failedNotify(err.response.data)
             }
         }
-
     })
-            // setAuth({ username: decoded.email, roles: ['user'], password: '', accessToken });
-            // setUsername('');
-            // setPassword('');
-            // navigate(from, { replace: true });
 
+    const handleGoogleLogin = (e) => {
+        e.preventDefault();
+        signIn();
+    };    
 
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
@@ -169,7 +174,7 @@ const Login = () => {
                         </div>
 
                             
-                        <div onClick={handleGoogleLogin} className="group relative flex w-full justify-center rounded-md border-[#8DD3BB] border-2 bg-white py-2 px-4 text-sm font-medium text-black hover:bg-[#CDEAE1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#CDEAE1] hover:text-black hover:border-[#CDEAE1]">
+                        <div onClick={signIn} className="group relative flex w-full justify-center rounded-md border-[#8DD3BB] border-2 bg-white py-2 px-4 text-sm font-medium text-black hover:bg-[#CDEAE1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#CDEAE1] hover:text-black hover:border-[#CDEAE1]">
                             <img className="w-5 h-5" src="https://ik.imagekit.io/Uptrip/google.png?updatedAt=1711371495172" alt='Google icon'/>
                             <div type="submit" target="_blank" className="ml-2">Login with Google</div>
                         </div>

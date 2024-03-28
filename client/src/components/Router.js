@@ -26,6 +26,7 @@ export default function Router() {
                     draggable
                     pauseOnHover={false}
                     theme="light"
+                    stacked
                 />
                 {header}
                 <Outlet />

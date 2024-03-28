@@ -74,6 +74,17 @@ exports.googleLogin = async (req,res) => {
 		})
 	}else if (!user.googleId){
 		return res.status(400).send("Email is already registered")
+	}else{
+		const userToken = generateToken(user)
+		const refreshToken = generateRefreshToken(user)
+		res.cookie("refreshToken", refreshToken, {httpOnly: true, sameSite: "None", maxAge:  30 * 60 * 1000, secure: true}) // 30 minutes
+		return res.status(200).json({
+			success: true,
+			roles: [2001],
+			email: user.email,
+			_id: user._id,
+			accessToken: userToken,
+		})
 	}
 }
 
