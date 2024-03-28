@@ -7,7 +7,7 @@ const userSchema = new moongose.Schema({
     password: String,
     googleId: String,
     verified: Boolean,
-    refreshToken: String
+    img: String,
 })
 
 module.exports = moongose.model('User', userSchema)

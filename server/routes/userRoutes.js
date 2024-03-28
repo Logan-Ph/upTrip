@@ -38,6 +38,8 @@ router.get("/auth/google/callback", (req, res) => {
 // user login
 router.get('/login', userController.getLogin);
 router.post('/login', userController.postLogin);
+router.post('/google/auth/login', userController.googleLogin);
+
 
 // user login success - get new token
 router.get('/refresh', userController.refreshToken)

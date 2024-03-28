@@ -24,10 +24,9 @@ exports.postLogin = async (req, res) => {
 	if (!isPasswordCorrect) return res.status(400).send("Password is incorrect");
 
 	const refreshToken = generateRefreshToken(user)
-	await User.findByIdAndUpdate(user._id, {refreshToken})
 
 	const userToken = generateToken(user);
-	res.cookie("refreshToken", refreshToken, {httpOnly: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000, secure: true}) // 1 day
+	res.cookie("refreshToken", refreshToken, {httpOnly: true, sameSite: "None", maxAge: 30 * 60 * 1000, secure: true}) // 30 minutes
 	
 	return res.status(200).json({
 		success: true,
@@ -49,6 +48,33 @@ exports.refreshToken = async (req, res) => {
 		const accessToken = generateToken(user)
 		res.status(200).json({accessToken: accessToken, roles: [2001]})
 	})
+}
+
+exports.googleLogin = async (req,res) => {
+	const {email, given_name, family_name, email_verified, sub, picture} = req.body
+	const user = await User.findOne({email})
+	if (!user) {
+		const newUser = new User({
+			name: `${given_name} ${family_name}`,
+			email,
+			googleId: sub,
+			verified: email_verified,
+			img: picture,
+		})
+		await newUser.save()
+		const userToken = generateToken(newUser)
+		const refreshToken = generateRefreshToken(newUser)
+		res.cookie("refreshToken", refreshToken, {httpOnly: true, sameSite: "None", maxAge:  30 * 60 * 1000, secure: true}) // 30 minutes
+		return res.status(200).json({
+			success: true,
+			roles: [2001],
+			email: newUser.email,
+			_id: newUser._id,
+			accessToken: userToken,
+		})
+	}else if (!user.googleId){
+		return res.status(400).send("Email is already registered")
+	}
 }
 
 exports.logout = async (req, res) => {
