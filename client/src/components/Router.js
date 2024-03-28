@@ -10,6 +10,8 @@ import VerifyEmail from '../pages/VerifyEmail'
 import PageNotFound from '../pages/PageNotFound'
 import { ToastContainer } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
+import SignUp from "../pages/SignUp";
+
 
 export default function Router() {
     const UserLayout = ({ header, footer }) => {
@@ -36,44 +38,47 @@ export default function Router() {
     }
 
     const BrowserRoutes = createBrowserRouter([
-        {
-            path: '/',
-            element: <UserLayout header={<Header />} footer={<Footer />} />,
+      {
+        path: "/",
+        element: <UserLayout header={<Header />} footer={<Footer />} />,
+        children: [
+          {
+            path: "/",
+            element: <Homepage />,
+          },
+          {
+            path: "/unauthorized",
+            element: <Unauthorized />,
+          },
+          {
+            path: "*",
+            element: <PageNotFound />,
+          },
+          {
+            path: "/verify-email",
+            element: <VerifyEmail />,
+          },
+          {
+            path: "/",
+            element: <PersistAndRequireAuth />,
             children: [
-                {
-                    path: '/',
-                    element: <Homepage />
-                },
-                {
-                    path: '/login',
-                    element: <Login />
-                },
-                {
-                    path: '/unauthorized',
-                    element: <Unauthorized />
-                },
-                {
-                    path: '*',
-                    element: <PageNotFound/>
-                },
-				{
-					path: '/verify-email',
-					element: <VerifyEmail />
-				},
-				{
-					path: '/',
-					element: <PersistAndRequireAuth/>,
-					children: [
-						{
-							path: '/admin',
-							element: <Admin />
-						}
-					]
-				},
-            ]
-        },
-        
-    ])
+              {
+                path: "/admin",
+                element: <Admin />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: "/signup",
+        element: <SignUp />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+    ]);
 
     return (
         <RouterProvider router={BrowserRoutes} />
