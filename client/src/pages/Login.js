@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from '../api/axios';
@@ -65,7 +65,7 @@ const Login = () => {
       <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
         <header className="absolute top-0 left-0 mx-auto p-8">
           <a href="/">
-            <img src={Logo} className="w-32 h-auto" />
+            <img src={Logo} className="w-32 h-auto" alt='logo'/>
           </a>
         </header>
 

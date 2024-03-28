@@ -1,4 +1,14 @@
+import { useLocation, useNavigate } from "react-router-dom";
+
 export default function PageNotFound(){
+    const navigate = useNavigate(); // get the navigate function
+    const location = useLocation(); // get the location object
+    const from = location.state?.from?.pathname || "/"; // default to home
+
+    const handleNavigate = () => {
+        navigate(from, { replace: true });
+    }
+
     return(
         <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center bg-opacity-60">
             <div className="flex flex-col items-center h-1/2 md:flex-row w-full max-w-sm md:max-w-3xl mx-auto p-6 bg-[#CDEAE1] bg-opacity-60 backdrop-filter backdrop-blur-md rounded-lg shadow-md">
@@ -6,11 +16,11 @@ export default function PageNotFound(){
                     <p className="text-4xl font-extrabold text-center p-2">404. Page Not Found</p>
                     <p className="text-lg text-center font-light">Sorry, we can't find that page! Don't worry though, everything is STILL AWESOME! </p>
 
-                    <div className="flex items-center justify-center my-5">
+                    <div onClick={handleNavigate} className="flex items-center justify-center my-5">
                         <p className="text-2xl font-bold hover:text-[#9A9A9A] mr-4">Go back</p>
-                        <a href="#" className="text-2xl font-bold hover:cursor-pointer">
+                        <div className="text-2xl font-bold hover:cursor-pointer">
                             <i className="fa-solid fa-arrow-right"></i>
-                        </a>
+                        </div>
                     </div>
                 </div>
                 <div className="w-1/2">
