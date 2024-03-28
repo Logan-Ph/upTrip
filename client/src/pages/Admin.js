@@ -7,7 +7,7 @@ export default function Admin(){
 
     const signOut = async () => {
         await logout();
-        navigate('/');
+        navigate('/login');
     }
 
     return (

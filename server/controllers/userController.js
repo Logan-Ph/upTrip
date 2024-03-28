@@ -17,11 +17,11 @@ exports.getLogin = (req, res) => {
 exports.postLogin = async (req, res) => {
 	const { username, password } = req.body;
 	const user = await User.findOne({ username });
-	if (!user) return res.status(404).send("Please check your username and password");
+	if (!user) return res.status(404).send("Invalid credentials");
 
 	const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-	if (!isPasswordCorrect) return res.status(400).send("Password is incorrect");
+	if (!isPasswordCorrect) return res.status(400).send("Invalid credentials");
 
 	const refreshToken = generateRefreshToken(user)
 
