@@ -9,8 +9,6 @@ const LOGIN_URL = '/login';
 
 const Login = () => {
     const { setAuth } = useAuth(); // get the setAuth function
-    const [ user, setUser ] = useState([]);
-    const [ profile, setProfile ] = useState([]);
 
     const navigate = useNavigate(); // get the navigate function
     const location = useLocation(); // get the location object
@@ -18,11 +16,6 @@ const Login = () => {
 
     const [username, setUsername] = useState(''); // create state for the username
     const [password, setPassword] = useState(''); // create state for the password
-    const [errMsg, setErrMsg] = useState(''); // create state for the error message
-
-    useEffect(() => {
-        setErrMsg('');
-    }, [username, password])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,15 +34,7 @@ const Login = () => {
             setPassword('');
             navigate(from, { replace: true });
         } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No Server Response');
-            } else if (err.response?.status === 400) {
-                setErrMsg('Missing Username or Password');
-            } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
-            } else {
-                setErrMsg('Login Failed');
-            }
+            failedNotify(err.response.data)    
         }
     }
 
@@ -62,10 +47,8 @@ const Login = () => {
                         Authorization: `Bearer ${response.access_token}`
                     },
                 })
-                console.log("haha")
                 const serverRes = await axios.post('/google/auth/login', googleRes.data, {withCredentials: true})
                 const {accessToken, roles} = serverRes?.data;
-                console.log(accessToken, roles)
                 setAuth({ roles, accessToken });
                 setUsername('');
                 setPassword('');
@@ -74,12 +57,7 @@ const Login = () => {
                 failedNotify(err.response.data)
             }
         }
-    })
-
-    const handleGoogleLogin = (e) => {
-        e.preventDefault();
-        signIn();
-    };    
+    })   
 
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
