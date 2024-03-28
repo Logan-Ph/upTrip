@@ -6,11 +6,27 @@ import Login from '../pages/Login'
 import Admin from '../pages/Admin'
 import Unauthorized from '../pages/Unauthorized'
 import PersistAndRequireAuth from './PersistAndRequireAuth'
+import VerifyEmail from '../pages/VerifyEmail'
+import PageNotFound from '../pages/PageNotFound'
+import { ToastContainer } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Router() {
     const UserLayout = ({ header, footer }) => {
         return (
             <>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={5000}
+                    hideProgressBar={true}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover={false}
+                    theme="light"
+                />
                 {header}
                 <Outlet />
                 {footer}
@@ -37,8 +53,12 @@ export default function Router() {
                 },
                 {
                     path: '*',
-                    element: <h1>404 Page not found</h1>
+                    element: <PageNotFound/>
                 },
+				{
+					path: '/verify-email',
+					element: <VerifyEmail />
+				},
 				{
 					path: '/',
 					element: <PersistAndRequireAuth/>,
@@ -50,8 +70,8 @@ export default function Router() {
 					]
 				},
             ]
-        }, 
-       
+        },
+        
     ])
 
     return (

@@ -2,6 +2,7 @@ client/node_modules
 client/.pnp
 client/.pnp.js
 client/package-lock.json
+client/build
 
 server/.env
 server/node_modules
