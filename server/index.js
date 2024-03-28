@@ -15,7 +15,7 @@ const routes = require('./routes/userRoutes.js')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
-  origin: ["http://localhost:3000", "https://up-trip.vercel.app"],
+  origin: "https://up-trip.vercel.app",
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
