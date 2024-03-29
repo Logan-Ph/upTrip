@@ -10,7 +10,6 @@ import VerifyEmail from '../pages/VerifyEmail'
 import PageNotFound from '../pages/PageNotFound'
 import SignUp from "../pages/SignUp";
 
-
 export default function Router() {
 	const UserLayout = ({ header, footer }) => {
 		return (
@@ -69,4 +68,3 @@ export default function Router() {
 		<RouterProvider router={BrowserRoutes} />
 	)
 }
-
