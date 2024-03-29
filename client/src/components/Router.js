@@ -9,6 +9,7 @@ import PersistAndRequireAuth from './PersistAndRequireAuth'
 import VerifyEmail from '../pages/VerifyEmail'
 import PageNotFound from '../pages/PageNotFound'
 import SignUp from "../pages/SignUp";
+import LinkExpried from '../pages/LinkExpired'
 
 
 export default function Router() {
@@ -42,6 +43,10 @@ export default function Router() {
 				{
 					path: "/verify-email",
 					element: <VerifyEmail />,
+				},
+				{
+					path: "/link-expired",
+					element: <LinkExpried />,
 				},
 				{
 					path: "/",
