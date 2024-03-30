@@ -3,52 +3,9 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const { generateToken, generateRefreshToken } = require("../utils/helper");
+const { generateToken, generateRefreshToken, generateVerifyToken, sendEmailVerification, verifyEmail } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
 
-function sendEmailVerification(userEmail) {
-  try {
-    let config = {
-      service: 'gmail',
-      auth: {
-        user: process.env.GOOGLE_USER,
-        pass: process.env.GOOGLE_PASS
-      }
-    }
-
-    let transporter = nodemailer.createTransport(config);
-
-    let mailgenerator = new Mailgen({
-      theme: "default",
-      product: {
-        name: "Uptrip",
-        link: "https://up-trip.vercel.app/"
-      }
-    })
-    const userToken = jwt.sign({ user: userEmail }, process.env.VERIFY_EMAIL, { expiresIn: '10m' });
-    const url = `http://localhost:3000/user/${userToken}/verify-email`;
-
-    let response = {
-      body: {
-        intro: "Email verification",
-        outro: `Please click on this link to verify your email ${url}, This link will be expired in 10 minutes`,
-      }
-    }
-
-    let mail = mailgenerator.generate(response);
-
-    let message = {
-      from: "rBuy@gmail.com",
-      to: userEmail,
-      subject: "Email verification",
-      html: mail
-    }
-    transporter.sendMail(message)
-  }
-  catch {
-    console.log("error when send Email")
-  }
-}
 
 exports.homePage = (req, res) => {
 	res.send("This is homepage");
@@ -137,7 +94,7 @@ exports.logout = async (req, res) => {
     res.status(200).send("Logged out")
 }
 
-exports.register = async(req, res) => {
+exports.signup = async(req, res) => {
   const bcrypt = require('bcrypt');
   try {
     let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -147,28 +104,31 @@ exports.register = async(req, res) => {
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     if (await User.findOne({ email: email })) {
-      return res.status(500).json("Email already exists.")
-    } else {
-      const newUser = new User({
-        email: email,
-        password: hashedPassword,
-        name: req.body.name,
-        verified: false
-      });
-      await newUser.save();
-      sendEmailVerification(email)
-      return res.status(200).json("Thank you for registering! A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account. If you don't see the email, please check your spam folder.");
+      throw new Error("Email already exists.")
     }
+    const userData = {
+      email: email,
+      hashedPassword: hashedPassword,
+      name: `${req.body.firstName} ${req.body.lastName}`,
+    }
+    sendEmailVerification(userData, '10m', res)
+    return res.status(200).json("Thank you for registering! A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account. If you don't see the email, please check your spam folder.");
   } catch (error) {
-    res.status(500).send(error.message || "Error Occured");
+    return res.status(500).send(error.message || "Error Occured");
   }
 }
 
 exports.verifyEmail = async (req, res) => {
-  jwt.verify(req.params.token, process.env.VERIFY_EMAIL, async (err, user) => {
-    if (err) return res.status(500).json("error");
-    const foundUser = (await User.findOneAndUpdate({ email: user.user }, { verify: true }))
-    if (!foundUser) return res.status.json("error");
-    return res.status(200).json("success")
-  })
+	jwt.verify(req.params.token, process.env.VERIFY_EMAIL, async (err, userData) => {
+	  if (err) return res.status(500).json("error")
+	  const newUser = new User({
+        email: userData.email,
+        password: userData.hashedPassword,
+        name: userData.name,
+        verified: true
+      });
+    await newUser.save();
+	  return res.status(200).json("success")
+	})
 }
+

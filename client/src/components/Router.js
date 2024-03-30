@@ -54,10 +54,10 @@ export default function Router() {
             path: "*",
             element: <PageNotFound />,
           },
-          {
-            path: "/verify-email",
-            element: <VerifyEmail />,
-          },
+          // {
+          //   path: "/verify-email",
+          //   element: <VerifyEmail />,
+          // },
           {
             path: "/",
             element: <PersistAndRequireAuth />,
@@ -69,6 +69,10 @@ export default function Router() {
             ],
           },
         ],
+      },
+      {
+        path: "user/:token/verify-email",
+        element: <VerifyEmail/>
       },
       {
         path: "/signup",

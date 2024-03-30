@@ -47,6 +47,10 @@ router.get('/refresh', userController.refreshToken)
 // user logout
 router.get('/logout', userController.logout)
 
+// user register
+router.post('/signup', userController.signup)
+
+router.get('/user/:token/verify-email', userController.verifyEmail) 
 
 
 module.exports = router;
