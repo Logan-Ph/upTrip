@@ -102,13 +102,12 @@ exports.signup = async(req, res) => {
     if (!emailRegex.test(email)) {
       throw new Error("Invalid email address");
     }
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     if (await User.findOne({ email: email })) {
       throw new Error("Email already exists.")
     }
     const userData = {
       email: email,
-      hashedPassword: hashedPassword,
+      password: req.body.password,
       name: `${req.body.firstName} ${req.body.lastName}`,
     }
     sendEmailVerification(userData, '10m', res)
@@ -121,9 +120,12 @@ exports.signup = async(req, res) => {
 exports.verifyEmail = async (req, res) => {
 	jwt.verify(req.params.token, process.env.VERIFY_EMAIL, async (err, userData) => {
 	  if (err) return res.status(500).json("error")
+    if (await User.findOne({email: userData.email})) {
+      return res.status(500).json("error")
+    }
 	  const newUser = new User({
         email: userData.email,
-        password: userData.hashedPassword,
+        password: await bcrypt.hash(userData.password, 10),
         name: userData.name,
         verified: true
       });

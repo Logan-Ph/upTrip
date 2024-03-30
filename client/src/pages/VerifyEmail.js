@@ -1,4 +1,21 @@
+import { useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import failedNotify from "../utils/failedNotify";
+import axios from "../api/axios";
+
+
 export default function VerifyEmail(){
+    const params = useParams();
+
+    const fetchData = useCallback(async () => {
+        await axios.get(`http://localhost:4000/user/${params.token}/verify-email`, { withCredentials: true })
+            .catch(er => failedNotify(er))
+    }, [params.token])
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData])
+
     return(
         <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
             <div className="flex flex-col max-w-sm md:max-w-lg mx-auto p-16 bg-[#CDEAE1] bg-opacity-60 backdrop-filter backdrop-blur-md rounded-lg shadow-md">

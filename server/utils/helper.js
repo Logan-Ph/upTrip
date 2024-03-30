@@ -37,7 +37,7 @@ exports.generateVerifyToken = (userData, expiresIn) => {
 		{
 			name: userData.name,
 			email: userData.email,
-			password: userData.hashedPassword,
+			password: userData.password,
 		},
 		process.env.VERIFY_EMAIL,
 		{ expiresIn: expiresIn}
