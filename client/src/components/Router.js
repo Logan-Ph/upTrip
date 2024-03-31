@@ -79,5 +79,7 @@ export default function Router() {
     },
   	]);
 
-  return <RouterProvider router={BrowserRoutes} />;
+	return (
+		<RouterProvider router={BrowserRoutes} />
+	)
 }
