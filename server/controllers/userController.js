@@ -1,9 +1,8 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const passport = require("passport");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const { generateToken, generateRefreshToken } = require("../utils/helper");
+const { generateToken, generateRefreshToken, sendEmailVerification } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
 
 exports.homePage = (req, res) => {
@@ -40,11 +39,15 @@ exports.postLogin = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
 	const {refreshToken} = req.cookies
+
 	if (!refreshToken) return res.status(401).send("You are not logged in")
+
 	jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
 		if (err) return res.status(403).send("Token is not valid")
+		
 		const user = await User.findById(decoded.id)
 		if (!user) return res.status(404).send("User not found")
+
 		const accessToken = generateToken(user)
 		res.status(200).json({accessToken: accessToken, roles: [2001]})
 	})
@@ -89,6 +92,53 @@ exports.googleLogin = async (req,res) => {
 }
 
 exports.logout = async (req, res) => {
-    res.clearCookie("refreshToken", {httpOnly: true, sameSite: "None", secure: true})
-    res.status(200).send("Logged out")
+	res.clearCookie("refreshToken", {httpOnly: true, sameSite: "None", secure: true})
+	res.status(200).send("Logged out")
 }
+
+exports.signup = async(req, res) => {
+  try {
+		let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		const email = req.body.email;
+		
+		if (!emailRegex.test(email)) {
+		throw new Error("Invalid email address");
+		}
+
+		if (await User.findOne({ email: email })) {
+		throw new Error("Email already exists.")
+		}
+
+		const userData = {
+		email: email,
+		password: req.body.password,
+		name: `${req.body.firstName} ${req.body.lastName}`,
+		}
+
+		sendEmailVerification(userData, '10m', res)
+		return res.status(200).json("Thank you for registering! A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account. If you don't see the email, please check your spam folder.");
+  } catch (error) {
+	return res.status(500).send(error.message || "Error Occured");
+  }
+}
+
+exports.verifyEmail = async (req, res) => {
+	jwt.verify(req.params.token, process.env.VERIFY_EMAIL, async (err, userData) => {
+	  	if (err) return res.status(500).json("Invalid Link")
+
+		if (await User.findOne({email: userData.email})) {
+		return res.status(500).json("Email already exists.")
+		}
+
+		const newUser = new User({
+			email: userData.email,
+			password: await bcrypt.hash(userData.password, 10),
+			name: userData.name,
+			verified: true
+		});
+		await newUser.save();
+
+	  return res.status(200).json("Email verified successfully")
+	})
+}
+

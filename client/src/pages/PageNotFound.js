@@ -1,13 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function PageNotFound(){
-    const navigate = useNavigate(); // get the navigate function
-    const location = useLocation(); // get the location object
-    const from = location.state?.from?.pathname || "/"; // default to home
-
-    const handleNavigate = () => {
-        navigate(from, { replace: true });
-    }
+    const handleNavigate = useHandleNavigate()
 
     return(
         <div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center bg-opacity-60">
