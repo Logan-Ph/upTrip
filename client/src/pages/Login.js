@@ -1,20 +1,18 @@
 import React, { useState } from 'react';
 import useAuth from '../hooks/useAuth';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { useGoogleLogin } from '@react-oauth/google';
 import failedNotify from '../utils/failedNotify'
 import googleAxios from '../api/googleAxios';
 import Logo from "../components/images/UptripLogo.png";
+import useHandleNavigate from '../utils/useHandleNavigate';
 
 const LOGIN_URL = '/login';
 
 const Login = () => {
 	const { setAuth } = useAuth(); // get the setAuth function
-
-	const navigate = useNavigate(); // get the navigate function
-	const location = useLocation(); // get the location object
-	const from = location.state?.from?.pathname || "/"; // default to home
+	const handleNavigate = useHandleNavigate()
 
 	const [username, setUsername] = useState(''); // create state for the username
 	const [password, setPassword] = useState(''); // create state for the password
@@ -34,7 +32,7 @@ const Login = () => {
 			setAuth({ roles, accessToken });
 			setUsername('');
 			setPassword('');
-			navigate(from, { replace: true });
+			handleNavigate()
 		} catch (err) {
 			failedNotify(err.response.data)
 		}
@@ -54,7 +52,7 @@ const Login = () => {
 				setAuth({ roles, accessToken });
 				setUsername('');
 				setPassword('');
-				navigate(from, { replace: true });
+				handleNavigate()
 			} catch (err) {
 				failedNotify(err.response.data)
 			}
