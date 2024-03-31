@@ -1,21 +1,20 @@
 require('dotenv').config();
-require('./config/passportConfig.js')
 const mongoose = require('mongoose');
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('express-flash');
-const passport = require('passport');
 const methodOverride = require('method-override')
 const app = express();
 const cors = require('cors')
-const port = process.env.PORT || 4000;
-const routes = require('./routes/userRoutes.js')
+const port = process.env.PORT;
+const routes = require('./routes/userRoutes.js');
+const { baseOrigin } = require('./utils/baseOrigin.js');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: baseOrigin,
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
@@ -26,8 +25,6 @@ app.use(session({
   resave: false
 }));
 app.use(flash());
-app.use(passport.initialize())
-app.use(passport.session())
 app.use(methodOverride('_method'))
 app.use('/', routes);
 

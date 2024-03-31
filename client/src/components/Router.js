@@ -9,7 +9,6 @@ import PersistAndRequireAuth from "./PersistAndRequireAuth";
 import VerifyEmail from "../pages/VerifyEmail";
 import PageNotFound from "../pages/PageNotFound";
 import SignUp from "../pages/SignUp";
-import LinkExpried from '../pages/LinkExpired'
 
 export default function Router() {
 	const UserLayout = ({ header, footer }) => {
@@ -22,51 +21,48 @@ export default function Router() {
 		);
 	};
 
-  	const BrowserRoutes = createBrowserRouter([
-		{
-			path: "/",
-			element: <UserLayout header={<Header />} footer={<Footer />} />,
-			children: [
-				{
-					path: "/",
-					element: <Homepage />,
-				},
-				{
-					path: "/unauthorized",
-					element: <Unauthorized />,
-				},
-				{
-					path: "/",
-					element: <PersistAndRequireAuth />,
-					children: [
-						{
-						path: "/admin",
-						element: <Admin />,
-						},
-					],
-				},
-			],
-		},
-		{	path: "/link-expired",
-			element: <LinkExpried />,
-		},
-		{
-			path: "/signup",
-			element: <SignUp />,
-		},
-		{
-			path: "/login",
-			element: <Login />,
-		},
-		{
-			path: "*",
-			element: <PageNotFound />,
-		},
-		{
-			path: "/verify-email",
-			element: <VerifyEmail />,
-		},
-  	]);
+    const BrowserRoutes = createBrowserRouter([
+      {
+        path: "/",
+        element: <UserLayout header={<Header />} footer={<Footer />} />,
+        children: [
+          {
+            path: "/",
+            element: <Homepage />,
+          },
+          {
+            path: "/unauthorized",
+            element: <Unauthorized />,
+          },
+          {
+            path: "*",
+            element: <PageNotFound />,
+          },
+          {
+            path: "/",
+            element: <PersistAndRequireAuth />,
+            children: [
+              {
+                path: "/admin",
+                element: <Admin />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: "user/:token/verify-email",
+        element: <VerifyEmail/>
+      },
+      {
+        path: "/signup",
+        element: <SignUp />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+    ]);
 
 	return (
 		<RouterProvider router={BrowserRoutes} />

@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import Logo from "../components/images/UptripLogo.png";
 import failedNotify from "../utils/failedNotify";
+import successNotify from "../utils/successNotify";
 import useAuth from "../hooks/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 import googleAxios from "../api/googleAxios";
 import axios from "../api/axios";
 import useHandleNavigate from "../utils/useHandleNavigate";
+import { useState } from "react";
 
 export default function SignUp() {
 	const { setAuth } = useAuth(); // get the setAuth function
@@ -29,6 +31,47 @@ export default function SignUp() {
 			}
 		}
 	})
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [checked, setChecked] = useState(false)
+
+  const data = {
+	email: email,
+	password: password,
+	firstName: firstName,
+	lastName: lastName,
+  }
+
+  async function axiosPostData() {
+		try {
+			const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+			if (!(email && password && firstName && lastName && checked)) {
+				failedNotify("The field is empty");
+				return;
+			}
+
+			if (!passwordPattern.test(password)) {
+				failedNotify("Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long.");
+				return;
+			}
+
+			await axios.post('/signup', data, { withCredentials: true })
+				.then(res => {
+					successNotify(res.data)
+				})
+				.catch(er => { failedNotify(er.response.data) });
+		} catch (error) {
+			console.error('Registration failed', error);
+		}
+	};
+  
+  const handleSubmit = (e) => {
+	e.preventDefault();
+	axiosPostData();
+  }
 
   return (
 	<>
@@ -64,6 +107,7 @@ export default function SignUp() {
 						name="first-name"
 						id="first-name"
 						autoComplete="given-name"
+						onChange={(e) => setFirstName(e.target.value)}
 						className="px-3 py-2 block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 					  />
 					</div>
@@ -82,6 +126,7 @@ export default function SignUp() {
 						name="last-name"
 						id="last-name"
 						autoComplete="family-name"
+						onChange={(e) => setLastName(e.target.value)}
 						className="block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 					  />
 					</div>
@@ -101,6 +146,7 @@ export default function SignUp() {
 					  name="email"
 					  type="email"
 					  autoComplete="email"
+					  onChange={(e) => setEmail(e.target.value)}
 					  className="block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 					/>
 				  </div>
@@ -121,6 +167,7 @@ export default function SignUp() {
 					  name="password"
 					  type="password"
 					  autoComplete="current-password"
+					  onChange={(e) => setPassword(e.target.value)}
 					  required
 					  className="block w-full rounded-md border-0 px-3 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 					/>
@@ -133,7 +180,8 @@ export default function SignUp() {
 					  id="terms"
 					  type="checkbox"
 					  class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 "
-					  defaultChecked
+					  checked={checked}
+					  onChange={(e) => setChecked(e.target.checked)}
 					  required
 					/>
 				  </div>
@@ -221,6 +269,7 @@ export default function SignUp() {
 				<div>
 				  <button
 					type="submit"
+					onClick={handleSubmit}
 					className="mt-5 group relative flex w-full justify-center rounded-md border-[#8DD3BB] border-transparent bg-[#8DD3BB] py-2 px-4 text-sm font-medium text-white hover:bg-[#CDEAE1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#CDEAE1] hover:text-black"
 				  >
 					Create account
@@ -229,11 +278,11 @@ export default function SignUp() {
 			  </form>
 			  <div className="text-center mt-4">
 				<p>
-				  	Already have an account?
-					<Link to="/login" className="font-bold">
-						{" "}
-						Login
-					</Link>
+				  Already have an account?
+				  <Link to="/login" className="font-bold">
+					{" "}
+					Login
+				  </Link>
 				</p>
 			  </div>
 
