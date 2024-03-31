@@ -58,7 +58,6 @@ export default function Router() {
 			path: "/login",
 			element: <Login />,
 		},
-
 		{
 			path: "*",
 			element: <PageNotFound />,
