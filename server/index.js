@@ -9,7 +9,7 @@ const app = express();
 const cors = require('cors')
 const port = process.env.PORT;
 const routes = require('./routes/userRoutes.js');
-const { baseOrigin } = require('./utils/baseOrigin.js');
+const { baseOrigin } = require('./utils/url.js');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

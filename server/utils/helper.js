@@ -2,7 +2,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
-const baseOrigin = require('./baseOrigin')
+const { baseOrigin} = require('./url')
 
 exports.generateToken = (user) => {
   return jwt.sign(
