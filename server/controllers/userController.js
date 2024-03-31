@@ -14,8 +14,8 @@ exports.getLogin = (req, res) => {
 };
 
 exports.postLogin = async (req, res) => {
-	const { username, password } = req.body;
-	const user = await User.findOne({ username });
+	const { email, password } = req.body;
+	const user = await User.findOne({ email });
 	if (!user) return res.status(404).send("Invalid credentials");
 
 	const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -30,8 +30,7 @@ exports.postLogin = async (req, res) => {
 	return res.status(200).json({
 		success: true,
 		roles: [2001],
-		username,
-		email: user.email,
+		email,
 		_id: user._id,
 		accessToken: userToken,
 	});
