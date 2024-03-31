@@ -36,7 +36,7 @@ const Login = () => {
             setPassword('');
             navigate(from, { replace: true });
         } catch (err) {
-            failedNotify(err.response.data)    
+            failedNotify(err?.response?.data)    
         }
     }
 

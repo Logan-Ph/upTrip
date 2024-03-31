@@ -17,17 +17,17 @@ export default function Router() {
     return (
       <>
         <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={true}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover={false}
-          theme="light"
-          stacked
+			position="top-center"
+			autoClose={5000}
+			hideProgressBar={true}
+			newestOnTop={true}
+			closeOnClick
+			rtl={false}
+			pauseOnFocusLoss
+			draggable
+			pauseOnHover={false}
+			theme="light"
+			stacked
         />
         {header}
         <Outlet />
