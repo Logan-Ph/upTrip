@@ -1,14 +1,11 @@
 import { Link } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
-import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function Admin(){
-    const handleNavigate = useHandleNavigate('/login')
     const logout = useLogout();
 
     const signOut = async () => {
         await logout();
-        handleNavigate();
     }
 
     return (
