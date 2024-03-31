@@ -91,7 +91,8 @@ exports.googleLogin = async (req,res) => {
 }
 
 exports.logout = async (req, res) => {
-	res.cookie("refreshToken", "", {httpOnly: true, sameSite: "None", maxAge:  0, secure: true, expires: Date.now()}) // remove the cookies
+	res.clearCookie("refreshToken", {httpOnly: true, sameSite: "None", secure: true}) // remove the cookies
+	req.session.destroy()
 	res.status(200).send("Logged out")
 }
 
@@ -125,7 +126,7 @@ exports.verifyEmail = async (req, res) => {
 	jwt.verify(req.params.token, process.env.VERIFY_EMAIL, async (err, userData) => {
 	  	if (err) return res.status(500).json("Invalid Link")
 
-		if (await User.findOne({email: userData.email})) {
+		if (await User.findOne({email})) {
 		return res.status(500).json("Email already exists.")
 		}
 
