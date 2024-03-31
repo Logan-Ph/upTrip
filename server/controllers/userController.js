@@ -91,8 +91,8 @@ exports.googleLogin = async (req,res) => {
 }
 
 exports.logout = async (req, res) => {
-	res.clearCookie("refreshToken", {httpOnly: true, sameSite: "None", secure: true})
-	res.status(200).send("Logged out")
+    res.clearCookie("refreshToken", {path: '/', httpOnly: true, sameSite: "None", secure: true});
+    res.status(200).send("Logged out");
 }
 
 exports.signup = async(req, res) => {
