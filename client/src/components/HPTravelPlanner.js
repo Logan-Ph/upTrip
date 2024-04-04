@@ -1,8 +1,8 @@
 export default function HPTravelPlanner(){
     const ImageLink = [
-        {imgSRC:"https://ik.imagekit.io/Uptrip/1.jpeg?updatedAt=1712237301601"},
-        {imgSRC:"https://ik.imagekit.io/Uptrip/2.jpeg?updatedAt=1712237302711"},
-        {imgSRC:"https://ik.imagekit.io/Uptrip/3.jpeg?updatedAt=1712237296909"},
+        {imgSRC:"https://ik.imagekit.io/Uptrip/ocean.jpg?updatedAt=1712247023086"},
+        {imgSRC:"https://ik.imagekit.io/Uptrip/beach.jpg?updatedAt=1712247022998"},
+        {imgSRC:"https://ik.imagekit.io/Uptrip/new.jpg?updatedAt=1712247440026"},
         {imgSRC:"https://ik.imagekit.io/Uptrip/4.jpeg?updatedAt=1712237300755"}
     ]
 
@@ -58,7 +58,7 @@ function ImageCard({imgSRC}){
 function DecorativeAirportCard(){
     return<>
     <div className="bg-homepagegairport bg-cover bg-center w-full md:h-[400px] rounded-xl border-4 ">
-        <div className="flex flex-col md:flex-row w-full h-full mx-auto p-4 backdrop-opacity-25 backdrop-invert rounded-lg shadow-md">
+        <div className="flex flex-col md:flex-row w-full h-full mx-auto p-4 backdrop-opacity-15 backdrop-invert rounded-lg shadow-md">
             <div className="p-4 flex flex-col items-center justify-end mx-auto">
                 <p className="font-extrabold text-5xl text-white py-2">Flights</p>
                 <p className="font-light text-md text-white py-2">Search Flights & Place Hire to our most popular destinations</p>
