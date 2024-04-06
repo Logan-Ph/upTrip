@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { generateToken, generateRefreshToken, sendEmailVerification } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
 
 exports.homePage = (req, res) => {
 	res.send("This is homepage");
@@ -140,5 +143,139 @@ exports.verifyEmail = async (req, res) => {
 
 	  return res.status(200).json("Email verified successfully")
 	})
+}
+
+exports.quickSearchHotels = async (req, res) => {
+	try{
+	const {keyword} = req.params
+
+	const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+	const page = await browser.newPage()
+	await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36');
+
+	await page.goto(`https://www.trip.com/global-gssearch/searchlist/search/?keyword=${keyword}&locale=en_xx&curr=VND`)
+	await page.waitForSelector('div.gl-search-result_list > div.content', {visible: true, timeout: 5000})
+
+	const hotelButton = await page.$$('.gl-search-result_tabs > li:nth-child(3)')
+	await hotelButton[0].click()
+	await page.waitForSelector('div.gl-result-hotel', {visible: true, timeout: 5000})
+	const hotelList = await page.$$('div.gl-search-result_list > div.content')
+
+	let hotels = []
+
+	for (const hotel of hotelList){
+		try{
+			let hotelName, hotelLink, hotelPrice, hotelImage, hotelReviewScore, hotelNumberReview
+
+			try{
+				hotelName = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').textContent, hotel)
+			}catch(er){
+				hotelName = null
+			}
+
+			try{
+				hotelLink = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').href, hotel)
+			}catch(er){
+				hotelLink = null
+			}
+
+			try{
+				hotelPrice = await page.evaluate(el => el.querySelector('div.gl-search-result_list-price > span').textContent, hotel)
+			}catch(er){
+				hotelPrice = null
+			}
+
+			try{
+				hotelImage = await page.evaluate(el => el.querySelector('div.default-img > a > img').src, hotel)
+			}catch(er){
+				hotelImage = null
+			}
+
+			try{
+				hotelReviewScore = await page.evaluate(el => el.querySelector('span.score-review_score').textContent, hotel)
+			}catch(er){
+				hotelReviewScore = null
+			}
+
+			try{
+				hotelNumberReview = await page.evaluate(el => el.querySelector('span.score-review_review').textContent, hotel)
+			}catch(er){
+				hotelNumberReview = null
+			}
+
+			hotels.push({hotelName, hotelLink, hotelImage, hotelReviewScore, hotelNumberReview, hotelPrice})
+		}catch (er) {}
+	}
+	return res.status(200).json({hotels})
+	}catch (error) {
+		return res.status(500).send("No search results found. Please adjust your search and try again.");
+	}
+}
+
+exports.quickSearchAttractions = async (req,res) => {
+	try{
+		const {keyword} = req.params
+
+		const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+		const page = await browser.newPage()
+		await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36');
+	
+		await page.goto(`https://www.trip.com/global-gssearch/searchlist/search/?keyword=${keyword}&locale=en_xx&curr=VND`)
+		await page.waitForSelector('div.gl-search-result_list > div.content', {visible: true, timeout: 5000})
+	
+		const attractionsButton = await page.$$('.gl-search-result_tabs > li:nth-child(4)')
+		await attractionsButton[0].click()
+
+		await page.waitForSelector('div.gl-result-mixlist', {visible: true, timeout: 5000})
+		const attractionsList = await page.$$('div.gl-search-result_list > div.content')
+		let attractions = []
+
+		for (const attraction of attractionsList){
+			try{
+				let attractionName, attractionLink, attractionImage, attractionPrice, attractionReviewScore, attractionNumberReview
+
+				try{
+					attractionName = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').textContent, attraction)
+				}catch (er) {
+					attractionName = null
+				}
+
+				try{
+					attractionLink = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').href, attraction)
+				}catch (er) {
+					attractionLink = null
+				}
+
+				try{
+					attractionImage = await page.evaluate(el => el.querySelector('div.default-img > a > img').src, attraction)
+				}catch (er) {
+					attractionImage = null
+				}
+
+				try{
+					attractionPrice = await page.evaluate(el => el.querySelector('div.gl-search-result_list-price > span').textContent, attraction)
+				}catch (er) {
+					attractionPrice = null
+				}
+
+				try{
+					attractionReviewScore = await page.evaluate(el => el.querySelector('span.score-review_score').textContent, attraction)
+				}catch (er) {
+					attractionReviewScore = null
+				}
+
+				try{
+					attractionNumberReview = await page.evaluate(el => el.querySelector('span.score-review_review').textContent, attraction)
+				}catch (er) {
+					attractionNumberReview = null
+				}
+
+				attractions.push({attractionName, attractionLink, attractionImage, attractionReviewScore, attractionNumberReview, attractionPrice})
+			}catch (er) {}
+		}
+		return res.status(200).json({attractions})
+	}catch (er){
+		return res.status(500).send("No search results found. Please adjust your search and try again.");
+	}
 }
 

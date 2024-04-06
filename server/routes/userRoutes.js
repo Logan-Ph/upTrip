@@ -11,6 +11,11 @@ router.get('/login', userController.getLogin);
 router.post('/login', userController.postLogin);
 router.post('/google/auth/login', userController.googleLogin);
 
+// quick search for hotels
+router.get('/quick-search/hotels/:keyword', userController.quickSearchHotels)
+
+// quick search for attractions
+router.get('/quick-search/attractions/:keyword', userController.quickSearchAttractions)
 
 // user login success - get new token
 router.get('/refresh', userController.refreshToken)
