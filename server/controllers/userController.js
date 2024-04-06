@@ -208,7 +208,7 @@ exports.quickSearchHotels = async (req, res) => {
 	}
 	return res.status(200).json({hotels})
 	}catch (error) {
-		return res.status(500).send("No search results found. Please adjust your search and try again.");
+		return res.status(500).send(error);
 	}
 }
 
@@ -274,8 +274,8 @@ exports.quickSearchAttractions = async (req,res) => {
 			}catch (er) {}
 		}
 		return res.status(200).json({attractions})
-	}catch (er){
-		return res.status(500).send("No search results found. Please adjust your search and try again.");
+	}catch (error){
+		return res.status(500).send(error);
 	}
 }
 
