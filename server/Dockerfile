@@ -5,7 +5,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY server/package*.json ./
 RUN npm ci
 COPY . .
-CMD [ "node", "index.js" ]
+CMD [ "nodemon", "index.js" ]
