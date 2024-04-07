@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
-    "chrome-aws-lambda": "^6",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -25,9 +24,9 @@
     "nodemailer": "^6.9.13",
     "nodemon": "^3.1.0",
     "passport-google-oauth20": "^2.0.0",
-    "puppeteer-core": "^6"
-  },
-  "devDependencies": {
-    "puppeteer": "^22.6.3"
+    "puppeteer": "^22.6.3",
+    "puppeteer-core": "^6",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   }
 }

@@ -5,18 +5,21 @@ const User = require("../models/user");
 const { generateToken, generateRefreshToken, sendEmailVerification } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-const chromium = require('chrome-aws-lambda')
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
 
-// let puppeteer;
-// let chrome = {}
-// let options = {args: ['--no-sandbox', '--disable-setuid-sandbox'] }
-
-// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-// 	puppeteer = require('puppeteer-core')
-// 	chrome = require('chrome-aws-lambda')
-// }else{
-// 	puppeteer = require('puppeteer')
-// }
+let	options = {
+	args: [
+		'--disabled-setuid-sandbox',
+		'--no-sandbox',
+		'--no-zygote' ,
+	],
+	executablePath: process.env.NODE_ENV === 'production'
+					? process.env.PUPPETEER_EXECUTABLE_PATH
+					: puppeteer.executablePath(),
+	headless: true,
+}
 
 
 exports.homePage = (req, res) => {
@@ -158,18 +161,9 @@ exports.verifyEmail = async (req, res) => {
 
 exports.quickSearchHotels = async (req, res) => {
 	try{
-		let	options = {
-				args: [...chromium.args, '--hide-scrollbars', '--disabled-web-security'],
-				executablePath: await chromium.executablePath,
-				headless: true,
-				defaultViewport: chromium.defaultViewport,
-				ignoreHTTPSErrors: true,
-				ignoreDefaultArgs: ['--disable-extensions']
-			}
-
 		const {keyword} = req.params
 
-		const browser = await chromium.puppeteer.launch(options)
+		const browser = await puppeteer.launch(options)
 		const page = await browser.newPage()
 		await page.setUserAgent(userAgent);
 
@@ -235,27 +229,9 @@ exports.quickSearchHotels = async (req, res) => {
 
 exports.quickSearchAttractions = async (req,res) => {
 	try{
-		// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-		// 	options = {
-		// 		args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
-		// 		executablePath: await chrome.executablePath,
-		// 		headless: true,
-		// 		defaultViewport: chrome.defaultViewport,
-		// 		ignoreHTTPSErrors: true,
-		// 	}
-		// }
-		let	options = {
-			args: [...chromium.args, '--hide-scrollbars', '--disabled-web-security'],
-			executablePath: await chromium.executablePath,
-			headless: true,
-			defaultViewport: chromium.defaultViewport,
-			ignoreHTTPSErrors: true,
-			ignoreDefaultArgs: ['--disable-extensions']
-		}
-
 		const {keyword} = req.params
 
-		const browser = await chromium.puppeteer.launch(options)
+		const browser = await puppeteer.launch(options)
 		const page = await browser.newPage()
 		await page.setUserAgent(userAgent);
 	
