@@ -5,7 +5,7 @@ const User = require("../models/user");
 const { generateToken, generateRefreshToken, sendEmailVerification } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-const chornium = require('chrome-aws-lambda')
+const chromium = require('chrome-aws-lambda')
 
 // let puppeteer;
 // let chrome = {}
@@ -159,17 +159,17 @@ exports.verifyEmail = async (req, res) => {
 exports.quickSearchHotels = async (req, res) => {
 	try{
 		let	options = {
-				args: [...chornium.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
-				executablePath: await chornium.executablePath,
+				args: [...chromium.args, '--hide-scrollbars', '--disabled-web-security'],
+				executablePath: await chromium.executablePath,
 				headless: true,
-				defaultViewport: chornium.defaultViewport,
+				defaultViewport: chromium.defaultViewport,
 				ignoreHTTPSErrors: true,
 				ignoreDefaultArgs: ['--disable-extensions']
 			}
 
 		const {keyword} = req.params
 
-		const browser = await chornium.puppeteer.launch(options)
+		const browser = await chromium.puppeteer.launch(options)
 		const page = await browser.newPage()
 		await page.setUserAgent(userAgent);
 
@@ -245,17 +245,17 @@ exports.quickSearchAttractions = async (req,res) => {
 		// 	}
 		// }
 		let	options = {
-			args: [...chornium.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
-			executablePath: await chornium.executablePath,
+			args: [...chromium.args, '--hide-scrollbars', '--disabled-web-security'],
+			executablePath: await chromium.executablePath,
 			headless: true,
-			defaultViewport: chornium.defaultViewport,
+			defaultViewport: chromium.defaultViewport,
 			ignoreHTTPSErrors: true,
 			ignoreDefaultArgs: ['--disable-extensions']
 		}
 
 		const {keyword} = req.params
 
-		const browser = await chornium.puppeteer.launch(options)
+		const browser = await chromium.puppeteer.launch(options)
 		const page = await browser.newPage()
 		await page.setUserAgent(userAgent);
 	
