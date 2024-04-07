@@ -49,12 +49,12 @@ export default function HPExplore() {
 function Carousel() {
     const wondersOfVn = [
         { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Ha Long", city: "Quang Ninh" },
-        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Hoi An", city: "Quang Nam" },
-        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Sapa", city: "Lao Cai" },
-        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Da Nang", city: "Da Nang" },
-        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Da Lat", city: "Lam Dong" },
-        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Cat Ba", city: "Hai Phong" },
-        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Quy Nhon", city: "Binh Dinh" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/hoian.jpg?updatedAt=1712471800654", destination: "Hoi An", city: "Quang Nam" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/sapa.jpg?updatedAt=1712471905348", destination: "Sapa", city: "Lao Cai" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/danang.jpg?updatedAt=1712471964458", destination: "Da Nang", city: "Da Nang" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/dalat.jpg?updatedAt=1712472061425", destination: "Da Lat", city: "Lam Dong" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/catba.jpg?updatedAt=1712472146159", destination: "Cat Ba", city: "Hai Phong" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/quynhon.jpg?updatedAt=1712472278392", destination: "Quy Nhon", city: "Binh Dinh" },
     ]
 
     return (
