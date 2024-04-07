@@ -5,17 +5,18 @@ const User = require("../models/user");
 const { generateToken, generateRefreshToken, sendEmailVerification } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
 const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+const chornium = require('chrome-aws-lambda')
 
-let puppeteer;
-let chrome = {}
-let options = {args: ['--no-sandbox', '--disable-setuid-sandbox'] }
+// let puppeteer;
+// let chrome = {}
+// let options = {args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-	puppeteer = require('puppeteer-core')
-	chrome = require('chrome-aws-lambda')
-}else{
-	puppeteer = require('puppeteer')
-}
+// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+// 	puppeteer = require('puppeteer-core')
+// 	chrome = require('chrome-aws-lambda')
+// }else{
+// 	puppeteer = require('puppeteer')
+// }
 
 
 exports.homePage = (req, res) => {
@@ -157,19 +158,17 @@ exports.verifyEmail = async (req, res) => {
 
 exports.quickSearchHotels = async (req, res) => {
 	try{
-		if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-			options = {
-				args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
-				executablePath: await chrome.executablePath,
+		let	options = {
+				args: [...chornium.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
+				executablePath: await chornium.executablePath,
 				headless: true,
-				defaultViewport: chrome.defaultViewport,
+				defaultViewport: chornium.defaultViewport,
 				ignoreHTTPSErrors: true,
 			}
-		}
 
 		const {keyword} = req.params
 
-		const browser = await puppeteer.launch(options)
+		const browser = await chornium.puppeteer.launch(options)
 		const page = await browser.newPage()
 		await page.setUserAgent(userAgent);
 
@@ -235,19 +234,26 @@ exports.quickSearchHotels = async (req, res) => {
 
 exports.quickSearchAttractions = async (req,res) => {
 	try{
-		if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-			options = {
-				args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
-				executablePath: await chrome.executablePath,
-				headless: true,
-				defaultViewport: chrome.defaultViewport,
-				ignoreHTTPSErrors: true,
-			}
+		// if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+		// 	options = {
+		// 		args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
+		// 		executablePath: await chrome.executablePath,
+		// 		headless: true,
+		// 		defaultViewport: chrome.defaultViewport,
+		// 		ignoreHTTPSErrors: true,
+		// 	}
+		// }
+		let	options = {
+			args: [...chornium.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
+			executablePath: await chornium.executablePath,
+			headless: true,
+			defaultViewport: chornium.defaultViewport,
+			ignoreHTTPSErrors: true,
 		}
-		
+
 		const {keyword} = req.params
 
-		const browser = await puppeteer.launch(options)
+		const browser = await chornium.puppeteer.launch(options)
 		const page = await browser.newPage()
 		await page.setUserAgent(userAgent);
 	
