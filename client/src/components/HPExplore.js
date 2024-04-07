@@ -1,161 +1,85 @@
-import { useState, useRef, useEffect } from 'react';
-import data from "../data.json";
+import { Link } from 'react-router-dom';
 
-export default function HPExplore(){
-    return<>
+export default function HPExplore() {
+    return <>
         <section className='mx-auto max-w-7xl px-6 py-6'>
-            <div className='flex flex-row'>
+            <div className='flex flex-col md:flex-row '>
 
-                <div className='w-1/4 flex flex-col'>
+                <div className='w-fullmd:w-1/4 flex flex-col'>
                     <p className='text-2xl font-bold py-2'>Wonders of Vietnam</p>
                     <p className="text-lg font-light">Your gateway to unforgettable experiences in Vietnam!</p>
-                    <button className="bg-[#EF4040] hover:bg-[#FF8682] text-white p-2 font-bold w-1/2  mt-5 rounded-xl transition ease-in-out delay-50 hover:-translate-y-1 duration-100 capitalize text-lg">Explore Now</button>
+                    <button className="bg-[#EF4040] hover:bg-[#FF8682] text-white p-4 font-bold w-1/2  mt-5 rounded-2xl transition ease-in-out delay-50 hover:-translate-y-1 duration-100 capitalize text-lg">Explore Now</button>
                 </div>
 
-                <div className='w-3/4'>
-                    <Carousel/>
+                <div className='w-full md:w-3/4'>
+                    <Carousel />
+                    {/* <div className="carousel carousel-end rounded-box shadow-md">
+                        <div className="carousel-item">
+                            <img src="https://daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.jpg" alt="Drink" />
+                        </div> 
+                        <div className="carousel-item">
+                            <img src="https://daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.jpg" alt="Drink" />
+                        </div> 
+                        <div className="carousel-item">
+                            <img src="https://daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.jpg" alt="Drink" />
+                        </div> 
+                        <div className="carousel-item">
+                            <img src="https://daisyui.com/images/stock/photo-1494253109108-2e30c049369b.jpg" alt="Drink" />
+                        </div> 
+                        <div className="carousel-item">
+                            <img src="https://daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.jpg" alt="Drink" />
+                        </div> 
+                        <div className="carousel-item">
+                            <img src="https://daisyui.com/images/stock/photo-1559181567-c3190ca9959b.jpg" alt="Drink" />
+                        </div> 
+                        <div className="carousel-item">
+                            <img src="https://daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.jpg" alt="Drink" />
+                        </div>
+                    </div>  */}
+
                 </div>
 
             </div>
 
         </section>
-        
+
     </>
 }
 
-function Carousel(){
+function Carousel() {
+    const wondersOfVn = [
+        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Ha Long", city: "Quang Ninh" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Hoi An", city: "Quang Nam" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Sapa", city: "Lao Cai" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Da Nang", city: "Da Nang" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Da Lat", city: "Lam Dong" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Cat Ba", city: "Hai Phong" },
+        { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Quy Nhon", city: "Binh Dinh" },
+    ]
 
-    const maxScrollWidth = useRef(0);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const carousel = useRef(null);
-  
-    const movePrev = () => {
-      if (currentIndex > 0) {
-        setCurrentIndex((prevState) => prevState - 1);
-      }
-    };
-  
-    const moveNext = () => {
-      if (
-        carousel.current !== null &&
-        carousel.current.offsetWidth * currentIndex <= maxScrollWidth.current
-      ) {
-        setCurrentIndex((prevState) => prevState + 1);
-      }
-    };
-  
-    const isDisabled = (direction) => {
-      if (direction === 'prev') {
-        return currentIndex <= 0;
-      }
-  
-      if (direction === 'next' && carousel.current !== null) {
-        return (
-          carousel.current.offsetWidth * currentIndex >= maxScrollWidth.current
-        );
-      }
-  
-      return false;
-    };
-  
-    useEffect(() => {
-      if (carousel !== null && carousel.current !== null) {
-        carousel.current.scrollLeft = carousel.current.offsetWidth * currentIndex;
-      }
-    }, [currentIndex]);
-  
-    useEffect(() => {
-      maxScrollWidth.current = carousel.current
-        ? carousel.current.scrollWidth - carousel.current.offsetWidth
-        : 0;
-    }, []);
-  
     return (
-      <div className="carousel my-12 mx-auto">
-        <h2 className="text-4xl leading-8 font-semibold mb-12 text-slate-700">
-          Our epic carousel
-        </h2>
-        <div className="relative overflow-hidden">
-          <div className="flex justify-between absolute top left w-full h-full">
-            <button
-              onClick={movePrev}
-              className="hover:bg-blue-900/75 text-white w-10 h-full text-center opacity-75 hover:opacity-100 disabled:opacity-25 disabled:cursor-not-allowed z-10 p-0 m-0 transition-all ease-in-out duration-300"
-              disabled={isDisabled('prev')}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-20 -ml-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span className="sr-only">Prev</span>
-            </button>
-            <button
-              onClick={moveNext}
-              className="hover:bg-blue-900/75 text-white w-10 h-full text-center opacity-75 hover:opacity-100 disabled:opacity-25 disabled:cursor-not-allowed z-10 p-0 m-0 transition-all ease-in-out duration-300"
-              disabled={isDisabled('next')}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-20 -ml-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-              <span className="sr-only">Next</span>
-            </button>
-          </div>
-          <div
-            ref={carousel}
-            className="carousel-container relative flex gap-1 overflow-hidden scroll-smooth snap-x snap-mandatory touch-pan-x z-0"
-          >
-            {data.destination.map((resource, index) => {
-              return (
-                <div
-                  key={index}
-                  className="carousel-item text-center relative w-64 h-64 snap-start"
-                >
-                  <a
-                    href={resource.link}
-                    className="h-full w-full aspect-square block bg-origin-padding bg-left-top bg-cover bg-no-repeat z-0"
-                    style={{ backgroundImage: `url(${resource.imageUrl || ''})` }}
-                  >
-                    <img
-                      src={resource.imageUrl || ''}
-                      alt={resource.title}
-                      className="w-full aspect-square hidden"
-                    />
-                  </a>
-                  <a
-                    href={resource.link}
-                    className="h-full w-full aspect-square block absolute top-0 left-0 transition-opacity duration-300 opacity-0 hover:opacity-100 bg-blue-800/75 z-10"
-                  >
-                    <h3 className="text-white py-6 px-3 mx-auto text-xl">
-                      {resource.title}
-                    </h3>
-                  </a>
-                </div>
-              );
-            })}
-          </div>
+        <div className="carousel carousel-end space-x-6 py-4">
+          {wondersOfVn.map((wonder, index) => (
+            <div key={index} className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
+              <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
+            </div>
+          ))}
         </div>
-      </div>
-    );
-};
+    )
+}
 
-    
+
+
+function DecorativeCard({ imgUrl, destination, city }) {
+    return <>
+        <div>
+            <Link to="" className='transition duration-150 ease-out hover:ease-in-out'>
+                <img src={imgUrl} alt={`${destination}`} class="h-[300px] w-[200px] object-cover shadow-lg rounded-xl" />
+            </Link>
+            <div class="absolute bottom-0 left-0 p-4">
+                <p class="text-white text-xl font-extrabold">{destination}</p>
+                <p class="text-white text-lg">{city}</p>
+            </div>
+        </div>
+    </>
+}
