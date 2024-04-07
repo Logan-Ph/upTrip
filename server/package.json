@@ -25,10 +25,6 @@
     "nodemon": "^3.1.0",
     "passport-google-oauth20": "^2.0.0",
     "puppeteer": "^22.6.3",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
-  },
-  "pkg": {
-    "assets": "node_modules/puppeteer-extra-plugin-stealth/**/*.*"
+    "puppeteer-extra": "^3.3.6"
   }
 }

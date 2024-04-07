@@ -5,8 +5,6 @@ const User = require("../models/user");
 const { generateToken, generateRefreshToken, sendEmailVerification } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
 const puppeteer = require('puppeteer-extra')
-const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())
 
 exports.homePage = (req, res) => {
 	res.send("This is homepage");
