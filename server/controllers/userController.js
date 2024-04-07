@@ -159,7 +159,7 @@ exports.quickSearchHotels = async (req, res) => {
 	try{
 		if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 			options = {
-				args: [chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
+				args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
 				executablePath: await chrome.executablePath,
 				headless: true,
 				defaultViewport: chrome.defaultViewport,
@@ -236,7 +236,7 @@ exports.quickSearchAttractions = async (req,res) => {
 	try{
 		if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 			options = {
-				args: [chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
+				args: [...chrome.args, '--no-sandbox', '--disable-setuid-sandbox', '--hide-scrollbars', '--disabled-web-security'],
 				executablePath: await chrome.executablePath,
 				headless: true,
 				defaultViewport: chrome.defaultViewport,
