@@ -7,4 +7,4 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 COPY . .
-CMD [ "nodemon", "index.js" ]
+CMD [ "node", "index.js" ]
