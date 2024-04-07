@@ -164,6 +164,7 @@ exports.quickSearchHotels = async (req, res) => {
 				headless: true,
 				defaultViewport: chornium.defaultViewport,
 				ignoreHTTPSErrors: true,
+				ignoreDefaultArgs: ['--disable-extensions']
 			}
 
 		const {keyword} = req.params
@@ -249,6 +250,7 @@ exports.quickSearchAttractions = async (req,res) => {
 			headless: true,
 			defaultViewport: chornium.defaultViewport,
 			ignoreHTTPSErrors: true,
+			ignoreDefaultArgs: ['--disable-extensions']
 		}
 
 		const {keyword} = req.params
