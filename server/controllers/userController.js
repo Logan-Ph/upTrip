@@ -228,7 +228,8 @@ exports.quickSearchHotels = async (req, res) => {
 		}
 		return res.status(200).json({hotels})
 	}catch (error) {
-		return res.status(500).send(error);
+		console.log(error)
+		return res.status(500).json(error);
 	}
 }
 
@@ -305,7 +306,8 @@ exports.quickSearchAttractions = async (req,res) => {
 		}
 		return res.status(200).json({attractions})
 	}catch (error){
-		return res.status(500).send(error);
+		console.log(error)
+		return res.status(500).json(error);
 	}
 }
 
