@@ -1,2 +1,2 @@
-exports.baseOrigin = 'https://up-trip.vercel.app'
+exports.baseOrigin = 'http://localhost:3000'
 
