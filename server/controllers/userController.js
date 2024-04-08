@@ -143,8 +143,8 @@ exports.verifyEmail = async (req, res) => {
 	jwt.verify(req.params.token, process.env.VERIFY_EMAIL, async (err, userData) => {
 	  	if (err) return res.status(500).json("Invalid Link")
 
-		if (await User.findOne({email})) {
-		return res.status(500).json("Email already exists.")
+		if (await User.findOne({email: userData.email})) {
+			return res.status(500).json("Email already exists.")
 		}
 
 		const newUser = new User({
