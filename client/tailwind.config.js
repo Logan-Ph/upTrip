@@ -7,7 +7,14 @@ module.exports = {
     extend: {
       backgroundImage: {
         'loginbackground': "url('https://ik.imagekit.io/Uptrip/CoverPhoto.jpg?updatedAt=1711371962548')",
+        'homepagegairport': "url('https://ik.imagekit.io/Uptrip/airport.jpg?updatedAt=1712246856385')",
+        'homepagehotel': "url('https://ik.imagekit.io/Uptrip/hotel.jpg?updatedAt=1712238990585')",
+      },
+
+      animation: {
+        'animate-pulse': 'animation: cubic-bezier(0.4, 0, 0.6, 1)',
       }
+
     },
   },
   plugins: [require("daisyui")],
