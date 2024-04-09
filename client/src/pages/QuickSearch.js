@@ -20,7 +20,7 @@ export default function QuickSearch() {
         refetchOnWindowFocus: false
     });
 
-    if (hotelsQuery.isLoading || attractionsQuery.isLoading) return <div>Loading...</div>;
+    if (hotelsQuery.isLoading && attractionsQuery.isLoading) return <div>Loading...</div>;
     if (hotelsQuery.isError) return <div>Error: {hotelsQuery.error.message}</div>;
     if (attractionsQuery.isError) return <div>Error: {attractionsQuery.error.message}</div>;
 
@@ -28,7 +28,7 @@ export default function QuickSearch() {
         <div>
             <div>
                 <h2>Hotels</h2>
-                {hotelsQuery.data?.map((hotel) => (
+                {!hotelsQuery.isLoading && hotelsQuery.data?.map((hotel) => (
                     <div key={hotel.id}>
                         <p>{hotel.hotelName}</p>
                     </div>
@@ -37,7 +37,7 @@ export default function QuickSearch() {
 			<hr/>
             <div>
                 <h2>Attractions</h2>
-                {attractionsQuery.data?.map((attraction) => (
+                {!attractionsQuery.isLoading && attractionsQuery.data?.map((attraction) => (
                     <div key={attraction.id}>
                         <p>{attraction.attractionName}</p>
                     </div>

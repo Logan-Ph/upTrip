@@ -13,5 +13,5 @@ export async function fetchQuickSearchHotels(keyword){
 export function fetchQuickSearchAttractions(keyword){
     return axios.get(`/quick-search/attractions/${keyword}`,options)
     .then(res => res.data.attractions)
-    .catch(er => er)
+    .catch(er => {throw new Error(er.response.data.message)})
 }

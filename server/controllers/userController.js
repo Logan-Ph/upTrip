@@ -13,7 +13,6 @@ let	options = {
 	args: [
 		'--disabled-setuid-sandbox',
 		'--no-sandbox',
-		'--no-zygote' ,
 	],
 	executablePath: process.env.NODE_ENV === 'production'
 					? process.env.PUPPETEER_EXECUTABLE_PATH
