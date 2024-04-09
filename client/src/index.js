@@ -6,6 +6,9 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "flowbite-datepicker";
+import "flowbite";
+
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
