@@ -20,7 +20,7 @@ export default function Admin(){
             </div>
             <div className="flexGrow">
                 <button onClick={signOut}>Sign Out</button>
-            </div>
+            </div>z
         </section>
         </>
     )
