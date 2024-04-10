@@ -10,6 +10,7 @@ import VerifyEmail from "../pages/VerifyEmail";
 import PageNotFound from "../pages/PageNotFound";
 import SignUp from "../pages/SignUp";
 import QuickSearch from '../pages/QuickSearch'
+import AdvancedSearchResultPage from "../pages/AdvancedSearchResultPage";
 
 export default function Router() {
   const UserLayout = ({ header, footer }) => {
@@ -35,10 +36,14 @@ export default function Router() {
           path: "/unauthorized",
           element: <Unauthorized />,
         },
-		{
-			path: "/quick-search",
-			element: <QuickSearch />
-		},
+        {
+          path: "/quick-search",
+          element: <QuickSearch />
+        },
+        {
+          path: "/advanced-search",
+          element: <AdvancedSearchResultPage />
+        },
         {
           path: "/",
           element: <PersistAndRequireAuth />,
