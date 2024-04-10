@@ -1,14 +1,16 @@
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
-import Header from './Header'
-import Footer from './Footer'
-import Homepage from '../pages/Homepage'
-import Login from '../pages/Login'
-import Admin from '../pages/Admin'
-import Unauthorized from '../pages/Unauthorized'
-import PersistAndRequireAuth from './PersistAndRequireAuth'
-import VerifyEmail from '../pages/VerifyEmail'
-import PageNotFound from '../pages/PageNotFound'
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import Header from "./Header";
+import Footer from "./Footer";
+import Login from "../pages/Login";
+import Unauthorized from "../pages/Unauthorized";
+import PersistAndRequireAuth from "./PersistAndRequireAuth";
+import VerifyEmail from "../pages/VerifyEmail";
+import PageNotFound from "../pages/PageNotFound";
 import SignUp from "../pages/SignUp";
+import QuickSearch from '../pages/QuickSearch'
+const Admin = lazy(() => import('../pages/Admin'));
+const Homepage = lazy(() => import('../pages/Homepage'))
 
 export default function Router() {
 	const UserLayout = ({ header, footer }) => {
@@ -18,8 +20,8 @@ export default function Router() {
 				<Outlet />
 				{footer}
 			</>
-		)
-	}
+		);
+	};
 
 	const BrowserRoutes = createBrowserRouter([
 		{
@@ -28,19 +30,18 @@ export default function Router() {
 			children: [
 				{
 					path: "/",
-					element: <Homepage />,
+					element: 
+					<Suspense fallback={<div>Loading...</div>}>
+						<Homepage />
+					</Suspense>
 				},
 				{
 					path: "/unauthorized",
 					element: <Unauthorized />,
 				},
 				{
-					path: "*",
-					element: <PageNotFound />,
-				},
-				{
-					path: "/verify-email",
-					element: <VerifyEmail />,
+					path: "/quick-search",
+					element: <QuickSearch />
 				},
 				{
 					path: "/",
@@ -48,11 +49,18 @@ export default function Router() {
 					children: [
 						{
 							path: "/admin",
-							element: <Admin />,
+							element:
+								<Suspense fallback={<div>Loading...</div>}>
+									<Admin />
+								</Suspense>
 						},
 					],
 				},
 			],
+		},
+		{
+			path: "user/:token/verify-email",
+			element: <VerifyEmail />,
 		},
 		{
 			path: "/signup",
@@ -62,9 +70,11 @@ export default function Router() {
 			path: "/login",
 			element: <Login />,
 		},
+		{
+			path: "*",
+			element: <PageNotFound />,
+		},
 	]);
 
-	return (
-		<RouterProvider router={BrowserRoutes} />
-	)
+	return <RouterProvider router={BrowserRoutes} />;
 }

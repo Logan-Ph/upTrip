@@ -1,13 +1,16 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
+import { useState } from "react";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function Admin(){
-    const navigate = useNavigate();
     const logout = useLogout();
+    const [keyword, setKeyword] = useState('');
+
+    const handleNavigate = useHandleNavigate(`/quick-search/?keyword=${keyword}`);
 
     const signOut = async () => {
         await logout();
-        navigate('/login');
     }
 
     return (
@@ -20,7 +23,11 @@ export default function Admin(){
             </div>
             <div className="flexGrow">
                 <button onClick={signOut}>Sign Out</button>
-            </div>z
+            </div>
+            <div>
+                <input type="text" value={keyword} onChange={e => setKeyword(e.target.value)} />
+                <button onClick={handleNavigate}>Fetch Hotels</button>
+            </div>
         </section>
         </>
     )

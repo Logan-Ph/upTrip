@@ -1,10 +1,24 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const passport = require("passport");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
-const { generateToken, generateRefreshToken } = require("../utils/helper");
+const { generateToken, generateRefreshToken, sendEmailVerification } = require("../utils/helper");
 const jwt = require("jsonwebtoken")
+const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+puppeteer.use(StealthPlugin())
+
+let	options = {
+	args: [
+		'--disabled-setuid-sandbox',
+		'--no-sandbox',
+	],
+	executablePath: process.env.NODE_ENV === 'production'
+					? process.env.PUPPETEER_EXECUTABLE_PATH
+					: puppeteer.executablePath(),
+}
+
 
 exports.homePage = (req, res) => {
 	res.send("This is homepage");
@@ -15,8 +29,8 @@ exports.getLogin = (req, res) => {
 };
 
 exports.postLogin = async (req, res) => {
-	const { username, password } = req.body;
-	const user = await User.findOne({ username });
+	const { email, password } = req.body;
+	const user = await User.findOne({ email });
 	if (!user) return res.status(404).send("Invalid credentials");
 
 	const isPasswordCorrect = await bcrypt.compare(password, user.password);
@@ -31,8 +45,7 @@ exports.postLogin = async (req, res) => {
 	return res.status(200).json({
 		success: true,
 		roles: [2001],
-		username,
-		email: user.email,
+		email,
 		_id: user._id,
 		accessToken: userToken,
 	});
@@ -40,11 +53,15 @@ exports.postLogin = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
 	const {refreshToken} = req.cookies
+
 	if (!refreshToken) return res.status(401).send("You are not logged in")
+
 	jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
 		if (err) return res.status(403).send("Token is not valid")
+		
 		const user = await User.findById(decoded.id)
 		if (!user) return res.status(404).send("User not found")
+
 		const accessToken = generateToken(user)
 		res.status(200).json({accessToken: accessToken, roles: [2001]})
 	})
@@ -89,6 +106,190 @@ exports.googleLogin = async (req,res) => {
 }
 
 exports.logout = async (req, res) => {
-    res.clearCookie("refreshToken", {httpOnly: true, sameSite: "None", secure: true})
-    res.status(200).send("Logged out")
+	res.clearCookie("refreshToken", {httpOnly: true, sameSite: "None", secure: true}) // remove the cookies
+	req.session.destroy()
+	res.status(200).send("Logged out")
 }
+
+exports.signup = async(req, res) => {
+  try {
+		let emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		const email = req.body.email;
+		
+		if (!emailRegex.test(email)) {
+		throw new Error("Invalid email address");
+		}
+
+		if (await User.findOne({ email: email })) {
+		throw new Error("Email already exists.")
+		}
+
+		const userData = {
+		email: email,
+		password: req.body.password,
+		name: `${req.body.firstName} ${req.body.lastName}`,
+		}
+
+		sendEmailVerification(userData, '10m', res)
+		return res.status(200).json("Thank you for registering! A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account. If you don't see the email, please check your spam folder.");
+  } catch (error) {
+	return res.status(500).send(error.message || "Error Occured");
+  }
+}
+
+exports.verifyEmail = async (req, res) => {
+	jwt.verify(req.params.token, process.env.VERIFY_EMAIL, async (err, userData) => {
+	  	if (err) return res.status(500).json("Invalid Link")
+
+		if (await User.findOne({email: userData.email})) {
+			return res.status(500).json("Email already exists.")
+		}
+
+		const newUser = new User({
+			email: userData.email,
+			password: await bcrypt.hash(userData.password, 10),
+			name: userData.name,
+			verified: true
+		});
+		await newUser.save();
+
+	  return res.status(200).json("Email verified successfully")
+	})
+}
+
+exports.quickSearchHotels = async (req, res) => {
+	try{
+		const {keyword} = req.params
+
+		const browser = await puppeteer.launch(options)
+		const page = await browser.newPage()
+		await page.setUserAgent(userAgent);
+
+		await page.goto(`https://www.trip.com/global-gssearch/searchlist/search/?keyword=${keyword}&locale=en_xx&curr=VND`)
+		await page.waitForSelector('div.gl-search-result_list > div.content', {visible: true, timeout: 5000})
+
+		const hotelButton = await page.$$('.gl-search-result_tabs > li:nth-child(3)')
+		await hotelButton[0].click()
+		await page.waitForSelector('div.gl-result-hotel', {visible: true, timeout: 5000})
+		const hotelList = await page.$$('div.gl-search-result_list > div.content')
+
+		let hotels = []
+
+		for (const hotel of hotelList){
+			try{
+				let hotelName, hotelLink, hotelPrice, hotelImage, hotelReviewScore, hotelNumberReview
+
+				try{
+					hotelName = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').textContent, hotel)
+				}catch(er){
+					hotelName = null
+				}
+
+				try{
+					hotelLink = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').href, hotel)
+				}catch(er){
+					hotelLink = null
+				}
+
+				try{
+					hotelPrice = await page.evaluate(el => el.querySelector('div.gl-search-result_list-price > span').textContent, hotel)
+				}catch(er){
+					hotelPrice = null
+				}
+
+				try{
+					hotelImage = await page.evaluate(el => el.querySelector('div.default-img > a > img').src, hotel)
+				}catch(er){
+					hotelImage = null
+				}
+
+				try{
+					hotelReviewScore = await page.evaluate(el => el.querySelector('span.score-review_score').textContent, hotel)
+				}catch(er){
+					hotelReviewScore = null
+				}
+
+				try{
+					hotelNumberReview = await page.evaluate(el => el.querySelector('span.score-review_review').textContent, hotel)
+				}catch(er){
+					hotelNumberReview = null
+				}
+
+				hotels.push({hotelName, hotelLink, hotelImage, hotelReviewScore, hotelNumberReview, hotelPrice})
+			}catch (er) {}
+		}
+		return res.status(200).json({hotels})
+	}catch (error) {
+		console.log(error)
+		return res.status(500).json(error);
+	}
+}
+
+exports.quickSearchAttractions = async (req,res) => {
+	try{
+		const {keyword} = req.params
+
+		const browser = await puppeteer.launch(options)
+		const page = await browser.newPage()
+		await page.setUserAgent(userAgent);
+	
+		await page.goto(`https://www.trip.com/global-gssearch/searchlist/search/?keyword=${keyword}&locale=en_xx&curr=VND`)
+		await page.waitForSelector('div.gl-search-result_list > div.content', {visible: true, timeout: 5000})
+	
+		const attractionsButton = await page.$$('.gl-search-result_tabs > li:nth-child(4)')
+		await attractionsButton[0].click()
+
+		await page.waitForSelector('div.gl-result-mixlist', {visible: true, timeout: 5000})
+		const attractionsList = await page.$$('div.gl-search-result_list > div.content')
+		let attractions = []
+
+		for (const attraction of attractionsList){
+			try{
+				let attractionName, attractionLink, attractionImage, attractionPrice, attractionReviewScore, attractionNumberReview
+
+				try{
+					attractionName = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').textContent, attraction)
+				}catch (er) {
+					attractionName = null
+				}
+
+				try{
+					attractionLink = await page.evaluate(el => el.querySelector('div.gl-search-result_list-title > a').href, attraction)
+				}catch (er) {
+					attractionLink = null
+				}
+
+				try{
+					attractionImage = await page.evaluate(el => el.querySelector('div.default-img > a > img').src, attraction)
+				}catch (er) {
+					attractionImage = null
+				}
+
+				try{
+					attractionPrice = await page.evaluate(el => el.querySelector('div.gl-search-result_list-price > span').textContent, attraction)
+				}catch (er) {
+					attractionPrice = null
+				}
+
+				try{
+					attractionReviewScore = await page.evaluate(el => el.querySelector('span.score-review_score').textContent, attraction)
+				}catch (er) {
+					attractionReviewScore = null
+				}
+
+				try{
+					attractionNumberReview = await page.evaluate(el => el.querySelector('span.score-review_review').textContent, attraction)
+				}catch (er) {
+					attractionNumberReview = null
+				}
+
+				attractions.push({attractionName, attractionLink, attractionImage, attractionReviewScore, attractionNumberReview, attractionPrice})
+			}catch (er) {}
+		}
+		return res.status(200).json({attractions})
+	}catch (error){
+		console.log(error)
+		return res.status(500).json(error);
+	}
+}
+

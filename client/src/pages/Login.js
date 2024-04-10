@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import useAuth from '../hooks/useAuth';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from '../api/axios';
 import { useGoogleLogin } from '@react-oauth/google';
 import failedNotify from '../utils/failedNotify'
 import googleAxios from '../api/googleAxios';
 import Logo from "../components/images/UptripLogo.png";
+import useHandleNavigate from '../utils/useHandleNavigate';
 
 const LOGIN_URL = '/login';
 
 const Login = () => {
 	const { setAuth } = useAuth(); // get the setAuth function
+	const handleNavigate = useHandleNavigate()
 
-	const navigate = useNavigate(); // get the navigate function
-	const location = useLocation(); // get the location object
-	const from = location.state?.from?.pathname || "/"; // default to home
-
-	const [username, setUsername] = useState(''); // create state for the username
+	const [email, setEmail] = useState(''); // create state for the username
 	const [password, setPassword] = useState(''); // create state for the password
 
 	const handleSubmit = async (e) => {
@@ -24,7 +22,7 @@ const Login = () => {
 
 		try {
 			const response = await axios.post(LOGIN_URL,
-				JSON.stringify({ username, password }),
+				JSON.stringify({ email, password }),
 				{
 					headers: { 'Content-Type': 'application/json' },
 					withCredentials: true
@@ -32,9 +30,9 @@ const Login = () => {
 			);
 			const { accessToken, roles } = response?.data;
 			setAuth({ roles, accessToken });
-			setUsername('');
+			setEmail('');
 			setPassword('');
-			navigate(from, { replace: true });
+			handleNavigate()
 		} catch (err) {
 			failedNotify(err.response.data)
 		}
@@ -52,21 +50,23 @@ const Login = () => {
 				const serverRes = await axios.post('/google/auth/login', googleRes.data, { withCredentials: true })
 				const { accessToken, roles } = serverRes?.data;
 				setAuth({ roles, accessToken });
-				setUsername('');
+				setEmail('');
 				setPassword('');
-				navigate(from, { replace: true });
+				handleNavigate()
 			} catch (err) {
 				failedNotify(err.response.data)
 			}
 		}
 	})
 
+	const [isLoading, setIsLoading] = useState(true);
+
 	return (
 		<div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
 
 			<header className="absolute top-0 left-0 mx-auto p-8">
 				<a href="/">
-					<img src={Logo} className="w-32 h-auto" />
+					<img src={Logo} className="w-32 h-auto" alt='logo'/>
 				</a>
 			</header>
 
@@ -76,7 +76,7 @@ const Login = () => {
 						<img
 							src="https://ik.imagekit.io/Uptrip/newdecorativeimg.jpg?updatedAt=1711383997767"
 							alt="decorative"
-							className="w-full h-full object-fill rounded-xl border-gray-600"
+							className="w-full h-full object-fill rounded-xl border-gray-600 animate-pulse"
 						/>
 					</div>
 				</div>
@@ -103,7 +103,7 @@ const Login = () => {
 									Email address
 								</label>
 								<input
-									onChange={(e) => setUsername(e.target.value)}
+									onChange={(e) => setEmail(e.target.value)}
 									id="email-address"
 									name="email"
 									type="email"
