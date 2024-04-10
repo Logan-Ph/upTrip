@@ -46,7 +46,7 @@ function Carousel() {
                 <a href={`#slide${wondersOfVn.length - 1}`} className="btn btn-circle">❯</a> */}
                   <button onClick={(e) => navigateCarousel(e, 0)} className="btn btn-circle">❮</button> 
                 <button onClick={(e) => navigateCarousel(e, wondersOfVn.length - 1)} className="btn btn-circle">❯</button>
-    </div>
+            </div>
             </div>
 
     )
@@ -73,9 +73,9 @@ function DecorativeCard({ imgUrl, destination, city }) {
             <Link to="" className='transition duration-150 ease-out hover:ease-in-out'>
                 <img src={imgUrl} alt={`${destination}`} class="h-[300px] w-[200px] object-cover shadow-lg rounded-xl" />
             </Link>
-            <div class="absolute bottom-0 left-0 p-4">
-                <p class="text-white text-xl font-extrabold">{destination}</p>
-                <p class="text-white text-lg">{city}</p>
+            <div className="absolute bottom-0 left-0 p-4">
+                <p className="text-white text-xl font-extrabold">{destination}</p>
+                <p className="text-white text-lg">{city}</p>
             </div>
         </div>
     </>)

@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom';
 import HPPLanYourTrip from '../components/HPPlanYourTrip';
 import HPTravelPlanner from '../components/HPTravelPlanner';
 import HPExplore from '../components/HPExplore';
+import LazyLoadingComponents from '../components/LazyLoadingComponents';
 
 export default function Homepage(){
     return(
