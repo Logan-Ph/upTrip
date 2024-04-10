@@ -33,17 +33,37 @@ function Carousel() {
     ]
 
     return (
-        <div className="carousel carousel-end space-x-6 py-4">
-          {wondersOfVn.map((wonder, index) => (
-            <div key={index} className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
-              <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
+        <div className='relative'>
+            <div className="carousel carousel-end space-x-6 py-4">
+            {wondersOfVn.map((wonder, index) => (
+                <div key={index} id={`slide${index}`} className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
+                <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
+                </div>
+            ))}
             </div>
-          ))}
-        </div>
+            <div className="absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2">
+                {/* <a href= "#slide0" className="btn btn-circle">❮</a> 
+                <a href={`#slide${wondersOfVn.length - 1}`} className="btn btn-circle">❯</a> */}
+                  <button onClick={(e) => navigateCarousel(e, 0)} className="btn btn-circle">❮</button> 
+                <button onClick={(e) => navigateCarousel(e, wondersOfVn.length - 1)} className="btn btn-circle">❯</button>
+    </div>
+            </div>
+
     )
 }
-
-
+function navigateCarousel(e, targetIndex) {
+    e.preventDefault();
+    const slideWidth = 200; 
+    
+    const carousel = document.querySelector('.carousel');
+    
+    if (!carousel) return; 
+    // Calculate the new scroll position based on the targetIndex
+    const newScrollPosition = targetIndex * slideWidth;
+    // Scroll to the new position
+    // For a horizontal carousel, we change the scrollLeft property
+    carousel.scrollTo({left: newScrollPosition, behavior: 'smooth'});  
+}
 
 function DecorativeCard({ imgUrl, destination, city }) {
     const handleNavigate = useHandleNavigate(`/quick-search/?keyword=${destination}`);
