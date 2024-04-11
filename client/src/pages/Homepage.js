@@ -23,7 +23,6 @@ export default function Homepage(){
                 </Suspense>
                 <br />
             </div>
-            
         </>
     )
 }

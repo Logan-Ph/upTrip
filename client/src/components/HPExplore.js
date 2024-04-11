@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import useHandleNavigate from '../utils/useHandleNavigate';
-import { Suspense, startTransition } from 'react';
+import { startTransition } from 'react';
 
 
 export default function HPExplore() {
@@ -39,13 +39,11 @@ function Carousel() {
             <div className="carousel carousel-end space-x-6 py-4">
             {wondersOfVn.map((wonder, index) => (
                 <div key={index} id={`slide${index}`} className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
-                <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
+                    <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
                 </div>
             ))}
             </div>
             <div className="absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2">
-                {/* <a href= "#slide0" className="btn btn-circle">❮</a> 
-                <a href={`#slide${wondersOfVn.length - 1}`} className="btn btn-circle">❯</a> */}
                   <button onClick={(e) => navigateCarousel(e, 0)} className="btn btn-circle">❮</button> 
                 <button onClick={(e) => navigateCarousel(e, wondersOfVn.length - 1)} className="btn btn-circle">❯</button>
             </div>
