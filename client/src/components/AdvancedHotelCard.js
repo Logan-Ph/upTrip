@@ -54,12 +54,12 @@ function HotelCard({imgSrc, hotelName, district, city}){
     
     return(
         <>
-        <div className="bg-white rounded-md flex space-x-10 shadow-md my-8">
+        <div className="bg-white rounded-md grid grid-cols-3 gap-8 shadow-md my-8">
             <div className="">
-                <img src={imgSrc} alt ="hotel cover" className="w-[200px] h-full object-cover"/>
+                <img src={imgSrc} alt ="hotel cover" className="w-[450px] h-[252px] object-cover"/>
             </div>
 
-            <div className="flex-col space-y-2 py-4">
+            <div className="flex-col space-y-2 py-4 col-span-2">
                 <p className="text-xl font-extrabold">{hotelName}</p>
 
                 {/* Star rating */}
@@ -113,11 +113,11 @@ function HotelCard({imgSrc, hotelName, district, city}){
                             </div>
 
                             {/* Placeholder for the rest of the div content */}
-                            <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 px-8 ml-4">
-                                <div>
-                                    <img src={heart.imgLogo} alt="website logo" className="w-[100px] h-[34px] object-cover"/>
+                            <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 ml-4 w-3/4 gap-8">
+                                <div className="mx-auto">
+                                    <img src={heart.imgLogo} alt="website logo" className="w-[120px] h-[34px] object-cover"/>
                                 </div>
-                                <div className="ml-4">
+                                <div className="mx-auto">
                                     <p className="text-md text-[#222160] font-bold">1.500.000 VND</p>
                                 </div>
                             </div>
