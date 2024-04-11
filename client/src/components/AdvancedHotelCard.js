@@ -1,25 +1,39 @@
 import { useState } from "react";
+
+
 export function AdvancedHotelCard(){
+    const hotelCardDetails = [
+        {imgSrc:"https://ik.imagekit.io/Uptrip/hotel.jpg?updatedAt=1712768205495", hotelName: "New World Saigon Hotel", district: "District 1", city: "Ho Chi Minh City", },
+        {imgSrc:"https://ik.imagekit.io/Uptrip/ibis.jpg?updatedAt=1712840113070", hotelName: "ibis Saigon Airport", district: "Tan Binh District", city: "Ho Chi Minh City", },
+        {imgSrc:"https://ik.imagekit.io/Uptrip/lavela.png?updatedAt=1712840114321", hotelName: "La Vela Saigon Hotel", district: "District 3", city: "Ho Chi Minh City", }
+    ]
+
     return(
         <>
-        <div className="flex justify-between">
-            <div>
-                <p>Showing 3 of 3164 properties found in Ho Chi Minh City</p>
-            </div>
-            <div>
-                <p>Sort by</p>
-            </div>
-        </div>
-
         <div className="my-10">
-            <HotelCard/>
+            {hotelCardDetails.map((item, index) => (
+            <HotelCard
+                key={index}
+                imgSrc={item.imgSrc}
+                hotelName={item.hotelName}
+                district={item.district}
+                city={item.city}
+            />
+            ))}
+
+            <div className="w-full">
+                <button    
+                    className="bg-[#FFA732] hover:bg-[F5EEC8] text-white font-medium py-2 px-8 rounded transition ease-in-out delay-50 hover:translate-y-1 duration-100 capitalize text-md mt-2 flex items-center justify-center space-x-2 w-full">
+                    <span>Show more results</span>
+                </button>
+            </div>        
         </div>
 
         </>
     )
 }
 
-function HotelCard(imgSrc, hotelName, district, city, price){
+function HotelCard({imgSrc, hotelName, district, city}){
     const websiteLogo =[
         {imgLogo: "https://ik.imagekit.io/Uptrip/traveloka?updatedAt=1712828670481"},
         {imgLogo: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"},
@@ -40,13 +54,13 @@ function HotelCard(imgSrc, hotelName, district, city, price){
     
     return(
         <>
-        <div className="bg-white rounded-md flex space-x-10 shadow-md">
+        <div className="bg-white rounded-md flex space-x-10 shadow-md my-8">
             <div className="">
-                <img src="https://ik.imagekit.io/Uptrip/hotel.jpg?updatedAt=1712768205495" alt ="hotel" className="w-[200px] h-full object-cover"/>
+                <img src={imgSrc} alt ="hotel cover" className="w-[200px] h-full object-cover"/>
             </div>
 
             <div className="flex-col space-y-2 py-4">
-                <p className="text-xl font-extrabold">New World Saigon Hotel</p>
+                <p className="text-xl font-extrabold">{hotelName}</p>
 
                 {/* Star rating */}
                 <div class="flex items-center">
@@ -79,7 +93,7 @@ function HotelCard(imgSrc, hotelName, district, city, price){
                             viewBox="0 0 384 512">
                                 <path fill="#9A9A9A" d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"/></svg>
                     </div>
-                    <div className="font-light text-sm text-[#9A9A9A]">Tan Binh District, Ho Chi Minh City</div>
+                    <div className="font-light text-sm text-[#9A9A9A]">{district}, {city}</div>
                 </div>
                 
                 {/* price tracking among three websites */}
@@ -118,5 +132,6 @@ function HotelCard(imgSrc, hotelName, district, city, price){
         </>
     )
 }
+export default HotelCard;
 
 

@@ -9,7 +9,8 @@ import VerifyEmail from "../pages/VerifyEmail";
 import PageNotFound from "../pages/PageNotFound";
 import SignUp from "../pages/SignUp";
 import QuickSearch from '../pages/QuickSearch'
-import AdvancedSearchResultPage from "../pages/AdvancedSearchResultPage";
+import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
+import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
 const Admin = lazy(() => import('../pages/Admin'));
 const Homepage = lazy(() => import('../pages/Homepage'))
 
@@ -42,8 +43,12 @@ export default function Router() {
 					element: <QuickSearch />
 				},
         {
-					path: "/advanced-search",
+					path: "/advanced-hotel-search",
 					element: <AdvancedSearchResultPage />
+				},
+        {
+					path: "/advanced-flight-search",
+					element: <AdvancedSearchFlightPage />
 				},
 				
 			],

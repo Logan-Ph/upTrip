@@ -10,19 +10,22 @@ export default function Header() {
     return (
         <>
             <div class="bg-loginbackground bg-cover bg-center">
-                <NavBar />
-                <div class="w-[75%] container mx-auto mt-20 md:mt32 mb-20">
-                    <p class="text-white text-lg mb-3 font-thin">
-                        LEVEL UP YOUR TRIP
-                    </p>
-                    <p class="text-white text-5xl font-semibold">
-                        Life is a journey <br></br>Not a destinations.
-                    </p>
-                </div>
+                <section className="mx-auto max-w-8xl px-6 py-6">
+                    <NavBar />
+                    <div class="w-full container mx-auto mt-20 md:mt32 mb-20">
+                        <p class="text-white text-lg mb-3 font-thin">
+                            LEVEL UP YOUR TRIP
+                        </p>
+                        <p class="text-white text-5xl font-semibold">
+                            Life is a journey <br></br>Not a destinations.
+                        </p>
+                    </div>
 
-                <div class="pb-10">
-					<HandleSelection tab={tab} setTab={setTab} />
-                </div>
+                    <div class="pb-10">
+                        <HandleSelection tab={tab} setTab={setTab} />
+                    </div>
+                </section>
+                
             </div>
         </>
     );
@@ -46,7 +49,7 @@ function QuickSearchFlight({setTab}) {
         <>
             <div
                 id="flight-section"
-                class="flex flex-col w-[75%] p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="flex flex-col w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="">
                     <select
@@ -299,7 +302,7 @@ function QuickSearchExperience({setTab}) {
         <>
             <div
                 id="experience-section"
-                class="grid grid-cols-2 w-[75%] p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="col-span-full flex flex-col md:flex-row space-y-2 md:space-y-0">
                     <div class="join w-full">
@@ -376,7 +379,7 @@ function QuickSearchStay({setTab}) {
         <>
             <div
                 id="stay-section"
-                class="grid grid-cols-2 w-[75%] p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="col-span-full flex flex-col md:flex-row w-full space-y-2 md:space-y-0">
                     <div class="join join-vertical md:join-horizontal space-y-2 md:space-y-0 w-full">
@@ -583,7 +586,7 @@ function QuickSearchAll({setTab}) {
         <>
             <div
                 id="all-section"
-                class="grid grid-cols-2 w-[75%] p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <form class="col-span-full flex flex-row">
                     <div class="join w-full">
