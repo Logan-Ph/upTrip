@@ -54,13 +54,13 @@ function HotelCard({imgSrc, hotelName, district, city}){
     
     return(
         <>
-        <div className="bg-white rounded-md grid grid-cols-3 gap-8 shadow-md my-8">
+        <div className="bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8">
             <div className="">
                 <img src={imgSrc} alt ="hotel cover" className="w-[450px] h-[252px] object-cover"/>
             </div>
 
             <div className="flex-col space-y-2 py-4 col-span-2">
-                <p className="text-xl font-extrabold">{hotelName}</p>
+                <p className="text-lg md:text-xl font-extrabold">{hotelName}</p>
 
                 {/* Star rating */}
                 <div class="flex items-center">
@@ -100,7 +100,7 @@ function HotelCard({imgSrc, hotelName, district, city}){
                 <div>
                     {hearts.map((heart, index) => (
 
-                        <div key={index} className="flex items-center my-2">
+                        <div key={index} className="flex items-center my-2 pr-4 md:pr-0">
 
                             <div className="border border-[#8DD3BB] w-[30px] h-[30px] flex items-center justify-between rounded-md cursor-pointer py-2">
                                 <svg className="w-[15px] h-[15px] mx-auto"
@@ -113,12 +113,12 @@ function HotelCard({imgSrc, hotelName, district, city}){
                             </div>
 
                             {/* Placeholder for the rest of the div content */}
-                            <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 ml-4 w-3/4 gap-8">
+                            <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0">
                                 <div className="mx-auto">
-                                    <img src={heart.imgLogo} alt="website logo" className="w-[120px] h-[34px] object-cover"/>
+                                    <img src={heart.imgLogo} alt="website logo" className="w-[80px] md:w-[120px] h-[34px] object-cover"/>
                                 </div>
                                 <div className="mx-auto">
-                                    <p className="text-md text-[#222160] font-bold">1.500.000 VND</p>
+                                    <p className="text-xs md:text-lg text-[#222160] font-medium md:font-bold">1500000VND</p>
                                 </div>
                             </div>
 
