@@ -28,7 +28,7 @@ export default function Admin(){
                 <input type="text" value={keyword} onChange={e => setKeyword(e.target.value)} />
                 <button onClick={handleNavigate}>Fetch Hotels</button>
             </div>
-        </section>
+            </section>
         </>
     )
 }

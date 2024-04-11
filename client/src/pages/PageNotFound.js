@@ -20,7 +20,6 @@ export default function PageNotFound(){
                 <div className="w-1/2">
                     <img src="https://ik.imagekit.io/Uptrip/404-error-page.jpg?updatedAt=1711463090130" alt="404 not found" className="rounded-lg"/>
                 </div>
-                
             </div>
         </div>
     )

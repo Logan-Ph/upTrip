@@ -218,6 +218,7 @@ exports.quickSearchHotels = async (req, res) => {
 				hotels.push({hotelName, hotelLink, hotelImage, hotelReviewScore, hotelNumberReview, hotelPrice})
 			}catch (er) {}
 		}
+		browser.close()
 		return res.status(200).json({hotels})
 	}catch (error) {
 		console.log(error)
@@ -286,6 +287,7 @@ exports.quickSearchAttractions = async (req,res) => {
 				attractions.push({attractionName, attractionLink, attractionImage, attractionReviewScore, attractionNumberReview, attractionPrice})
 			}catch (er) {}
 		}
+		browser.close()
 		return res.status(200).json({attractions})
 	}catch (error){
 		console.log(error)

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import Logo from "../components/images/UptripLogo.png";
 
-
 export default function Footer(){
     return <>
         <div className="h-sreen md:h-1/2 w-full bg-[#CDEAE1] p-10 lg:px-20 md:py-10">

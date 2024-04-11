@@ -59,8 +59,6 @@ const Login = () => {
 		}
 	})
 
-	const [isLoading, setIsLoading] = useState(true);
-
 	return (
 		<div className="flex h-screen w-screen items-center justify-center bg-loginbackground bg-cover bg-center">
 

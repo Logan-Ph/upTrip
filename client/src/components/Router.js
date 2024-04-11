@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { lazy } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Login from "../pages/Login";
@@ -30,10 +30,7 @@ export default function Router() {
 			children: [
 				{
 					path: "/",
-					element: 
-					<Suspense fallback={<div>Loading...</div>}>
-						<Homepage />
-					</Suspense>
+					element: <Homepage />
 				},
 				{
 					path: "/unauthorized",
@@ -43,19 +40,7 @@ export default function Router() {
 					path: "/quick-search",
 					element: <QuickSearch />
 				},
-				{
-					path: "/",
-					element: <PersistAndRequireAuth />,
-					children: [
-						{
-							path: "/admin",
-							element:
-								<Suspense fallback={<div>Loading...</div>}>
-									<Admin />
-								</Suspense>
-						},
-					],
-				},
+				
 			],
 		},
 		{
@@ -69,6 +54,16 @@ export default function Router() {
 		{
 			path: "/login",
 			element: <Login />,
+		},
+		{
+			path: "/",
+			element: <PersistAndRequireAuth />,
+			children: [
+				{
+					path: "/admin",
+					element: <Admin />
+				},
+			],
 		},
 		{
 			path: "*",
