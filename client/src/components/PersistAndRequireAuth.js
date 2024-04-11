@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { useLocation, Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useRefreshToken from "../hooks/useRefreshToken";
+import PageNotFound from "../pages/PageNotFound"
 
 const PersistAndRequireAuth = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { auth } = useAuth();
     const refresh = useRefreshToken();
-    const location = useLocation();
 
     useEffect(() => {
         let isMounted = true;
@@ -38,7 +38,7 @@ const PersistAndRequireAuth = () => {
     }
 
     if (!auth?.accessToken) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
+        return <PageNotFound/>;
     }
 
     return <Outlet />;

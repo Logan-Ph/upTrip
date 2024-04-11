@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import useHandleNavigate from '../utils/useHandleNavigate';
+import { startTransition } from 'react';
+
 
 export default function HPExplore() {
     return <>
@@ -37,13 +39,11 @@ function Carousel() {
             <div className="carousel carousel-end space-x-6 py-4">
             {wondersOfVn.map((wonder, index) => (
                 <div key={index} id={`slide${index}`} className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
-                <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
+                    <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
                 </div>
             ))}
             </div>
             <div className="absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2">
-                {/* <a href= "#slide0" className="btn btn-circle">❮</a> 
-                <a href={`#slide${wondersOfVn.length - 1}`} className="btn btn-circle">❯</a> */}
                   <button onClick={(e) => navigateCarousel(e, 0)} className="btn btn-circle">❮</button> 
                 <button onClick={(e) => navigateCarousel(e, wondersOfVn.length - 1)} className="btn btn-circle">❯</button>
             </div>
@@ -62,7 +62,11 @@ function navigateCarousel(e, targetIndex) {
     const newScrollPosition = targetIndex * slideWidth;
     // Scroll to the new position
     // For a horizontal carousel, we change the scrollLeft property
-    carousel.scrollTo({left: newScrollPosition, behavior: 'smooth'});  
+    startTransition(() => {
+        // Scroll to the new position
+        // For a horizontal carousel, we change the scrollLeft property
+        carousel.scrollTo({left: newScrollPosition, behavior: 'smooth'});  
+    });
 }
 
 function DecorativeCard({ imgUrl, destination, city }) {
@@ -71,7 +75,7 @@ function DecorativeCard({ imgUrl, destination, city }) {
     return (<>
         <div onClick={handleNavigate}>
             <Link to="" className='transition duration-150 ease-out hover:ease-in-out'>
-                <img src={imgUrl} alt={`${destination}`} class="h-[300px] w-[200px] object-cover shadow-lg rounded-xl" />
+                <img loading='lazy' src={imgUrl} alt={`${destination}`} class="h-[300px] w-[200px] object-cover shadow-lg rounded-xl" />
             </Link>
             <div className="absolute bottom-0 left-0 p-4">
                 <p className="text-white text-xl font-extrabold">{destination}</p>

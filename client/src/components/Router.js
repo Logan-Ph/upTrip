@@ -1,28 +1,33 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { lazy } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import Homepage from "../pages/Homepage";
 import Login from "../pages/Login";
-import Admin from "../pages/Admin";
 import Unauthorized from "../pages/Unauthorized";
 import PersistAndRequireAuth from "./PersistAndRequireAuth";
 import VerifyEmail from "../pages/VerifyEmail";
 import PageNotFound from "../pages/PageNotFound";
 import SignUp from "../pages/SignUp";
 import QuickSearch from '../pages/QuickSearch'
+<<<<<<< HEAD
 import AdvancedSearchResultPage from "../pages/AdvancedSearchResultPage";
+=======
+const Admin = lazy(() => import('../pages/Admin'));
+const Homepage = lazy(() => import('../pages/Homepage'))
+>>>>>>> main
 
 export default function Router() {
-  const UserLayout = ({ header, footer }) => {
-    return (
-      <>
-        {header}
-        <Outlet />
-        {footer}
-      </>
-    );
-  };
+	const UserLayout = ({ header, footer }) => {
+		return (
+			<>
+				{header}
+				<Outlet />
+				{footer}
+			</>
+		);
+	};
 
+<<<<<<< HEAD
   const BrowserRoutes = createBrowserRouter([
     {
       path: "/",
@@ -73,6 +78,55 @@ export default function Router() {
       element: <PageNotFound />,
     },
   ]);
+=======
+	const BrowserRoutes = createBrowserRouter([
+		{
+			path: "/",
+			element: <UserLayout header={<Header />} footer={<Footer />} />,
+			children: [
+				{
+					path: "/",
+					element: <Homepage />
+				},
+				{
+					path: "/unauthorized",
+					element: <Unauthorized />,
+				},
+				{
+					path: "/quick-search",
+					element: <QuickSearch />
+				},
+				
+			],
+		},
+		{
+			path: "user/:token/verify-email",
+			element: <VerifyEmail />,
+		},
+		{
+			path: "/signup",
+			element: <SignUp />,
+		},
+		{
+			path: "/login",
+			element: <Login />,
+		},
+		{
+			path: "/",
+			element: <PersistAndRequireAuth />,
+			children: [
+				{
+					path: "/admin",
+					element: <Admin />
+				},
+			],
+		},
+		{
+			path: "*",
+			element: <PageNotFound />,
+		},
+	]);
+>>>>>>> main
 
-  return <RouterProvider router={BrowserRoutes} />;
+	return <RouterProvider router={BrowserRoutes} />;
 }
