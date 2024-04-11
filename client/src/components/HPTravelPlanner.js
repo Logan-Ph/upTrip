@@ -16,7 +16,7 @@ export default function HPTravelPlanner() {
 
     return (
         <>
-            <section className="mx-auto max-w-7xl px-6 py-6 mt-8">
+            <section className="mx-auto max-w-8xl px-6 py-6 mt-8">
                 <div>
                     <p className="text-2xl font-bold py-2">
                         Your Personalize Travel Planner
