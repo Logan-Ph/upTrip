@@ -1,10 +1,11 @@
 import NavBar from "../components/Navbar";
 import { useState, useEffect, useRef } from "react";
-// import { Datepicker } from "flowbite-react";
 import Datepicker from "flowbite-datepicker/Datepicker";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function Header() {
     const [tab, setTab] = useState("All");
+	
 
     return (
         <>
@@ -21,13 +22,6 @@ export default function Header() {
 
                 <div class="pb-10">
 					<HandleSelection tab={tab} setTab={setTab} />
-                    {/* Quick Search - All */}
-
-                    {/* Stay Search */}
-
-                    {/* Flight Search */}
-
-                    {/* Experience Search */}
                 </div>
             </div>
         </>
@@ -577,13 +571,21 @@ function QuickSearchStay({setTab}) {
 }
 
 function QuickSearchAll({setTab}) {
+	const [keyword, setKeyword] = useState('')
+	const handleNavigate = useHandleNavigate(`/quick-search/?keyword=${keyword}`);
+
+	const handleSubmit = (e) => {
+		e.preventDefault()
+		handleNavigate()
+	}
+
     return (
         <>
             <div
                 id="all-section"
                 class="grid grid-cols-2 w-11/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
-                <div class="col-span-full flex flex-row">
+                <form class="col-span-full flex flex-row">
                     <div class="join w-full">
                         <select
                             id="form-selector-1"
@@ -602,16 +604,20 @@ function QuickSearchAll({setTab}) {
                                 <input
                                     class="w-full input input-bordered join-item h-[52px] bg-white"
                                     placeholder="Search for destinations, activities, experiences..."
-                                />
+									onChange={(e) => setKeyword(e.target.value)}
+								/>
                             </div>
                         </div>
                     </div>
                     <div class="ml-1.5">
-                        <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px]">
+                        <button 
+							class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px]"
+							onClick={handleSubmit}
+						>
                             Search
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </>
     );
