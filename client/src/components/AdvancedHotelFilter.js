@@ -20,6 +20,15 @@ function PriceRange(){
     return(
         <>
         <div className="font-bold text-md">PriceRange</div>
+        <div className='flex-col'>
+            <div>
+                <input type="range" min={50} max="1200" step="25" className="range-secondary w-3/4"  />
+            </div>
+            <div className="w-3/4 flex justify-between">
+                <span>$50</span>
+                <span>$1200</span>
+            </div>
+        </div>
 
         </>
     )
