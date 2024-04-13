@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import {AdvancedSearchCard} from "../components/LazyLoadingComponents";
 
 
 export function AdvancedHotelCard(){
@@ -10,7 +11,7 @@ export function AdvancedHotelCard(){
 
     return(
         <>
-        <div className="my-10">
+        <div className="my-8">
             {hotelCardDetails.map((item, index) => (
             <HotelCard
                 key={index}
@@ -20,15 +21,20 @@ export function AdvancedHotelCard(){
                 city={item.city}
             />
             ))}
+            </div>
 
-            <div className="w-full">
+            {/* <div className="w-full">
                 <button    
                     className="bg-[#FFA732] hover:bg-[F5EEC8] text-white font-medium py-2 px-8 rounded transition ease-in-out delay-50 hover:translate-y-1 duration-100 capitalize text-md mt-2 flex items-center justify-center space-x-2 w-full">
                     <span>Show more results</span>
                 </button>
-            </div>        
-        </div>
+            </div>         */}
 
+            <div className="mt-20">
+                <AdvancedSearchCard/>
+                
+            </div>
+    
         </>
     )
 }
@@ -51,10 +57,44 @@ function HotelCard({imgSrc, hotelName, district, city}){
         setHearts(updatedHearts);
     };
 
+    const [isIntersecting, setIsIntersecting] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsIntersecting(entry.isIntersecting);  
+            },
+            {rootMargin: "0px"}
+        );
+
+        console.log(isIntersecting);
+        observer.observe(ref.current);
+
+        
+        return () => observer.disconnect();
+      }, [isIntersecting]);
+
+    //   useEffect(() => {
+    //     if(isIntersecting){
+    //         ref.current.querySelectorAll("div").forEach((el) => {
+    //             el.classList.add('translate-y-2 opacity-100 transition ease-in-out');
+    //         });
+    //     } else {
+    //         ref.current.querySelectorAll("div").forEach((el) => {
+    //             el.classList.remove('translate-y-2 opacity-100 transition ease-in-out');
+    //         });
+    //     }
+    //   }, [isIntersecting]);
+
+    const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition ease-in-out" : "opacity-0 translate-y-10";
+
+
+
     
     return(
         <>
-        <div className="bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8">
+        <div ref={ref} className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8 ${visibilityClass}`}>
             <div className="">
                 <img src={imgSrc} alt ="hotel cover" className="w-[450px] h-[252px] object-cover"/>
             </div>

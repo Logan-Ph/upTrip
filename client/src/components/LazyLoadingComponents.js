@@ -30,6 +30,79 @@ export function PlanYourTripCard(){
     </>
 }
 
+export function AdvancedSearchCard(){
+    return(
+        <>
+        <div className= "bg-[#F3F3F3] rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8">
+            <div className="border-[#DDDDDD] bg-[#DDDDDD] h-[252px]">
+            </div>
+
+            <div className="flex-col space-y-2 py-4 col-span-2">
+                <div className="border-[#DDDDDD] py-4 w-1/2 bg-[#DDDDDD] rounded-md"></div>
+
+                {/* Star rating */}
+                <div class="flex items-center">
+                    <div className="border-[#DDDDDD] py-2 w-1/4 bg-[#DDDDDD] rounded-md"></div>
+                </div>
+
+                {/* district, city */}
+                <div className="flex items-center">
+                    <div className="border-[#DDDDDD] py-2 w-1/4 bg-[#DDDDDD] rounded-md"></div>
+                </div>
+                
+                {/* price tracking among three websites */}
+                <div>
+                    <div className="flex items-center my-2 pr-4 md:pr-0">
+
+                        <div className="border-[#DDDDDD] bg-[#DDDDDD] w-[30px] h-[30px] flex items-center justify-between rounded-md cursor-pointer py-2"></div>
+
+                        {/* Placeholder for the rest of the div content */}
+                        <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0 ">
+                            <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+                            <div className="mx-auto">
+                                <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div className="flex items-center my-2 pr-4 md:pr-0">
+
+<div className="border-[#DDDDDD] bg-[#DDDDDD] w-[30px] h-[30px] flex items-center justify-between rounded-md cursor-pointer py-2 "></div>
+
+{/* Placeholder for the rest of the div content */}
+<div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0 ">
+    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+    <div className="mx-auto">
+        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+    </div>
+</div>
+
+                    </div>
+
+                    <div className="flex items-center my-2 pr-4 md:pr-0">
+
+<div className="border-[#DDDDDD] bg-[#DDDDDD] w-[30px] h-[30px] flex items-center justify-between rounded-md cursor-pointer py-2 "></div>
+
+{/* Placeholder for the rest of the div content */}
+<div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0">
+    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+    <div className="mx-auto">
+        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+    </div>
+</div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        </>
+    )
+}
+
 
 
 
