@@ -2,10 +2,15 @@ import NavBar from "../components/Navbar";
 import { useState, useEffect, useRef } from "react";
 import Datepicker from "flowbite-datepicker/Datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
+import { fetchTripAutoComplete } from "../api/fetch";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Header() {
     const [tab, setTab] = useState("All");
-	
+	const [keyword, setKeyword] = useState("");
+
+    // autocomplete query on keyword change
+
 
     return (
         <>
@@ -21,27 +26,27 @@ export default function Header() {
                 </div>
 
                 <div class="pb-10">
-					<HandleSelection tab={tab} setTab={setTab} />
+					<HandleSelection tab={tab} setTab={setTab} setKeyword={setKeyword} keyword={keyword}/>
                 </div>
             </div>
         </>
     );
 }
 
-function HandleSelection({tab, setTab}) {
+function HandleSelection({tab, setTab, setKeyword, keyword}) {
     switch (tab) {
         case "Stay":
-            return <QuickSearchStay setTab={setTab} />;
+            return <QuickSearchStay setTab={setTab} setKeyword={setKeyword} keyword={keyword}/>;
         case "Flight":
-            return <QuickSearchFlight setTab={setTab} />;
+            return <QuickSearchFlight setTab={setTab} setKeyword={setKeyword} keyword={keyword}/>;
         case "Experience":
-            return <QuickSearchExperience setTab={setTab} />;
+            return <QuickSearchExperience setTab={setTab} setKeyword={setKeyword} keyword={keyword}/>;
         default:
-            return <QuickSearchAll setTab={setTab}/>;
+            return <QuickSearchAll setTab={setTab} setKeyword={setKeyword} keyword={keyword}/>;
     }
 }
 
-function QuickSearchFlight({setTab}) {
+function QuickSearchFlight({setTab, setKeyword, keyword}) {
     return (
         <>
             <div
@@ -294,7 +299,7 @@ function QuickSearchFlight({setTab}) {
     );
 }
 
-function QuickSearchExperience({setTab}) {
+function QuickSearchExperience({setTab, setKeyword, keyword}) {
     return (
         <>
             <div
@@ -336,7 +341,13 @@ function QuickSearchExperience({setTab}) {
     );
 }
 
-function QuickSearchStay({setTab}) {
+function QuickSearchStay({setTab, setKeyword, keyword}) {
+    useQuery({
+        queryKey: ["quick-search", "hotels", keyword],
+        queryFn: () => fetchTripAutoComplete(keyword),
+        refetchOnWindowFocus: false
+    });
+
 	const checkinDate = useRef(null);
     const checkoutDate = useRef(null);
 
@@ -401,6 +412,8 @@ function QuickSearchStay({setTab}) {
                                         <input
                                             class="h-[52px] w-full input input-bordered join-item bg-white"
                                             placeholder="Where are you going?"
+                                            onChange={(e) => setKeyword(e.target.value)}
+                                            value={keyword}
                                         />
                                     </div>
                                 </div>
@@ -570,8 +583,7 @@ function QuickSearchStay({setTab}) {
     );
 }
 
-function QuickSearchAll({setTab}) {
-	const [keyword, setKeyword] = useState('')
+function QuickSearchAll({setTab, setKeyword, keyword}) {
 	const handleNavigate = useHandleNavigate(`/quick-search/?keyword=${keyword}`);
 
 	const handleSubmit = (e) => {

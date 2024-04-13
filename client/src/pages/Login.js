@@ -74,7 +74,8 @@ const Login = () => {
 						<img
 							src="https://ik.imagekit.io/Uptrip/newdecorativeimg.jpg?updatedAt=1711383997767"
 							alt="decorative"
-							className="w-full h-full object-fill rounded-xl border-gray-600 animate-pulse"
+							loading='lazy'
+							className="w-full h-full object-fill rounded-xl border-gray-600"
 						/>
 					</div>
 				</div>
