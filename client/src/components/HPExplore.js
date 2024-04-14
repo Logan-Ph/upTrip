@@ -5,7 +5,7 @@ import { startTransition } from 'react';
 
 export default function HPExplore() {
     return <>
-        <section className='mx-auto max-w-7xl px-6 py-6'>
+        <section className='mx-auto max-w-8xl px-6 py-6'>
             <div className='flex flex-col md:flex-row '>
 
                 <div className='w-fullmd:w-1/4 flex flex-col'>

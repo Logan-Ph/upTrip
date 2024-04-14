@@ -16,7 +16,7 @@ export default function HPPLanYourTrip(){
 
     
     return<>
-        <section className="mx-auto max-w-7xl px-6 py-6">
+        <section className="mx-auto max-w-8xl px-6 py-6">
             <div>
                 <p className="text-2xl font-bold py-2 capitalize">Plan your perfect trip</p>
                 <p className="text-lg font-light">Search Flights & Places Hire to our most popular destinations.</p>

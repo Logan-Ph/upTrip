@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const cheerio = require("cheerio");
 const User = require("../models/user");
 const {
     generateToken,
@@ -17,6 +18,12 @@ const {
     tripQuickSearchURL,
     quickSearchHotelTripOptions,
     quickSearchAttractionsTripOptions,
+    tripAutoCompletePayload,
+    tripAutoCompleteHeaders,
+    tripAutoCompleteURL,
+    tripAdvancedSearchHeaders,
+    tripGetHotelListURLPayload,
+    tripGetHotelListIdURL,
 } = require("../utils/requestOptions");
 puppeteer.use(StealthPlugin());
 
@@ -205,13 +212,11 @@ exports.quickSearchHotels = async (req, res) => {
         const data = response.data.data[0]["itemList"];
         const pageTotal = response.data.total;
         const isLastPage = response.data.isLastPage;
-        return res
-            .status(200)
-            .json({
-                hotels: data,
-                pageTotal: pageTotal,
-                isLastPage: isLastPage,
-            });
+        return res.status(200).json({
+            hotels: data,
+            pageTotal: pageTotal,
+            isLastPage: isLastPage,
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
@@ -239,4 +244,75 @@ exports.quickSearchAttractions = async (req, res) => {
         console.log(error);
         return res.status(500).json(error);
     }
+};
+
+exports.autocomplete = async (req, res) => {
+    try {
+        const { keyword } = req.body; // get keyword at body
+        const options = tripAutoCompletePayload(keyword); // get the payload options
+        const headers = tripAutoCompleteHeaders(); // get the headers
+        const response = await axios.post(tripAutoCompleteURL, options, {
+            headers: headers,
+        }); // send the request
+        return res.status(200).json(response.data); // return the response
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
+
+exports.advancedSearchHotels = async (req, res) => {
+    const headers = tripAdvancedSearchHeaders();
+
+    const queryParam = {
+        city: 286,
+        cityName: "Hanoi",
+        provinceId: 0,
+        countryId: 111,
+        districtId: 0,
+        checkin: "20240510",
+        checkout: "20240518",
+        barCurr: "USD",
+        cityType : "OVERSEA",
+        searchType: "CT",
+        searchWord: "Hanoi",
+        searchValue: "19|286_19_286_1",
+        latitude : "21.030735",
+        longitude: "105.852398",
+        searchCoordinate:
+            "BAIDU_-1_-1_0|GAODE_-1_-1_0|GOOGLE_-1_-1_0|NORMAL_21.030735_105.852398_0",
+        crn: 1, // number of rooms 
+        adult: 1,
+        children: 0, // children=3&ages=0,15,4 -> decoded version
+        searchBoxArg: "t",
+        travelPurpose: 0,
+        ctm_ref: "ix_sb_dl",
+        domestic: false,
+        listFilters: "80|0|1*80*0*2,29|1*29*1|2*2",
+        locale: "en_US",
+        curr: "USD",
+    };
+
+    const href = `https://us.trip.com/hotels/list?city=${queryParam.city}&cityName=${queryParam.cityName}&provinceId=${queryParam.provinceId}&countryId=${queryParam.countryId}&districtId=${queryParam.districtId}&checkin=${queryParam.checkin}&checkout=${queryParam.checkout}&barCurr=${queryParam.barCurr}&crn=${queryParam.crn}&adult=${queryParam.adult}&children=${queryParam.children}&searchBoxArg=${queryParam.searchBoxArg}&travelPurpose=${queryParam.travelPurpose}&ctm_ref=${queryParam.ctm_ref}&domestic=${queryParam.domestic}&listFilters=${queryParam.listFilters}&locale=${queryParam.locale}&curr=${queryParam.curr}`
+
+    const payload = tripGetHotelListURLPayload(
+        [],
+        queryParam.checkin,
+        queryParam.checkout,
+        queryParam.countryId,
+        queryParam.provinceId,
+        queryParam.city,
+        queryParam.districtId || 0,
+        queryParam.cityType === "OVERSEA" ? true : false,
+        queryParam.roomQuantity || 1,
+        queryParam.latitude,
+        queryParam.longitude,
+        href
+    );
+    
+    const response = await axios.post(tripGetHotelListIdURL, payload , {
+        headers: headers,
+    });
+
+    return res.status(200).json({hotelList: response.data.hotelList});
 };

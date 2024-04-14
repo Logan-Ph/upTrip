@@ -9,25 +9,25 @@ export default function Header() {
     const [tab, setTab] = useState("All");
 	const [keyword, setKeyword] = useState("");
 
-    // autocomplete query on keyword change
-
-
     return (
         <>
             <div class="bg-loginbackground bg-cover bg-center">
-                <NavBar />
-                <div class="w-11/12 container mx-auto mt-20 md:mt32 mb-20">
-                    <p class="text-white text-lg mb-3 font-thin">
-                        LEVEL UP YOUR TRIP
-                    </p>
-                    <p class="text-white text-5xl font-semibold">
-                        Life is a journey <br></br>Not a destinations.
-                    </p>
-                </div>
+                <section className="mx-auto max-w-8xl px-6 py-6">
+                    <NavBar />
+                    <div class="w-full container mx-auto mt-20 md:mt32 mb-20">
+                        <p class="text-white text-lg mb-3 font-thin">
+                            LEVEL UP YOUR TRIP
+                        </p>
+                        <p class="text-white text-5xl font-semibold">
+                            Life is a journey <br></br>Not a destinations.
+                        </p>
+                    </div>
 
-                <div class="pb-10">
-					<HandleSelection tab={tab} setTab={setTab} setKeyword={setKeyword} keyword={keyword}/>
-                </div>
+                    <div class="pb-10">
+                        <HandleSelection tab={tab} setTab={setTab} setKeyword={setKeyword} keyword={keyword}/>
+                    </div>
+                </section>
+                
             </div>
         </>
     );
@@ -51,7 +51,7 @@ function QuickSearchFlight({setTab, setKeyword, keyword}) {
         <>
             <div
                 id="flight-section"
-                class="flex flex-col w-11/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="flex flex-col w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="">
                     <select
@@ -304,7 +304,7 @@ function QuickSearchExperience({setTab, setKeyword, keyword}) {
         <>
             <div
                 id="experience-section"
-                class="grid grid-cols-2 w-11/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="col-span-full flex flex-col md:flex-row space-y-2 md:space-y-0">
                     <div class="join w-full">
@@ -342,11 +342,24 @@ function QuickSearchExperience({setTab, setKeyword, keyword}) {
 }
 
 function QuickSearchStay({setTab, setKeyword, keyword}) {
+    const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
+    const [dropdown, setDropdown] = useState(false);
+
     useQuery({
-        queryKey: ["quick-search", "hotels", keyword],
-        queryFn: () => fetchTripAutoComplete(keyword),
+        queryKey: ["quick-search", "hotels", debouncedKeyword],
+        queryFn: () => fetchTripAutoComplete(debouncedKeyword),
         refetchOnWindowFocus: false
     });
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedKeyword(keyword);
+        }, 500); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keyword]);
 
 	const checkinDate = useRef(null);
     const checkoutDate = useRef(null);
@@ -387,7 +400,7 @@ function QuickSearchStay({setTab, setKeyword, keyword}) {
         <>
             <div
                 id="stay-section"
-                class="grid grid-cols-2 w-11/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="col-span-full flex flex-col md:flex-row w-full space-y-2 md:space-y-0">
                     <div class="join join-vertical md:join-horizontal space-y-2 md:space-y-0 w-full">
@@ -497,6 +510,7 @@ function QuickSearchStay({setTab, setKeyword, keyword}) {
                                 data-dropdown-toggle="dropdownDivider"
                                 class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between"
                                 type="button"
+                                onClick={() => setDropdown((prev) => !prev)}
                             >
                                 <label
                                     for="floating_filled"
@@ -528,7 +542,7 @@ function QuickSearchStay({setTab, setKeyword, keyword}) {
                             {/* <!-- Dropdown menu --> */}
                             <div
                                 id="dropdownDivider"
-                                class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-[200px]"
+                                class={`z-10 ${dropdown ? "" : "hidden"} bg-white divide-y divide-gray-100 rounded-lg shadow w-[200px]`}
                             >
                                 {/* Ask user to input room information */}
                                 <div class="my-3 mx-5">
@@ -595,7 +609,7 @@ function QuickSearchAll({setTab, setKeyword, keyword}) {
         <>
             <div
                 id="all-section"
-                class="grid grid-cols-2 w-11/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <form class="col-span-full flex flex-row">
                     <div class="join w-full">

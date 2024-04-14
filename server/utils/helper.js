@@ -87,3 +87,13 @@ exports.sendEmailVerification = (userData, expiresIn, res) => {
 	  }
 }
 
+exports.convertDateFormat = (dateString) => {
+	const year = dateString.slice(0, 4);
+    const month = dateString.slice(4, 6);
+    const day = dateString.slice(6, 8);
+
+    // Construct the date string in the desired format
+    const formattedDate = `${year}/${month}/${day}`;
+
+    return formattedDate;
+}
