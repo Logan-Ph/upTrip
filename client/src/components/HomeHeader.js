@@ -13,16 +13,16 @@ export default function Header() {
         <>
             <div class="bg-loginbackground bg-cover bg-center md:px-10">
                 <NavBar />
-                <div class="mx-auto max-w-7xl px-6 md:py-6 container md:mt-32 mb-18">
-                    <p class="text-white text-lg mb-3 font-thin">
+                <div class="mx-auto max-w-8xl px-6 md:py-6 md:mt-32 mb-18">
+                    <p class="text-white text-base md:text-lg mb-3 font-thin">
                         LEVEL UP YOUR TRIP
                     </p>
-                    <p class="text-white text-5xl font-semibold">
+                    <p class="text-white text-3xl md:text-5xl font-semibold">
                         Life is a journey <br></br>Not a destinations.
                     </p>
                 </div>
 
-                <div class="pb-10 mx-auto max-w-7xl px-6 py-6">
+                <div class="pb-10 mx-auto max-w-8xl px-6 py-6">
                     <HandleSelection
                         tab={tab}
                         setTab={setTab}
@@ -77,7 +77,7 @@ function QuickSearchFlight({ setTab }) {
         <>
             <div
                 id="flight-section"
-                class="flex flex-col p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="flex flex-col p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="w-full mx-auto my-4 bg-white p-4 rounded-lg space-y-2">
                     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between w-full mb-4">
@@ -133,7 +133,7 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Origin
                                 </label>
@@ -152,7 +152,7 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Destination
                                 </label>
@@ -191,7 +191,7 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Departing
                                 </label>
@@ -229,7 +229,7 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Returning
                                 </label>
@@ -245,7 +245,7 @@ function QuickSearchFlight({ setTab }) {
                         >
                             <label
                                 for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
                             >
                                 No. of Passengers
                             </label>
@@ -427,7 +427,7 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
         <>
             <div
                 id="experience-section"
-                class="grid grid-cols-2 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="col-span-full flex flex-col md:flex-row space-y-2 md:space-y-0">
                     <div class="join w-full">
@@ -520,201 +520,367 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
     }, []);
 
     return (
-        <>
-            <div
-                id="stay-section"
-                class="grid grid-cols-2 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
-            >
-                <div class="col-span-full flex flex-col md:flex-row w-full space-y-2 md:space-y-0">
-                    <div class="join join-vertical md:join-horizontal space-y-2 md:space-y-0 w-full">
-                        <div class="join-item flex-1">
-                            <div class="join join-horizontal w-full md:rounded-r-none">
-                                <select
-                                    id="form-selector-2"
-                                    class="h-[52px] px-2 select select-bordered join-item w-[82px] pr-2 pl-3"
-                                    onChange={(e) => setTab(e.target.value)}
-                                >
-                                    <option value="All">All</option>
-                                    <option value="Stay" selected="selected">
-                                        Stay
-                                    </option>
-                                    <option value="Flight">Flight</option>
-                                    <option value="Experience">
-                                        Experience
-                                    </option>
-                                </select>
-                                <div class="w-full flex-1">
-                                    <div>
-                                        <input
-                                            class="h-[52px] w-full input input-bordered join-item bg-white"
-                                            placeholder="Where are you going?"
-                                            onChange={(e) => setKeyword(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="join-item">
-                            <div class="flex items-center">
-                                <div class="relative w-1/2">
-                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                        <svg
-                                            class="w-4 h-4 text-gray-500"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <input
-                                            ref={checkinDate}
-                                            datepicker
-                                            datepicker-autohide
-                                            name="start"
-                                            type="text"
-                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-r-none md:rounded-none border-l-"
-                                            placeholder="dd/mm/yyyy"
-                                            onSelect={(e) =>
-                                                console.log(e.target.value)
-                                            }
-                                        />
-                                        <label
-                                            for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                        >
-                                            Check-in
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="relative w-1/2">
-                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                        <svg
-                                            class="w-4 h-4 text-gray-500"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <input
-                                            ref={checkoutDate}
-                                            datepicker
-                                            datepicker-autohide
-                                            name="end"
-                                            type="text"
-                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none"
-                                            placeholder="dd/mm/yyyy"
-                                            onSelect={(e) =>
-                                                console.log(e.target.value)
-                                            }
-                                        />
-                                        <label
-                                            for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                        >
-                                            Check-out
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="join-item">
-                            <button
-                                id="dropdownDividerButton"
-                                data-dropdown-toggle="dropdownDivider"
-                                class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between"
-                                type="button"
-                            >
-                                <label
-                                    for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
-                                >
-                                    Guest(s) and Room(s)
-                                </label>
-                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
-                                </div>
-                                1 adult, 1 child, 1 room{" "}
-                                <svg
-                                    class="w-2.5 h-2.5 ms-3"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 10 6"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="m1 1 4 4 4-4"
-                                    />
-                                </svg>
-                            </button>
-
-                            {/* <!-- Dropdown menu --> */}
-                            <div
-                                id="dropdownDivider"
-                                class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-[200px]"
-                            >
-                                {/* Ask user to input room information */}
-                                <div class="my-3 mx-5">
-                                    <div class="flex justify-between">
-                                        <div>Room</div>
-                                        <div>
-                                            <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
-                                                </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <div>Adult(s)</div>
-                                        <div>
-                                            <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
-                                                </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <div>Children(s)</div>
-                                        <div>
-                                            <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
-                                                </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+      <>
+        <div
+          id="stay-section"
+          class="grid grid-cols-2 p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
+        >
+          <div class="col-span-full flex flex-col md:flex-row w-full space-y-2 md:space-y-0">
+            <div class="join join-vertical md:join-horizontal space-y-2 md:space-y-0 w-full">
+              <div class="join-item flex-1">
+                <div class="join join-horizontal w-full md:rounded-r-none">
+                  <select
+                    id="form-selector-2"
+                    class="h-[52px] px-2 select select-bordered join-item w-[82px] pr-2 pl-3"
+                    onChange={(e) => setTab(e.target.value)}
+                  >
+                    <option value="All">All</option>
+                    <option value="Stay" selected="selected">
+                      Stay
+                    </option>
+                    <option value="Flight">Flight</option>
+                    <option value="Experience">Experience</option>
+                  </select>
+                  <div class="w-full flex-1">
+                    <div>
+                      <input
+                        class="h-[52px] w-full input input-bordered join-item bg-white"
+                        placeholder="Where are you going?"
+                        onChange={(e) => setKeyword(e.target.value)}
+                      />
                     </div>
-                    <div class="md:ml-1.5">
-                        <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
-                            Search
-                        </button>
-                    </div>
+                  </div>
                 </div>
+              </div>
+
+              <div class="join-item">
+                <div class="flex items-center">
+                  <div class="relative w-1/2">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                      <svg
+                        class="w-4 h-4 text-gray-500"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <input
+                        ref={checkinDate}
+                        datepicker
+                        datepicker-autohide
+                        name="start"
+                        type="text"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-r-none md:rounded-none border-l-"
+                        placeholder="dd/mm/yyyy"
+                        onSelect={(e) => console.log(e.target.value)}
+                      />
+                      <label
+                        for="floating_filled"
+                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                      >
+                        Check-in
+                      </label>
+                    </div>
+                  </div>
+                  <div class="relative w-1/2">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                      <svg
+                        class="w-4 h-4 text-gray-500"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <input
+                        ref={checkoutDate}
+                        datepicker
+                        datepicker-autohide
+                        name="end"
+                        type="text"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none"
+                        placeholder="dd/mm/yyyy"
+                        onSelect={(e) => console.log(e.target.value)}
+                      />
+                      <label
+                        for="floating_filled"
+                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                      >
+                        Check-out
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="join-item">
+                <button
+                  id="dropdownDividerButton"
+                  data-dropdown-toggle="dropdownDivider"
+                  class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between"
+                  type="button"
+                >
+                  <label
+                    for="floating_filled"
+                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                  >
+                    Guest(s) and Room(s)
+                  </label>
+                  <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
+                  </div>
+                  1 adult, 1 child, 1 room{" "}
+                  <svg
+                    class="w-2.5 h-2.5 ms-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 10 6"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m1 1 4 4 4-4"
+                    />
+                  </svg>
+                </button>
+
+                {/* <!-- Dropdown menu --> */}
+                <div
+                  id="dropdownDivider"
+                  class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full"
+                >
+                  {/* Ask user to input room information */}
+                  <div
+                    class="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                    aria-labelledby="dropdownDividerButton"
+                  >
+                    <div class="flex justify-between">
+                      <div class="flex flex-col">
+                        <div>
+                          <i class="fa-solid fa-door-open"></i> Room(s)
+                        </div>
+                      </div>
+                      <div>
+                        <div class="flex space-x-3 items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            ></path>
+                          </svg>
+                          <span class="text-lg"> 1 </span>
+
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex justify-between">
+                      <div class="flex flex-col">
+                        <div>
+                          <i class="fa-solid fa-person" aria-hidden="true"></i>{" "}
+                          Adult(s)
+                        </div>
+                      </div>
+                      <div>
+                        <div class="flex space-x-3 items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            ></path>
+                          </svg>
+                          <span class="text-lg"> 1 </span>
+
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex justify-between">
+                      <div class="flex flex-col">
+                        <div>
+                          <i
+                            class="fa-solid fa-child-reaching"
+                            aria-hidden="true"
+                          ></i>{" "}
+                          Children
+                        </div>
+                        <div class="text-xs text-gray-500">
+                          maximum 17 years old
+                        </div>
+                      </div>
+                      <div>
+                        <div class="flex space-x-3 items-center">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            ></path>
+                          </svg>
+                          <span class="text-lg"> 1 </span>
+
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            ></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="py-2">
+                    <a
+                      href="#"
+                      class="block px-4 pb-2 text-[12px] text-gray-500 md:max-w-72"
+                    >
+                      Please enter your children's ages by the time of check-in
+                    </a>
+                    <div class="flex flex-wrap items-start px-5 mx-auto justify-between md:justify-normal md:max-w-72">
+                      <form class="w-24 md:w-16 mb-3 md:mr-4">
+                        <label
+                          for="number-input"
+                          class="block mb-2 text-xs font-medium text-gray-900"
+                        >
+                          Child 1
+                        </label>
+                        <input
+                          type="number"
+                          id="number-input"
+                          aria-describedby="helper-text-explanation"
+                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          placeholder="Age"
+                          required
+                        />
+                      </form>
+                      <form class="w-24 md:w-16 mb-3 md:mr-4">
+                        <label
+                          for="number-input"
+                          class="block mb-2 text-xs font-medium text-gray-900"
+                        >
+                          Child 1
+                        </label>
+                        <input
+                          type="number"
+                          id="number-input"
+                          aria-describedby="helper-text-explanation"
+                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          placeholder="Age"
+                          required
+                        />
+                      </form>
+                      <form class="w-24 md:w-16 mb-3 md:mr-4">
+                        <label
+                          for="number-input"
+                          class="block mb-2 text-xs font-medium text-gray-900"
+                        >
+                          Child 1
+                        </label>
+                        <input
+                          type="number"
+                          id="number-input"
+                          aria-describedby="helper-text-explanation"
+                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          placeholder="Age"
+                          required
+                        />
+                      </form>
+                      <form class="w-24 md:w-16 mb-3 md:mr-4">
+                        <label
+                          for="number-input"
+                          class="block mb-2 text-xs font-medium text-gray-900"
+                        >
+                          Child 1
+                        </label>
+                        <input
+                          type="number"
+                          id="number-input"
+                          aria-describedby="helper-text-explanation"
+                          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                          placeholder="Age"
+                          required
+                        />
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-        </>
+            <div class="md:ml-1.5">
+              <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
+                Search
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
     );
 }
 
@@ -733,7 +899,7 @@ function QuickSearchAll({ setTab }) {
         <>
             <div
                 id="all-section"
-                class="grid grid-cols-2 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <form class="col-span-full flex flex-row">
                     <div class="join w-full">

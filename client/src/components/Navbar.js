@@ -4,7 +4,7 @@ import Logo from "../components/images/UptripLogo.png";
 export default function Header() {
     return (
       <div>
-        <div class="drawer">
+        <div class="drawer z-50">
           <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
           <div class="drawer-content flex flex-col">
             {/* <!-- Navbar --> */}
@@ -95,7 +95,9 @@ export default function Header() {
                       </div>
 
                       {/* if user already upload their profile image */}
-                      <div class="avatar hidden"> {/* hidden */}
+                      <div class="avatar hidden">
+                        {" "}
+                        {/* hidden */}
                         <div class="w-12 rounded-full">
                           <img
                             src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"

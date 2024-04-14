@@ -27,58 +27,64 @@ export default function Router() {
     };
 
     const BrowserRoutes = createBrowserRouter([
-        {
+      {
+        path: "/",
+        element: <UserLayout header={<HomeHeader />} footer={<footer />} />,
+        children: [
+          {
             path: "/",
-            element: <UserLayout header={<HomeHeader />} footer={<footer />} />,
-            children: [
-                {
-                    path: "/",
-                    element: <Homepage />,
-                },
-                {
-                    path: "/unauthorized",
-                    element: <Unauthorized />,
-                },
-                {
-                    path: "/quick-search",
-                    element: <QuickSearch />,
-                },
-                {
-                    path: "/advanced-hotel-search",
-                    element: <AdvancedSearchResultPage />,
-                },
-                {
-                    path: "/advanced-flight-search",
-                    element: <AdvancedSearchFlightPage />,
-                },
-            ],
-        },
-        {
-            path: "user/:token/verify-email",
-            element: <VerifyEmail />,
-        },
-        {
-            path: "/signup",
-            element: <SignUp />,
-        },
-        {
-            path: "/login",
-            element: <Login />,
-        },
-        {
-            path: "*",
-            element: <PageNotFound />,
-        },
-		{
-            path: "/",
-            element: <PersistAndRequireAuth />,
-            children: [
-                {
-                    path: "/admin",
-                    element: <Admin />,
-                },
-            ],
-        },
+            element: <Homepage />,
+          },
+          {
+            path: "/unauthorized",
+            element: <Unauthorized />,
+          },
+        ],
+      },
+      {
+        path: "/",
+        element: <UserLayout header={<Header />} footer={<footer />} />,
+        children: [
+          {
+            path: "/quick-search",
+            element: <QuickSearch />,
+          },
+          {
+            path: "/advanced-hotel-search",
+            element: <AdvancedSearchResultPage />,
+          },
+          {
+            path: "/advanced-flight-search",
+            element: <AdvancedSearchFlightPage />,
+          },
+        ],
+      },
+      {
+        path: "user/:token/verify-email",
+        element: <VerifyEmail />,
+      },
+      {
+        path: "/signup",
+        element: <SignUp />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "*",
+        element: <PageNotFound />,
+      },
+      {
+        path: "/",
+        element: <PersistAndRequireAuth />,
+        children: [
+          {
+            path: "/admin",
+            element: <Admin />,
+          },
+        ],
+      },
     ]);
 
     return <RouterProvider router={BrowserRoutes} />;
