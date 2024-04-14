@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { lazy } from "react";
+import HomeHeader from "./HomeHeader";
 import Header from "./Header";
 import Footer from "./Footer";
 import Login from "../pages/Login";
@@ -13,63 +14,69 @@ const Admin = lazy(() => import('../pages/Admin'));
 const Homepage = lazy(() => import('../pages/Homepage'))
 
 export default function Router() {
+
 	const UserLayout = ({ header, footer }) => {
-		return (
-			<>
-				{header}
-				<Outlet />
-				{footer}
-			</>
-		);
-	};
+    return (
+      <>
+        {header}
+        <Outlet />
+        {footer}
+      </>
+    );
+  };
 
 	const BrowserRoutes = createBrowserRouter([
-		{
-			path: "/",
-			element: <UserLayout header={<Header />} footer={<Footer />} />,
-			children: [
-				{
-					path: "/",
-					element: <Homepage />
-				},
-				{
-					path: "/unauthorized",
-					element: <Unauthorized />,
-				},
-				{
-					path: "/quick-search",
-					element: <QuickSearch />
-				},
-				
-			],
-		},
-		{
-			path: "user/:token/verify-email",
-			element: <VerifyEmail />,
-		},
-		{
-			path: "/signup",
-			element: <SignUp />,
-		},
-		{
-			path: "/login",
-			element: <Login />,
-		},
-		{
-			path: "/",
-			element: <PersistAndRequireAuth />,
-			children: [
-				{
-					path: "/admin",
-					element: <Admin />
-				},
-			],
-		},
-		{
-			path: "*",
-			element: <PageNotFound />,
-		},
-	]);
+    {
+      path: "/",
+      element: <UserLayout header={<HomeHeader />} footer={<Footer />} />,
+      children: [
+        {
+          path: "/",
+          element: <Homepage />,
+        },
+        {
+          path: "/unauthorized",
+          element: <Unauthorized />,
+        },
+      ],
+    },
+    {
+      path: "/",
+      element: <UserLayout header={<Header />} footer={<Footer />} />,
+      children: [
+        {
+          path: "/quick-search",
+          element: <QuickSearch />,
+        },
+      ],
+    },
+    {
+      path: "user/:token/verify-email",
+      element: <VerifyEmail />,
+    },
+    {
+      path: "/signup",
+      element: <SignUp />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/",
+      element: <PersistAndRequireAuth />,
+      children: [
+        {
+          path: "/admin",
+          element: <Admin />,
+        },
+      ],
+    },
+    {
+      path: "*",
+      element: <PageNotFound />,
+    },
+  ]);
 
 	return <RouterProvider router={BrowserRoutes} />;
 }
