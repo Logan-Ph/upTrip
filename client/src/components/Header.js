@@ -439,7 +439,7 @@ function QuickSearchStay({setTab}) {
                                     <svg className="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                                         <path fill="grey" d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"/></svg>
                                 </div> 
-                                <p className="text-xs font-medium text-[#9A9A9A] absolute top-0 left-12 ml-2 mt-0 z-10">Check-in</p>
+                                <p className="text-xs font-medium text-gray-500 absolute top-0 left-12 ml-2 mt-0 z-10 scale-90">Check-in</p>
                                 <div>
                                     <DatePicker placeholderText="dd/mm/yyyy" className="input input-bordered rounded-none pl-12" selected={startDate} onChange={(date) => setStartDate(date)} />
                                 </div>
@@ -450,7 +450,7 @@ function QuickSearchStay({setTab}) {
                                     <svg className="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                                         <path fill="grey" d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"/></svg>
                                 </div>
-                                <p className="text-xs font-medium text-[#9A9A9A] absolute top-0 left-12 ml-2 mt-0 z-10">Check-out</p>
+                                <p className="text-xs font-medium text-gray-500 absolute top-0 left-12 ml-2 mt-0 z-10 scale-90">Check-out</p>
                                 <DatePicker placeholderText="dd/mm/yyyy" className="input input-bordered rounded-none w-full pl-12" selected={endDate} onChange={(date) => setEndDate(date)} />
                             </div>
                         </div>  
