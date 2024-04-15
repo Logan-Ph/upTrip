@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-export function AdvancedFlightCard(){
+export default function AdvancedFlightCard(){
     return(
         <>
         <div>

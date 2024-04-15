@@ -1,6 +1,18 @@
-import { AdvancedFlightCard } from "../components/AdvancedFlightCard";
+// import { AdvancedFlightCard } from "../components/AdvancedFlightCard";
 import { AdvancedFlightFilter } from "../components/AdvancedFlightFilter";
 import {SortOption} from "../components/SortOption";
+
+import { Suspense, lazy } from "react";
+import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
+
+const AdvancedFlightCard = lazy(()=> delayForDemo(import('../components/AdvancedFlightCard.js')));
+
+//testing lazy loading function
+function delayForDemo(promise) {
+    return new Promise(resolve => {
+      setTimeout(resolve, 2000);
+    }).then(() => promise);
+  }
 
 export default function AdvancedSearchFlightPage(){
     return(
@@ -25,7 +37,9 @@ export default function AdvancedSearchFlightPage(){
                                <SortOption/>
                             </div>
                         </div>
-                        <AdvancedFlightCard/>
+                        <Suspense fallback={<ASearchSkeleton/>}> <AdvancedFlightCard/>
+                        </Suspense>
+                        
                     </div>
 
             </div>

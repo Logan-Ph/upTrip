@@ -1,7 +1,7 @@
 import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react';
 
-export function AdvancedFlightFilter(){
+export  function AdvancedFlightFilter(){
     return(
         <>
         <div className='flex-col space-y-6'>
