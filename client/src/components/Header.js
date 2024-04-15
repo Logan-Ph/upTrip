@@ -1,8 +1,11 @@
 import NavBar from "../components/Navbar";
 import { useState, useEffect, useRef } from "react";
-import Datepicker from "flowbite-datepicker/Datepicker";
+// import Datepicker from "flowbite-datepicker/Datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
+import DatePicker from "react-datepicker";
 
+import "react-datepicker/dist/react-datepicker.css";
+ 
 export default function Header() {
     const [tab, setTab] = useState("All");
 	
@@ -45,6 +48,7 @@ function HandleSelection({tab, setTab}) {
 }
 
 function QuickSearchFlight({setTab}) {
+   
     return (
         <>
             <div
@@ -129,6 +133,7 @@ function QuickSearchFlight({setTab}) {
                     </div>
 
                     <div class="flex flex-col md:flex-row space-y-2 md:space-x-4 md:space-y-0 items-center justify-between	">
+                  
                         <div class="relative w-full md:w-1/3">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <svg
@@ -143,6 +148,7 @@ function QuickSearchFlight({setTab}) {
                             </div>
                             <div>
                                 <input
+                                    id="datepicker1"
                                     datepicker
                                     datepicker-autohide
                                     name="start"
@@ -155,7 +161,7 @@ function QuickSearchFlight({setTab}) {
                                     // onClick={(e) => dobHandler(e)}
                                     // onClick={(e) => console.log(e.target.value)}
                                     // onChange={(e) => console.log(e)}
-                                    id="datepickerId3"
+                                   
                                 />
                                 <label
                                     for="floating_filled"
@@ -339,42 +345,16 @@ function QuickSearchExperience({setTab}) {
     );
 }
 
-function QuickSearchStay({setTab}) {
-	const checkinDate = useRef(null);
-    const checkoutDate = useRef(null);
-
-	useEffect(() => {
-        let checkinPicker;
-        let checkoutPicker;
-
-        if (checkinDate.current && checkoutDate.current) {
-            // Initialize the check-in datepicker
-            checkinPicker = new Datepicker(checkinDate.current, {
-                autohide: true,
-                // When a date is selected, update the checkout datepicker's minDate
-                onSelect: (dateText, instance) => {
-                    const selectedDate = instance.getDate();
-                    if (checkoutPicker) {
-                        checkoutPicker.setOptions({ minDate: selectedDate });
-                        checkoutPicker.setDate(selectedDate, true); // Optionally set checkout date to match check-in
-                    }
-                },
-            });
-
-            // Initialize the checkout datepicker with a minDate of today by default
-            checkoutPicker = new Datepicker(checkoutDate.current, {
-                autohide: true,
-                minDate: new Date(), // Set initial minDate to today or check-in date if you prefer
-            });
-        }
-
-        // Cleanup function to destroy datepickers when component unmounts or rerenders
-        return () => {
-            if (checkinPicker) checkinPicker.destroy();
-            if (checkoutPicker) checkoutPicker.destroy();
-        };
-    }, []);
-
+function QuickSearchStay({setTab}) { 
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
+    useEffect(() => {
+    if(endDate < startDate){
+        setStartDate(endDate)
+        setEndDate(startDate)
+    } 
+    }, [startDate,endDate])
+    
 	return (
         <>
             <div
@@ -408,159 +388,17 @@ function QuickSearchStay({setTab}) {
                                     </div>
                                 </div>
                             </div>
+                        </div> 
+                        <div>
+                            <p>Checkin</p>
+                            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
                         </div>
-
-                        <div class="join-item">
-                            <div class="flex items-center">
-                                <div class="relative w-1/2">
-                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                        <svg
-                                            class="w-4 h-4 text-gray-500"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <input
-											ref={checkinDate}
-                                            datepicker
-                                            datepicker-autohide
-                                            name="start"
-                                            type="text"
-                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-r-none md:rounded-none border-l-"
-                                            placeholder="dd/mm/yyyy"
-                                            onSelect={(e) =>
-                                                console.log(e.target.value)
-                                            }
-                                        />
-                                        <label
-                                            for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                        >
-                                            Check-in
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="relative w-1/2">
-                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                        <svg
-                                            class="w-4 h-4 text-gray-500"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <input
-											ref={checkoutDate}
-                                            datepicker
-                                            datepicker-autohide
-                                            name="end"
-                                            type="text"
-                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none"
-                                            placeholder="dd/mm/yyyy"
-                                            onSelect={(e) =>
-                                                console.log(e.target.value)
-                                            }
-                                        />
-                                        <label
-                                            for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                        >
-                                            Check-out
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                        <div className="bg-white border border-grey-200 rounded-md">
+                        <p className="px-3">Checkout</p>
+                        <DatePicker placeholderText="asdsad" className="rounded-md border-none" selected={endDate} onChange={(date) => setEndDate(date)} />
                         </div>
-
-                        <div class="join-item">
-                            <button
-                                id="dropdownDividerButton"
-                                data-dropdown-toggle="dropdownDivider"
-                                class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between"
-                                type="button"
-                            >
-                                <label
-                                    for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
-                                >
-                                    Guest(s) and Room(s)
-                                </label>
-                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
-                                </div>
-                                1 adult, 1 child, 1 room{" "}
-                                <svg
-                                    class="w-2.5 h-2.5 ms-3"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 10 6"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="m1 1 4 4 4-4"
-                                    />
-                                </svg>
-                            </button>
-
-                            {/* <!-- Dropdown menu --> */}
-                            <div
-                                id="dropdownDivider"
-                                class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-[200px]"
-                            >
-                                {/* Ask user to input room information */}
-                                <div class="my-3 mx-5">
-                                    <div class="flex justify-between">
-                                        <div>Room</div>
-                                        <div>
-                                            <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
-                                                </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <div>Adult(s)</div>
-                                        <div>
-                                            <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
-                                                </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <div>Children(s)</div>
-                                        <div>
-                                            <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
-                                                </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
+                       
                     </div>
                     <div class="md:ml-1.5">
                         <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">

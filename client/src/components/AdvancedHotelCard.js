@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import {AdvancedSearchCard} from "../components/LazyLoadingComponents";
 
 
-export function AdvancedHotelCard(){
+export default function AdvancedHotelCard(){
     const hotelCardDetails = [
         {imgSrc:"https://ik.imagekit.io/Uptrip/hotel.jpg?updatedAt=1712768205495", hotelName: "New World Saigon Hotel", district: "District 1", city: "Ho Chi Minh City", },
         {imgSrc:"https://ik.imagekit.io/Uptrip/ibis.jpg?updatedAt=1712840113070", hotelName: "ibis Saigon Airport", district: "Tan Binh District", city: "Ho Chi Minh City", },
@@ -10,8 +10,8 @@ export function AdvancedHotelCard(){
     ]
 
     return(
-        <>
-        <div className="my-8">
+        <> 
+        <div className="mt-0">
             {hotelCardDetails.map((item, index) => (
             <HotelCard
                 key={index}
@@ -32,14 +32,13 @@ export function AdvancedHotelCard(){
 
             <div className="mt-20">
                 <AdvancedSearchCard/>
-                
             </div>
     
         </>
     )
 }
 
-function HotelCard({imgSrc, hotelName, district, city}){
+export function HotelCard({imgSrc, hotelName, district, city}){
     const websiteLogo =[
         {imgLogo: "https://ik.imagekit.io/Uptrip/traveloka?updatedAt=1712828670481"},
         {imgLogo: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"},
@@ -75,18 +74,6 @@ function HotelCard({imgSrc, hotelName, district, city}){
         return () => observer.disconnect();
       }, [isIntersecting]);
 
-    //   useEffect(() => {
-    //     if(isIntersecting){
-    //         ref.current.querySelectorAll("div").forEach((el) => {
-    //             el.classList.add('translate-y-2 opacity-100 transition ease-in-out');
-    //         });
-    //     } else {
-    //         ref.current.querySelectorAll("div").forEach((el) => {
-    //             el.classList.remove('translate-y-2 opacity-100 transition ease-in-out');
-    //         });
-    //     }
-    //   }, [isIntersecting]);
-
     const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition ease-in-out" : "opacity-0 translate-y-10";
 
 
@@ -94,7 +81,7 @@ function HotelCard({imgSrc, hotelName, district, city}){
     
     return(
         <>
-        <div ref={ref} className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8 ${visibilityClass}`}>
+        <div ref={ref} className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md ${visibilityClass}`}>
             <div className="">
                 <img src={imgSrc} alt ="hotel cover" className="w-[450px] h-[252px] object-cover"/>
             </div>
@@ -172,6 +159,5 @@ function HotelCard({imgSrc, hotelName, district, city}){
         </>
     )
 }
-export default HotelCard;
 
 

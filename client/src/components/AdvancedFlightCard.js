@@ -1,25 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 export function AdvancedFlightCard(){
     return(
         <>
-        <div className="my-10">
-            {/* {hotelCardDetails.map((item, index) => (
-            <HotelCard
-                key={index}
-                imgSrc={item.imgSrc}
-                hotelName={item.hotelName}
-                district={item.district}
-                city={item.city}
-            />
-            ))} */}
-            <FlightCard/>
+        <div>
+            <FlightCard/>     
+            <FlightCard/>     
+            <FlightCard/>     
+            <FlightCard/>     
+            <FlightCard/>     
 
-            <div className="w-full">
-                <button    
-                    className="bg-[#FFA732] hover:bg-[F5EEC8] text-white font-medium py-2 px-8 rounded transition ease-in-out delay-50 hover:translate-y-1 duration-100 capitalize text-md mt-2 flex items-center justify-center space-x-2 w-full">
-                    <span>Show more results</span>
-                </button>
-            </div>        
         </div>
 
         </>
@@ -45,24 +34,44 @@ function FlightCard({imgSrc}){
         setHearts(updatedHearts);
     };
 
+    const [isIntersecting, setIsIntersecting] = useState(false);
+    const ref = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsIntersecting(entry.isIntersecting);  
+            },
+            {rootMargin: "0px"}
+        );
+
+        console.log(isIntersecting);
+        observer.observe(ref.current);
+
+        
+        return () => observer.disconnect();
+      }, [isIntersecting]);
+
+    const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition ease-in-out" : "opacity-0 translate-y-10";
+
     
     return(
         <>
-        <div className="bg-white rounded-md flex space-x-10 shadow-md my-8">
-            <div className="w-1/3">
-                <img src="https://ik.imagekit.io/Uptrip/vnalogo.png?updatedAt=1712847214914" alt ="airline logo" className="w-[200px] object-cover"/>
+        <div ref={ref} className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md ${visibilityClass}`}>
+            <div>
+                <img src="https://ik.imagekit.io/Uptrip/vnalogo.png?updatedAt=1712847214914" alt ="airline logo" className="w-[200px] w-[100px] md:w-[450px] md:h-[252px] object-cover"/>
             </div>
 
-            <div className="flex-col space-y-2 py-4 w-3/4">
-                <div className="grid grid-cols-3 space-x-6">
+            <div className="flex-col space-y-2 py-4 px-4 md:px-0 col-span-2">
+                <div className="grid grid-cols-3 space-x-4 md:space-x-6">
                     <div className="flex-col">
-                        <div className="font-bold text-md">6:00 am - 7:30 am</div>
-                        <div className="font-extralight text-sm text-[#9A9A9A]">Vietnam Airlines</div>
+                        <div className="font-bold text-xs md:text-md">6:00-7:30am</div>
+                        <div className="font-extralight text-xs md:text-sm text-[#9A9A9A] text-nowrap">Vietnam Airlines</div>
                     </div>
-                    <div className="mx-auto font-light text-black">none stop</div>
+                    <div className="mx-auto font-light text-xs md:text-md  text-black">none stop</div>
                     <div className="flex-col">
-                        <div className="font-bold text-md">1h30m</div>
-                        <div className="font-extralight text-sm text-[#9A9A9A]">SGN - DAD </div>
+                        <div className="font-bold text-xs md:text-md">1h30m</div>
+                        <div className="font-extralight text-xs md:text-sm text-[#9A9A9A]">SGN-DAD </div>
                     </div>
                 </div>
 
@@ -85,12 +94,12 @@ function FlightCard({imgSrc}){
                             </div>
 
                             {/* Placeholder for the rest of the div content */}
-                            <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 px-8 ml-4">
-                                <div>
+                            <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 px-8 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0">
+                                <div className="mx-auto">
                                     <img src={heart.imgLogo} alt="website logo" className="w-[100px] h-[34px] object-cover"/>
                                 </div>
-                                <div className="ml-4">
-                                    <p className="text-md text-[#222160] font-bold">1.500.000 VND</p>
+                                <div className="mx-auto">
+                                    <p className="text-xs md:text-lg text-[#222160] font-bold">1500000VND</p>
                                 </div>
                             </div>
 

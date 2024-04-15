@@ -16,7 +16,7 @@ export default function AdvancedSearchFlightPage(){
                     </div>
 
                     <div className="col-span-2">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between mt-10 md:mt-0">
                             <div className="w-1/2">
                                 <p className="text-sm md:text-lg">Showing 3 of 3164 properties found in <span className="font-bold text-sm md:text-lg text-wrap md:text-nowrap text-[#EF4040]">Ho Chi Minh City</span></p>
                             </div>
