@@ -7,13 +7,14 @@ const {
     generateToken,
     generateRefreshToken,
     sendEmailVerification,
+    getDecodedCurrentTimeAgoda,
 } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
 const userAgent =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-const axios = require("axios");
+const { default: axios } = require("axios");
 const {
     tripQuickSearchURL,
     quickSearchHotelTripOptions,
@@ -24,6 +25,14 @@ const {
     tripAdvancedSearchHeaders,
     tripGetHotelListURLPayload,
     tripGetHotelListIdURL,
+    autocompleteQueryParamAgoda,
+    agodaAutocompleteURL,
+    bookingAutocompleteURL,
+    autocompletePayloadBooking,
+    bookingAdvancedSearchHotelQueryParam,
+    bookingAdvancedSearchHotelURL,
+    agodaAdvancedSearchHotelURL,
+    agodaAdvancedSearchHotelPayload,
 } = require("../utils/requestOptions");
 puppeteer.use(StealthPlugin());
 
@@ -262,57 +271,218 @@ exports.autocomplete = async (req, res) => {
 };
 
 exports.advancedSearchHotels = async (req, res) => {
-    const headers = tripAdvancedSearchHeaders();
+    try {
+        const headers = tripAdvancedSearchHeaders();
 
-    const queryParam = {
-        city: 286,
-        cityName: "Hanoi",
-        provinceId: 0,
-        countryId: 111,
-        districtId: 0,
-        checkin: "20240510",
-        checkout: "20240518",
-        barCurr: "USD",
-        cityType : "OVERSEA",
-        searchType: "CT",
-        searchWord: "Hanoi",
-        searchValue: "19|286_19_286_1",
-        latitude : "21.030735",
-        longitude: "105.852398",
-        searchCoordinate:
-            "BAIDU_-1_-1_0|GAODE_-1_-1_0|GOOGLE_-1_-1_0|NORMAL_21.030735_105.852398_0",
-        crn: 1, // number of rooms 
-        adult: 1,
-        children: 0, // children=3&ages=0,15,4 -> decoded version
-        searchBoxArg: "t",
-        travelPurpose: 0,
-        ctm_ref: "ix_sb_dl",
-        domestic: false,
-        listFilters: "80|0|1*80*0*2,29|1*29*1|2*2",
-        locale: "en_US",
-        curr: "USD",
-    };
+        const queryParam = {
+            city: 286,
+            cityName: "Hanoi",
+            provinceId: 0,
+            countryId: 111,
+            districtId: 0,
+            checkin: "20240510",
+            checkout: "20240518",
+            barCurr: "USD",
+            cityType: "OVERSEA",
+            searchType: "CT",
+            searchWord: "Hanoi",
+            searchValue: "19|286_19_286_1",
+            latitude: "21.030735",
+            longitude: "105.852398",
+            searchCoordinate:
+                "BAIDU_-1_-1_0|GAODE_-1_-1_0|GOOGLE_-1_-1_0|NORMAL_21.030735_105.852398_0",
+            crn: 1, // number of rooms
+            adult: 1,
+            children: 0, // children=3&ages=0,15,4 -> decoded version
+            searchBoxArg: "t",
+            travelPurpose: 0,
+            ctm_ref: "ix_sb_dl",
+            domestic: false,
+            listFilters: "80|0|1*80*0*2,29|1*29*1|2*2",
+            locale: "en_US",
+            curr: "USD",
+        };
 
-    const href = `https://us.trip.com/hotels/list?city=${queryParam.city}&cityName=${queryParam.cityName}&provinceId=${queryParam.provinceId}&countryId=${queryParam.countryId}&districtId=${queryParam.districtId}&checkin=${queryParam.checkin}&checkout=${queryParam.checkout}&barCurr=${queryParam.barCurr}&crn=${queryParam.crn}&adult=${queryParam.adult}&children=${queryParam.children}&searchBoxArg=${queryParam.searchBoxArg}&travelPurpose=${queryParam.travelPurpose}&ctm_ref=${queryParam.ctm_ref}&domestic=${queryParam.domestic}&listFilters=${queryParam.listFilters}&locale=${queryParam.locale}&curr=${queryParam.curr}`
+        const href = `https://us.trip.com/hotels/list?city=${queryParam.city}&cityName=${queryParam.cityName}&provinceId=${queryParam.provinceId}&countryId=${queryParam.countryId}&districtId=${queryParam.districtId}&checkin=${queryParam.checkin}&checkout=${queryParam.checkout}&barCurr=${queryParam.barCurr}&crn=${queryParam.crn}&adult=${queryParam.adult}&children=${queryParam.children}&searchBoxArg=${queryParam.searchBoxArg}&travelPurpose=${queryParam.travelPurpose}&ctm_ref=${queryParam.ctm_ref}&domestic=${queryParam.domestic}&listFilters=${queryParam.listFilters}&locale=${queryParam.locale}&curr=${queryParam.curr}`;
 
-    const payload = tripGetHotelListURLPayload(
-        [],
-        queryParam.checkin,
-        queryParam.checkout,
-        queryParam.countryId,
-        queryParam.provinceId,
-        queryParam.city,
-        queryParam.districtId || 0,
-        queryParam.cityType === "OVERSEA" ? true : false,
-        queryParam.roomQuantity || 1,
-        queryParam.latitude,
-        queryParam.longitude,
-        href
-    );
-    
-    const response = await axios.post(tripGetHotelListIdURL, payload , {
-        headers: headers,
-    });
+        const payload = tripGetHotelListURLPayload(
+            [],
+            queryParam.checkin,
+            queryParam.checkout,
+            queryParam.countryId,
+            queryParam.provinceId,
+            queryParam.city,
+            queryParam.districtId || 0,
+            queryParam.cityType === "OVERSEA" ? true : false,
+            queryParam.roomQuantity || 1,
+            queryParam.latitude,
+            queryParam.longitude,
+            href
+        );
 
-    return res.status(200).json({hotelList: response.data.hotelList});
+        const response = await axios.post(tripGetHotelListIdURL, payload, {
+            headers: headers,
+        });
+
+        return res.status(200).json({ hotelList: response.data.hotelList });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
+
+exports.agodaAutocomplete = async (req, res) => {
+    try {
+        const { keyword } = req.body;
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        };
+
+        const response = await axios.get(agodaAutocompleteURL, {
+            params: autocompleteQueryParamAgoda(keyword),
+            headers: headers,
+        });
+
+        const matchHotel = response.data.ViewModelList[1] || null;
+
+        return res.status(200).json({ matchHotel });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
+
+exports.bookingAutoComplete = async (req, res) => {
+    try {
+        const { keyword } = req.body;
+
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        };
+
+        const response = await axios.post(
+            bookingAutocompleteURL,
+            autocompletePayloadBooking(keyword),
+            {
+                headers: headers,
+            }
+        );
+
+        const matchHotel = response.data.results[0];
+
+        return res.status(200).json({ matchHotel });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
+
+exports.priceComparisonHotels = async (req, res) => {
+    try {
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
+
+exports.advancedSearchHotelAgoda = async (req, res) => {
+    try {
+        const {
+            objectId,
+            checkin,
+            checkout,
+            los,
+            rooms,
+            adults,
+            children,
+            childAges,
+            cityId,
+        } = req.body;
+
+        const payload = agodaAdvancedSearchHotelPayload(
+            objectId,
+            checkin,
+            checkout,
+            los,
+            rooms,
+            adults,
+            children,
+            childAges,
+            cityId
+        );
+
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        };
+
+        const response = await axios.post(
+            agodaAdvancedSearchHotelURL,
+            payload,
+            { headers: headers }
+        );
+
+        return res
+            .status(200)
+            .json(response.data?.data?.citySearch?.properties[0]);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
+
+exports.advancedSearchHotelBooking = async (req, res) => {
+    try {
+        const {
+            keyword,
+            checkin,
+            checkout,
+            group_adults,
+            no_rooms,
+            group_children,
+            age,
+        } = req.body;
+
+        const params = bookingAdvancedSearchHotelQueryParam(
+            keyword,
+            checkin,
+            checkout,
+            group_adults,
+            no_rooms,
+            group_children,
+            age
+        );
+
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Upgrade-Insecure-Requests": 1,
+        };
+
+        const response = await axios.get(bookingAdvancedSearchHotelURL, {
+            headers: headers,
+            params: params,
+        });
+
+        const html = response.data;
+        const $ = cheerio.load(html);
+        // Find the script tag with the specific data-capla-namespace attribute
+        const scriptTag = $('script[data-capla-store-data="apollo"]');
+        // Extract the content of the script tag
+        const scriptContent = JSON.parse(scriptTag.html());
+        const searchQueriesArray = Object.values(
+            scriptContent["ROOT_QUERY"]["searchQueries"]
+        );
+        const hotel = searchQueriesArray[1]["results"][0]; // select the name by ".displayName.text"
+        // select the price by "blocks"
+        // console.log(Hotel.displayName);
+        // console.log(Hotel.blocks);
+
+        return res.status(200).json({ hotel });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
 };

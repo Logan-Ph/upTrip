@@ -2,38 +2,26 @@ import NavBar from "../components/Navbar";
 import { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
-
-import {DateRangePicker} from '@mui/x-date-pickers-pro/DateRangePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import "react-datepicker/dist/react-datepicker.css";
- 
+
 export default function Header() {
+    const [tab, setTab] = useState("All");
+
     return (
         <>
-            <div class="bg-loginbackground bg-cover bg-center">
-                <section className="mx-auto max-w-8xl px-6 py-6">
-                    <NavBar />
-                    <div class="w-full container mx-auto mt-20 md:mt32 mb-20">
-                        <p class="text-white text-lg mb-3 font-thin">
-                            LEVEL UP YOUR TRIP
-                        </p>
-                        <p class="text-white text-5xl font-semibold">
-                            Life is a journey <br></br>Not a destinations.
-                        </p>
-                    </div>
-
+            <div class="bg-[#8DD3BB] md:px-10">
+                <NavBar />
+                <section>
                     <div class="pb-10">
                         <HandleSelection tab={tab} setTab={setTab} />
                     </div>
                 </section>
-                
             </div>
         </>
     );
 }
 
-function HandleSelection({tab, setTab}) {
+function HandleSelection({ tab, setTab }) {
     switch (tab) {
         case "Stay":
             return <QuickSearchStay setTab={setTab} />;
@@ -42,20 +30,20 @@ function HandleSelection({tab, setTab}) {
         case "Experience":
             return <QuickSearchExperience setTab={setTab} />;
         default:
-            return <QuickSearchAll setTab={setTab}/>;
+            return <QuickSearchAll setTab={setTab} />;
     }
 }
 
-function QuickSearchFlight({setTab}) {
+function QuickSearchFlight({ setTab }) {
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     useEffect(() => {
-    if(endDate < startDate){
-        setStartDate(endDate)
-        setEndDate(startDate)
-    } 
-    }, [startDate,endDate])
-   
+        if (endDate < startDate) {
+            setStartDate(endDate);
+            setEndDate(startDate);
+        }
+    }, [startDate, endDate]);
+
     return (
         <>
             <div
@@ -66,7 +54,7 @@ function QuickSearchFlight({setTab}) {
                     <select
                         id="form-selector-2"
                         class="h-[52px] px-2 select select-bordered w-full md:w-[90px] pr-2 pl-3"
-						onChange={(e) => setTab(e.target.value)}
+                        onChange={(e) => setTab(e.target.value)}
                     >
                         <option value="All">All</option>
                         <option value="Stay">Stay</option>
@@ -140,7 +128,6 @@ function QuickSearchFlight({setTab}) {
                     </div>
 
                     <div class="flex flex-col md:flex-row space-y-2 md:space-x-4 md:space-y-0 items-center justify-between	">
-                  
                         <div class="relative w-full md:w-1/3">
                             {/* <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <svg
@@ -172,22 +159,28 @@ function QuickSearchFlight({setTab}) {
                                     Departing
                                 </label>
                             </div> */}
-                             <div className="bg-gray-100 border-b-grey-200 h-[52px] w-full flex items-center rounded-t-lg relative border-0 border-b-2 border-gray-300 appearance-none focus:outline-none">
-
+                            <div className="bg-gray-100 border-b-grey-200 h-[52px] w-full flex items-center rounded-t-lg relative border-0 border-b-2 border-gray-300 appearance-none focus:outline-none">
                                 <div className="absolute left-0 ml-2 mt-0 z-10">
-                                <svg
-                                    class="w-4 h-4 text-gray-500"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                </svg>
-                                </div> 
-                                <p className="text-xs text-gray-500 absolute top-1 left-10 ml-2 mt-0 z-10 scale-90">Departure</p>
+                                    <svg
+                                        class="w-4 h-4 text-gray-500"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                    </svg>
+                                </div>
+                                <p className="text-xs text-gray-500 absolute top-1 left-10 ml-2 mt-0 z-10 scale-90">
+                                    Departure
+                                </p>
                                 <div className="ml-2">
-                                    <DatePicker placeholderText="dd/mm/yyyy" className="bg-gray-100 input border-transparent ps-10 pt-4  rounded-none" selected={startDate} onChange={(date) => setStartDate(date)} />
+                                    <DatePicker
+                                        placeholderText="dd/mm/yyyy"
+                                        className="bg-gray-100 input border-transparent ps-10 pt-4  rounded-none"
+                                        selected={startDate}
+                                        onChange={(date) => setStartDate(date)}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -230,25 +223,29 @@ function QuickSearchFlight({setTab}) {
                             </div> */}
 
                             <div className="bg-gray-100 border-b-grey-200 h-[52px] w-full flex items-center rounded-t-lg relative border-0 border-b-2 border-gray-300 appearance-none focus:outline-none">
-
-                            <div className="absolute left-0 ml-2 mt-0 z-10">
-                            <svg
-                                class="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
-                            </div> 
-                            <p className="text-xs text-gray-500 absolute top-1 left-10 ml-2 mt-0 z-10 scale-90">Returning</p>
-                            <div className="ml-2">
-                                <DatePicker placeholderText="dd/mm/yyyy" className="bg-gray-100 input border-transparent ps-10 pt-4  rounded-none" selected={startDate} onChange={(date) => setStartDate(date)} />
+                                <div className="absolute left-0 ml-2 mt-0 z-10">
+                                    <svg
+                                        class="w-4 h-4 text-gray-500"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                    </svg>
+                                </div>
+                                <p className="text-xs text-gray-500 absolute top-1 left-10 ml-2 mt-0 z-10 scale-90">
+                                    Returning
+                                </p>
+                                <div className="ml-2">
+                                    <DatePicker
+                                        placeholderText="dd/mm/yyyy"
+                                        className="bg-gray-100 input border-transparent ps-10 pt-4  rounded-none"
+                                        selected={startDate}
+                                        onChange={(date) => setStartDate(date)}
+                                    />
+                                </div>
                             </div>
-                            </div>
-
-
                         </div>
 
                         {/* Ask for number of passenger */}
@@ -283,27 +280,20 @@ function QuickSearchFlight({setTab}) {
                                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                                 />
                             </svg>
-                        </div>
-                        <input
-                            type="search"
-                            id="default-search"
-                            class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Search all"
-                            required
-                        />
+                        </button>
                     </div>
                 </div>
-                <div class="md:ml-1.5">
-                    <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
-                        Search
-                    </button>
-                </div>
+            </div>
+            <div class="md:ml-1.5">
+                <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
+                    Search
+                </button>
             </div>
         </>
     );
 }
 
-function QuickSearchExperience({setTab}) {
+function QuickSearchExperience({ setTab }) {
     return (
         <>
             <div
@@ -316,7 +306,7 @@ function QuickSearchExperience({setTab}) {
                             id="form-selector-1"
                             class="px-2 select select-bordered join-item w-[125px] pr-2 pl-3 h-[52px]"
                             onchange="toggleSections(this)"
-							onChange={(e) => setTab(e.target.value)}
+                            onChange={(e) => setTab(e.target.value)}
                         >
                             <option value="All">All</option>
                             <option value="Stay">Stay</option>
@@ -345,17 +335,17 @@ function QuickSearchExperience({setTab}) {
     );
 }
 
-function QuickSearchStay({setTab}) { 
+function QuickSearchStay({ setTab }) {
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     useEffect(() => {
-    if(endDate < startDate){
-        setStartDate(endDate)
-        setEndDate(startDate)
-    } 
-    }, [startDate,endDate])
-    
-	return (
+        if (endDate < startDate) {
+            setStartDate(endDate);
+            setEndDate(startDate);
+        }
+    }, [startDate, endDate]);
+
+    return (
         <>
             <div
                 id="stay-section"
@@ -368,7 +358,7 @@ function QuickSearchStay({setTab}) {
                                 <select
                                     id="form-selector-2"
                                     class="h-[52px] px-2 select select-bordered join-item w-[82px] pr-2 pl-3"
-									onChange={(e) => setTab(e.target.value)}
+                                    onChange={(e) => setTab(e.target.value)}
                                 >
                                     <option value="All">All</option>
                                     <option value="Stay" selected="selected">
@@ -388,33 +378,170 @@ function QuickSearchStay({setTab}) {
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                         <div className="joint-item flex-1 md:flex">
                             <div className="bg-white border border-grey-200 h-[52px]  join join-horizontal w-full flex items-center rounded-md md:rounded-none relative">
                                 <div className="px-2 absolute left-0 ml-2 mt-0 z-10">
-                                    <svg className="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                        <path fill="grey" d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"/></svg>
-                                </div> 
-                                <p className="text-xs font-medium text-gray-500 absolute top-0 left-12 ml-2 mt-0 z-10 scale-90">Check-in</p>
+                                    <svg
+                                        className="w-[18px] h-[18px]"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 448 512"
+                                    >
+                                        <path
+                                            fill="grey"
+                                            d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"
+                                        />
+                                    </svg>
+                                </div>
+                                <p className="text-xs font-medium text-gray-500 absolute top-0 left-12 ml-2 mt-0 z-10 scale-90">
+                                    Check-in
+                                </p>
                                 <div>
-                                    <DatePicker placeholderText="dd/mm/yyyy" className="input input-bordered rounded-none pl-12" selected={startDate} onChange={(date) => setStartDate(date)} />
+                                    <DatePicker
+                                        placeholderText="dd/mm/yyyy"
+                                        className="input input-bordered rounded-none pl-12"
+                                        selected={startDate}
+                                        onChange={(date) => setStartDate(date)}
+                                    />
                                 </div>
                             </div>
-                            
+
                             <div className="bg-white border border-grey-200 h-[52px] w-full join join-horizontal rounded-md md:rounded-none md:rounded-r-md flex items-center relative">
                                 <div className="px-2 absolute left-0 ml-2 mt-0 z-10">
-                                    <svg className="w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                        <path fill="grey" d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"/></svg>
+                                    <svg
+                                        className="w-[18px] h-[18px]"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 448 512"
+                                    >
+                                        <path
+                                            fill="grey"
+                                            d="M12 192h424c6.6 0 12 5.4 12 12v260c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V204c0-6.6 5.4-12 12-12zm436-44v-36c0-26.5-21.5-48-48-48h-48V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H160V12c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v52H48C21.5 64 0 85.5 0 112v36c0 6.6 5.4 12 12 12h424c6.6 0 12-5.4 12-12z"
+                                        />
+                                    </svg>
                                 </div>
-                                <p className="text-xs font-medium text-gray-500 absolute top-0 left-12 ml-2 mt-0 z-10 scale-90">Check-out</p>
-                                <DatePicker placeholderText="dd/mm/yyyy" className="input input-bordered rounded-none w-full pl-12" selected={endDate} onChange={(date) => setEndDate(date)} />
+                                <p className="text-xs font-medium text-gray-500 absolute top-0 left-12 ml-2 mt-0 z-10 scale-90">
+                                    Check-out
+                                </p>
+                                <DatePicker
+                                    placeholderText="dd/mm/yyyy"
+                                    className="input input-bordered rounded-none w-full pl-12"
+                                    selected={endDate}
+                                    onChange={(date) => setEndDate(date)}
+                                />
                             </div>
-                        </div>  
+                        </div>
                     </div>
                     <div class="md:ml-1.5">
                         <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
                             Search
                         </button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+function QuickSearchAll({ setTab }) {
+    const [keyword, setKeyword] = useState("");
+    const handleNavigate = useHandleNavigate(
+        `/quick-search/?keyword=${keyword}`
+    );
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        handleNavigate();
+    };
+
+    return (
+        <>
+            <div
+                id="all-section"
+                class="grid grid-cols-2 w-10/12 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+            >
+                <form class="col-span-full flex flex-row">
+                    <div class="join w-full">
+                        <select
+                            id="form-selector-1"
+                            class="px-2 select select-bordered join-item w-[70px] pr-2 pl-3 h-[52px]"
+                            onChange={(e) => setTab(e.target.value)}
+                        >
+                            <option value="All" selected="selected">
+                                All
+                            </option>
+                            <option value="Stay">Stay</option>
+                            <option value="Flight">Flight</option>
+                            <option value="Experience">Experience</option>
+                        </select>
+                        <div class="w-full">
+                            <div>
+                                <input
+                                    class="w-full input input-bordered join-item h-[52px] bg-white"
+                                    placeholder="Search for destinations, activities, experiences..."
+                                    onChange={(e) => setKeyword(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ml-1.5">
+                        <button
+                            class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px]"
+                            onClick={handleSubmit}
+                        >
+                            Search
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mx-auto max-w-7xl px-6">
+                    <div class="">
+                        <ul
+                            class="flex flex-wrap -mb-px text-sm font-medium text-center"
+                            id="default-tab"
+                            data-tabs-toggle="#default-tab-content"
+                            role="tablist"
+                        >
+                            <li class="" role="presentation">
+                                <button
+                                    class="inline-block p-4 rounded-tl-lg text-white bg-[#231F20]"
+                                    id="profile-tab"
+                                    data-tabs-target="#profile"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="profile"
+                                    aria-selected="false"
+                                >
+                                    Stay
+                                </button>
+                            </li>
+                            <li class="" role="presentation">
+                                <button
+                                    class="inline-block p-4
+                  text-white bg-[#231F20]"
+                                    id="dashboard-tab"
+                                    data-tabs-target="#dashboard"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="dashboard"
+                                    aria-selected="false"
+                                >
+                                    Flight
+                                </button>
+                            </li>
+                            <li class="" role="presentation">
+                                <button
+                                    class="inline-block p-4 rounded-tr-lg text-white bg-[#231F20] ${options}"
+                                    id="settings-tab"
+                                    data-tabs-target="#settings"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="settings"
+                                    aria-selected="false"
+                                >
+                                    Experience
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
