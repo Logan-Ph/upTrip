@@ -1,7 +1,9 @@
 import { Suspense, lazy } from 'react';
+
 import HPExploreSkeleton from '../components/skeletonLoadings/HPExploreSkeleton';
 import HPPLanYourTripSkeleton from '../components/skeletonLoadings/HPPLanYourTripSkeleton';
 import HPTravelPlannerSkeleton from '../components/skeletonLoadings/HPTravelPlannerSkeleton';
+
 const HPPLanYourTrip = lazy(() => import('../components/HPPlanYourTrip'));
 const HPExplore = lazy(() => import('../components/HPExplore'));
 const HPTravelPlanner = lazy(() => import('../components/HPTravelPlanner'));
