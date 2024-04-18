@@ -30,3 +30,12 @@ export function fetchQuickSearchAttractions(keyword) {
             return Promise.reject(new Error(er.response.data.message));
         });
 }
+
+export function fetchHotelAdvancedSearch(payload) {
+    return axios
+        .post(`/advanced-search/hotels`, payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}

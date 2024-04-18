@@ -21,7 +21,7 @@ router.post('/oauth/v1/autocomplete', userController.agodaAutocomplete);
 router.post('/oauth/v2/autocomplete', userController.bookingAutoComplete);
 
 // advanced search for hotels
-router.get('/advanced-search/hotels', userController.advancedSearchHotels)
+router.post('/advanced-search/hotels', userController.advancedSearchHotels)
 
 // price comparison for hotels
 router.post('/price-comparison/hotels', userController.priceComparisonHotels)

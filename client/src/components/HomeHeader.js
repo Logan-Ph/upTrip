@@ -4,6 +4,7 @@ import Datepicker from "flowbite-datepicker/Datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTripAutoComplete } from "../api/fetch";
+import { Link } from "react-router-dom";
 
 export default function Header() {
     const [tab, setTab] = useState("All");
@@ -13,16 +14,16 @@ export default function Header() {
         <>
             <div class="bg-loginbackground bg-cover bg-center md:px-10">
                 <NavBar />
-                <div class="mx-auto max-w-7xl px-6 md:py-6 container md:mt-32 mb-18">
-                    <p class="text-white text-lg mb-3 font-thin">
+                <div class="mx-auto max-w-8xl px-6 md:py-6 md:mt-32 mb-18">
+                    <p class="text-white text-base md:text-lg mb-3 font-thin">
                         LEVEL UP YOUR TRIP
                     </p>
-                    <p class="text-white text-5xl font-semibold">
+                    <p class="text-white text-3xl md:text-5xl font-semibold">
                         Life is a journey <br></br>Not a destinations.
                     </p>
                 </div>
 
-                <div class="pb-10 mx-auto max-w-7xl px-6 py-6">
+                <div class="pb-10 mx-auto max-w-8xl px-6 py-6">
                     <HandleSelection
                         tab={tab}
                         setTab={setTab}
@@ -73,11 +74,17 @@ function HandleSelection({ tab, setTab, setKeyword, keyword }) {
 }
 
 function QuickSearchFlight({ setTab }) {
+    const [isOneWay, setIsOneWay] = useState(false);
+    const [openMenu, setOpenMenu] = useState(false);
+    const [numberOfAdult, setNumberOfAdult] = useState(0);
+    const [numberOfChild, setNumberOfChild] = useState(0);
+    const [numberOfInfant, setNumberOfInfant] = useState(0);
+
     return (
         <>
             <div
                 id="flight-section"
-                class="flex flex-col p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="flex flex-col p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="w-full mx-auto my-4 bg-white p-4 rounded-lg space-y-2">
                     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between w-full mb-4">
@@ -98,6 +105,7 @@ function QuickSearchFlight({ setTab }) {
                         <div class="flex grow-1 space-x-5">
                             <div>
                                 <input
+                                    onClick={() => setIsOneWay(true)}
                                     type="radio"
                                     id="one-way"
                                     name="radio-1"
@@ -108,6 +116,7 @@ function QuickSearchFlight({ setTab }) {
                             </div>
                             <div>
                                 <input
+                                    onClick={() => setIsOneWay(false)}
                                     type="radio"
                                     id="round-trip"
                                     name="radio-1"
@@ -133,7 +142,7 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Origin
                                 </label>
@@ -152,7 +161,7 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Destination
                                 </label>
@@ -191,7 +200,7 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Departing
                                 </label>
@@ -199,7 +208,11 @@ function QuickSearchFlight({ setTab }) {
                         </div>
 
                         {/* This field appears only when user choose round trip , hidden when one way */}
-                        <div class="relative w-full md:w-1/3">
+                        <div
+                            class={`relative w-full md:w-1/3 ${
+                                isOneWay ? "hidden" : ""
+                            }`}
+                        >
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <svg
                                     class="w-4 h-4 text-gray-500"
@@ -222,14 +235,11 @@ function QuickSearchFlight({ setTab }) {
                                     onSelect={(e) =>
                                         console.log(e.target.value)
                                     }
-                                    // onClick={(e) => dobHandler(e)}
-                                    // onClick={(e) => console.log(e.target.value)}
-                                    // onChange={(e) => console.log(e)}
                                     id="datepickerId4"
                                 />
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Returning
                                 </label>
@@ -242,17 +252,19 @@ function QuickSearchFlight({ setTab }) {
                             data-dropdown-toggle="dropdown"
                             class="rounded-t-lg   bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 text-gray-500 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full md:w-1/3 justify-between "
                             type="button"
+                            onClick={() => setOpenMenu((prev) => !prev)}
                         >
                             <label
                                 for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
                             >
                                 No. of Passengers
                             </label>
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                             </div>
-                            1 Adult, 1 Child, 0 Infant{" "}
+                            {numberOfAdult} Adult, {numberOfChild} Child,{" "}
+                            {numberOfInfant} Infant{" "}
                             <svg
                                 class="w-2.5 h-2.5 ms-3"
                                 aria-hidden="true"
@@ -273,7 +285,9 @@ function QuickSearchFlight({ setTab }) {
                         {/* <!-- Dropdown menu --> */}
                         <div
                             id="dropdown"
-                            class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full"
+                            class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full ${
+                                openMenu ? "" : "hidden"
+                            }`}
                         >
                             <div
                                 class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
@@ -296,6 +310,11 @@ function QuickSearchFlight({ setTab }) {
                                                 stroke-width="1.5"
                                                 stroke="currentColor"
                                                 class="w-6 h-6"
+                                                onClick={() =>
+                                                    setNumberOfAdult(
+                                                        numberOfAdult + 1
+                                                    )
+                                                }
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -304,7 +323,10 @@ function QuickSearchFlight({ setTab }) {
                                                 />
                                             </svg>
 
-                                            <span class="text-lg"> 1 </span>
+                                            <span class="text-lg">
+                                                {" "}
+                                                {numberOfAdult}{" "}
+                                            </span>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -427,7 +449,7 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
         <>
             <div
                 id="experience-section"
-                class="grid grid-cols-2 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="col-span-full flex flex-col md:flex-row space-y-2 md:space-y-0">
                     <div class="join w-full">
@@ -467,12 +489,22 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
 function QuickSearchStay({ setTab, setKeyword, keyword }) {
     const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
     const [dropdown, setDropdown] = useState(false);
+    const [numberOfAdults, setNumberOfAdults] = useState(1);
+    const [numberOfChildren, setNumberOfChildren] = useState(0);
+    const [numberOfRooms, setNumberOfRooms] = useState(1);
+    const [childrenAges, setChildrenAges] = useState([]);
 
     useQuery({
         queryKey: ["quick-search", "hotels", debouncedKeyword],
         queryFn: () => fetchTripAutoComplete(debouncedKeyword),
         refetchOnWindowFocus: false,
     });
+
+    useEffect(() => {
+        if (numberOfChildren === 0) {
+            setChildrenAges(new Array(numberOfChildren).fill(0));
+        }
+    }, [numberOfChildren]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -495,20 +527,14 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
             // Initialize the check-in datepicker
             checkinPicker = new Datepicker(checkinDate.current, {
                 autohide: true,
-                // When a date is selected, update the checkout datepicker's minDate
-                onSelect: (dateText, instance) => {
-                    const selectedDate = instance.getDate();
-                    if (checkoutPicker) {
-                        checkoutPicker.setOptions({ minDate: selectedDate });
-                        checkoutPicker.setDate(selectedDate, true); // Optionally set checkout date to match check-in
-                    }
-                },
+                minDate: checkoutDate.current.value ? (new Date(checkoutDate.current.value)) : new Date(),
             });
 
-            // Initialize the checkout datepicker with a minDate of today by default
+            const initialMinDate = new Date();
+            initialMinDate.setDate(initialMinDate.getDate() + 1);
             checkoutPicker = new Datepicker(checkoutDate.current, {
                 autohide: true,
-                minDate: new Date(), // Set initial minDate to today or check-in date if you prefer
+                minDate: checkinDate.current.value ? new Date(initialMinDate) : new Date(),
             });
         }
 
@@ -523,7 +549,7 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
         <>
             <div
                 id="stay-section"
-                class="grid grid-cols-2 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <div class="col-span-full flex flex-col md:flex-row w-full space-y-2 md:space-y-0">
                     <div class="join join-vertical md:join-horizontal space-y-2 md:space-y-0 w-full">
@@ -548,7 +574,9 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                         <input
                                             class="h-[52px] w-full input input-bordered join-item bg-white"
                                             placeholder="Where are you going?"
-                                            onChange={(e) => setKeyword(e.target.value)}
+                                            onChange={(e) =>
+                                                setKeyword(e.target.value)
+                                            }
                                         />
                                     </div>
                                 </div>
@@ -584,7 +612,7 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                         />
                                         <label
                                             for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                         >
                                             Check-in
                                         </label>
@@ -617,7 +645,7 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                         />
                                         <label
                                             for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                         >
                                             Check-out
                                         </label>
@@ -632,17 +660,19 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                 data-dropdown-toggle="dropdownDivider"
                                 class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between"
                                 type="button"
+                                onClick={() => setDropdown((prev) => !prev)}
                             >
                                 <label
                                     for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
                                 >
                                     Guest(s) and Room(s)
                                 </label>
                                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                     <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                                 </div>
-                                1 adult, 1 child, 1 room{" "}
+                                {numberOfAdults} adult, {numberOfChildren}{" "}
+                                child, {numberOfRooms} room{" "}
                                 <svg
                                     class="w-2.5 h-2.5 ms-3"
                                     aria-hidden="true"
@@ -663,45 +693,284 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                             {/* <!-- Dropdown menu --> */}
                             <div
                                 id="dropdownDivider"
-                                class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-[200px]"
+                                class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full ${
+                                    dropdown ? "block" : "hidden"
+                                }`}
                             >
                                 {/* Ask user to input room information */}
-                                <div class="my-3 mx-5">
+                                <div
+                                    class="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                                    aria-labelledby="dropdownDividerButton"
+                                >
                                     <div class="flex justify-between">
-                                        <div>Room</div>
-                                        <div>
+                                        <div class="flex flex-col">
                                             <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
+                                                <i class="fa-solid fa-door-open"></i>{" "}
+                                                Room(s)
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfRooms(
+                                                            (prev) =>
+                                                                prev > 1
+                                                                    ? prev - 1
+                                                                    : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    ></path>
+                                                </svg>
+                                                <span class="text-lg">
+                                                    {" "}
+                                                    {numberOfRooms}{" "}
                                                 </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
+
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                    onClick={() => {
+                                                        setNumberOfRooms(
+                                                            (prev) => {
+                                                                if (prev >= 10)
+                                                                    return prev;
+
+                                                                if (
+                                                                    prev ===
+                                                                    numberOfAdults
+                                                                ) {
+                                                                    setNumberOfAdults(
+                                                                        prev + 1
+                                                                    );
+                                                                }
+                                                                return prev + 1;
+                                                            }
+                                                        );
+                                                    }}
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    ></path>
+                                                </svg>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="flex justify-between">
-                                        <div>Adult(s)</div>
-                                        <div>
+                                        <div class="flex flex-col">
                                             <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
+                                                <i
+                                                    class="fa-solid fa-person"
+                                                    aria-hidden="true"
+                                                ></i>{" "}
+                                                Adult(s)
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfAdults(
+                                                            (prev) =>
+                                                                prev - 1 > 0 &&
+                                                                prev >
+                                                                    numberOfRooms
+                                                                    ? prev - 1
+                                                                    : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    ></path>
+                                                </svg>
+                                                <span class="text-lg">
+                                                    {" "}
+                                                    {numberOfAdults}{" "}
                                                 </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
+
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfAdults(
+                                                            (prev) => prev + 1
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    ></path>
+                                                </svg>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="flex justify-between">
-                                        <div>Children(s)</div>
-                                        <div>
+                                        <div class="flex flex-col">
                                             <div>
-                                                <i class="fa-solid fa-plus p-1 border rounded-full  aspect-square text-[9px]	"></i>{" "}
-                                                <span class="text-base">
-                                                    &nbsp; 1 &nbsp;{" "}
-                                                </span>
-                                                <i class="fa-solid fa-minus p-1 border rounded-full  aspect-square text-[9px]	"></i>
+                                                <i
+                                                    class="fa-solid fa-child-reaching"
+                                                    aria-hidden="true"
+                                                ></i>{" "}
+                                                Children
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                maximum 17 years old
                                             </div>
                                         </div>
+                                        <div>
+                                            <div class="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfChildren(
+                                                            (prev) => {
+                                                                if (prev > 0) {
+                                                                    setChildrenAges(
+                                                                        (
+                                                                            prev
+                                                                        ) =>
+                                                                            prev.slice(
+                                                                                0,
+                                                                                prev.length -
+                                                                                    1
+                                                                            )
+                                                                    );
+                                                                    return (
+                                                                        prev - 1
+                                                                    );
+                                                                } else {
+                                                                    return prev;
+                                                                }
+                                                            }
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    ></path>
+                                                </svg>
+                                                <span class="text-lg">
+                                                    {" "}
+                                                    {numberOfChildren}{" "}
+                                                </span>
+
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfChildren(
+                                                            (prev) =>
+                                                                prev <
+                                                                numberOfRooms *
+                                                                    6
+                                                                    ? prev + 1
+                                                                    : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    ></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="py-2">
+                                    <Link
+                                        to="#"
+                                        class="block px-4 pb-2 text-[12px] text-gray-500 md:max-w-72"
+                                    >
+                                        Please enter your children's ages by the
+                                        time of check-in
+                                    </Link>
+                                    <div class="overflow-y-scroll flex flex-wrap items-start px-5 mx-auto justify-between md:justify-normal md:max-w-80 md:max-h-[150px]">
+                                        {Array.from(
+                                            { length: numberOfChildren },
+                                            (_, index) => {
+                                                return (
+                                                    <form class="w-24 md:w-16 mb-3 md:mr-4">
+                                                        <label
+                                                            for="number-input"
+                                                            class="block mb-2 text-xs font-medium text-gray-900"
+                                                        >
+                                                            Child {index + 1}
+                                                        </label>
+                                                        <input
+                                                            type="number"
+                                                            id="number-input"
+                                                            aria-describedby="helper-text-explanation"
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                            placeholder="Age"
+                                                            required
+                                                            onChange={(e) => {
+                                                                setChildrenAges(
+                                                                    (prev) => {
+                                                                        const temp =
+                                                                            [
+                                                                                ...prev,
+                                                                            ];
+                                                                        console.log(
+                                                                            temp
+                                                                        );
+                                                                        temp[
+                                                                            index
+                                                                        ] =
+                                                                            e.target.value;
+                                                                        return temp;
+                                                                    }
+                                                                );
+                                                            }}
+                                                        />
+                                                    </form>
+                                                );
+                                            }
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -733,7 +1002,7 @@ function QuickSearchAll({ setTab }) {
         <>
             <div
                 id="all-section"
-                class="grid grid-cols-2 p-4 mx-auto my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
                 <form class="col-span-full flex flex-row">
                     <div class="join w-full">

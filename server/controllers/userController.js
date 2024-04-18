@@ -273,40 +273,74 @@ exports.autocomplete = async (req, res) => {
 exports.advancedSearchHotels = async (req, res) => {
     try {
         const headers = tripAdvancedSearchHeaders();
+        let {
+            preHotelIds,
+            city,
+            cityName,
+            provinceId,
+            countryId,
+            districtId,
+            checkin,
+            checkout,
+            cityType,
+            latitude,
+            longitude,
+            searchCoordinate,
+            crn, // number of rooms
+            adult,
+            children, // children=3&ages=0,15,4 -> decoded version
+            domestic,
+            listFilters,
+        } = req.body;
 
         const queryParam = {
-            city: 286,
-            cityName: "Hanoi",
-            provinceId: 0,
-            countryId: 111,
-            districtId: 0,
-            checkin: "20240510",
-            checkout: "20240518",
+            // city: 286,
+            city: Number(city),
+            // cityName: "Hanoi",
+            cityName: cityName,
+            // provinceId: 0,
+            provinceId: Number(provinceId),
+            // countryId: 111,
+            countryId: Number(countryId),
+            // districtId: 0,
+            districtId: Number(districtId),
+            // checkin: "20240518",
+            checkin: String(checkin),
+            // checkout: "20240520",
+            checkout: String(checkout),
             barCurr: "USD",
-            cityType: "OVERSEA",
-            searchType: "CT",
-            searchWord: "Hanoi",
-            searchValue: "19|286_19_286_1",
-            latitude: "21.030735",
-            longitude: "105.852398",
-            searchCoordinate:
-                "BAIDU_-1_-1_0|GAODE_-1_-1_0|GOOGLE_-1_-1_0|NORMAL_21.030735_105.852398_0",
-            crn: 1, // number of rooms
-            adult: 1,
-            children: 0, // children=3&ages=0,15,4 -> decoded version
+            // cityType: "OVERSEA",
+            cityType: String(cityType),
+            // latitude: "21.030735",
+            latitude: String(latitude),
+            // longitude: "105.852398",
+            longitude: String(longitude),
+            // searchCoordinate:
+            //     "BAIDU_-1_-1_0|GAODE_-1_-1_0|GOOGLE_-1_-1_0|NORMAL_21.030735_105.852398_0",
+            searchCoordinate: String(searchCoordinate),
+
+            // crn: 1, // number of rooms
+            crn: Number(crn),
+
+            // adult: 1,
+            adult: Number(adult),
+
+            // children: 0, // children=3&ages=0,15,4 -> decoded version
+            children:Number(children),
             searchBoxArg: "t",
             travelPurpose: 0,
             ctm_ref: "ix_sb_dl",
-            domestic: false,
+            domestic: domestic,
             listFilters: "80|0|1*80*0*2,29|1*29*1|2*2",
             locale: "en_US",
             curr: "USD",
         };
 
         const href = `https://us.trip.com/hotels/list?city=${queryParam.city}&cityName=${queryParam.cityName}&provinceId=${queryParam.provinceId}&countryId=${queryParam.countryId}&districtId=${queryParam.districtId}&checkin=${queryParam.checkin}&checkout=${queryParam.checkout}&barCurr=${queryParam.barCurr}&crn=${queryParam.crn}&adult=${queryParam.adult}&children=${queryParam.children}&searchBoxArg=${queryParam.searchBoxArg}&travelPurpose=${queryParam.travelPurpose}&ctm_ref=${queryParam.ctm_ref}&domestic=${queryParam.domestic}&listFilters=${queryParam.listFilters}&locale=${queryParam.locale}&curr=${queryParam.curr}`;
+        if (preHotelIds) preHotelIds = preHotelIds.map(Number)
 
         const payload = tripGetHotelListURLPayload(
-            [],
+            (preHotelIds) ? preHotelIds : [],
             queryParam.checkin,
             queryParam.checkout,
             queryParam.countryId,
@@ -314,17 +348,24 @@ exports.advancedSearchHotels = async (req, res) => {
             queryParam.city,
             queryParam.districtId || 0,
             queryParam.cityType === "OVERSEA" ? true : false,
-            queryParam.roomQuantity || 1,
+            queryParam.crn || 1,
             queryParam.latitude,
             queryParam.longitude,
             href
         );
 
-        const response = await axios.post(tripGetHotelListIdURL, payload, {
-            headers: headers,
-        });
+        const response = await axios.post(
+            tripGetHotelListIdURL,
+            payload,
+            {
+                headers: headers,
+            }
+        );
+        
+        const hotelName = response.data.hotelList.map(hotel => hotel.hotelBasicInfo.hotelName)
+        preHotelIds = response.data.hotelList.map(hotel => hotel.hotelBasicInfo.hotelId)
 
-        return res.status(200).json({ hotelList: response.data.hotelList });
+        return res.status(200).json({ hotelList: response.data.hotelList, hotelName, preHotelIds });
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);

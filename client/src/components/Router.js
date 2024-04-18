@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { lazy } from "react";
 import HomeHeader from "./HomeHeader";
 import Header from "./Header";
-import Footer from "./Footer";
 import Login from "../pages/Login";
 import Unauthorized from "../pages/Unauthorized";
 import PersistAndRequireAuth from "./PersistAndRequireAuth";
@@ -39,6 +38,12 @@ export default function Router() {
                     path: "/unauthorized",
                     element: <Unauthorized />,
                 },
+            ],
+        },
+        {
+            path: "/",
+            element: <UserLayout header={<Header />} footer={<footer />} />,
+            children: [
                 {
                     path: "/quick-search",
                     element: <QuickSearch />,
@@ -69,7 +74,7 @@ export default function Router() {
             path: "*",
             element: <PageNotFound />,
         },
-		{
+        {
             path: "/",
             element: <PersistAndRequireAuth />,
             children: [

@@ -2,10 +2,14 @@ import NavBar from "../components/Navbar";
 import { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
+
+import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function Header() {
-    const [tab, setTab] = useState("All");
+    const [tab, setTab] = useState('All')
 
     return (
         <>
