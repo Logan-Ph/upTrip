@@ -113,6 +113,24 @@ export default function Header() {
                         class="h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
                         placeholder="Where are you going?"
                       />
+                      <div class="relative z-40 drop-shadow-lg">
+                        <ul class="absolute menu bg-white w-full rounded-b-lg mt-1.5 md:mt-3">
+                          <li>
+                            <a>Intercontenial Da Nang</a>
+                          </li>
+                          <li>
+                            <a>
+                              <i class="fa-solid fa-location-dot"></i> Da Nang
+                            </a>
+                          </li>
+                          <li>
+                            <a> Nikko Hotel</a>
+                          </li>
+                          <li>
+                            <a> Legacy Yen Tu</a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                     <div class="relative grow md:border-r border-gray-300">
                       <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -486,6 +504,30 @@ export default function Header() {
                             Origin
                           </label>
                         </div>
+                        <div class="relative z-40">
+                          <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
+                            <li>
+                              <a>
+                                <i class="fa-solid fa-plane"></i> Da Nang
+                                Internation Airport
+                              </a>
+                            </li>
+                            <li>
+                              <a>
+                                {" "}
+                                <i class="fa-solid fa-plane"></i> Tan Son Nhat
+                                Intercontenial Airport
+                              </a>
+                            </li>
+                            <li>
+                              <a>
+                                {" "}
+                                <i class="fa-solid fa-plane"></i> Noi Bai
+                                Intercontenial Airport
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                       <div class="relative w-full md:w-1/2 mb-2">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -504,6 +546,30 @@ export default function Header() {
                           >
                             Destination
                           </label>
+                          <div class="relative z-40">
+                            <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
+                              <li>
+                                <a>
+                                  <i class="fa-solid fa-plane"></i> Da Nang
+                                  Internation Airport
+                                </a>
+                              </li>
+                              <li>
+                                <a>
+                                  {" "}
+                                  <i class="fa-solid fa-plane"></i> Tan Son Nhat
+                                  Intercontenial Airport
+                                </a>
+                              </li>
+                              <li>
+                                <a>
+                                  {" "}
+                                  <i class="fa-solid fa-plane"></i> Noi Bai
+                                  Intercontenial Airport
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -777,6 +843,27 @@ export default function Header() {
                         class="block rounded-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px] truncate"
                         placeholder="Search for activities in the location"
                       />
+                    </div>
+                    <div class="relative z-40">
+                      <ul class="absolute menu bg-base-200 w-full rounded-lg mt-1.5 drop-shadow-lg">
+                        <li>
+                          <a>
+                            <i class="fa-solid fa-location-dot"></i> Da Nang
+                          </a>
+                        </li>
+                        <li>
+                          <a>
+                            {" "}
+                            <i class="fa-solid fa-location-dot"></i> Ho Chi Minh
+                          </a>
+                        </li>
+                        <li>
+                          <a>
+                            {" "}
+                            <i class="fa-solid fa-location-dot"></i> Ha Noi
+                          </a>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                   <div class="ml-2.5">
