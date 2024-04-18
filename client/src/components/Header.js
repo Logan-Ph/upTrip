@@ -116,18 +116,33 @@ export default function Header() {
                       <div class="relative z-40 drop-shadow-lg">
                         <ul class="absolute menu bg-white w-full rounded-b-lg mt-1.5 md:mt-3">
                           <li>
-                            <a>Intercontenial Da Nang</a>
-                          </li>
-                          <li>
                             <a>
                               <i class="fa-solid fa-location-dot"></i> Da Nang
                             </a>
                           </li>
                           <li>
-                            <a> Nikko Hotel</a>
+                            <a>
+                              <i class="fa-solid fa-plane"></i> Da Nang
+                              Internation Airport
+                            </a>
                           </li>
                           <li>
-                            <a> Legacy Yen Tu</a>
+                            <a>
+                              <i class="fa-solid fa-hotel"></i> Intercontenial
+                              Da Nang
+                            </a>
+                          </li>
+                          <li>
+                            <a>
+                              {" "}
+                              <i class="fa-solid fa-hotel"></i> Nikko Hotel
+                            </a>
+                          </li>
+                          <li>
+                            <a>
+                              {" "}
+                              <i class="fa-solid fa-hotel"></i> Legacy Yen Tu
+                            </a>
                           </li>
                         </ul>
                       </div>
