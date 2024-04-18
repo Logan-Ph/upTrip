@@ -6,7 +6,7 @@ export default function Header() {
             <div class="bg-[#8DD3BB] md:px-10">
                 <NavBar />
 
-                <form class="static mx-auto max-w-7xl px-6 pb-10">
+                <form class="static mx-auto max-w-8xl px-6 pb-10">
                     <label
                         for="default-search"
                         class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -41,7 +41,7 @@ export default function Header() {
                     </div>
                 </form>
 
-                <div class="mx-auto max-w-7xl px-6">
+                <div class="mx-auto max-w-8xl px-6">
                     <div class="">
                         <ul
                             class="flex flex-wrap -mb-px text-sm font-medium text-center"
@@ -95,7 +95,7 @@ export default function Header() {
             </div>
 
             <div class="md:px-10">
-                <div class="mx-auto max-w-7xl px-6">
+                <div class="mx-auto max-w-8xl px-6">
                     <div id="default-tab-content">
                         <div
                             class="hidden rounded-br-lg  px-5 py-2 rounded-bl-lg bg-white shadow-lg"
