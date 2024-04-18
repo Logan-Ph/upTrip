@@ -3,8 +3,11 @@ import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
 import { Suspense, lazy } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchHotelAdvancedSearch } from "../api/fetch.js";
+import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
+import {
+    fetchHotelAdvancedSearch,
+    fetchHotelPriceComparison,
+} from "../api/fetch.js";
 const AdvancedHotelCardLazy = lazy(() =>
     import("../components/AdvancedHotelCard.js")
 );
@@ -32,8 +35,7 @@ export default function AdvancedSearchHotelPage() {
     };
 
     const {
-        data,
-        error,
+        data: hotelList,
         fetchNextPage,
         hasNextPage,
         isFetching,
@@ -62,6 +64,20 @@ export default function AdvancedSearchHotelPage() {
             }
             return undefined;
         },
+    });
+
+    const hotelNames = hotelList?.pages?.[0]?.hotelList
+        ? hotelList.pages[0].hotelList.map(
+              (hotel) => hotel.hotelBasicInfo.hotelName
+          )
+        : [];
+
+    const getHotelPriceComparison = useQuery({
+        queryKey: ["hotel-price-comparison", hotelNames],
+        queryFn: () => fetchHotelPriceComparison(hotelNames),
+        retry: false,
+        refetchOnWindowFocus: false,
+        enabled: !!hotelNames.length > 0,
     });
 
     return (
@@ -94,7 +110,7 @@ export default function AdvancedSearchHotelPage() {
                             </div>
 
                             {status === "success" &&
-                                data.pages.map((page) => {
+                                hotelList.pages.map((page) => {
                                     return page.hotelList.map((hotel) => {
                                         return (
                                             <Suspense

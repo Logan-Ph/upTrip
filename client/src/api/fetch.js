@@ -39,3 +39,12 @@ export function fetchHotelAdvancedSearch(payload) {
             return Promise.reject(new Error(er.response.data.message));
         });
 }
+
+export function fetchHotelPriceComparison(hotelNames) {
+    return axios
+        .post(`/price-comparison/hotels`, { hotelNames }, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}

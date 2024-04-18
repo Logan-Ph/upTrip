@@ -147,6 +147,30 @@ function QuickSearchFlight({ setTab }) {
                                     Origin
                                 </label>
                             </div>
+                            <div class="relative z-40">
+                                <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
+                                    <li>
+                                        <a>
+                                            <i class="fa-solid fa-plane"></i> Da
+                                            Nang Internation Airport
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            {" "}
+                                            <i class="fa-solid fa-plane"></i>{" "}
+                                            Tan Son Nhat Intercontenial Airport
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            {" "}
+                                            <i class="fa-solid fa-plane"></i>{" "}
+                                            Noi Bai Intercontenial Airport
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="relative w-full md:w-1/2">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -165,6 +189,30 @@ function QuickSearchFlight({ setTab }) {
                                 >
                                     Destination
                                 </label>
+                            </div>
+                            <div class="relative z-40">
+                                <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
+                                    <li>
+                                        <a>
+                                            <i class="fa-solid fa-plane"></i> Da
+                                            Nang Internation Airport
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            {" "}
+                                            <i class="fa-solid fa-plane"></i>{" "}
+                                            Tan Son Nhat Intercontenial Airport
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            {" "}
+                                            <i class="fa-solid fa-plane"></i>{" "}
+                                            Noi Bai Intercontenial Airport
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -469,9 +517,33 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
                         <div class="w-full">
                             <div>
                                 <input
-                                    class="w-full input input-bordered join-item h-[52px] bg-white"
+                                    class="w-full input input-bordered rounded-l-none h-[52px] bg-white"
                                     placeholder="Search for activities in the location"
                                 />
+                            </div>
+                            <div class="relative z-40">
+                                <ul class="absolute menu bg-white w-full rounded-b-lg">
+                                    <li>
+                                        <a>
+                                            <i class="fa-solid fa-location-dot"></i>{" "}
+                                            Da Nang
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            {" "}
+                                            <i class="fa-solid fa-location-dot"></i>{" "}
+                                            Ho Chi Minh
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a>
+                                            {" "}
+                                            <i class="fa-solid fa-location-dot"></i>{" "}
+                                            Ha Noi
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -527,14 +599,18 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
             // Initialize the check-in datepicker
             checkinPicker = new Datepicker(checkinDate.current, {
                 autohide: true,
-                minDate: checkoutDate.current.value ? (new Date(checkoutDate.current.value)) : new Date(),
+                minDate: checkoutDate.current.value
+                    ? new Date(checkoutDate.current.value)
+                    : new Date(),
             });
 
             const initialMinDate = new Date();
             initialMinDate.setDate(initialMinDate.getDate() + 1);
             checkoutPicker = new Datepicker(checkoutDate.current, {
                 autohide: true,
-                minDate: checkinDate.current.value ? new Date(initialMinDate) : new Date(),
+                minDate: checkinDate.current.value
+                    ? new Date(initialMinDate)
+                    : new Date(),
             });
         }
 

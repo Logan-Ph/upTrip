@@ -15,10 +15,10 @@ router.post('/google/auth/login', userController.googleLogin);
 router.post('/oauth/v0/autocomplete', userController.autocomplete);
 
 // autocomplete for Agoda.com
-router.post('/oauth/v1/autocomplete', userController.agodaAutocomplete);
+router.post('/agoda/autocomplete', userController.agodaAutocomplete);
 
 // autocomplete for Booking.com
-router.post('/oauth/v2/autocomplete', userController.bookingAutoComplete);
+router.post('/booking/autocomplete', userController.bookingAutoComplete);
 
 // advanced search for hotels
 router.post('/advanced-search/hotels', userController.advancedSearchHotels)

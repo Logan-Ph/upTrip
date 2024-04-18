@@ -422,6 +422,31 @@ exports.bookingAutoComplete = async (req, res) => {
 
 exports.priceComparisonHotels = async (req, res) => {
     try {
+        const {hotelNames} = req.body
+        const agodaPromises = hotelNames.map(hotelName =>
+            axios.post('http://localhost:4000/agoda/autocomplete', { keyword: hotelName })
+        );
+
+        const bookingPromises = hotelNames.map(hotelName =>
+            axios.post('http://localhost:4000/booking/autocomplete', { keyword: hotelName })
+        );
+
+        // Wait for all promises from both agoda and booking to resolve
+        const agodaResults = await Promise.all(agodaPromises);
+        const bookingResults = await Promise.all(bookingPromises);
+
+        // Extract data from responses
+        const agodaHotels = agodaResults.map(response => response.data);
+        const bookingHotels = bookingResults.map(response => response.data);
+
+        // Combine the results into a single response
+        const combinedResults = hotelNames.map((hotelName, index) => ({
+            hotelName,
+            agoda: agodaHotels[index],
+            booking: bookingHotels[index]
+        }));
+
+        return res.status(200).json(combinedResults);
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
