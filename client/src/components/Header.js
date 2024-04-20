@@ -94,7 +94,7 @@ export default function Header() {
                 </div>
             </div>
 
-            <div class="md:px-10 bg-[#FAFBFC] pb-10">
+            <div class="md:px-10 bg-[#FAFBFC] pb-4">
                 <div class="mx-auto max-w-7xl px-6">
                     <div id="default-tab-content">
                         <div
@@ -911,7 +911,7 @@ export default function Header() {
                                         />
                                     </div>
                                     <div class="relative z-40">
-                                        <ul class="absolute menu bg-base-200 w-full rounded-lg mt-1.5 drop-shadow-lg">
+                                        {/* <ul class="absolute menu bg-base-200 w-full rounded-lg mt-0 drop-shadow-lg">
                                             <li>
                                                 <a>
                                                     <i class="fa-solid fa-location-dot"></i>{" "}
@@ -932,7 +932,7 @@ export default function Header() {
                                                     Ha Noi
                                                 </a>
                                             </li>
-                                        </ul>
+                                        </ul> */}
                                     </div>
                                 </div>
                                 <div class="ml-2.5">
