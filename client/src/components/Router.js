@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { lazy } from "react";
 import HomeHeader from "./HomeHeader";
+import Footer from "./Footer";
 import Header from "./Header";
 import Login from "../pages/Login";
 import Unauthorized from "../pages/Unauthorized";
@@ -28,7 +29,7 @@ export default function Router() {
     const BrowserRoutes = createBrowserRouter([
         {
             path: "/",
-            element: <UserLayout header={<HomeHeader />} footer={<footer />} />,
+            element: <UserLayout header={<HomeHeader />} footer={<Footer />} />,
             children: [
                 {
                     path: "/",

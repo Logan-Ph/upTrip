@@ -3,11 +3,13 @@ import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
 import { Suspense, lazy } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
-import { useInfiniteQuery, useQueries, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
     fetchHotelAdvancedSearch,
     fetchHotelPriceComparison,
 } from "../api/fetch.js";
+import ScrollUpButton from "../components/ScrollUpButton.js";
+
 const AdvancedHotelCardLazy = lazy(() =>
     import("../components/AdvancedHotelCard.js")
 );
@@ -139,6 +141,7 @@ export default function AdvancedSearchHotelPage() {
                         </div>
                     </div>
                 </section>
+                <ScrollUpButton/>
             </div>
         </>
     );

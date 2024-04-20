@@ -94,7 +94,7 @@ export default function Header() {
                 </div>
             </div>
 
-            <div class="md:px-10">
+            <div class="md:px-10 bg-[#FAFBFC] pb-10">
                 <div class="mx-auto max-w-7xl px-6">
                     <div id="default-tab-content">
                         <div

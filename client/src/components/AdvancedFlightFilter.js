@@ -1,4 +1,4 @@
-import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react';
 
 export  function AdvancedFlightFilter(){
