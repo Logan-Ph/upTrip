@@ -18,18 +18,31 @@ export function AdvancedHotelFilter(){
 }
 
 function PriceRange(){
+    const [showPriceRang, setPriceRange] = useState(false);
     return(
         <>
-        <div className="font-bold text-md">PriceRange</div>
-        <div className='flex-col'>
-            <div>
-                <input type="range" min={50} max="1200" step="25" className="range-secondary w-full md:w-3/4"  />
-            </div>
-            <div className="md:w-3/4 flex justify-between">
-                <span>$50</span>
-                <span>$1200</span>
-            </div>
+        <div className='md:w-3/4 flex items-center justify-between'>
+            <div className="font-bold text-md">PriceRange</div>
+            {showPriceRang ? (
+                 <ChevronUpIcon onClick={() => setPriceRange(!showPriceRang)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
+                ) : (
+                    <ChevronDownIcon onClick={() => setPriceRange(!showPriceRang)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
+            )}
         </div>
+
+
+        {showPriceRang && (
+            <div className='flex-col'>
+                <div>
+                    <input type="range" min={50} max="1200" step="25" className="range-secondary w-full md:w-3/4"  />
+                </div>
+                <div className="md:w-3/4 flex justify-between">
+                    <span>$50</span>
+                    <span>$1200</span>
+                </div>
+            </div>
+        )}
+
 
         </>
     )
