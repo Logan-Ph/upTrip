@@ -1,6 +1,5 @@
 import {React, useState } from "react";
 import { ArrowLongUpIcon } from "@heroicons/react/24/solid";
-import { Button } from '../components/Style'; 
 
 const ScrollUpButton = () =>{
     const[visible, setVisible] = useState(false);

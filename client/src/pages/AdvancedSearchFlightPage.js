@@ -19,7 +19,7 @@ export default function AdvancedSearchFlightPage(){
     return(
         <>
         <div className='bg-[#FAFBFC] md:p-10 md:overflow-y-auto'>
-            <section className="mx-auto max-w-8xl px-6 py-6">
+            <section className="mx-auto max-w-7xl px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-3">
 
                         <div className="relative">
@@ -29,8 +29,8 @@ export default function AdvancedSearchFlightPage(){
                         </div>
 
                         <div className="col-span-2">
-                            <div className="flex items-center justify-between mt-10 md:mt-0">
-                                <div className="w-1/2">
+                            <div className="flex items-center justify-between">
+                                <div className="w-1/2 mt-10 md:mt-0">
                                     <p className="text-sm md:text-lg">Showing 3 of 3164 properties found in <span className="font-bold text-sm md:text-lg text-wrap md:text-nowrap text-[#EF4040]">Ho Chi Minh City</span></p>
                                 </div>
 
@@ -38,6 +38,7 @@ export default function AdvancedSearchFlightPage(){
                                 <SortOption/>
                                 </div>
                             </div>
+                            
                             <Suspense fallback={<ASearchSkeleton/>}> <AdvancedFlightCard/>
                             </Suspense>      
                         </div>
