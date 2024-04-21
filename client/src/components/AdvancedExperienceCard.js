@@ -88,23 +88,23 @@ const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition 
                 <div className="col-span-2 space-y-2 py-4 px-1 flex flex-col">
                     <div
                         ref={textRef}
-                        className={`text-lg font-bold ${isTruncated ? 'truncate' : ''}`}
+                        className={`text-sm md:text-lg font-bold ${isTruncated ? 'truncate' : ''}`}
                         >
                         Mekong Delta (My Tho - Ben Tre) 1 day | Optional: Small Group - Better Lunch
                         </div>
                     <div className="flex items-center space-x-2">
                         <div>
-                        <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                        <svg className="w-4 h-4 md:w-5 md:h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                               <path fill="#FFA732" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
                         </div>
-                        <div className="border border-[#CDEAE1] px-2 bg-[#CDEAE1]">
-                            <p className="font-bold">4.6<span className="font-light">/5</span></p>
+                        <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
+                            <p className="font-bold text-sm md:text-md">4.6<span className="text-sm md:text-md font-light">/5</span></p>
                         </div>
                     </div>
 
                     {/* cai nay luc rap backend, Nhi de no display cai keyword ngta search duoc hong */}
-                    <div className="text-md font-light">
-                        Departs from <span className="font-bold text-[#FF8682]">Ho Chi Minh City</span>
+                    <div className="text-sm md:text-md font-light">
+                        Departs from <span className="font-bold text-[#FF8682] text-sm md:text-md">Ho Chi Minh City</span>
                     </div>
 
                     {/* price tracking among website */}
@@ -132,7 +132,7 @@ const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition 
                             <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 px-8 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0">
                                 <div className="mx-auto">
                                     <Link to="" >
-                                        <img src={heart.imgLogo} alt="website logo" className="w-[80px] h-[40px] object-cover cursor-pointer"/>
+                                        <img src={heart.imgLogo} alt="website logo" className="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"/>
                                     </Link>
                                     
                                 </div>
@@ -198,17 +198,17 @@ const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition 
                 </div>
 
                 <div className="col-span-2 space-y-2 py-4 px-1 flex flex-col">
-                    <div className="text-lg font-bold">
+                    <div className="text-sm md:text-lg font-bold">
                        Sai Gon Central Post Office
                     </div>
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-1">
                             <div>
-                            <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <svg className="w-4 h-4 md:w-5 md:h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                                 <path fill="#FFA732" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
                             </div>
                             <div className="border border-[#CDEAE1] px-2 bg-[#CDEAE1]">
-                                <p className="font-bold">4.5<span className="font-light">/5</span></p>
+                                <p className="font-bold text-sm md:text-md">4.5<span className="font-light text-sm md:text-md">/5</span></p>
                             </div>
                         </div>
                         <div>|</div>
@@ -217,7 +217,7 @@ const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition 
                         <div className="flex items-center">
                             <div className="pr-1">
                                 <svg
-                                    className="w-5 h-5"
+                                    className="w-4 h-4 md:w-5 md:h-5"
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 384 512"
                                 >
@@ -227,7 +227,7 @@ const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition 
                                     />
                                 </svg>
                             </div>
-                            <div className="font-light text-md">
+                            <div className="font-light text-sm md:text-md">
                                 Ho Chi Minh City
                             </div>
                         </div>
@@ -260,7 +260,7 @@ const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition 
                             <div className="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 px-8 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0">
                                 <div className="mx-auto">
                                     <Link to="" >
-                                        <img src={heart.imgLogo} alt="website logo" className="w-[80px] h-[40px] object-cover cursor-pointer"/>
+                                        <img src={heart.imgLogo} alt="website logo" className="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"/>
                                     </Link>
                                     
                                 </div>
