@@ -33,6 +33,17 @@ const {
     bookingAdvancedSearchHotelURL,
     agodaAdvancedSearchHotelURL,
     agodaAdvancedSearchHotelPayload,
+    agodaGetFlightPayload,
+    agodaGetFlightURL,
+    tripComGetFlightPayload,
+    tripComGetFlightURL,
+    myTripGetFlightPayload,
+    myTripGetFlightURL,
+    myTripGetMoreFlightPayload,
+    myTripGetMoreFlightURL,
+    bayDepGetFlightPayload,
+    bayDepGetFlightURL,
+    airportOptions
 } = require("../utils/requestOptions");
 puppeteer.use(StealthPlugin());
 
@@ -552,3 +563,206 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         return res.status(500).json(error);
     }
 };
+
+exports.advancedSearchFlights = async (req, res) => {
+	const url = agodaGetFlightURL;
+	const items = [];
+	const payload = agodaGetFlightPayload(req.body)
+	await axios.post(url, payload, {
+		headers: {
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+		}
+	})
+		.then(res => {
+			for (const item of res.data.trips[0].bundles) {
+				const flightNo = []
+				const airline = []
+				let arrival
+				for (const flight of item.outboundSlice.segments) {
+					flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
+					airline.push(flight.carrierContent.carrierCode)
+					arrival = flight.arrivalDateTime
+				}
+				items.push({
+					flightNo: flightNo,
+					departureTime: item.outboundSlice.segments[0].departDateTime,
+					arrivalTime: arrival,
+					airline: airline,
+					agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
+					tripComPrice: "null",
+					myTripPrice: "null",
+					bayDepPrice: "null",
+				})
+			}
+			console.log(items)
+		})
+		.catch(er => {
+			return res.status(500).json(er)
+		})
+	return res.status(200).json(items)
+}
+
+exports.getTripComFlight = async (req, res) => {
+	const items = []
+	let url = tripComGetFlightURL;
+	let payload = tripComGetFlightPayload(req.body)
+	await axios.post(url, payload, {
+		headers: {
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+		}
+	})
+		.then(res => {
+			for (const item of res.data.data.flightListSearch.flightProductList) {
+				const flightNo = []
+				const airline = []
+				for (const flight of item.segmentList[0].flightList) {
+					flightNo.push(flight.flightNo)
+					airline.push(flight.airline.code)
+				}
+				items.push({
+					flightNo: flightNo,
+					airline: airline,
+					// departure: item.segmentList[0].departDateTime.replace(' ', 'T'),
+					// arrival: item.segmentList[0].arriveDateTime.replace(' ', 'T'),
+					tripcomPrice: item.price.averagePrice
+				})
+			}
+		})
+		.catch(er => {
+			return res.status(500).json(er)
+		})
+	return res.status(200).json(items)
+}
+
+exports.getMyTripFlight = async (req, res) => {
+	const items = []
+	let totalFlight;
+	await axios.post(myTripGetFlightURL, myTripGetFlightPayload(req.body), {
+		headers: {
+			'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+		}
+	})
+		.then(res => {
+			totalFlight = res.data.data.search.flightsCount
+			for (const item of res.data.data.search.flights) {
+				const flightNo = []
+				const airline = []
+				let arrival;
+				for (const flight of item.bounds[0].segments) {
+					if (flight.__typename == 'TripSegment') {
+						flightNo.push(flight.flightNumber)
+						airline.push(flight.marketingCarrier.code)
+						arrival = flight.arrivedAt
+					}
+				}
+				items.push({
+					flightNo: flightNo,
+					//airline: airline,
+					//departure: item.bounds[0].segments[0].departuredAt,
+					//arrival: arrival,
+					myTripPrice: item.travelerPrices[0].price.price.value / 100 * 25000,
+				})
+			}
+		})
+		.catch(er => {
+			return res.status(500).json(er)
+		})
+	while (items.length < totalFlight) {
+		await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
+			headers: {
+				'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+			}
+		})
+			.then(res => {
+				for (const item of res.data.data.search.flights) {
+					const flightNo = []
+					const airline = []
+					let arrival;
+					for (const flight of item.bounds[0].segments) {
+						if (flight.__typename == 'TripSegment') {
+							flightNo.push(flight.flightNumber)
+							airline.push(flight.marketingCarrier.code)
+							arrival = flight.arrivedAt
+						}
+					}
+					items.push({
+						flightNo: flightNo,
+						//airline: airline,
+						//departure: item.bounds[0].segments[0].departuredAt,
+						//arrival: arrival,
+						myTripPrice: item.travelerPrices[0].price.price.value / 100 * 25000,
+					})
+				}
+			})
+			.catch(er => {
+				return res.status(500).json(er)
+			})
+	}
+	return res.status(200).json(items)
+}
+
+exports.getBayDepFlight = async (req, res) => {
+	try {
+		const items = []
+		const sendRequest = async (url, payload) => {
+			try {
+				const res = await axios.post(url, payload, {
+					headers: {
+						'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+					}
+				});
+				return res
+			} catch (error) {
+				throw error;
+			}
+		};
+		const requests = bayDepGetFlightPayload(req.body).map(payload => {
+			return sendRequest(bayDepGetFlightURL, payload);
+		});
+		Promise.all(requests)
+			.then(response => {
+				for (const res of response) {
+					// console.log(res.data.ListFareOption[0])
+					for (const item of res.data.ListFareOption) {
+						const flightNo = []
+						const airline = []
+						airline.push(item.Carrier)
+						for (const flight of (item.ListFareData[0].ListFlight[0].FlightNumber).split(',')) {
+							flightNo.push(flight)
+						}
+						items.push({
+							flightNo: flightNo,
+							//airline: airline,
+							//departure: item.ListFareData[0].ListFlight[0].StartDate,
+							//arrival: item.ListFareData[0].ListFlight[0].EndDate,
+							bayDepPrice: item.PriceAdt
+						})
+					}
+				}
+				return res.status(200).json(items)
+			})
+			.catch(error => {
+				throw error
+			});
+	} catch (error) {
+		return res.status(500).json(error);
+	}
+}
+
+exports.flightSearchAutocomplete = async (req, res) => {
+	try {
+		const options = (req.body.options) ? req.body.options : airportOptions
+		const result = []
+		for (const opt of options) {
+			if (stringSimilarity(req.body.input, opt.cityName) > 0) {
+				opt.similarity = stringSimilarity(req.body.input, opt.cityName)
+				result.push(opt)
+			}
+		}
+		result.sort((a, b) => b.similarity - a.similarity);
+		return res.status(200).json(result)
+	} catch (err) {
+		console.log(err)
+		return res.status(500).json(err)
+	}
+}
