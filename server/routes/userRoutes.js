@@ -27,8 +27,8 @@ router.post('/advanced-search/hotels', userController.advancedSearchHotels)
 router.post('/price-comparison/hotels', userController.priceComparisonHotels)
 
 // advanced search for hotels to do price comparison
-router.get('/advanced-search/hotels/agoda', userController.advancedSearchHotelAgoda)
-router.get('/advanced-search/hotels/booking', userController.advancedSearchHotelBooking)
+router.post('/advanced-search/hotels/agoda', userController.advancedSearchHotelAgoda)
+router.post('/advanced-search/hotels/booking', userController.advancedSearchHotelBooking)
 
 // quick search for hotels
 router.get('/quick-search/hotels/:keyword', userController.quickSearchHotels)

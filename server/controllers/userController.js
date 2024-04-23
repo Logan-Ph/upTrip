@@ -2,6 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
+const simlarity = require('similarity')
 const User = require("../models/user");
 const {
     generateToken,
@@ -10,10 +11,6 @@ const {
     getDecodedCurrentTimeAgoda,
 } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
-const userAgent =
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
-const puppeteer = require("puppeteer-extra");
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const { default: axios } = require("axios");
 const {
     tripQuickSearchURL,
@@ -34,15 +31,7 @@ const {
     agodaAdvancedSearchHotelURL,
     agodaAdvancedSearchHotelPayload,
 } = require("../utils/requestOptions");
-puppeteer.use(StealthPlugin());
-
-let options = {
-    args: ["--disabled-setuid-sandbox", "--no-sandbox"],
-    executablePath:
-        process.env.NODE_ENV === "production"
-            ? process.env.PUPPETEER_EXECUTABLE_PATH
-            : puppeteer.executablePath(),
-};
+const similarity = require("similarity");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
@@ -326,7 +315,7 @@ exports.advancedSearchHotels = async (req, res) => {
             adult: Number(adult),
 
             // children: 0, // children=3&ages=0,15,4 -> decoded version
-            children:Number(children),
+            children: Number(children),
             searchBoxArg: "t",
             travelPurpose: 0,
             ctm_ref: "ix_sb_dl",
@@ -337,10 +326,10 @@ exports.advancedSearchHotels = async (req, res) => {
         };
 
         const href = `https://us.trip.com/hotels/list?city=${queryParam.city}&cityName=${queryParam.cityName}&provinceId=${queryParam.provinceId}&countryId=${queryParam.countryId}&districtId=${queryParam.districtId}&checkin=${queryParam.checkin}&checkout=${queryParam.checkout}&barCurr=${queryParam.barCurr}&crn=${queryParam.crn}&adult=${queryParam.adult}&children=${queryParam.children}&searchBoxArg=${queryParam.searchBoxArg}&travelPurpose=${queryParam.travelPurpose}&ctm_ref=${queryParam.ctm_ref}&domestic=${queryParam.domestic}&listFilters=${queryParam.listFilters}&locale=${queryParam.locale}&curr=${queryParam.curr}`;
-        if (preHotelIds) preHotelIds = preHotelIds.map(Number)
+        if (preHotelIds) preHotelIds = preHotelIds.map(Number);
 
         const payload = tripGetHotelListURLPayload(
-            (preHotelIds) ? preHotelIds : [],
+            preHotelIds ? preHotelIds : [],
             queryParam.checkin,
             queryParam.checkout,
             queryParam.countryId,
@@ -354,18 +343,24 @@ exports.advancedSearchHotels = async (req, res) => {
             href
         );
 
-        const response = await axios.post(
-            tripGetHotelListIdURL,
-            payload,
-            {
-                headers: headers,
-            }
-        );
-        
-        const hotelName = response.data.hotelList.map(hotel => hotel.hotelBasicInfo.hotelName)
-        preHotelIds = response.data.hotelList.map(hotel => hotel.hotelBasicInfo.hotelId)
+        const response = await axios.post(tripGetHotelListIdURL, payload, {
+            headers: headers,
+        });
 
-        return res.status(200).json({ hotelList: response.data.hotelList, hotelName, preHotelIds });
+        const hotelName = response.data.hotelList.map(
+            (hotel) => hotel.hotelBasicInfo.hotelName
+        );
+        preHotelIds = response.data.hotelList.map(
+            (hotel) => hotel.hotelBasicInfo.hotelId
+        );
+
+        return res
+            .status(200)
+            .json({
+                hotelList: response.data.hotelList,
+                hotelName,
+                preHotelIds,
+            });
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
@@ -422,13 +417,27 @@ exports.bookingAutoComplete = async (req, res) => {
 
 exports.priceComparisonHotels = async (req, res) => {
     try {
-        const {hotelNames} = req.body
-        const agodaPromises = hotelNames.map(hotelName =>
-            axios.post('http://localhost:4000/agoda/autocomplete', { keyword: hotelName })
+        const {
+            hotelNames,
+            cityName,
+            checkin,
+            checkout,
+            crn,
+            adult,
+            children,
+            childAges,
+        } = req.body;
+
+        const agodaPromises = hotelNames.map((hotelName) =>
+            axios.post("http://localhost:4000/agoda/autocomplete", {
+                keyword: hotelName + " " + cityName,
+            })
         );
 
-        const bookingPromises = hotelNames.map(hotelName =>
-            axios.post('http://localhost:4000/booking/autocomplete', { keyword: hotelName })
+        const bookingPromises = hotelNames.map((hotelName) =>
+            axios.post("http://localhost:4000/booking/autocomplete", {
+                keyword: hotelName + " " + cityName,
+            })
         );
 
         // Wait for all promises from both agoda and booking to resolve
@@ -436,20 +445,70 @@ exports.priceComparisonHotels = async (req, res) => {
         const bookingResults = await Promise.all(bookingPromises);
 
         // Extract data from responses
-        const agodaHotels = agodaResults.map(response => response.data);
-        const bookingHotels = bookingResults.map(response => response.data);
+        const agodaHotels = agodaResults.map((response) => response.data);
+        const bookingHotels = bookingResults.map((response) => response.data);
 
         // Combine the results into a single response
-        const combinedResults = hotelNames.map((hotelName, index) => ({
+        let combinedResults = hotelNames.map((hotelName, index) => ({
             hotelName,
             agoda: agodaHotels[index],
-            booking: bookingHotels[index]
+            booking: bookingHotels[index],
         }));
+
+        // Send POST requests to "/advanced-search/hotels/agoda" for each hotel
+        const agodaAdvancedSearchPromises = combinedResults.map((hotel) => {
+            const payload = {
+                objectId: hotel?.agoda?.matchHotel?.ObjectId,
+                checkin: checkin.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                checkout: checkout.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                rooms: crn,
+                adults: adult,
+                children: children,
+                childAges: childAges,
+                cityId: hotel?.agoda?.matchHotel?.CityId,
+            };
+
+            return axios.post("http://localhost:4000/advanced-search/hotels/agoda", payload)
+                .then(response => response.data.pricing.offers[0].roomOffers[0].room.pricing) // Extract only the data needed
+                .catch(err => {
+                    return null; // Return null or appropriate fallback if the request fails
+                });
+        });
+
+        // Send POST requests to "/advanced-search/hotels/booking" for each hotel
+        const bookingAdvancedSearchPromises = combinedResults.map((hotel) => {
+            const payload = {
+                keyword : hotel.booking?.matchHotel?.value,
+                checkin: checkin.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                checkout: checkout.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                group_adults: adult,
+                no_rooms: crn,
+                group_children: children,
+                age: childAges
+            }
+
+            return axios.post("http://localhost:4000/advanced-search/hotels/booking", payload)
+                .then(response => response.data)
+                .catch(err => {
+                    return null;
+                })
+        })
+
+        // Wait for all advanced search promises to resolve
+        const agodaAdvancedSearchResults = await Promise.all(agodaAdvancedSearchPromises);
+        const bookingAdvancedSearchResults = await Promise.all(bookingAdvancedSearchPromises);
+
+        // Filter out any null responses due to errors
+        combinedResults = combinedResults.map((hotel, index) => ({
+            ...hotel,
+            agodaPrice: agodaAdvancedSearchResults[index],
+            bookingPrice: bookingAdvancedSearchResults[index]
+        })).filter(hotel => hotel.advancedSearch !== null);
 
         return res.status(200).json(combinedResults);
     } catch (error) {
-        console.log(error);
-        return res.status(500).json(error);
+        console.log("Error in priceComparisonHotels:", error);
+        return res.status(500).json({ message: "Internal Server Error", error: error });
     }
 };
 
@@ -459,7 +518,6 @@ exports.advancedSearchHotelAgoda = async (req, res) => {
             objectId,
             checkin,
             checkout,
-            los,
             rooms,
             adults,
             children,
@@ -467,19 +525,23 @@ exports.advancedSearchHotelAgoda = async (req, res) => {
             cityId,
         } = req.body;
 
+        if (objectId === "10901788"){
+            console.log(req.body)
+        }
+
         const payload = agodaAdvancedSearchHotelPayload(
-            objectId,
+            Number(objectId),
             checkin,
             checkout,
-            los,
-            rooms,
-            adults,
-            children,
-            childAges,
-            cityId
+            Number(rooms),
+            Number(adults),
+            Number(children),
+            childAges || [],
+            Number(cityId)
         );
 
         const headers = {
+            "Ag-Language-Locale": "vi-vn",
             "User-Agent":
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
         };
@@ -494,7 +556,6 @@ exports.advancedSearchHotelAgoda = async (req, res) => {
             .status(200)
             .json(response.data?.data?.citySearch?.properties[0]);
     } catch (error) {
-        console.log(error);
         return res.status(500).json(error);
     }
 };
@@ -515,9 +576,9 @@ exports.advancedSearchHotelBooking = async (req, res) => {
             keyword,
             checkin,
             checkout,
-            group_adults,
-            no_rooms,
-            group_children,
+            Number(group_adults),
+            Number(no_rooms),
+            Number(group_children),
             age
         );
 
@@ -538,7 +599,7 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         const scriptTag = $('script[data-capla-store-data="apollo"]');
         // Extract the content of the script tag
         const scriptContent = JSON.parse(scriptTag.html());
-        const searchQueriesArray = Object.values(
+        const searchQueriesArray = Object?.values(
             scriptContent["ROOT_QUERY"]["searchQueries"]
         );
         const hotel = searchQueriesArray[1]["results"][0]; // select the name by ".displayName.text"
@@ -546,9 +607,8 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         // console.log(Hotel.displayName);
         // console.log(Hotel.blocks);
 
-        return res.status(200).json({ hotel });
+        return res.status(200).json({ price: hotel.blocks });
     } catch (error) {
-        console.log(error);
         return res.status(500).json(error);
     }
 };

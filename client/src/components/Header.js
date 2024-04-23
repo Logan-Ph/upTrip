@@ -5,7 +5,6 @@ export default function Header() {
         <>
             <div class="bg-[#8DD3BB] md:px-10">
                 <NavBar />
-
                 <form class="static mx-auto max-w-7xl px-6 pb-10">
                     <label
                         for="default-search"

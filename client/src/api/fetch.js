@@ -40,9 +40,9 @@ export function fetchHotelAdvancedSearch(payload) {
         });
 }
 
-export function fetchHotelPriceComparison(hotelNames) {
+export function fetchHotelPriceComparison(payload) {
     return axios
-        .post(`/price-comparison/hotels`, { hotelNames }, options)
+        .post(`/price-comparison/hotels`, payload , options)
         .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));

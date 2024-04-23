@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 
-export default function successNotify(message) {
-    toast.success(message, {
+export default function warningNotify(message) {
+    toast.warning(message, {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: true,
