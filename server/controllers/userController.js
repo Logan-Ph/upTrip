@@ -78,7 +78,7 @@ exports.refreshToken = async (req, res) => {
         if (!user) return res.status(404).send("User not found");
 
         const accessToken = generateToken(user);
-        res.status(200).json({ accessToken: accessToken, roles: [2001] });
+        res.status(200).json({ _id: user._id, email: user.email, accessToken: accessToken, roles: [2001] });
     });
 };
 

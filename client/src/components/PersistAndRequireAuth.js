@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useRefreshToken from "../hooks/useRefreshToken";
-import PageNotFound from "../pages/PageNotFound"
 
-const PersistAndRequireAuth = () => {
+const PersistAndRequireAuth = ({ header, footer }) => {
     const [isLoading, setIsLoading] = useState(true);
     const { auth } = useAuth();
     const refresh = useRefreshToken();
@@ -37,11 +36,13 @@ const PersistAndRequireAuth = () => {
         return null;
     }
 
-    if (!auth?.accessToken) {
-        return <PageNotFound/>;
-    }
-
-    return <Outlet />;
+    return (
+        <>
+            {header}
+            <Outlet />
+            {footer}
+        </>
+    );
 };
 
 export default PersistAndRequireAuth;

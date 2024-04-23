@@ -63,8 +63,7 @@ export default function Header() {
                             </li>
                             <li class="" role="presentation">
                                 <button
-                                    class="inline-block p-4
-                  text-white bg-[#231F20] dark:text-white"
+                                    class="inline-block p-4 text-white bg-[#231F20] dark:text-white"
                                     id="flight-tab"
                                     data-tabs-target="#flight"
                                     type="button"

@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy } from "react";
 import HomeHeader from "./HomeHeader";
 import Header from "./Header";
@@ -11,24 +11,13 @@ import SignUp from "../pages/SignUp";
 import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
-const Admin = lazy(() => import("../pages/Admin"));
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {
-    const UserLayout = ({ header, footer }) => {
-        return (
-            <>
-                {header}
-                <Outlet />
-                {footer}
-            </>
-        );
-    };
-
     const BrowserRoutes = createBrowserRouter([
         {
             path: "/",
-            element: <UserLayout header={<HomeHeader />} footer={<footer />} />,
+            element: <PersistAndRequireAuth header={<HomeHeader />} footer={<footer />} />,
             children: [
                 {
                     path: "/",
@@ -42,7 +31,7 @@ export default function Router() {
         },
         {
             path: "/",
-            element: <UserLayout header={<Header />} footer={<footer />} />,
+            element: <PersistAndRequireAuth header={<Header />} footer={<footer />} />,
             children: [
                 {
                     path: "/quick-search",
@@ -73,16 +62,6 @@ export default function Router() {
         {
             path: "*",
             element: <PageNotFound />,
-        },
-        {
-            path: "/",
-            element: <PersistAndRequireAuth />,
-            children: [
-                {
-                    path: "/admin",
-                    element: <Admin />,
-                },
-            ],
         },
     ]);
 

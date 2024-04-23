@@ -12,7 +12,7 @@ import { Suspense, useState } from "react";
 export default function QuickSearch() {
     const [searchParams] = useSearchParams();
     const keyword = searchParams.get("keyword");
-    const [type, setType] = useState("Stays");
+    const [type, setType] = useState("All");
 
     const { data: hotels, isLoading: hotelsLoading } = useQuery({
         queryKey: ["quick-search", "hotels", keyword],
