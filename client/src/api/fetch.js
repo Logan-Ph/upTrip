@@ -48,3 +48,40 @@ export function fetchHotelPriceComparison(hotelNames) {
             return Promise.reject(new Error(er.response.data.message));
         });
 }
+
+export function fetchFlightAdvancedSearch(payload) {
+    return axios
+        .post('advanced-search/flights', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+export function fetchTripComFlight(payload) {
+    return axios
+        .post('search-tripcom-flights', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+export function fetchMyTripFlight(payload) {
+    return axios
+        .post('search-my-trip-flights', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+export function fetchBayDepFlight(payload) {
+    return axios
+        .post('search-bay-dep-flights', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+
+// export function fetchFlightPriceComparison(payload, flightNo) {
+
+// }

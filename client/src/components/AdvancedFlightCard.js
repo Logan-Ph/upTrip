@@ -1,13 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-export default function AdvancedFlightCard(){
+export default function AdvancedFlightCard( {flight} ){
     return(
         <>
         <div>
-            <FlightCard/>     
-            <FlightCard/>     
-            <FlightCard/>     
-            <FlightCard/>     
-            <FlightCard/>     
+            <FlightCard
+                key={flight.flightNo}
+                from={flight.from}
+                to={flight.to}
+                departure={flight.departureTime}
+                arrival={flight.arrivalTime}
+                stop={flight.flightNo.length}
+                carrier={flight.airline[0]}
+                tripComPrice={flight.agodaPrice}
+            />     
 
         </div>
 
@@ -15,7 +20,7 @@ export default function AdvancedFlightCard(){
     )
 }
 
-function FlightCard({imgSrc}){
+function FlightCard({from, to, departure, arrival, stop, carrier, agodaPrice, tripComPrice, myTripPrice, bayDepPrice }){
     const websiteLogo =[
         {imgLogo: "https://ik.imagekit.io/Uptrip/traveloka?updatedAt=1712828670481"},
         {imgLogo: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"},
@@ -65,7 +70,7 @@ function FlightCard({imgSrc}){
             <div className="flex-col space-y-2 py-4 px-4 md:px-0 col-span-2">
                 <div className="grid grid-cols-3 space-x-4 md:space-x-6">
                     <div className="flex-col">
-                        <div className="font-bold text-xs md:text-md">6:00-7:30am</div>
+                        <div className="font-bold text-xs md:text-md">{departure}-{arrival}</div>
                         <div className="font-extralight text-xs md:text-sm text-[#9A9A9A] text-nowrap">Vietnam Airlines</div>
                     </div>
                     <div className="mx-auto font-light text-xs md:text-md  text-black">none stop</div>
@@ -99,7 +104,7 @@ function FlightCard({imgSrc}){
                                     <img src={heart.imgLogo} alt="website logo" className="w-[100px] h-[34px] object-cover"/>
                                 </div>
                                 <div className="mx-auto">
-                                    <p className="text-xs md:text-lg text-[#222160] font-bold">1500000VND</p>
+                                    <p className="text-xs md:text-lg text-[#222160] font-bold">{tripComPrice}</p>
                                 </div>
                             </div>
 

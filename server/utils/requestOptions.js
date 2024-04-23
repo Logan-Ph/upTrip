@@ -958,9 +958,9 @@ const tripComGetFlightPayload = (data) => {
                         }
                     ],
                     "passengerCount": {
-                        "adult": data.adult,
-                        "child": data.child,
-                        "infant": data.infant
+                        "adult": parseInt(data.adult),
+                        "child": parseInt(data.child),
+                        "infant": parseInt(data.infant)
                     },
                     "tripType": 1
                 },
