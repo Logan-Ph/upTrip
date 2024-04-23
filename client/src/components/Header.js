@@ -1,6 +1,79 @@
 import NavBar from "./Navbar";
+import React, { useState } from "react";
+
+
+const Tabs = () => {
+    const [activeTab, setActiveTab] = useState(1);
+
+    const tabClass = (tabNumber) =>
+        activeTab === tabNumber
+            ? "bg-white text-black"
+            : "bg-base-100 text-base-500";
+
+    const contentClass = (tabNumber) =>
+        activeTab === tabNumber ? "block" : "hidden";
+
+    return (
+        <div role="tablist" className="tabs tabs-lifted">
+            <input
+                type="radio"
+                name="my_tabs_2"
+                role="tab"
+                className={`tab ${tabClass(1)}`}
+                aria-label="Tab 1"
+                onClick={() => setActiveTab(1)}
+            />
+            <div
+                role="tabpanel"
+                className={`tab-content border-base-300 rounded-box p-6 ${contentClass(
+                    1
+                )}`}
+            >
+                Tab content 1
+            </div>
+
+            <input
+                type="radio"
+                name="my_tabs_2"
+                role="tab"
+                className={`tab ${tabClass(2)}`}
+                aria-label="Tab 2"
+                onClick={() => setActiveTab(2)}
+            />
+            <div
+                role="tabpanel"
+                className={`tab-content border-base-300 rounded-box p-6 ${contentClass(
+                    2
+                )}`}
+            >
+                Tab content 2
+            </div>
+
+            <input
+                type="radio"
+                name="my_tabs_2"
+                role="tab"
+                className={`tab ${tabClass(3)}`}
+                aria-label="Tab 3"
+                onClick={() => setActiveTab(3)}
+            />
+            <div
+                role="tabpanel"
+                className={`tab-content border-base-300 rounded-box p-6 ${contentClass(
+                    3
+                )}`}
+            >
+                Tab content 3
+            </div>
+        </div>
+    );
+};
+
+
 
 export default function Header() {
+    const [activeTab, setActiveTab] = useState("stay"); // Default active tab is 'stay'
+
     return (
         <>
             <div class="bg-[#8DD3BB] md:px-10">
@@ -51,41 +124,56 @@ export default function Header() {
                         >
                             <li class="" role="presentation">
                                 <button
-                                    class="inline-block p-4 rounded-tl-lg text-white active:text-white bg-[#231F20] active:bg-white dark:text-white"
+                                    className={`inline-block p-4 rounded-tl-lg ${
+                                        activeTab === "stay"
+                                            ? "bg-white text-black"
+                                            : "text-white bg-[#231F20] dark:text-white"
+                                    }`}
                                     id="stay-tab"
+                                    onClick={() => setActiveTab("stay")}
                                     data-tabs-target="#stay"
                                     type="button"
                                     role="tab"
                                     aria-controls="stay"
-                                    aria-selected="false"
+                                    aria-selected={activeTab === "stay"}
                                 >
-                                    Stay
+                                    <i class="fa-solid fa-hotel"></i> Stay
                                 </button>
                             </li>
                             <li class="" role="presentation">
                                 <button
-                                    class="inline-block p-4
-                  text-white bg-[#231F20] dark:text-white"
+                                    className={`inline-block p-4 ${
+                                        activeTab === "flight"
+                                            ? "bg-white text-black"
+                                            : "text-white bg-[#231F20] dark:text-white"
+                                    }`}
                                     id="flight-tab"
+                                    onClick={() => setActiveTab("flight")}
                                     data-tabs-target="#flight"
                                     type="button"
                                     role="tab"
                                     aria-controls="flight"
-                                    aria-selected="false"
+                                    aria-selected={activeTab === "flight"}
                                 >
-                                    Flight
+                                    <i class="fa-solid fa-plane"></i> Flight
                                 </button>
                             </li>
                             <li class="" role="presentation">
                                 <button
-                                    class="inline-block p-4 rounded-tr-lg text-white bg-[#231F20] dark:text-white"
+                                    className={`inline-block p-4 rounded-tr-lg ${
+                                        activeTab === "experience"
+                                            ? "bg-white text-black"
+                                            : "text-white bg-[#231F20] dark:text-white"
+                                    }`}
                                     id="experience-tab"
+                                    onClick={() => setActiveTab("experience")}
                                     data-tabs-target="#experience"
                                     type="button"
                                     role="tab"
                                     aria-controls="experience"
-                                    aria-selected="false"
+                                    aria-selected={activeTab === "experience"}
                                 >
+                                    <i class="fa-solid fa-umbrella-beach"></i>{" "}
                                     Experience
                                 </button>
                             </li>
@@ -421,6 +509,7 @@ export default function Header() {
                                                             aria-describedby="helper-text-explanation"
                                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                                             placeholder="Age"
+                                                            max={17}
                                                             required
                                                         />
                                                     </form>
@@ -437,6 +526,7 @@ export default function Header() {
                                                             aria-describedby="helper-text-explanation"
                                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                                             placeholder="Age"
+                                                            max={17}
                                                             required
                                                         />
                                                     </form>
@@ -453,6 +543,7 @@ export default function Header() {
                                                             aria-describedby="helper-text-explanation"
                                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                                             placeholder="Age"
+                                                            max={17}
                                                             required
                                                         />
                                                     </form>
@@ -469,6 +560,7 @@ export default function Header() {
                                                             aria-describedby="helper-text-explanation"
                                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                                                             placeholder="Age"
+                                                            max={17}
                                                             required
                                                         />
                                                     </form>
@@ -698,186 +790,192 @@ export default function Header() {
                                             </div>
                                         </div>
 
-                                        {/* Ask for number of passenger */}
-                                        <button
-                                            id="dropdownDefaultButton"
-                                            data-dropdown-toggle="dropdown"
-                                            class="rounded-t-lg   bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 text-gray-500 text-sm px-5 py-2.5 text-center inline-flex items-center h-[56px] relative p-2.5 pt-5 ps-10 w-full md:w-1/3 justify-between mb-2"
-                                            type="button"
-                                        >
-                                            <label
-                                                for="floating_filled"
-                                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                                        <div className="relative w-full md:w-1/3 mb-2 grow border-b-2 border-gray-300">
+                                            {/* Ask for number of passenger */}
+                                            <button
+                                                id="dropdownDefaultButton"
+                                                data-dropdown-toggle="dropdown"
+                                                class=" text-gray-900 bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-t-lg  md:border-none text-sm px-5 py-2.5 text-center inline-flex items-center h-[56px] relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none focus:border-blue-600"
+                                                type="button"
                                             >
-                                                No. of Passengers
-                                            </label>
-                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
-                                            </div>
-                                            1 Adult, 1 Child, 0 Infant{" "}
-                                            <svg
-                                                class="w-2.5 h-2.5 ms-3"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 10 6"
-                                            >
-                                                <path
-                                                    stroke="currentColor"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="m1 1 4 4 4-4"
-                                                />
-                                            </svg>
-                                        </button>
+                                                <label
+                                                    for="floating_filled"
+                                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                                                >
+                                                    No. of Passengers
+                                                </label>
+                                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                    <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
+                                                </div>
+                                                1 Adult, 1 Child, 0 Infant{" "}
+                                                <svg
+                                                    class="w-2.5 h-2.5 ms-3"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 10 6"
+                                                >
+                                                    <path
+                                                        stroke="currentColor"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="m1 1 4 4 4-4"
+                                                    />
+                                                </svg>
+                                            </button>
 
-                                        {/* <!-- Dropdown menu --> */}
-                                        <div
-                                            id="dropdown"
-                                            class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-full"
-                                        >
+                                            {/* <!-- Dropdown menu --> */}
                                             <div
-                                                class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
-                                                aria-labelledby="dropdownDefaultButton"
+                                                id="dropdown"
+                                                class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-full"
                                             >
-                                                <div class="flex justify-between">
-                                                    <div class="flex flex-col">
-                                                        <div>
-                                                            <i class="fa-solid fa-child"></i>{" "}
-                                                            Adult
+                                                <div
+                                                    class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                                                    aria-labelledby="dropdownDefaultButton"
+                                                >
+                                                    <div class="flex justify-between">
+                                                        <div class="flex flex-col">
+                                                            <div>
+                                                                <i class="fa-solid fa-child"></i>{" "}
+                                                                Adult
+                                                            </div>
+                                                            <div>
+                                                                (age 12 and
+                                                                over)
+                                                            </div>
                                                         </div>
                                                         <div>
-                                                            (age 12 and over)
+                                                            <div class="flex space-x-3 items-center">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke-width="1.5"
+                                                                    stroke="currentColor"
+                                                                    class="w-6 h-6"
+                                                                >
+                                                                    <path
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    />
+                                                                </svg>
+                                                                <span class="text-lg">
+                                                                    {" "}
+                                                                    1{" "}
+                                                                </span>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke-width="1.5"
+                                                                    stroke="currentColor"
+                                                                    class="w-6 h-6"
+                                                                >
+                                                                    <path
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    />
+                                                                </svg>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div>
-                                                        <div class="flex space-x-3 items-center">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-width="1.5"
-                                                                stroke="currentColor"
-                                                                class="w-6 h-6"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                />
-                                                            </svg>
+                                                    <div class="flex justify-between">
+                                                        <div class="flex flex-col">
+                                                            <div>
+                                                                <i class="fa-solid fa-child-reaching"></i>{" "}
+                                                                Child
+                                                            </div>
+                                                            <div>
+                                                                (age 2 - 11)
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div class="flex space-x-3 items-center">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke-width="1.5"
+                                                                    stroke="currentColor"
+                                                                    class="w-6 h-6"
+                                                                >
+                                                                    <path
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    />
+                                                                </svg>
+                                                                <span class="text-lg">
+                                                                    {" "}
+                                                                    1{" "}
+                                                                </span>
 
-                                                            <span class="text-lg">
-                                                                {" "}
-                                                                1{" "}
-                                                            </span>
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-width="1.5"
-                                                                stroke="currentColor"
-                                                                class="w-6 h-6"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                />
-                                                            </svg>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke-width="1.5"
+                                                                    stroke="currentColor"
+                                                                    class="w-6 h-6"
+                                                                >
+                                                                    <path
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    />
+                                                                </svg>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="flex justify-between">
-                                                    <div class="flex flex-col">
+                                                    <div class="flex justify-between">
+                                                        <div class="flex flex-col">
+                                                            <div>
+                                                                <i class="fa-solid fa-baby"></i>{" "}
+                                                                Infant
+                                                            </div>
+                                                            <div>
+                                                                (below age 2)
+                                                            </div>
+                                                        </div>
                                                         <div>
-                                                            <i class="fa-solid fa-child-reaching"></i>{" "}
-                                                            Child
-                                                        </div>
-                                                        <div>(age 2 - 11)</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="flex space-x-3 items-center">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-width="1.5"
-                                                                stroke="currentColor"
-                                                                class="w-6 h-6"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                />
-                                                            </svg>
+                                                            <div class="flex space-x-3 items-center">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke-width="1.5"
+                                                                    stroke="currentColor"
+                                                                    class="w-6 h-6"
+                                                                >
+                                                                    <path
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    />
+                                                                </svg>
+                                                                <span class="text-lg">
+                                                                    {" "}
+                                                                    1{" "}
+                                                                </span>
 
-                                                            <span class="text-lg">
-                                                                {" "}
-                                                                1{" "}
-                                                            </span>
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-width="1.5"
-                                                                stroke="currentColor"
-                                                                class="w-6 h-6"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="flex justify-between">
-                                                    <div class="flex flex-col">
-                                                        <div>
-                                                            <i class="fa-solid fa-baby"></i>{" "}
-                                                            Infant
-                                                        </div>
-                                                        <div>(below age 2)</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="flex space-x-3 items-center">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-width="1.5"
-                                                                stroke="currentColor"
-                                                                class="w-6 h-6"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                />
-                                                            </svg>
-
-                                                            <span class="text-lg">
-                                                                {" "}
-                                                                1{" "}
-                                                            </span>
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke-width="1.5"
-                                                                stroke="currentColor"
-                                                                class="w-6 h-6"
-                                                            >
-                                                                <path
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                />
-                                                            </svg>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke-width="1.5"
+                                                                    stroke="currentColor"
+                                                                    class="w-6 h-6"
+                                                                >
+                                                                    <path
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                    />
+                                                                </svg>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
