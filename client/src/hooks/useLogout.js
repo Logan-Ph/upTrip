@@ -11,7 +11,6 @@ const useLogout = () => {
         try {
             await axios('/logout', { withCredentials: true })
             .then((res) => {
-                console.log(res.data);
                 handleNavigate();
             });
         } catch (err) {

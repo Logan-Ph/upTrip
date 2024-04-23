@@ -2,13 +2,11 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
-const simlarity = require('similarity')
 const User = require("../models/user");
 const {
     generateToken,
     generateRefreshToken,
     sendEmailVerification,
-    getDecodedCurrentTimeAgoda,
 } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
 const { default: axios } = require("axios");
@@ -31,7 +29,6 @@ const {
     agodaAdvancedSearchHotelURL,
     agodaAdvancedSearchHotelPayload,
 } = require("../utils/requestOptions");
-const similarity = require("similarity");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
