@@ -4,7 +4,8 @@ import Datepicker from "flowbite-datepicker/Datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTripAutoComplete } from "../api/fetch";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import warningNotify from "../utils/warningNotify";
 
 export default function Header() {
     const [tab, setTab] = useState("All");
@@ -559,17 +560,22 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
 }
 
 function QuickSearchStay({ setTab, setKeyword, keyword }) {
+    const navigate = useNavigate();
     const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
     const [dropdown, setDropdown] = useState(false);
     const [numberOfAdults, setNumberOfAdults] = useState(1);
     const [numberOfChildren, setNumberOfChildren] = useState(0);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
+    const [autocompletePayload, setAutocompletePayload] = useState();
     const [childrenAges, setChildrenAges] = useState([]);
+    const checkinDate = useRef();
+    const checkoutDate = useRef();
 
-    useQuery({
+    const { data, isFetched } = useQuery({
         queryKey: ["quick-search", "hotels", debouncedKeyword],
         queryFn: () => fetchTripAutoComplete(debouncedKeyword),
         refetchOnWindowFocus: false,
+        enabled: !!debouncedKeyword,
     });
 
     useEffect(() => {
@@ -577,6 +583,11 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
             setChildrenAges(new Array(numberOfChildren).fill(0));
         }
     }, [numberOfChildren]);
+
+    useEffect(() => {
+        setAutocompletePayload(null);
+    }, [debouncedKeyword]);
+
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -588,9 +599,7 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
         };
     }, [keyword]);
 
-    const checkinDate = useRef(null);
-    const checkoutDate = useRef(null);
-
+    
     useEffect(() => {
         let checkinPicker;
         let checkoutPicker;
@@ -621,6 +630,35 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
         };
     }, []);
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!autocompletePayload) {
+            warningNotify("Please select a location");
+            return
+        }
+
+        const payload = {
+            checkin: checkinDate.current.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3$1$2'),
+            checkout: checkoutDate.current.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3$1$2'),
+            city: autocompletePayload.city.geoCode,
+            cityName: autocompletePayload.resultWord,
+            countryId: autocompletePayload.country.geoCode,
+            districtId: 0,
+            provinceId: autocompletePayload.province.geoCode,
+            cityType: autocompletePayload.cityType,
+            latitude: autocompletePayload.coordinateInfos[3].latitude,
+            longitude: autocompletePayload.coordinateInfos[3].longitude,
+            searchCoordinate: autocompletePayload.coordinateInfos.map(info => `${info.coordinateType}_${info.latitude}_${info.longitude}_${info.accuracy}`).join('|'),
+            crn: numberOfRooms,
+            adult: numberOfAdults,
+            children: numberOfChildren,
+            domestic: false
+        }
+
+        navigate(`/advanced-hotel-search/?city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`);
+    }
+
     return (
         <>
             <div
@@ -650,11 +688,108 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                         <input
                                             class="h-[52px] w-full input input-bordered join-item bg-white"
                                             placeholder="Where are you going?"
+                                            value={autocompletePayload?.resultWord}
                                             onChange={(e) =>
                                                 setKeyword(e.target.value)
                                             }
                                         />
                                     </div>
+                                    {(isFetched && !autocompletePayload) && (
+                                        <div class="relative z-40 drop-shadow-lg">
+                                            <ul class="absolute menu bg-white w-full rounded-b-lg">
+                                                {data?.keyWordSearchResults?.map(
+                                                    (element) => {
+                                                        switch (
+                                                            element.resultType
+                                                        ) {
+                                                            case "H":
+                                                                return (
+                                                                    <>
+                                                                        <li>
+                                                                            <div
+                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                            >
+                                                                                <i class="fa-solid fa-hotel"></i>{" "}
+                                                                                {element?.resultWord}
+                                                                            </div>
+                                                                        </li>
+                                                                    </>
+                                                                );
+                                                            case "CT":
+                                                            case "D": 
+                                                                return (
+                                                                    <>
+                                                                        <li>
+                                                                            <div
+                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                            >
+                                                                                <i class="fa-solid fa-location-dot"></i>{" "}
+                                                                                {element?.resultWord}
+                                                                            </div>
+                                                                        </li>
+                                                                    </>
+                                                                );
+                                                            case "LM":
+                                                                return (
+                                                                    <>
+                                                                        <li>
+                                                                            <div
+                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                            >
+                                                                                <i class="fa-solid fa-map-pin"></i>{" "}
+                                                                                {element?.resultWord}
+                                                                            </div>
+                                                                        </li>
+                                                                    </>
+                                                                )
+                                                            case "A":
+                                                                return (
+                                                                    <>
+                                                                        <li>
+                                                                            <div
+                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                            >
+                                                                                <i class="fa-solid fa-plane-departure"></i>{" "}
+                                                                                {element?.resultWord}
+                                                                            </div>
+                                                                        </li>
+                                                                    </>
+                                                                )
+                                                            case "Z":
+                                                                return (
+                                                                    <>
+                                                                        <li>
+                                                                            <div
+                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                            >
+                                                                                <i class="fa-solid fa-map-pin"></i>{" "}
+                                                                                {element?.resultWord}
+                                                                            </div>
+                                                                        </li>
+                                                                    </>
+                                                                )
+                                                            case "T":
+                                                                return (
+                                                                    <>
+                                                                        <li>
+                                                                            <div
+                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                            >
+                                                                                <i class="fa-solid fa-train"></i>{" "}
+                                                                                {element?.resultWord}
+                                                                            </div>
+                                                                        </li>
+                                                                    </>
+                                                                )
+                                                            default:
+                                                                return <>
+                                                                {element?.resultWord}</>;
+                                                        }
+                                                    }
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -682,6 +817,7 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                             type="text"
                                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-r-none md:rounded-none border-l-"
                                             placeholder="dd/mm/yyyy"
+                                            value={checkinDate.current?.value}
                                             onSelect={(e) =>
                                                 console.log(e.target.value)
                                             }
@@ -715,6 +851,7 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                             type="text"
                                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none"
                                             placeholder="dd/mm/yyyy"
+                                            value={checkoutDate.current?.value}
                                             onSelect={(e) =>
                                                 console.log(e.target.value)
                                             }
@@ -1053,7 +1190,9 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                         </div>
                     </div>
                     <div class="md:ml-1.5">
-                        <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
+                        <button
+                            onClick={(e) => handleSubmit(e)}
+                            class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
                             Search
                         </button>
                     </div>

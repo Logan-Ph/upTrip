@@ -3,12 +3,16 @@ import { Suspense, lazy } from 'react';
 import HPExploreSkeleton from '../components/skeletonLoadings/HPExploreSkeleton';
 import HPPLanYourTripSkeleton from '../components/skeletonLoadings/HPPLanYourTripSkeleton';
 import HPTravelPlannerSkeleton from '../components/skeletonLoadings/HPTravelPlannerSkeleton';
+import useAuth from '../hooks/useAuth';
 
 const HPPLanYourTrip = lazy(() => import('../components/HPPlanYourTrip'));
 const HPExplore = lazy(() => import('../components/HPExplore'));
 const HPTravelPlanner = lazy(() => import('../components/HPTravelPlanner'));
 
 export default function Homepage(){
+    const { auth } = useAuth();
+    console.log(auth)
+
     return(
         <>
             <div className='bg-[#FAFBFC] md:p-10'>

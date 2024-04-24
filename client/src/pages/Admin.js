@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function Admin(){

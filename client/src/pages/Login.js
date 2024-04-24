@@ -14,7 +14,7 @@ const Login = () => {
 	const { setAuth } = useAuth(); // get the setAuth function
 	const handleNavigate = useHandleNavigate()
 
-	const [email, setEmail] = useState(''); // create state for the username
+	const [userEmail, setUserEmail] = useState(''); // create state for the username
 	const [password, setPassword] = useState(''); // create state for the password
 
 	const handleSubmit = async (e) => {
@@ -22,15 +22,15 @@ const Login = () => {
 
 		try {
 			const response = await axios.post(LOGIN_URL,
-				JSON.stringify({ email, password }),
+				JSON.stringify({ email: userEmail, password }),
 				{
 					headers: { 'Content-Type': 'application/json' },
 					withCredentials: true
 				}
 			);
-			const { accessToken, roles } = response?.data;
-			setAuth({ roles, accessToken });
-			setEmail('');
+			const { accessToken, roles, email, _id } = response?.data;
+			setAuth({ roles, accessToken, email, _id });
+			setUserEmail('');
 			setPassword('');
 			handleNavigate()
 		} catch (err) {
@@ -48,9 +48,9 @@ const Login = () => {
 						},
 					})
 				const serverRes = await axios.post('/google/auth/login', googleRes.data, { withCredentials: true })
-				const { accessToken, roles } = serverRes?.data;
-				setAuth({ roles, accessToken });
-				setEmail('');
+				const { accessToken, roles, email, _id } = serverRes?.data;
+				setAuth({ roles, accessToken, email, _id });
+				setUserEmail('');
 				setPassword('');
 				handleNavigate()
 			} catch (err) {
@@ -102,7 +102,7 @@ const Login = () => {
 									Email address
 								</label>
 								<input
-									onChange={(e) => setEmail(e.target.value)}
+									onChange={(e) => setUserEmail(e.target.value)}
 									id="email-address"
 									name="email"
 									type="email"
