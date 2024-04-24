@@ -622,41 +622,45 @@ exports.advancedSearchHotelBooking = async (req, res) => {
 };
 
 exports.advancedSearchFlights = async (req, res) => {
-    const url = agodaGetFlightURL;
-    const items = [];
-    const payload = agodaGetFlightPayload(req.body)
-    await axios.post(url, payload, {
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        }
-    })
-        .then(res => {
-            for (const item of res.data.trips[0].bundles) {
-                const flightNo = []
-                const airline = []
-                let arrival
-                for (const flight of item.outboundSlice.segments) {
-                    flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
-                    airline.push(flight.carrierContent.carrierCode)
-                    arrival = flight.arrivalDateTime
-                }
-                items.push({
-                    flightNo: flightNo,
-                    departureTime: item.outboundSlice.segments[0].departDateTime.substring(11, 16),
-                    arrivalTime: arrival.substring(11, 16),
-                    airline: airline,
-                    duration: item.outboundSlice.duration,
-                    agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
-                    tripComPrice: "null",
-                    myTripPrice: "null",
-                    bayDepPrice: "null",
-                })
+    try {
+        const url = agodaGetFlightURL;
+        const items = [];
+        const payload = agodaGetFlightPayload(req.body)
+        await axios.post(url, payload, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             }
         })
+            .then(res => {
+                for (const item of res.data.trips[0].bundles) {
+                    const flightNo = []
+                    const airline = []
+                    let arrival
+                    for (const flight of item.outboundSlice.segments) {
+                        flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
+                        airline.push(flight.carrierContent.carrierCode)
+                        arrival = flight.arrivalDateTime
+                    }
+                    items.push({
+                        flightNo: flightNo,
+                        departureTime: item.outboundSlice.segments[0].departDateTime.substring(11, 16),
+                        arrivalTime: arrival.substring(11, 16),
+                        airline: airline,
+                        duration: item.outboundSlice.duration,
+                        agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
+                        tripComPrice: "null",
+                        myTripPrice: "null",
+                        bayDepPrice: "null",
+                    })
+                }
+            })
         .catch(er => {
-            return res.status(500).json(er)
+            throw er
         })
-    return res.status(200).json(items)
+        return res.status(200).json(items) 
+    } catch (err) {
+        return res.status(500).json(er)
+    }
 }
 
 exports.getTripComFlight = async (req, res) => {
