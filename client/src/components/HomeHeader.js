@@ -103,9 +103,8 @@ function QuickSearchFlight({ setTab }) {
                             </select>
                         </div>
                         <div class="flex grow-1 space-x-5">
-                            <div>
+                            <div onClick={() => setIsOneWay(true)}>
                                 <input
-                                    onClick={() => setIsOneWay(true)}
                                     type="radio"
                                     id="one-way"
                                     name="radio-1"
@@ -114,9 +113,8 @@ function QuickSearchFlight({ setTab }) {
                                 />
                                 <label for="one-way">&ensp; One way</label>
                             </div>
-                            <div>
+                            <div onClick={() => setIsOneWay(false)}>
                                 <input
-                                    onClick={() => setIsOneWay(false)}
                                     type="radio"
                                     id="round-trip"
                                     name="radio-1"
@@ -417,9 +415,7 @@ function QuickSearchFlight({ setTab }) {
                                                         d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                                     />
                                                 </svg>
-                                                <span class="text-lg">
-                                                    1
-                                                </span>
+                                                <span class="text-lg">1</span>
 
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -462,9 +458,7 @@ function QuickSearchFlight({ setTab }) {
                                                         d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                                     />
                                                 </svg>
-                                                <span class="text-lg">
-                                                    1
-                                                </span>
+                                                <span class="text-lg">1</span>
 
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"

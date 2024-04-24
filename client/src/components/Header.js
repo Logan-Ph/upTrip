@@ -1,76 +1,6 @@
 import NavBar from "./Navbar";
 import React, { useState } from "react";
 
-
-const Tabs = () => {
-    const [activeTab, setActiveTab] = useState(1);
-
-    const tabClass = (tabNumber) =>
-        activeTab === tabNumber
-            ? "bg-white text-black"
-            : "bg-base-100 text-base-500";
-
-    const contentClass = (tabNumber) =>
-        activeTab === tabNumber ? "block" : "hidden";
-
-    return (
-        <div role="tablist" className="tabs tabs-lifted">
-            <input
-                type="radio"
-                name="my_tabs_2"
-                role="tab"
-                className={`tab ${tabClass(1)}`}
-                aria-label="Tab 1"
-                onClick={() => setActiveTab(1)}
-            />
-            <div
-                role="tabpanel"
-                className={`tab-content border-base-300 rounded-box p-6 ${contentClass(
-                    1
-                )}`}
-            >
-                Tab content 1
-            </div>
-
-            <input
-                type="radio"
-                name="my_tabs_2"
-                role="tab"
-                className={`tab ${tabClass(2)}`}
-                aria-label="Tab 2"
-                onClick={() => setActiveTab(2)}
-            />
-            <div
-                role="tabpanel"
-                className={`tab-content border-base-300 rounded-box p-6 ${contentClass(
-                    2
-                )}`}
-            >
-                Tab content 2
-            </div>
-
-            <input
-                type="radio"
-                name="my_tabs_2"
-                role="tab"
-                className={`tab ${tabClass(3)}`}
-                aria-label="Tab 3"
-                onClick={() => setActiveTab(3)}
-            />
-            <div
-                role="tabpanel"
-                className={`tab-content border-base-300 rounded-box p-6 ${contentClass(
-                    3
-                )}`}
-            >
-                Tab content 3
-            </div>
-        </div>
-    );
-};
-
-
-
 export default function Header() {
     const [activeTab, setActiveTab] = useState("stay"); // Default active tab is 'stay'
 
@@ -124,10 +54,10 @@ export default function Header() {
                         >
                             <li class="" role="presentation">
                                 <button
-                                    className={`inline-block p-4 rounded-tl-lg ${
+                                    className={`inline-block p-4 rounded-tl-lg text-black ${
                                         activeTab === "stay"
                                             ? "bg-white text-black"
-                                            : "text-white bg-[#231F20] dark:text-white"
+                                            : "text-white bg-[#231F20]"
                                     }`}
                                     id="stay-tab"
                                     onClick={() => setActiveTab("stay")}
@@ -145,7 +75,7 @@ export default function Header() {
                                     className={`inline-block p-4 ${
                                         activeTab === "flight"
                                             ? "bg-white text-black"
-                                            : "text-white bg-[#231F20] dark:text-white"
+                                            : "text-white bg-[#231F20]"
                                     }`}
                                     id="flight-tab"
                                     onClick={() => setActiveTab("flight")}
@@ -163,7 +93,7 @@ export default function Header() {
                                     className={`inline-block p-4 rounded-tr-lg ${
                                         activeTab === "experience"
                                             ? "bg-white text-black"
-                                            : "text-white bg-[#231F20] dark:text-white"
+                                            : "text-white bg-[#231F20]"
                                     }`}
                                     id="experience-tab"
                                     onClick={() => setActiveTab("experience")}
