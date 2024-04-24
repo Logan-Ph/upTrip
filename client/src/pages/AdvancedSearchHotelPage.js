@@ -16,7 +16,7 @@ const AdvancedHotelCardLazy = lazy(() =>
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
-    const payload = {
+    let payload = {
         city: searchParams.get("city"),
         cityName: searchParams.get("cityName"),
         provinceId: searchParams.get("provinceId"),
@@ -73,10 +73,13 @@ export default function AdvancedSearchHotelPage() {
               (hotel) => hotel.hotelBasicInfo.hotelName
           )
         : [];
+    
+    payload = {...payload, hotelNames}
+    
 
     const getHotelPriceComparison = useQuery({
         queryKey: ["hotel-price-comparison", hotelNames],
-        queryFn: () => fetchHotelPriceComparison(hotelNames),
+        queryFn: () => fetchHotelPriceComparison(payload),
         retry: false,
         refetchOnWindowFocus: false,
         enabled: !!hotelNames.length > 0,
@@ -112,20 +115,26 @@ export default function AdvancedSearchHotelPage() {
                             </div>
 
                             {status === "success" &&
-                                hotelList.pages.map((page) => {
-                                    return page.hotelList.map((hotel) => {
+                                hotelList.pages.map((page, pageIndex) => {
+                                    return page.hotelList.map((hotel, hotelIndex) => {
+                                        const priceData = getHotelPriceComparison.isSuccess ? getHotelPriceComparison.data[hotelIndex] : null;
+                                        const agodaPrice = priceData?.agodaPrice ? Math.round(priceData.agodaPrice?.[0]?.price?.perNight?.exclusive?.display).toLocaleString("vi-VN") : null;
+                                        const bookingPrice = priceData?.bookingPrice ? Math.round(priceData.bookingPrice?.price?.[0]?.finalPrice?.amount).toLocaleString("vi-VN") : null;
                                         return (
-                                            <Suspense
-                                                fallback={<ASearchSkeleton />}
-                                            >
+                                            <Suspense fallback={<ASearchSkeleton />}>
                                                 <AdvancedHotelCardLazy
                                                     hotel={hotel}
+                                                    agodaPrice={agodaPrice}
+                                                    bookingPrice={bookingPrice}
+                                                    isSuccess={getHotelPriceComparison.isSuccess}
                                                 />
                                             </Suspense>
                                         );
                                     });
-                                })}
-                            <div>
+                                })
+                            }
+                            
+                            {isFetching && <ASearchSkeleton />}
                                 <button
                                     onClick={() => fetchNextPage()}
                                     disabled={
@@ -136,8 +145,6 @@ export default function AdvancedSearchHotelPage() {
                                         ? "Loading more..."
                                         : "Load More"}
                                 </button>
-                            </div>
-                            {isFetching && <ASearchSkeleton />}
                         </div>
                     </div>
                 </section>

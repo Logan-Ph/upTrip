@@ -1,5 +1,4 @@
 import { AdvancedSearchCard } from "../LazyLoadingComponents";
-import {Skeleton} from '@mui/material'
 export default function ASearchSkeleton(){
     return(
         <>

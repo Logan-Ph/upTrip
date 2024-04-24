@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
 import useLogout from "../hooks/useLogout";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useHandleNavigate from "../utils/useHandleNavigate";
+import AuthContext from "../context/AuthProvider";
 
 export default function Admin(){
     const logout = useLogout();
+    const {auth} = useContext(AuthContext)
+    console.log(auth)
     const [keyword, setKeyword] = useState('');
 
     const handleNavigate = useHandleNavigate(`/quick-search/?keyword=${keyword}`);

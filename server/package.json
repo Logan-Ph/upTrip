@@ -29,6 +29,7 @@
     "puppeteer": "^22.6.3",
     "puppeteer-core": "^22.6.3",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "similarity": "^1.2.1"
   }
 }
