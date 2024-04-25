@@ -28,6 +28,10 @@ const {
     bookingAdvancedSearchHotelURL,
     agodaAdvancedSearchHotelURL,
     agodaAdvancedSearchHotelPayload,
+    tripAdvancedSearchSpecificHotelURL,
+    advancedSearchSpecificHotelQueryParam,
+    bookingSecondaryAutocompleteURL,
+    secondaryAutocompletePayloadBooking,
 } = require("../utils/requestOptions");
 
 exports.homePage = (req, res) => {
@@ -78,7 +82,12 @@ exports.refreshToken = async (req, res) => {
         if (!user) return res.status(404).send("User not found");
 
         const accessToken = generateToken(user);
-        res.status(200).json({ _id: user._id, email: user.email, accessToken: accessToken, roles: [2001] });
+        res.status(200).json({
+            _id: user._id,
+            email: user.email,
+            accessToken: accessToken,
+            roles: [2001],
+        });
     });
 };
 
@@ -317,7 +326,7 @@ exports.advancedSearchHotels = async (req, res) => {
             travelPurpose: 0,
             ctm_ref: "ix_sb_dl",
             domestic: domestic,
-            listFilters: "80|0|1*80*0*2,29|1*29*1|2*2",
+            listFilters: listFilters || "80|0|1*80*0*2,29|1*29*1|2*2",
             locale: "en_US",
             curr: "USD",
         };
@@ -337,6 +346,7 @@ exports.advancedSearchHotels = async (req, res) => {
             queryParam.crn || 1,
             queryParam.latitude,
             queryParam.longitude,
+            queryParam.listFilters,
             href
         );
 
@@ -351,13 +361,11 @@ exports.advancedSearchHotels = async (req, res) => {
             (hotel) => hotel.hotelBasicInfo.hotelId
         );
 
-        return res
-            .status(200)
-            .json({
-                hotelList: response.data.hotelList,
-                hotelName,
-                preHotelIds,
-            });
+        return res.status(200).json({
+            hotelList: response.data.hotelList,
+            hotelName,
+            preHotelIds,
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
@@ -423,17 +431,29 @@ exports.priceComparisonHotels = async (req, res) => {
             adult,
             children,
             childAges,
+            resultType,
         } = req.body;
+
+
+        const keyword = (hotelNames, cityName, resultType) => {
+            switch (resultType) {
+                case "CT":
+                case "LM":
+                case "H":
+                default:
+                    return hotelNames;
+            }
+        };
 
         const agodaPromises = hotelNames.map((hotelName) =>
             axios.post("http://localhost:4000/agoda/autocomplete", {
-                keyword: hotelName + " " + cityName,
+                keyword: keyword(hotelName, cityName, resultType),
             })
         );
 
         const bookingPromises = hotelNames.map((hotelName) =>
             axios.post("http://localhost:4000/booking/autocomplete", {
-                keyword: hotelName + " " + cityName,
+                keyword: keyword(hotelName, cityName, resultType),
             })
         );
 
@@ -441,14 +461,29 @@ exports.priceComparisonHotels = async (req, res) => {
         const agodaResults = await Promise.all(agodaPromises);
         const bookingResults = await Promise.all(bookingPromises);
 
-        // Extract data from responses
-        const agodaHotels = agodaResults.map((response) => response.data);
-        const bookingHotels = bookingResults.map((response) => response.data);
-
+        const handleSecondaryBooking = async (hotelName, index) => {
+            if (!bookingResults[index].data.matchHotel) {
+                try {
+                    const secondaryResponse = await axios.post(bookingSecondaryAutocompleteURL, secondaryAutocompletePayloadBooking(hotelName));
+                    return secondaryResponse.data.data.searchPlaces.results[0];
+                } catch (error) {
+                    console.error("Error fetching secondary booking data:", error);
+                    return null;
+                }
+            } else {
+                return bookingResults[index].data;
+            }
+        };
+        
+        // Map over bookingResults to handle missing matchHotel
+        const bookingHotels = await Promise.all(bookingResults.map((response, index) => {
+            return handleSecondaryBooking(hotelNames[index], index);
+        }));
+        
         // Combine the results into a single response
         let combinedResults = hotelNames.map((hotelName, index) => ({
             hotelName,
-            agoda: agodaHotels[index],
+            agoda: agodaResults[index].data,
             booking: bookingHotels[index],
         }));
 
@@ -465,9 +500,17 @@ exports.priceComparisonHotels = async (req, res) => {
                 cityId: hotel?.agoda?.matchHotel?.CityId,
             };
 
-            return axios.post("http://localhost:4000/advanced-search/hotels/agoda", payload)
-                .then(response => response.data.pricing.offers[0].roomOffers[0].room.pricing) // Extract only the data needed
-                .catch(err => {
+            return axios
+                .post(
+                    "http://localhost:4000/advanced-search/hotels/agoda",
+                    payload
+                )
+                .then(
+                    (response) =>
+                        response.data.pricing.offers[0].roomOffers[0].room
+                            .pricing
+                ) // Extract only the data needed
+                .catch((err) => {
                     return null; // Return null or appropriate fallback if the request fails
                 });
         });
@@ -475,37 +518,128 @@ exports.priceComparisonHotels = async (req, res) => {
         // Send POST requests to "/advanced-search/hotels/booking" for each hotel
         const bookingAdvancedSearchPromises = combinedResults.map((hotel) => {
             const payload = {
-                keyword : hotel.booking?.matchHotel?.value,
+                keyword: hotel.booking?.matchHotel?.value || hotel.booking?.label,
                 checkin: checkin.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 checkout: checkout.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 group_adults: adult,
                 no_rooms: crn,
                 group_children: children,
-                age: childAges
-            }
+                age: childAges,
+            };
 
-            return axios.post("http://localhost:4000/advanced-search/hotels/booking", payload)
-                .then(response => response.data)
-                .catch(err => {
+            return axios
+                .post(
+                    "http://localhost:4000/advanced-search/hotels/booking",
+                    payload
+                )
+                .then((response) => response.data)
+                .catch((err) => {
                     return null;
-                })
-        })
+                });
+        });
 
         // Wait for all advanced search promises to resolve
-        const agodaAdvancedSearchResults = await Promise.all(agodaAdvancedSearchPromises);
-        const bookingAdvancedSearchResults = await Promise.all(bookingAdvancedSearchPromises);
+        const agodaAdvancedSearchResults = await Promise.all(
+            agodaAdvancedSearchPromises
+        );
+        const bookingAdvancedSearchResults = await Promise.all(
+            bookingAdvancedSearchPromises
+        );
 
         // Filter out any null responses due to errors
-        combinedResults = combinedResults.map((hotel, index) => ({
-            ...hotel,
-            agodaPrice: agodaAdvancedSearchResults[index],
-            bookingPrice: bookingAdvancedSearchResults[index]
-        })).filter(hotel => hotel.advancedSearch !== null);
+        combinedResults = combinedResults
+            .map((hotel, index) => ({
+                ...hotel,
+                agodaPrice: agodaAdvancedSearchResults[index],
+                bookingPrice: bookingAdvancedSearchResults[index],
+            }))
+            .filter((hotel) => hotel.advancedSearch !== null);
 
         return res.status(200).json(combinedResults);
     } catch (error) {
         console.log("Error in priceComparisonHotels:", error);
-        return res.status(500).json({ message: "Internal Server Error", error: error });
+        return res
+            .status(500)
+            .json({ message: "Internal Server Error", error: error });
+    }
+};
+
+exports.advancedSearchSpecificHotelTrip = async (req, res) => {
+    try {
+        const {
+            cityId,
+            cityName,
+            provinceId,
+            countryId,
+            districtId,
+            checkin, // type: yyyymmdd
+            checkout, // type: yyyymmdd
+            hotelName,
+            searchValue,
+            searchCoordinate,
+            adult,
+            ages,
+            domestic,
+            children,
+            crn,
+        } = req.body;
+
+        const queryParam =  advancedSearchSpecificHotelQueryParam(
+            Number(cityId), // 1777: Number
+            cityName, // "Nha Trang": String
+            Number(provinceId), // 11120: Number
+            Number(countryId), // 111: Number
+            Number(districtId), // 0: Number
+            String(checkin), // "2024/05/24": String
+            String(checkout), // "2024/05/25": String
+            String(hotelName),
+            String(searchValue), 
+            String(searchCoordinate),
+            Number(adult),
+            Number(children), 
+            String(ages), // "4,9,0"
+            Boolean(domestic),
+            Number(crn)
+        );
+
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Upgrade-Insecure-Requests": 1,
+        };
+
+        const response = await axios.get(tripAdvancedSearchSpecificHotelURL, {
+            headers: headers,
+            params: queryParam,
+        });
+
+        const html = response.data;
+        const $ = cheerio.load(html);
+        const targetDiv = $(".with-decorator-wrap-v8");
+        const img = targetDiv.find("img").attr("src");
+        const describe = targetDiv.find(".describe").text();
+        const reviewCounts = targetDiv.find(".count").text();
+        const reviewScore = targetDiv.find(".score").text();
+        const name = targetDiv.find(".list-card-title").text();
+        const starNum = targetDiv.find(".list-card-title > div > i").length;
+        const saleOff = targetDiv.find(".favour").text();
+        const transportInfo = targetDiv.find(".list-card-transport-v8").text();
+        const price = targetDiv.find(".price-explain").text();
+
+        const matchHotel = {
+            img,
+            name,
+            saleOff,
+            price,
+            starNum,
+            describe,
+            reviewCounts,
+            reviewScore,
+            transportInfo,
+        };
+        res.status(200).json({ matchHotel });
+    } catch (er) {
+        return res.status(500).json(error);
     }
 };
 
@@ -522,8 +656,8 @@ exports.advancedSearchHotelAgoda = async (req, res) => {
             cityId,
         } = req.body;
 
-        if (objectId === "10901788"){
-            console.log(req.body)
+        if (objectId === "10901788") {
+            console.log(req.body);
         }
 
         const payload = agodaAdvancedSearchHotelPayload(

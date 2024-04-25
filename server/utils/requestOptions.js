@@ -10,6 +10,7 @@ const {
     getCurrentTimeUTC,
     convertToUTCFormat,
     calculateLengthOfStay,
+    getListFiltersTrip,
 } = require("./helper");
 
 // tab: "mixlist", -> tour and attractions
@@ -123,7 +124,54 @@ const tripQuickSearchURL =
 
 // URL to get initial hotels id from Trip.com
 const tripGetHotelListIdURL =
-    "https://us.trip.com/htls/getHotelList?testab=da82393cab1e3ed7bf5e888bb3c32eae593bd4c5e046d8053b88462892165005&x-traceID=1711297830645.f17ebYxB7ZgE-1713436452811-1464205231";
+    "https://us.trip.com/htls/getHotelList?testab=0502f4ac23477daa3876caecb69ba02036210d281634f8bd9c42ed3b3c10be5f&x-traceID=1711297830645.f17ebYxB7ZgE-1714060812625-1902858376";
+
+// URL to get specific hotels from Trip.com
+const tripAdvancedSearchSpecificHotelURL = "https://us.trip.com/hotels/list";
+
+const advancedSearchSpecificHotelQueryParam = (
+    cityId,
+    cityName,
+    provincedId,
+    countryId,
+    districtId,
+    checkin,
+    checkout,
+    searchWord,
+    searchValue,
+    searchCoordinate,
+    adult,
+    children,
+    ages,
+    domestic,
+    crn
+) => {
+    return {
+        city: cityId,
+        cityName: cityName,
+        provinceId: provincedId,
+        countryId: countryId,
+        districtId: districtId,
+        checkin: convertDateFormat(checkin), // accept: yyyy/mm/dd
+        checkout: convertDateFormat(checkout), // accept: yyyy/mm/dd
+        barCurr: "VND",
+        searchType: "H",
+        searchWord: searchWord,
+        searchValue: searchValue, // filterID_type_value_subType
+        searchCoordinate: searchCoordinate,
+        crn: crn, // number of rooms
+        adult: adult,
+        children: children,
+        ages: ages, // "4,9,0"
+        searchBoxArg: "t",
+        travelPurpose: 0,
+        ctm_ref: "ix_sb_dl",
+        domestic: domestic,
+        listFilters: "80|0|1*80*0*2,29|1*29*1|1*2",
+        locale: "en-US",
+        curr: "VND",
+    };
+};
 
 const tripClientID = "1711297830645.f17ebYxB7ZgE";
 
@@ -147,6 +195,7 @@ const tripGetHotelListURLPayload = (
     roomQuantity,
     lat,
     lng,
+    listFilters,
     href
 ) => {
     return {
@@ -157,27 +206,7 @@ const tripGetHotelListURLPayload = (
             checkIn: checkIn, // yyyymmdd
             checkOut: checkOut, // yyyymmdd
             sourceFromTag: "",
-            filters: [
-                {
-                    filterId: "17|1",
-                    value: "1",
-                    type: "17",
-                    subType: "2",
-                    sceneType: "17",
-                },
-                {
-                    filterId: "80|0|1",
-                    value: "0",
-                    type: "80",
-                    subType: "2",
-                    sceneType: "80",
-                },
-                {
-                    filterId: "29|1",
-                    value: "1|2",
-                    type: "29",
-                },
-            ],
+            filters: getListFiltersTrip(listFilters),
             location: {
                 geo: {
                     countryID: countryID,
@@ -267,7 +296,7 @@ const autocompleteQueryParamAgoda = (keyWord) => {
         logtime: getDecodedCurrentTimeAgoda(),
         logTypeId: 1,
         cid: 1758161,
-        guid:"a97adc1f-7b17-4a32-95d4-4ac017dade12",
+        guid: "a97adc1f-7b17-4a32-95d4-4ac017dade12",
         pageTypeId: 103,
         isHotelLandSearch: true,
     };
@@ -286,6 +315,24 @@ const autocompletePayloadBooking = (keyword) => {
         query: keyword,
         language: "en-gb",
         size: 5,
+    };
+};
+
+// URL for secondary autocomplete at Booking.com (this is called when the first autocomplete have no result)
+const bookingSecondaryAutocompleteURL =
+    "https://www.booking.com/dml/graphql?aid=304142&lang=vi";
+
+const secondaryAutocompletePayloadBooking = (keyword) => {
+    return {
+        operationName: "SearchPlaces",
+        variables: {
+            input: {
+                searchString: keyword,
+            },
+            fetchOnlyFirst: true,
+        },
+        extensions: {},
+        query: "query SearchPlaces($input: SearchPlacesInput!, $fetchOnlyFirst: Boolean) {\n  searchPlaces(input: $input) {\n    results {\n      label\n      mainText\n      secondaryText\n      types\n      position\n      placeId\n      destType\n      placeType\n      languageCode\n      maxLengthOfStayInDays\n      place(fetchOnlyFirst: $fetchOnlyFirst) {\n        location {\n          latitude\n          longitude\n          __typename\n        }\n        __typename\n      }\n      source\n      encodedAutocompleteMeta\n      __typename\n    }\n    __typename\n  }\n}\n",
     };
 };
 
@@ -320,7 +367,7 @@ const bookingAdvancedSearchHotelQueryParam = (
         lang: "en-gb", // Language code
         src: "searchresults", // Source of the search
         dest_type: "hotel", // Destination type (hotel)
-        ac_langcode: "en", // Autocomplete language code
+        ac_langcode: "vi", // Autocomplete language code
         checkin: checkin, // Check-in date (YYYY-MM-DD)
         checkout: checkout, // Check-out date (YYYY-MM-DD)
         group_adults: group_adults, // Number of adults in the group
@@ -350,7 +397,6 @@ const agodaAdvancedSearchHotelPayload = (
     childAges,
     cityId
 ) => {
-    
     return {
         operationName: "citySearch",
         variables: {
@@ -362,7 +408,7 @@ const agodaAdvancedSearchHotelPayload = (
                         bookingDate: getCurrentTimeUTC(), // Current date and time in UTC 2024-04-14T09:12:21.581Z
                         checkInDate: convertToUTCFormat(checkin), // Check-in date and time in UTC 2024-04-14T17:00:00.000Z
                         localCheckInDate: checkin, // Local check-in date (YYYY-MM-DD) 2024-04-15
-                        los: calculateLengthOfStay(checkin,checkout), // length of Stay
+                        los: calculateLengthOfStay(checkin, checkout), // length of Stay
                         rooms: rooms, // number of rooms
                         adults: adults, // number of adults
                         children: children, // number of children
@@ -893,6 +939,10 @@ const agodaAdvancedSearchHotelPayload = (
 };
 
 module.exports = {
+    bookingSecondaryAutocompleteURL,
+    secondaryAutocompletePayloadBooking,
+    advancedSearchSpecificHotelQueryParam,
+    tripAdvancedSearchSpecificHotelURL,
     quickSearchHotelTripOptions,
     tripQuickSearchURL,
     quickSearchAttractionsTripOptions,

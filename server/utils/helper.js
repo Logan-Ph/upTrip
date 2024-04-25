@@ -160,7 +160,7 @@ exports.getCurrentTimeUTC = () => {
     const now = new Date();
     now.setHours(now.getHours() - 7); // Subtract 7 hours from the current time
     return now.toISOString();
-}
+};
 
 /**
  * Converts a date string from 'YYYY-MM-DD' to an ISO string representing 17:00 UTC of that day.
@@ -168,21 +168,88 @@ exports.getCurrentTimeUTC = () => {
  * @returns {string} The UTC date in ISO format.
  */
 exports.convertToUTCFormat = (dateString) => {
-    const [year, month, day] = dateString.split('-');
+    const [year, month, day] = dateString.split("-");
     const utcDate = new Date(Date.UTC(year, month - 1, day, 17, 0, 0, 0));
     return utcDate.toISOString();
-}
+};
 
 /**
  * Calculates the length of stay between two dates.
- * @param {string} checkInDate - The check-in date in 'YYYY-MM-DD' format.
- * @param {string} checkOutDate - The check-out date in 'YYYY-MM-DD' format.
+ * @param {string} checkInDate - The check-in date in 'YYYY-MM-DD' or 'YYYY/MM/DD' format.
+ * @param {string} checkOutDate - The check-out date in 'YYYY-MM-DD' or 'YYYY/MM/DD' format.
  * @returns {number} The number of days between the check-in and check-out dates.
  */
 exports.calculateLengthOfStay = (checkInDate, checkOutDate) => {
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
+    // Normalize date strings to 'YYYY-MM-DD' format
+    const normalizedCheckInDate = checkInDate.replace(/\//g, "-");
+    const normalizedCheckOutDate = checkOutDate.replace(/\//g, "-");
+
+    const checkIn = new Date(normalizedCheckInDate);
+    const checkOut = new Date(normalizedCheckOutDate);
     const differenceInTime = checkOut.getTime() - checkIn.getTime();
     const differenceInDays = differenceInTime / (1000 * 3600 * 24); // Convert milliseconds to days
-    return  Number(differenceInDays);
-}
+    return Math.floor(differenceInDays); // Ensure the result is an integer
+};
+
+/**
+ * Generates a list of filters for trips based on the specified filter criteria.
+ * @param {string} listFilters - A string identifier for the filter type (e.g., highest rating, lowest price).
+ * @returns {Array} An array of filter objects, each containing properties like filterId, value, type, subType, and sceneType.
+ */
+exports.getListFiltersTrip = (listFilters) => {
+    const baseFilters = [
+        {
+            filterId: "80|0|1",
+            value: "0",
+            type: "80",
+            subType: "2",
+            sceneType: "80",
+        },
+        {
+            filterId: "29|1",
+            value: "1|2",
+            type: "29",
+        }
+    ];
+
+    let specificFilter;
+    switch (listFilters) {
+        case "17~6*17*6*2%2C80~0~1*80*0*2": // highest rating
+            specificFilter = {
+                filterId: "17|6",
+                value: "6",
+                type: "17",
+                subType: "2",
+                sceneType: "17",
+            };
+            break;
+        case "17~3*17*3*2,80~0~1*80*0*2": // lowest price
+            specificFilter = {
+                filterId: "17|3",
+                value: "3",
+                type: "17",
+                subType: "2",
+                sceneType: "17",
+            };
+            break;
+        case "17~4*17*4*2,80~0~1*80*0*2": // highest price
+            specificFilter = {
+                filterId: "17|4",
+                value: "4",
+                type: "17",
+                subType: "2",
+                sceneType: "17",
+            };
+            break;
+        default:
+            specificFilter = {
+                filterId: "17|1",
+                value: "1",
+                type: "17",
+                subType: "2",
+                sceneType: "17",
+            };
+    }
+
+    return [specificFilter, ...baseFilters];
+};

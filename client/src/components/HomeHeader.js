@@ -41,7 +41,7 @@ function HandleSelection({ tab, setTab, setKeyword, keyword }) {
     switch (tab) {
         case "Stay":
             return (
-                <QuickSearchStay
+                <AdvancedSearchStay
                     setTab={setTab}
                     setKeyword={setKeyword}
                     keyword={keyword}
@@ -242,9 +242,6 @@ function QuickSearchFlight({ setTab }) {
                                     onSelect={(e) =>
                                         console.log(e.target.value)
                                     }
-                                    // onClick={(e) => dobHandler(e)}
-                                    // onClick={(e) => console.log(e.target.value)}
-                                    // onChange={(e) => console.log(e)}
                                     id="datepickerId3"
                                 />
                                 <label
@@ -559,20 +556,20 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
     );
 }
 
-function QuickSearchStay({ setTab, setKeyword, keyword }) {
+function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
     const navigate = useNavigate();
     const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
     const [dropdown, setDropdown] = useState(false);
     const [numberOfAdults, setNumberOfAdults] = useState(1);
     const [numberOfChildren, setNumberOfChildren] = useState(0);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
-    const [autocompletePayload, setAutocompletePayload] = useState();
     const [childrenAges, setChildrenAges] = useState([]);
+    const [autocompletePayload, setAutocompletePayload] = useState();
     const checkinDate = useRef();
     const checkoutDate = useRef();
 
     const { data, isFetched } = useQuery({
-        queryKey: ["quick-search", "hotels", debouncedKeyword],
+        queryKey: ["advanced-search", "hotels", debouncedKeyword],
         queryFn: () => fetchTripAutoComplete(debouncedKeyword),
         refetchOnWindowFocus: false,
         enabled: !!debouncedKeyword,
@@ -588,18 +585,16 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
         setAutocompletePayload(null);
     }, [debouncedKeyword]);
 
-
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedKeyword(keyword);
-        }, 500); // Delay of 1 second
+        }, 250); // Delay of 1 second
 
         return () => {
             clearTimeout(handler);
         };
     }, [keyword]);
 
-    
     useEffect(() => {
         let checkinPicker;
         let checkoutPicker;
@@ -635,29 +630,43 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
 
         if (!autocompletePayload) {
             warningNotify("Please select a location");
-            return
+            return;
         }
 
         const payload = {
-            checkin: checkinDate.current.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3$1$2'),
-            checkout: checkoutDate.current.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3$1$2'),
+            checkin: checkinDate.current.value.replace(
+                /(\d{2})\/(\d{2})\/(\d{4})/,
+                "$3$1$2"
+            ),
+            checkout: checkoutDate.current.value.replace(
+                /(\d{2})\/(\d{2})\/(\d{4})/,
+                "$3$1$2"
+            ),
             city: autocompletePayload.city.geoCode,
             cityName: autocompletePayload.resultWord,
+            resultType: autocompletePayload.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
             provinceId: autocompletePayload.province.geoCode,
             cityType: autocompletePayload.cityType,
             latitude: autocompletePayload.coordinateInfos[3].latitude,
             longitude: autocompletePayload.coordinateInfos[3].longitude,
-            searchCoordinate: autocompletePayload.coordinateInfos.map(info => `${info.coordinateType}_${info.latitude}_${info.longitude}_${info.accuracy}`).join('|'),
+            searchCoordinate: autocompletePayload.coordinateInfos
+                .map(
+                    (info) =>
+                        `${info.coordinateType}_${info.latitude}_${info.longitude}_${info.accuracy}`
+                )
+                .join("|"),
             crn: numberOfRooms,
             adult: numberOfAdults,
             children: numberOfChildren,
-            domestic: false
-        }
+            domestic: false,
+        };
 
-        navigate(`/advanced-hotel-search/?city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`);
-    }
+        navigate(
+            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
+        );
+    };
 
     return (
         <>
@@ -688,13 +697,15 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                         <input
                                             class="h-[52px] w-full input input-bordered join-item bg-white"
                                             placeholder="Where are you going?"
-                                            value={autocompletePayload?.resultWord}
+                                            value={
+                                                autocompletePayload?.resultWord
+                                            }
                                             onChange={(e) =>
                                                 setKeyword(e.target.value)
                                             }
                                         />
                                     </div>
-                                    {(isFetched && !autocompletePayload) && (
+                                    {isFetched && !autocompletePayload && (
                                         <div class="relative z-40 drop-shadow-lg">
                                             <ul class="absolute menu bg-white w-full rounded-b-lg">
                                                 {data?.keyWordSearchResults?.map(
@@ -707,24 +718,36 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-hotel"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
                                                                 );
                                                             case "CT":
-                                                            case "D": 
+                                                            case "D":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-location-dot"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
@@ -734,56 +757,85 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-map-pin"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             case "A":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-plane-departure"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             case "Z":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-map-pin"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             case "T":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-train"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             default:
-                                                                return <>
-                                                                {element?.resultWord}</>;
+                                                                return (
+                                                                    <>
+                                                                        {
+                                                                            element?.resultWord
+                                                                        }
+                                                                    </>
+                                                                );
                                                         }
                                                     }
                                                 )}
@@ -1192,7 +1244,8 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                     <div class="md:ml-1.5">
                         <button
                             onClick={(e) => handleSubmit(e)}
-                            class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
+                            class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit"
+                        >
                             Search
                         </button>
                     </div>

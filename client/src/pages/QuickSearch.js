@@ -14,14 +14,14 @@ export default function QuickSearch() {
     const keyword = searchParams.get("keyword");
     const [type, setType] = useState("All");
 
-    const { data: hotels, isLoading: hotelsLoading } = useQuery({
+    const { data: hotels, isLoading: hotelsLoading, isSuccess: hotelsSuccess } = useQuery({
         queryKey: ["quick-search", "hotels", keyword],
         queryFn: () => fetchQuickSearchHotels(keyword),
         retry: false,
         refetchOnWindowFocus: false,
     });
 
-    const { data: attractions, isLoading: attractionsLoading } = useQuery({
+    const { data: attractions, isLoading: attractionsLoading, isSuccess: attractionsSuccess } = useQuery({
         queryKey: ["quick-search", "attractions", keyword],
         queryFn: () => fetchQuickSearchAttractions(keyword),
         retry: false,
@@ -30,21 +30,17 @@ export default function QuickSearch() {
 
     return (
         <>
-            <div class="md:px-10">
-                <div class="flex flex-col md:flex-row mx-auto max-w-8xl px-6 py-6">
+            <div className="md:px-10">
+                <div className="flex flex-col md:flex-row mx-auto max-w-8xl px-6 py-6">
                     {/* filter section */}
-                    <div class="hidden md:block">
-                        <ul class="menu bg-white drop-shadow-lg w-56">
+                    <div className="hidden md:block">
+                        <ul className="menu bg-white drop-shadow-lg w-56">
                             <p className="my-3 px-4 text-lg font-extrabold">
                                 Filter Results
                             </p>
                             <li>
                                 <div
-                                    class={`${
-                                        type === "All"
-                                            ? "font-semibold underline"
-                                            : ""
-                                    }`}
+                                    className={`${type === "All" ? "font-semibold underline" : ""}`}
                                     onClick={() => setType("All")}
                                 >
                                     All
@@ -52,42 +48,34 @@ export default function QuickSearch() {
                             </li>
                             <li>
                                 <div 
-									class={`${
-										type === "Stays"
-											? "font-semibold underline"
-											: ""
-									}`}
+                                    className={`${type === "Stays" ? "font-semibold underline" : ""}`}
 									onClick={() => setType("Stays")}>
                                     Stays
                                 </div>
                             </li>
                             <li>
                                 <div 
-									class={`${
-										type === "Experiences"
-											? "font-semibold underline"
-											: ""
-									}`}
+                                    className={`${type === "Experiences" ? "font-semibold underline" : ""}`}
 									onClick={() => setType("Experiences")}>
                                     Experiences
                                 </div>
                             </li>
                         </ul>
                     </div>
-                    <div class="md:hidden flex space-x-2 justify-between">
-                        <div class="px-7 py-2 border rounded shadow-sm bg-gray-200 font-medium text-gray-500">
+                    <div className="md:hidden flex space-x-2 justify-between">
+                        <div className="px-7 py-2 border rounded shadow-sm bg-gray-200 font-medium text-gray-500">
                             All
                         </div>
-                        <div class="px-7 py-2 border rounded shadow-sm bg-white font-medium text-gray-500">
+                        <div className="px-7 py-2 border rounded shadow-sm bg-white font-medium text-gray-500">
                             Stays
                         </div>
-                        <div class="px-7 py-2 border rounded shadow-sm bg-white font-medium text-gray-500">
+                        <div className="px-7 py-2 border rounded shadow-sm bg-white font-medium text-gray-500">
                             Experiences
                         </div>
                     </div>
-                    <div class="divider lg:divider-horizontal"></div>
+                    <div className="divider lg:divider-horizontal"></div>
                     {/*  result section */}
-                    <div class="grow">
+                    <div className="grow">
                         <div>
                             <p className="text-sm md:text-lg font-medium">
                                 Results matching{" "}
@@ -97,41 +85,40 @@ export default function QuickSearch() {
                             </p>
                         </div>
 
-                        <div class="my-3 space-x-3">
-                            {type === "All" && (
+                        <div className="my-3 space-x-3">
+                            {type === "All" && hotelsSuccess && attractionsSuccess && (
                                 <>
                                     <Suspense
                                         fallback={<QuickSearchSkeletonCard />}
                                     >
-                                        {hotels?.map((hotel) => (
-                                            <QuickStayCard hotel={hotel} />
+                                        {hotels.map((hotel) => (
+                                            <QuickStayCard key={hotel.id} hotel={hotel} />
                                         ))}
                                     </Suspense>
                                     <Suspense
                                         fallback={<QuickSearchSkeletonCard />}
                                     >
-                                        {attractions?.map((attr) => (
-                                            <QuickExperienceCard attraction={attr}
-                                            />
+                                        {attractions.map((attr) => (
+                                            <QuickExperienceCard key={attr.id} attraction={attr} />
                                         ))}
                                     </Suspense>
                                 </>
                             )}
-                            {type === "Stays" && (
+                            {type === "Stays" && hotelsSuccess && (
                                 <Suspense
                                     fallback={<QuickSearchSkeletonCard />}
                                 >
-                                    {hotels?.map((hotel) => (
-                                        <QuickStayCard hotel={hotel} />
+                                    {hotels.map((hotel) => (
+                                        <QuickStayCard key={hotel.id} hotel={hotel} />
                                     ))}
                                 </Suspense>
                             )}
-                            {type === "Experiences" && (
+                            {type === "Experiences" && attractionsSuccess && (
                                 <Suspense
                                     fallback={<QuickSearchSkeletonCard />}
                                 >
-                                    {attractions?.map((attr) => (
-                                        <QuickExperienceCard attraction={attr} />
+                                    {attractions.map((attr) => (
+                                        <QuickExperienceCard key={attr.id} attraction={attr} />
                                     ))}
                                 </Suspense>
                             )}
