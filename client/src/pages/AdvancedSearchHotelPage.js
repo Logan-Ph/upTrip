@@ -7,6 +7,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
     fetchHotelAdvancedSearch,
     fetchHotelPriceComparison,
+    getAppConfig,
 } from "../api/fetch.js";
 const AdvancedHotelCardLazy = lazy(() =>
     import("../components/AdvancedHotelCard.js")
@@ -37,6 +38,14 @@ export default function AdvancedSearchHotelPage() {
         preHotelIds: searchParams.getAll("preHotelIds"),
         listFilters: searchParams.get("listFilters"),
     };
+
+    const {data: filterOptions} = useQuery({
+        queryKey: ['get-app-config', payload],
+        queryFn: getAppConfig,
+        retry: false,
+        refetchOnWindowFocus: false,
+        staleTime: Infinity
+    })
 
     const {
         data: hotelList,
@@ -95,7 +104,7 @@ export default function AdvancedSearchHotelPage() {
                             <div className="font-bold text-xl mb-4">
                                 Filters
                             </div>
-                            <AdvancedHotelFilter />
+                            <AdvancedHotelFilter filterOptions={filterOptions}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 

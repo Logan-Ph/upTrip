@@ -7,6 +7,9 @@ const {
     generateToken,
     generateRefreshToken,
     sendEmailVerification,
+    propertyFacilitiesAndServices,
+    roomFacilitiesAndServices,
+    bedOptions,
 } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
 const { default: axios } = require("axios");
@@ -250,6 +253,14 @@ exports.quickSearchAttractions = async (req, res) => {
     }
 };
 
+exports.getAppConfig = async (req, res) => {
+    return res.status(200).json({
+        propertyFacilitiesAndServices: propertyFacilitiesAndServices(),
+        roomFacilitiesAndServices: roomFacilitiesAndServices(),
+        bedOptions: bedOptions(),
+    });
+};
+
 exports.autocomplete = async (req, res) => {
     try {
         const { keyword } = req.body; // get keyword at body
@@ -434,7 +445,6 @@ exports.priceComparisonHotels = async (req, res) => {
             resultType,
         } = req.body;
 
-
         const keyword = (hotelNames, cityName, resultType) => {
             switch (resultType) {
                 case "CT":
@@ -464,22 +474,30 @@ exports.priceComparisonHotels = async (req, res) => {
         const handleSecondaryBooking = async (hotelName, index) => {
             if (!bookingResults[index].data.matchHotel) {
                 try {
-                    const secondaryResponse = await axios.post(bookingSecondaryAutocompleteURL, secondaryAutocompletePayloadBooking(hotelName));
+                    const secondaryResponse = await axios.post(
+                        bookingSecondaryAutocompleteURL,
+                        secondaryAutocompletePayloadBooking(hotelName)
+                    );
                     return secondaryResponse.data.data.searchPlaces.results[0];
                 } catch (error) {
-                    console.error("Error fetching secondary booking data:", error);
+                    console.error(
+                        "Error fetching secondary booking data:",
+                        error
+                    );
                     return null;
                 }
             } else {
                 return bookingResults[index].data;
             }
         };
-        
+
         // Map over bookingResults to handle missing matchHotel
-        const bookingHotels = await Promise.all(bookingResults.map((response, index) => {
-            return handleSecondaryBooking(hotelNames[index], index);
-        }));
-        
+        const bookingHotels = await Promise.all(
+            bookingResults.map((response, index) => {
+                return handleSecondaryBooking(hotelNames[index], index);
+            })
+        );
+
         // Combine the results into a single response
         let combinedResults = hotelNames.map((hotelName, index) => ({
             hotelName,
@@ -518,7 +536,8 @@ exports.priceComparisonHotels = async (req, res) => {
         // Send POST requests to "/advanced-search/hotels/booking" for each hotel
         const bookingAdvancedSearchPromises = combinedResults.map((hotel) => {
             const payload = {
-                keyword: hotel.booking?.matchHotel?.value || hotel.booking?.label,
+                keyword:
+                    hotel.booking?.matchHotel?.value || hotel.booking?.label,
                 checkin: checkin.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 checkout: checkout.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 group_adults: adult,
@@ -584,7 +603,7 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
             crn,
         } = req.body;
 
-        const queryParam =  advancedSearchSpecificHotelQueryParam(
+        const queryParam = advancedSearchSpecificHotelQueryParam(
             Number(cityId), // 1777: Number
             cityName, // "Nha Trang": String
             Number(provinceId), // 11120: Number
@@ -593,10 +612,10 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
             String(checkin), // "2024/05/24": String
             String(checkout), // "2024/05/25": String
             String(hotelName),
-            String(searchValue), 
+            String(searchValue),
             String(searchCoordinate),
             Number(adult),
-            Number(children), 
+            Number(children),
             String(ages), // "4,9,0"
             Boolean(domestic),
             Number(crn)

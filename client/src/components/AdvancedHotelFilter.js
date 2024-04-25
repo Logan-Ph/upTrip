@@ -1,7 +1,7 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react';
 
-export function AdvancedHotelFilter(){
+export function AdvancedHotelFilter({filterOptions}){
     return(
         <>
         <div className='flex-col space-y-6'>
@@ -10,9 +10,7 @@ export function AdvancedHotelFilter(){
             <AmenitiesFilter/>
             <hr className='md:w-3/4'/>
             <ProperStyleFilter/>
-            
         </div>
-
         </>
     )
 }

@@ -74,7 +74,7 @@ export default function Header() {
                                     type="button"
                                     onClick={() => setTab("stay")}
                                 >
-                                    Stay
+                                    <i class="fa-solid fa-hotel"></i> Stay
                                 </button>
                             </li>
                             <li className="" role="presentation">
@@ -83,7 +83,7 @@ export default function Header() {
                                     type="button"
                                     onClick={() => setTab("flight")}
                                 >
-                                    Flight
+                                    <i class="fa-solid fa-plane"></i> Flight
                                 </button>
                             </li>
                             <li className="" role="presentation">
@@ -92,6 +92,7 @@ export default function Header() {
                                     type="button"
                                     onClick={() => setTab("experience")}
                                 >
+                                    <i class="fa-solid fa-umbrella-beach"></i>{" "}
                                     Experience
                                 </button>
                             </li>
@@ -920,13 +921,13 @@ function AdvancedSearchHotel() {
                         {/* <!-- Dropdown menu --> */}
                         <div
                             id="dropdownDivider"
-                            class={`z-0 bg-white divide-y divide-gray-100 rounded-lg shadow ${
-                                dropdown ? "block" : "hidden"
+                            class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow ${
+                                dropdown ? "" : "hidden"
                             }`}
                         >
                             {/* Ask user to input room information */}
                             <div
-                                className="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                                className="py-3 text-sm text-gray-700 my-3 mx-5 space-y-4"
                                 aria-labelledby="dropdownDividerButton"
                             >
                                 <div className="flex justify-between">
