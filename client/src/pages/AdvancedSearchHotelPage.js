@@ -9,6 +9,8 @@ import {
     fetchHotelPriceComparison,
     getAppConfig,
 } from "../api/fetch.js";
+import ScrollUpButton from "../components/ScrollUpButton.js";
+
 const AdvancedHotelCardLazy = lazy(() =>
     import("../components/AdvancedHotelCard.js")
 );
@@ -158,6 +160,7 @@ export default function AdvancedSearchHotelPage() {
                         </div>
                     </div>
                 </section>
+                <ScrollUpButton/>
             </div>
         </>
     );
