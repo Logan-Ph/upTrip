@@ -17,6 +17,7 @@ export default function AdvancedSearchExperiencePage(){
                                 <p className="font-light">Attractions</p>
                             </div>
 
+
                             
                             {/* Filter section */}
                             <div className="font-bold text-xl mb-4">

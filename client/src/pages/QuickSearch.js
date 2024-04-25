@@ -8,6 +8,7 @@ import { QuickSearchSkeletonCard } from "../components/LazyLoadingComponents";
 import { QuickStayCard } from "../components/QuickSearchCard";
 import { QuickExperienceCard } from "../components/QuickSearchCard";
 import { Suspense, useState } from "react";
+import ScrollUpButton from "../components/ScrollUpButton";
 
 export default function QuickSearch() {
     const [searchParams] = useSearchParams();
@@ -32,6 +33,7 @@ export default function QuickSearch() {
         <>
             <div className="md:px-10">
                 <div className="flex flex-col md:flex-row mx-auto max-w-8xl px-6 py-6">
+
                     {/* filter section */}
                     <div className="hidden md:block">
                         <ul className="menu bg-white drop-shadow-lg w-56">
@@ -74,6 +76,7 @@ export default function QuickSearch() {
                         </div>
                     </div>
                     <div className="divider lg:divider-horizontal"></div>
+                    
                     {/*  result section */}
                     <div className="grow">
                         <div>
@@ -135,6 +138,7 @@ export default function QuickSearch() {
                         </div>
                     </div>
                 </div>
+                <ScrollUpButton/>
             </div>
         </>
     );

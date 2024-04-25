@@ -12,6 +12,7 @@ import SignUp from "../pages/SignUp";
 import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
+import AdvancedSearchExperiencePage from "../pages/AdvancedSearchExperiencePage";
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {

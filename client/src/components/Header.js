@@ -100,7 +100,7 @@ export default function Header() {
                 </div>
             </div>
 
-            <div className="md:px-10">
+            <div className="md:px-10 pb-10 bg-[#FAFBFC]">
                 <div className="mx-auto max-w-8xl px-6">
                     <div id="default-tab-content">
                         <HandleSelection tab={tab} />
