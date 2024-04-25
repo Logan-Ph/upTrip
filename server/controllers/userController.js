@@ -7,6 +7,7 @@ const {
     generateToken,
     generateRefreshToken,
     sendEmailVerification,
+    formatMinutesToHoursAndMinutes
 } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
 const { default: axios } = require("axios");
@@ -486,7 +487,7 @@ exports.priceComparisonHotels = async (req, res) => {
         // Send POST requests to "/advanced-search/hotels/booking" for each hotel
         const bookingAdvancedSearchPromises = combinedResults.map((hotel) => {
             const payload = {
-                keyword : hotel.booking?.matchHotel?.value,
+                keyword: hotel.booking?.matchHotel?.value,
                 checkin: checkin.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 checkout: checkout.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 group_adults: adult,
@@ -533,7 +534,7 @@ exports.advancedSearchHotelAgoda = async (req, res) => {
             cityId,
         } = req.body;
 
-        if (objectId === "10901788"){
+        if (objectId === "10901788") {
             console.log(req.body)
         }
 
@@ -638,7 +639,7 @@ exports.advancedSearchFlights = async (req, res) => {
                     let arrival
                     for (const flight of item.outboundSlice.segments) {
                         flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
-                        airline.push(flight.carrierContent.carrierCode)
+                        airline.push(flight.carrierContent.carrierName)
                         arrival = flight.arrivalDateTime
                     }
                     items.push({
@@ -646,18 +647,18 @@ exports.advancedSearchFlights = async (req, res) => {
                         departureTime: item.outboundSlice.segments[0].departDateTime.substring(11, 16),
                         arrivalTime: arrival.substring(11, 16),
                         airline: airline,
-                        duration: item.outboundSlice.duration,
+                        duration: formatMinutesToHoursAndMinutes(item.outboundSlice.duration),
                         agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
-                        tripComPrice: "null",
-                        myTripPrice: "null",
-                        bayDepPrice: "null",
+                        // tripComPrice: "null",
+                        // myTripPrice: "null",
+                        // bayDepPrice: "null",
                     })
                 }
             })
-        .catch(er => {
-            throw er
-        })
-        return res.status(200).json(items) 
+            .catch(er => {
+                throw er
+            })
+        return res.status(200).json(items)
     } catch (err) {
         return res.status(500).json(er)
     }
@@ -686,59 +687,30 @@ exports.getTripComFlight = async (req, res) => {
                         airline: airline,
                         // departure: item.segmentList[0].departDateTime.replace(' ', 'T'),
                         // arrival: item.segmentList[0].arriveDateTime.replace(' ', 'T'),
-                        tripcomPrice: item.price.averagePrice
+                        price: item.price.averagePrice
                     })
                 }
             })
             .catch(er => {
                 throw er
             })
-            return res.status(200).json(items)
-        } catch (er) {
-            return res.status(500).json(er)
-        }
+        return res.status(200).json(items)
+    } catch (er) {
+        return res.status(500).json(er)
     }
+}
 
 exports.getMyTripFlight = async (req, res) => {
-    const items = []
-    let totalFlight;
-    await axios.post(myTripGetFlightURL, myTripGetFlightPayload(req.body), {
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        }
-    })
-        .then(res => {
-            totalFlight = res.data.data.search.flightsCount
-            for (const item of res.data.data.search.flights) {
-                const flightNo = []
-                const airline = []
-                let arrival;
-                for (const flight of item.bounds[0].segments) {
-                    if (flight.__typename == 'TripSegment') {
-                        flightNo.push(flight.flightNumber)
-                        airline.push(flight.marketingCarrier.code)
-                        arrival = flight.arrivedAt
-                    }
-                }
-                items.push({
-                    flightNo: flightNo,
-                    //airline: airline,
-                    //departure: item.bounds[0].segments[0].departuredAt,
-                    //arrival: arrival,
-                    myTripPrice: item.travelerPrices[0].price.price.value / 100 * 25000,
-                })
-            }
-        })
-        .catch(er => {
-            return res.status(500).json(er)
-        })
-    while (items.length < totalFlight) {
-        await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
+    try {
+        const items = []
+        let totalFlight;
+        await axios.post(myTripGetFlightURL, myTripGetFlightPayload(req.body), {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             }
         })
             .then(res => {
+                totalFlight = res.data.data.search.flightsCount
                 for (const item of res.data.data.search.flights) {
                     const flightNo = []
                     const airline = []
@@ -755,15 +727,49 @@ exports.getMyTripFlight = async (req, res) => {
                         //airline: airline,
                         //departure: item.bounds[0].segments[0].departuredAt,
                         //arrival: arrival,
-                        myTripPrice: item.travelerPrices[0].price.price.value / 100 * 25000,
+                        price: item.travelerPrices[0].price.price.value / 100 * 25000,
                     })
                 }
             })
             .catch(er => {
                 return res.status(500).json(er)
             })
+        while (items.length < totalFlight) {
+            await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                }
+            })
+                .then(res => {
+                    for (const item of res.data.data.search.flights) {
+                        const flightNo = []
+                        const airline = []
+                        let arrival;
+                        for (const flight of item.bounds[0].segments) {
+                            if (flight.__typename == 'TripSegment') {
+                                flightNo.push(flight.flightNumber)
+                                airline.push(flight.marketingCarrier.code)
+                                arrival = flight.arrivedAt
+                            }
+                        }
+                        items.push({
+                            flightNo: flightNo,
+                            //airline: airline,
+                            //departure: item.bounds[0].segments[0].departuredAt,
+                            //arrival: arrival,
+                            price: item.travelerPrices[0].price.price.value / 100 * 25000,
+                        })
+                    }
+                })
+                .catch(er => {
+                    throw er
+                })
+        }
+        return res.status(200).json(items)
+    } catch (er) {
+        return res.status(500).json(er)
+
     }
-    return res.status(200).json(items)
 }
 
 exports.getBayDepFlight = async (req, res) => {
@@ -771,14 +777,14 @@ exports.getBayDepFlight = async (req, res) => {
         const items = []
         const sendRequest = async (url, payload) => {
             try {
-                const res = await axios.post(url, payload, {
+                const response = await axios.post(url, payload, {
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
                     }
                 });
-                return res
+                return response;
             } catch (error) {
-                throw error;
+                throw new Error(`Error sending request: ${error.message}`);
             }
         };
         const requests = bayDepGetFlightPayload(req.body).map(payload => {
@@ -787,7 +793,6 @@ exports.getBayDepFlight = async (req, res) => {
         Promise.all(requests)
             .then(response => {
                 for (const res of response) {
-                    // console.log(res.data.ListFareOption[0])
                     for (const item of res.data.ListFareOption) {
                         const flightNo = []
                         const airline = []
@@ -800,7 +805,7 @@ exports.getBayDepFlight = async (req, res) => {
                             //airline: airline,
                             //departure: item.ListFareData[0].ListFlight[0].StartDate,
                             //arrival: item.ListFareData[0].ListFlight[0].EndDate,
-                            bayDepPrice: item.PriceAdt
+                            price: item.PriceAdt
                         })
                     }
                 }

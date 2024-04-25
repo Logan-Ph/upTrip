@@ -186,3 +186,22 @@ exports.calculateLengthOfStay = (checkInDate, checkOutDate) => {
     const differenceInDays = differenceInTime / (1000 * 3600 * 24); // Convert milliseconds to days
     return  Number(differenceInDays);
 }
+
+exports.formatMinutesToHoursAndMinutes = (minutes) => {
+    // Calculate hours and minutes
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+
+    // Build the formatted string
+    let formattedString = '';
+
+    if (hours > 0) {
+        formattedString += hours + 'h'; // Add hours with 'h' suffix
+    }
+
+    if (remainingMinutes > 0) {
+        formattedString += (formattedString.length > 0 ? '' : '') + remainingMinutes + 'm'; // Add minutes with 'm' suffix
+    }
+
+    return formattedString;
+}

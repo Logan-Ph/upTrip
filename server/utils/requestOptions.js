@@ -1110,7 +1110,7 @@ const bayDepGetFlightPayload = (data) => {
     const airlineList = ["VN", "VJ", "QH", "VU"]
     const payload = []
     for (const airlineCode of airlineList) {
-        payload.push(`requestType=Search&legArr=${data.to}${data.from}${data.day}${data.month}${data.year}&adt=${data.adult}&chd=${data.child}&inf=${data.infant}&airline=${airlineCode}&searchType=standard&currency=VND&lang=en-US&nearbyAirport=yes&fareclass=${data.seatClass.toLowerCase()}`)
+        payload.push(`requestType=Search&legArr=${data.from}${data.to}${data.day}${data.month}${data.year}&adt=${data.adult}&chd=${data.child}&inf=${data.infant}&airline=${airlineCode}&searchType=standard&currency=VND&lang=en-US&nearbyAirport=yes&fareclass=${data.seatClass.toLowerCase()}`)
     }
     return payload;
 }
