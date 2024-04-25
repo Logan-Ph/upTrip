@@ -11,13 +11,19 @@ import SignUp from "../pages/SignUp";
 import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
+import Favorites from "../pages/Favorites";
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {
     const BrowserRoutes = createBrowserRouter([
         {
             path: "/",
-            element: <PersistAndRequireAuth header={<HomeHeader />} footer={<footer />} />,
+            element: (
+                <PersistAndRequireAuth
+                    header={<HomeHeader />}
+                    footer={<footer />}
+                />
+            ),
             children: [
                 {
                     path: "/",
@@ -31,11 +37,20 @@ export default function Router() {
         },
         {
             path: "/",
-            element: <PersistAndRequireAuth header={<Header />} footer={<footer />} />,
+            element: (
+                <PersistAndRequireAuth
+                    header={<Header />}
+                    footer={<footer />}
+                />
+            ),
             children: [
                 {
                     path: "/quick-search",
                     element: <QuickSearch />,
+                },
+                {
+                    path: "/favorites",
+                    element: <Favorites />,
                 },
                 {
                     path: "/advanced-hotel-search",
