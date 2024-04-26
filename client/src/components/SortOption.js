@@ -8,12 +8,12 @@ function classNames(...classes) {
 }
 
 export function SortOption({payload}) {
-    const [listFilters, setListFilters] = useState("")
+    const [listFilters, setListFilters] = useState()
     const navigate = useNavigate()
 
-    useEffect(() => {
-        navigate(`/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${listFilters}&domestic=${payload.domestic}`);
-    },[listFilters])
+    // useEffect(() => {
+    //     navigate(`/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload?.city}&cityName=${payload?.cityName}&provinceId=${payload?.provinceId}&countryId=${payload?.countryId}&districtId=${payload?.districtId}&checkin=${payload?.checkin}&checkout=${payload?.checkout}&barCurr=USD&cityType=${payload?.cityType}&latitude=${payload?.latitude}&longitude=${payload?.longitude}&searchCoordinate=${payload?.searchCoordinate}&crn=${payload?.crn}&adult=${payload?.adult}&children=${payload?.children}&listFilters=${listFilters}&domestic=${payload?.domestic}`);
+    // },[listFilters])
 
     return (
         <Menu as="div" className="relative inline-block text-left">

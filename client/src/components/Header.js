@@ -640,7 +640,7 @@ function AdvancedSearchHotel() {
             ),
             city: autocompletePayload.city.geoCode,
             cityName: autocompletePayload.resultWord,
-            resultType: autocompletePayload.resultType,
+            resultType: autocompletePayload?.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
             provinceId: autocompletePayload.province.geoCode,
@@ -660,7 +660,7 @@ function AdvancedSearchHotel() {
         };
 
         navigate(
-            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
+            `/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
         );
     };
 
@@ -689,7 +689,7 @@ function AdvancedSearchHotel() {
                                     <ul class="absolute menu bg-white w-full rounded-b-lg">
                                         {data?.keyWordSearchResults?.map(
                                             (element) => {
-                                                switch (element.resultType) {
+                                                switch (element?.resultType) {
                                                     case "H":
                                                         return (
                                                             <>

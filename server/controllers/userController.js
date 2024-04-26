@@ -42,7 +42,7 @@ const {
     myTripGetMoreFlightURL,
     bayDepGetFlightPayload,
     bayDepGetFlightURL,
-    airportOptions
+    airportOptions,
     tripAdvancedSearchSpecificHotelURL,
     advancedSearchSpecificHotelQueryParam,
     bookingSecondaryAutocompleteURL,
@@ -813,7 +813,7 @@ exports.advancedSearchFlights = async (req, res) => {
             })
         return res.status(200).json(items)
     } catch (err) {
-        return res.status(500).json(er)
+        return res.status(500).json(err)
     }
 }
 
@@ -971,16 +971,6 @@ exports.getBayDepFlight = async (req, res) => {
         return res.status(500).json(error);
     }
 }
-
-// exports.priceComparisonFlights = async (req, res) => {
-//     try {
-//         const payload = req.body.payload
-//         const flightNo = req.body.flightNo
-//         const tripComPromise = axios.post('http://localhost:4000/search-tripcom-flights', payload)
-//         const myTripPromise = axios.post('http://localhost:4000/search-my-trip-flights', payload)
-//     }
-
-// }
 
 exports.flightSearchAutocomplete = async (req, res) => {
     try {
