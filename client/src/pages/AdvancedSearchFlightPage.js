@@ -6,6 +6,7 @@ import { Suspense, lazy } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { fetchFlightAdvancedSearch, fetchTripComFlight, fetchBayDepFlight, fetchMyTripFlight } from "../api/fetch.js";
+import ScrollUpButton from "../components/ScrollUpButton.js";
 
 const AdvancedFlightCard = lazy(() => delayForDemo(import('../components/AdvancedFlightCard.js')));
 

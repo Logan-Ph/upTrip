@@ -41,7 +41,7 @@ function HandleSelection({ tab, setTab, setKeyword, keyword }) {
     switch (tab) {
         case "Stay":
             return (
-                <QuickSearchStay
+                <AdvancedSearchStay
                     setTab={setTab}
                     setKeyword={setKeyword}
                     keyword={keyword}
@@ -104,20 +104,18 @@ function QuickSearchFlight({ setTab }) {
                             </select>
                         </div>
                         <div class="flex grow-1 space-x-5">
-                            <div>
+                            <div onClick={() => setIsOneWay(true)}>
                                 <input
-                                    onClick={() => setIsOneWay(true)}
                                     type="radio"
                                     id="one-way"
                                     name="radio-1"
-                                    class="radio"
+                                    className="radio"
                                     checked
                                 />
                                 <label for="one-way">&ensp; One way</label>
                             </div>
-                            <div>
+                            <div onClick={() => setIsOneWay(false)}>
                                 <input
-                                    onClick={() => setIsOneWay(false)}
                                     type="radio"
                                     id="round-trip"
                                     name="radio-1"
@@ -242,9 +240,6 @@ function QuickSearchFlight({ setTab }) {
                                     onSelect={(e) =>
                                         console.log(e.target.value)
                                     }
-                                    // onClick={(e) => dobHandler(e)}
-                                    // onClick={(e) => console.log(e.target.value)}
-                                    // onChange={(e) => console.log(e)}
                                     id="datepickerId3"
                                 />
                                 <label
@@ -295,187 +290,189 @@ function QuickSearchFlight({ setTab }) {
                             </div>
                         </div>
 
-                        {/* Ask for number of passenger */}
-                        <button
-                            id="dropdownDefaultButton"
-                            data-dropdown-toggle="dropdown"
-                            class="rounded-t-lg   bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 text-gray-500 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full md:w-1/3 justify-between "
-                            type="button"
-                            onClick={() => setOpenMenu((prev) => !prev)}
-                        >
-                            <label
-                                for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                        <div className="relative w-full md:w-1/3 mb-2 grow border-b-2 border-gray-300">
+                            {/* Ask for number of passenger */}
+                            <button
+                                id="dropdownDefaultButton"
+                                data-dropdown-toggle="dropdown"
+                                class="text-gray-900 bg-gray-100 focus:ring-4 focus:outline-none font-medium rounded-t-lg  md:border-none text-sm px-5 py-2.5 text-center inline-flex items-center h-[56px] relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none"
+                                type="button"
+                                onClick={() => setOpenMenu((prev) => !prev)}
                             >
-                                No. of Passengers
-                            </label>
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
-                            </div>
-                            {numberOfAdult} Adult, {numberOfChild} Child,{" "}
-                            {numberOfInfant} Infant{" "}
-                            <svg
-                                class="w-2.5 h-2.5 ms-3"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 10 6"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="m1 1 4 4 4-4"
-                                />
-                            </svg>
-                        </button>
+                                <label
+                                    for="floating_filled"
+                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                                >
+                                    No. of Passengers
+                                </label>
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
+                                </div>
+                                {numberOfAdult} Adult, {numberOfChild} Child,{" "}
+                                {numberOfInfant} Infant{" "}
+                                <svg
+                                    class="w-2.5 h-2.5 ms-3"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="m1 1 4 4 4-4"
+                                    />
+                                </svg>
+                            </button>
 
-                        {/* <!-- Dropdown menu --> */}
-                        <div
-                            id="dropdown"
-                            class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full ${
-                                openMenu ? "" : "hidden"
-                            }`}
-                        >
+                            {/* <!-- Dropdown menu --> */}
                             <div
-                                class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
-                                aria-labelledby="dropdownDefaultButton"
+                                id="dropdown"
+                                class={`z-10 bg-gray-100 divide-y divide-gray-100 rounded-b-lg shadow w-full absolute mt-[1.5px] ${
+                                    openMenu ? "" : "hidden"
+                                }`}
                             >
-                                <div class="flex justify-between">
-                                    <div class="flex flex-col">
+                                <div
+                                    class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                                    aria-labelledby="dropdownDefaultButton"
+                                >
+                                    <div class="flex justify-between">
+                                        <div class="flex flex-col">
+                                            <div>
+                                                <i class="fa-solid fa-child"></i>{" "}
+                                                Adult
+                                            </div>
+                                            <div>(age 12 and over)</div>
+                                        </div>
                                         <div>
-                                            <i class="fa-solid fa-child"></i>{" "}
-                                            Adult
-                                        </div>
-                                        <div>(age 12 and over)</div>
-                                    </div>
-                                    <div>
-                                        <div class="flex space-x-3 items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                class="w-6 h-6"
-                                                onClick={() =>
-                                                    setNumberOfAdult(
-                                                        numberOfAdult + 1
-                                                    )
-                                                }
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                            <div class="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                                <span class="text-lg">
+                                                    {" "}
+                                                    {numberOfAdult}{" "}
+                                                </span>
 
-                                            <span class="text-lg">
-                                                {" "}
-                                                {numberOfAdult}{" "}
-                                            </span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                class="w-6 h-6"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfAdult(
+                                                            numberOfAdult + 1
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="flex justify-between">
-                                    <div class="flex flex-col">
+                                    <div class="flex justify-between">
+                                        <div class="flex flex-col">
+                                            <div>
+                                                <i class="fa-solid fa-child-reaching"></i>{" "}
+                                                Child
+                                            </div>
+                                            <div>(age 2 - 11)</div>
+                                        </div>
                                         <div>
-                                            <i class="fa-solid fa-child-reaching"></i>{" "}
-                                            Child
-                                        </div>
-                                        <div>(age 2 - 11)</div>
-                                    </div>
-                                    <div>
-                                        <div class="flex space-x-3 items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                class="w-6 h-6"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                            <div class="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                                <span class="text-lg">1</span>
 
-                                            <span class="text-lg"> 1 </span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                class="w-6 h-6"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="flex justify-between">
-                                    <div class="flex flex-col">
+                                    <div class="flex justify-between">
+                                        <div class="flex flex-col">
+                                            <div>
+                                                <i class="fa-solid fa-baby"></i>{" "}
+                                                Infant
+                                            </div>
+                                            <div>(below age 2)</div>
+                                        </div>
                                         <div>
-                                            <i class="fa-solid fa-baby"></i>{" "}
-                                            Infant
-                                        </div>
-                                        <div>(below age 2)</div>
-                                    </div>
-                                    <div>
-                                        <div class="flex space-x-3 items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                class="w-6 h-6"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                            <div class="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                                <span class="text-lg">1</span>
 
-                                            <span class="text-lg"> 1 </span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                class="w-6 h-6"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    class="w-6 h-6"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -559,20 +556,20 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
     );
 }
 
-function QuickSearchStay({ setTab, setKeyword, keyword }) {
+function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
     const navigate = useNavigate();
     const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
     const [dropdown, setDropdown] = useState(false);
     const [numberOfAdults, setNumberOfAdults] = useState(1);
     const [numberOfChildren, setNumberOfChildren] = useState(0);
     const [numberOfRooms, setNumberOfRooms] = useState(1);
-    const [autocompletePayload, setAutocompletePayload] = useState();
     const [childrenAges, setChildrenAges] = useState([]);
+    const [autocompletePayload, setAutocompletePayload] = useState();
     const checkinDate = useRef();
     const checkoutDate = useRef();
 
     const { data, isFetched } = useQuery({
-        queryKey: ["quick-search", "hotels", debouncedKeyword],
+        queryKey: ["advanced-search", "hotels", debouncedKeyword],
         queryFn: () => fetchTripAutoComplete(debouncedKeyword),
         refetchOnWindowFocus: false,
         enabled: !!debouncedKeyword,
@@ -588,18 +585,16 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
         setAutocompletePayload(null);
     }, [debouncedKeyword]);
 
-
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedKeyword(keyword);
-        }, 500); // Delay of 1 second
+        }, 250); // Delay of 1 second
 
         return () => {
             clearTimeout(handler);
         };
     }, [keyword]);
 
-    
     useEffect(() => {
         let checkinPicker;
         let checkoutPicker;
@@ -635,29 +630,43 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
 
         if (!autocompletePayload) {
             warningNotify("Please select a location");
-            return
+            return;
         }
 
         const payload = {
-            checkin: checkinDate.current.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3$1$2'),
-            checkout: checkoutDate.current.value.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3$1$2'),
+            checkin: checkinDate.current.value.replace(
+                /(\d{2})\/(\d{2})\/(\d{4})/,
+                "$3$1$2"
+            ),
+            checkout: checkoutDate.current.value.replace(
+                /(\d{2})\/(\d{2})\/(\d{4})/,
+                "$3$1$2"
+            ),
             city: autocompletePayload.city.geoCode,
             cityName: autocompletePayload.resultWord,
+            resultType: autocompletePayload.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
             provinceId: autocompletePayload.province.geoCode,
             cityType: autocompletePayload.cityType,
             latitude: autocompletePayload.coordinateInfos[3].latitude,
             longitude: autocompletePayload.coordinateInfos[3].longitude,
-            searchCoordinate: autocompletePayload.coordinateInfos.map(info => `${info.coordinateType}_${info.latitude}_${info.longitude}_${info.accuracy}`).join('|'),
+            searchCoordinate: autocompletePayload.coordinateInfos
+                .map(
+                    (info) =>
+                        `${info.coordinateType}_${info.latitude}_${info.longitude}_${info.accuracy}`
+                )
+                .join("|"),
             crn: numberOfRooms,
             adult: numberOfAdults,
             children: numberOfChildren,
-            domestic: false
-        }
+            domestic: false,
+        };
 
-        navigate(`/advanced-hotel-search/?city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`);
-    }
+        navigate(
+            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
+        );
+    };
 
     return (
         <>
@@ -683,18 +692,20 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                         Experience
                                     </option>
                                 </select>
-                                <div class="w-full flex-1">
+                                <div class="w-full grow">
                                     <div>
                                         <input
                                             class="h-[52px] w-full input input-bordered join-item bg-white"
                                             placeholder="Where are you going?"
-                                            value={autocompletePayload?.resultWord}
+                                            value={
+                                                autocompletePayload?.resultWord
+                                            }
                                             onChange={(e) =>
                                                 setKeyword(e.target.value)
                                             }
                                         />
                                     </div>
-                                    {(isFetched && !autocompletePayload) && (
+                                    {isFetched && !autocompletePayload && (
                                         <div class="relative z-40 drop-shadow-lg">
                                             <ul class="absolute menu bg-white w-full rounded-b-lg">
                                                 {data?.keyWordSearchResults?.map(
@@ -707,24 +718,36 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-hotel"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
                                                                 );
                                                             case "CT":
-                                                            case "D": 
+                                                            case "D":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-location-dot"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
@@ -734,56 +757,85 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-map-pin"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             case "A":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-plane-departure"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             case "Z":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-map-pin"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             case "T":
                                                                 return (
                                                                     <>
                                                                         <li>
                                                                             <div
-                                                                                onClick={() =>setAutocompletePayload(element)}
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
                                                                             >
                                                                                 <i class="fa-solid fa-train"></i>{" "}
-                                                                                {element?.resultWord}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
+                                                                );
                                                             default:
-                                                                return <>
-                                                                {element?.resultWord}</>;
+                                                                return (
+                                                                    <>
+                                                                        {
+                                                                            element?.resultWord
+                                                                        }
+                                                                    </>
+                                                                );
                                                         }
                                                     }
                                                 )}
@@ -867,11 +919,11 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                             </div>
                         </div>
 
-                        <div class="join-item">
+                        <div class="join-item relative">
                             <button
                                 id="dropdownDividerButton"
                                 data-dropdown-toggle="dropdownDivider"
-                                class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between"
+                                class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 mr-5 pt-5 ps-10 w-full justify-between"
                                 type="button"
                                 onClick={() => setDropdown((prev) => !prev)}
                             >
@@ -906,7 +958,7 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                             {/* <!-- Dropdown menu --> */}
                             <div
                                 id="dropdownDivider"
-                                class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-full ${
+                                class={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] ${
                                     dropdown ? "block" : "hidden"
                                 }`}
                             >
@@ -1192,7 +1244,8 @@ function QuickSearchStay({ setTab, setKeyword, keyword }) {
                     <div class="md:ml-1.5">
                         <button
                             onClick={(e) => handleSubmit(e)}
-                            class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
+                            class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit"
+                        >
                             Search
                         </button>
                     </div>

@@ -7,14 +7,20 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
     fetchHotelAdvancedSearch,
     fetchHotelPriceComparison,
+    getAppConfig,
 } from "../api/fetch.js";
+import ScrollUpButton from "../components/ScrollUpButton.js";
+
 const AdvancedHotelCardLazy = lazy(() =>
     import("../components/AdvancedHotelCard.js")
 );
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
+    const daysBetween = (checkin, checkout) => (new Date(checkout.slice(0,4), checkout.slice(4,6) - 1, checkout.slice(6)) - new Date(checkin.slice(0,4), checkin.slice(4,6) - 1, checkin.slice(6))) / (1000 * 60 * 60 * 24);
+
     let payload = {
+        resultType: searchParams.get("resultType"),
         city: searchParams.get("city"),
         cityName: searchParams.get("cityName"),
         provinceId: searchParams.get("provinceId"),
@@ -32,7 +38,16 @@ export default function AdvancedSearchHotelPage() {
         children: searchParams.get("children"),
         domestic: searchParams.get("domestic"),
         preHotelIds: searchParams.getAll("preHotelIds"),
+        listFilters: searchParams.get("listFilters"),
     };
+
+    const {data: filterOptions} = useQuery({
+        queryKey: ['get-app-config'],
+        queryFn: getAppConfig,
+        retry: false,
+        refetchOnWindowFocus: false,
+        staleTime: Infinity
+    })
 
     const {
         data: hotelList,
@@ -42,7 +57,7 @@ export default function AdvancedSearchHotelPage() {
         isFetchingNextPage,
         status,
     } = useInfiniteQuery({
-        queryKey: ["advanced-search", "hotels"],
+        queryKey: ["advanced-search", "hotels", payload],
         queryFn: ({ pageParam = payload }) =>
             fetchHotelAdvancedSearch(pageParam),
         retry: false,
@@ -73,7 +88,6 @@ export default function AdvancedSearchHotelPage() {
         : [];
     
     payload = {...payload, hotelNames}
-    
 
     const getHotelPriceComparison = useQuery({
         queryKey: ["hotel-price-comparison", hotelNames],
@@ -92,7 +106,7 @@ export default function AdvancedSearchHotelPage() {
                             <div className="font-bold text-xl mb-4">
                                 Filters
                             </div>
-                            <AdvancedHotelFilter />
+                            <AdvancedHotelFilter filterOptions={filterOptions}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 
@@ -100,15 +114,15 @@ export default function AdvancedSearchHotelPage() {
                             <div className="flex items-center justify-between">
                                 <div className="w-1/2 mt-10 md:mt-0">
                                     <p className="text-sm md:text-lg">
-                                        Showing 3 of 3164 properties found in{" "}
+                                        Showing properties found in{" "}
                                         <span className="font-bold text-sm md:text-lg text-wrap md:text-nowrap text-[#EF4040]">
-                                            Ho Chi Minh City
+                                            {payload.cityName}
                                         </span>
                                     </p>
                                 </div>
 
                                 <div>
-                                    <SortOption />
+                                    <SortOption payload={payload}/>
                                 </div>
                             </div>
 
@@ -116,8 +130,8 @@ export default function AdvancedSearchHotelPage() {
                                 hotelList.pages.map((page, pageIndex) => {
                                     return page.hotelList.map((hotel, hotelIndex) => {
                                         const priceData = getHotelPriceComparison.isSuccess ? getHotelPriceComparison.data[hotelIndex] : null;
-                                        const agodaPrice = priceData?.agodaPrice ? Math.round(priceData.agodaPrice?.[0]?.price?.perNight?.exclusive?.display).toLocaleString("vi-VN") : null;
-                                        const bookingPrice = priceData?.bookingPrice ? Math.round(priceData.bookingPrice?.price?.[0]?.finalPrice?.amount).toLocaleString("vi-VN") : null;
+                                        const agodaPrice = priceData?.agodaPrice ? Math.round(priceData.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN") : null;
+                                        const bookingPrice = priceData?.bookingPrice ? Math.round(priceData.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0)/(Number(payload.adult) * Number(daysBetween(payload.checkin, payload.checkout)))).toLocaleString("vi-VN") : null
                                         return (
                                             <Suspense fallback={<ASearchSkeleton />}>
                                                 <AdvancedHotelCardLazy
@@ -146,6 +160,7 @@ export default function AdvancedSearchHotelPage() {
                         </div>
                     </div>
                 </section>
+                <ScrollUpButton/>
             </div>
         </>
     );

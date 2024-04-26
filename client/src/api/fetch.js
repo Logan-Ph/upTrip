@@ -42,7 +42,7 @@ export function fetchHotelAdvancedSearch(payload) {
 
 export function fetchHotelPriceComparison(payload) {
     return axios
-        .post(`/price-comparison/hotels`, payload , options)
+        .post(`/price-comparison/hotels`, payload, options)
         .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));
@@ -85,3 +85,15 @@ export function fetchBayDepFlight(payload) {
 // export function fetchFlightPriceComparison(payload, flightNo) {
 
 // }
+
+export function getAppConfig() {
+    return axios
+        .get("/get-app-config", options)
+        .then((res) => {
+            console.log(res.data)
+            return res.data
+        })
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
