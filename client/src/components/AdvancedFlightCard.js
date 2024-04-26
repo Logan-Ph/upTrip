@@ -17,7 +17,7 @@ export default function AdvancedFlightCard(){
     )
 }
 
-function FlightCard({imgSrc}){
+function FlightCard(){
     const websiteLogo =[
         {imgLogo: "https://ik.imagekit.io/Uptrip/traveloka?updatedAt=1712828670481"},
         {imgLogo: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"},
@@ -60,7 +60,7 @@ function FlightCard({imgSrc}){
         <>
         <div ref={ref} className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-lg ${visibilityClass}`}>
             <div>
-                <img src="https://ik.imagekit.io/Uptrip/vnalogo.png?updatedAt=1712847214914" alt ="airline logo" className="w-[200px] w-[100px] md:w-[450px] md:h-[252px] object-cover"/>
+                <img src="https://ik.imagekit.io/Uptrip/vnalogo.png?updatedAt=1712847214914" alt ="airline logo" className="w-[200px] h-[100px] md:w-[450px] md:h-[252px] object-cover"/>
             </div>
 
             <div className="flex-col space-y-2 py-4 px-4 md:px-0 col-span-2">

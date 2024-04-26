@@ -4,10 +4,11 @@ export function AdvancedExperienceCard(){
     return(
         <>
             <div className="mt-0">
+                hi
+                {/* <ExperienceCard/>
                 <ExperienceCard/>
                 <ExperienceCard/>
-                <ExperienceCard/>
-                <AttractionCard/>
+                <AttractionCard/> */}
             </div>
         </>
     )
