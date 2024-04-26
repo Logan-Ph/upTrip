@@ -1,6 +1,6 @@
 import { SortOption } from "../components/SortOption";
 import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useRef } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -17,6 +17,8 @@ const AdvancedHotelCardLazy = lazy(() =>
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
+    const listSort = useRef(searchParams.get("listFilters").split(',')[0])
+    const listFilter = useRef(searchParams.get("listFilters").split(',').slice(1))
     const daysBetween = (checkin, checkout) => (new Date(checkout.slice(0,4), checkout.slice(4,6) - 1, checkout.slice(6)) - new Date(checkin.slice(0,4), checkin.slice(4,6) - 1, checkin.slice(6))) / (1000 * 60 * 60 * 24);
 
     let payload = {
@@ -38,7 +40,7 @@ export default function AdvancedSearchHotelPage() {
         children: searchParams.get("children"),
         domestic: searchParams.get("domestic"),
         preHotelIds: searchParams.getAll("preHotelIds"),
-        listFilters: searchParams.get("listFilters"),
+        listFilters: `${listSort.current},${listFilter.current}`,
     };
 
     const filterOptions = useQuery({
@@ -105,7 +107,7 @@ export default function AdvancedSearchHotelPage() {
                             <div className="font-bold text-xl mb-4">
                                 Filters
                             </div>
-                            <AdvancedHotelFilter filterOptions={filterOptions}/>
+                            <AdvancedHotelFilter filterOptions={filterOptions} listSort={listSort} listFilter={listFilter}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 
@@ -121,7 +123,7 @@ export default function AdvancedSearchHotelPage() {
                                 </div>
 
                                 <div>
-                                    <SortOption payload={payload}/>
+                                    <SortOption payload={payload} listSort={listSort} listFilter={listFilter}/>
                                 </div>
                             </div>
 

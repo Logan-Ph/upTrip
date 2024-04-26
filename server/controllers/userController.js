@@ -311,6 +311,8 @@ exports.advancedSearchHotels = async (req, res) => {
             listFilters,
         } = req.body;
 
+        console.log(listFilters)
+
         const queryParam = {
             // city: 286,
             city: Number(city),
@@ -349,7 +351,7 @@ exports.advancedSearchHotels = async (req, res) => {
             travelPurpose: 0,
             ctm_ref: "ix_sb_dl",
             domestic: domestic,
-            listFilters: listFilters || "80|0|1*80*0*2,29|1*29*1|2*2",
+            listFilters: listFilters,
             locale: "en_US",
             curr: "USD",
         };

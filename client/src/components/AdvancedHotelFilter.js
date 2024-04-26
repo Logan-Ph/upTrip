@@ -1,17 +1,17 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react';
 
-export function AdvancedHotelFilter({filterOptions}){
+export function AdvancedHotelFilter({filterOptions, listSort, listFilter}){
     return(
         <>
         <div className='flex-col space-y-6'>
             <PriceRange/>
             <hr className='md:w-3/4'/>
-            <BedType bedOptions={filterOptions?.data?.bedOptions}/>
+            <BedType bedOptions={filterOptions?.data?.bedOptions} listSort={listSort} listFilter={listFilter}/>
             <hr className='md:w-3/4'/>
-            <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices}/>
+            <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices} listSort={listSort} listFilter={listFilter}/>
             <hr className='md:w-3/4'/>
-            <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices}/>
+            <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices} listSort={listSort} listFilter={listFilter}/>
         </div>
         </>
     )
@@ -46,9 +46,24 @@ function PriceRange(){
     )
 }
 
-function BedType({bedOptions}){
+function BedType({bedOptions, listSort, listFilter}){
     const [showAmenities, setShowAmenities] = useState(true);
 
+    const toggleListFilter = (item) => {
+        const newListFilter = `${item.filterId.split("|")[0]}~${item.filterId.split("|")[1]}*${item.type}*${item.value}*${item.subType}`;
+        const filters = String(listFilter.current).split(',');
+        const index = filters.indexOf(newListFilter);
+        if (index === -1) {
+            // Not found, add it
+            listFilter.current = filters.length > 0 && filters[0] !== "" ? `${listFilter.current},${newListFilter}` : newListFilter;
+        } else {
+            // Found, remove it
+            filters.splice(index, 1);
+            listFilter.current = filters.join(',');
+        }
+        console.log(listFilter.current);
+    }
+ 
     return(   
     <>
         <div className="md:w-3/4 flex items-center justify-between">
@@ -63,7 +78,7 @@ function BedType({bedOptions}){
             <div>
                 {bedOptions?.subItems.map((item, index) => (
                 <div className="flex items-center space-x-2" key={index}>
-                    <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900 " />
+                    <input type="radio" name="radio-1" className="radio border-gray-900 rounded-sm valid:border-gray-900"  onClick={() => toggleListFilter(item.data)} />
                     <label className="font-medium text-md">{item.title}</label>
                 </div>
             ))}
@@ -73,14 +88,9 @@ function BedType({bedOptions}){
     )
 }
 
-function AmenitiesFilter({amenities}){
+function AmenitiesFilter({amenities, listSort, listFilter}){
     const [showAmenities, setShowAmenities] = useState(true);
 
-    const amenityCat = [
-        {type: "Wifi"},{type: "Swimming Pool"},{type: "Parking"},{type: "Elevator"},
-        {type: "Meeting Room"}, {type: "Airport Pick-up Service"}, {type: "Barbecue"}, {type: "Smoking Area"},
-        {type: "Airport Transfer"}
-    ]
     return(   
     <>
         <div className="md:w-3/4 flex items-center justify-between">
