@@ -7,11 +7,11 @@ export function AdvancedHotelFilter({filterOptions}){
         <div className='flex-col space-y-6'>
             <PriceRange/>
             <hr className='md:w-3/4'/>
-            <BedType amenityCat={filterOptions?.bedOptions}/>
+            <BedType bedOptions={filterOptions?.data?.bedOptions}/>
             <hr className='md:w-3/4'/>
-            <AmenitiesFilter/>
+            <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices}/>
             <hr className='md:w-3/4'/>
-            <ProperStyleFilter/>
+            <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices}/>
         </div>
         </>
     )
@@ -42,14 +42,11 @@ function PriceRange(){
                 </div>
             </div>
         )}
-
-
         </>
     )
 }
 
 function BedType({bedOptions}){
-    console.log(bedOptions)
     const [showAmenities, setShowAmenities] = useState(true);
 
     return(   
@@ -76,7 +73,7 @@ function BedType({bedOptions}){
     )
 }
 
-function AmenitiesFilter(){
+function AmenitiesFilter({amenities}){
     const [showAmenities, setShowAmenities] = useState(true);
 
     const amenityCat = [
@@ -87,7 +84,7 @@ function AmenitiesFilter(){
     return(   
     <>
         <div className="md:w-3/4 flex items-center justify-between">
-            <div className="font-bold text-md">Property Facilities & Services</div>
+            <div className="font-bold text-md">{amenities?.title}</div>
             {showAmenities ?(
                 <ChevronUpIcon onClick={() => setShowAmenities(!showAmenities)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true" />
             ) : (
@@ -96,10 +93,10 @@ function AmenitiesFilter(){
         </div>
         {showAmenities && (
             <div>
-                {amenityCat.map((item, index) => (
+                {amenities?.list.map((item, index) => (
                 <div className="flex items-center space-x-2" key={index}>
                     <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900 " />
-                    <label className="font-medium text-md">{item.type}</label>
+                    <label className="font-medium text-md">{item.text}</label>
                 </div>
             ))}
             </div>
@@ -108,7 +105,7 @@ function AmenitiesFilter(){
     )
 }
 
-function ProperStyleFilter(){
+function ProperStyleFilter({properties}){
     const [showAmenities, setShowAmenities] = useState(true);
 
     const amenityCat = [
@@ -119,7 +116,7 @@ function ProperStyleFilter(){
     return(   
     <>
         <div className="md:w-3/4 flex items-center justify-between">
-            <div className="font-bold text-md">Room Facilities & Services</div>
+            <div className="font-bold text-md">{properties?.title}</div>
             {showAmenities ?(
                 <ChevronUpIcon onClick={() => setShowAmenities(!showAmenities)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true" />
             ) : (
@@ -128,10 +125,10 @@ function ProperStyleFilter(){
         </div>
         {showAmenities && (
             <div>
-                {amenityCat.map((item, index) => (
+                {properties?.list.map((item, index) => (
                 <div className="flex items-center space-x-2" key={index}>
                     <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900 " />
-                    <label className="font-medium text-md">{item.type}</label>
+                    <label className="font-medium text-md">{item.text}</label>
                 </div>
             ))}
             </div>

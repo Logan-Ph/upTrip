@@ -41,12 +41,11 @@ export default function AdvancedSearchHotelPage() {
         listFilters: searchParams.get("listFilters"),
     };
 
-    const {data: filterOptions} = useQuery({
+    const filterOptions = useQuery({
         queryKey: ['get-app-config'],
-        queryFn: getAppConfig,
+        queryFn:  getAppConfig,
         retry: false,
         refetchOnWindowFocus: false,
-        staleTime: Infinity
     })
 
     const {
