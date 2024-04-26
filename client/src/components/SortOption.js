@@ -8,12 +8,12 @@ function classNames(...classes) {
 }
 
 export function SortOption({payload}) {
-    const [listFilters, setListFilters] = useState()
     const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     navigate(`/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload?.city}&cityName=${payload?.cityName}&provinceId=${payload?.provinceId}&countryId=${payload?.countryId}&districtId=${payload?.districtId}&checkin=${payload?.checkin}&checkout=${payload?.checkout}&barCurr=USD&cityType=${payload?.cityType}&latitude=${payload?.latitude}&longitude=${payload?.longitude}&searchCoordinate=${payload?.searchCoordinate}&crn=${payload?.crn}&adult=${payload?.adult}&children=${payload?.children}&listFilters=${listFilters}&domestic=${payload?.domestic}`);
-    // },[listFilters])
+    const updateFiltersAndNavigate = (filters) => {
+        const url = `/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload?.city}&cityName=${payload?.cityName}&provinceId=${payload?.provinceId}&countryId=${payload?.countryId}&districtId=${payload?.districtId}&checkin=${payload?.checkin}&checkout=${payload?.checkout}&barCurr=USD&cityType=${payload?.cityType}&latitude=${payload?.latitude}&longitude=${payload?.longitude}&searchCoordinate=${payload?.searchCoordinate}&crn=${payload?.crn}&adult=${payload?.adult}&children=${payload?.children}&listFilters=${filters}&domestic=${payload?.domestic}`;
+        navigate(url);
+    };
 
     return (
         <Menu as="div" className="relative inline-block text-left">
@@ -41,7 +41,7 @@ export function SortOption({payload}) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    onClick={() => setListFilters("")}
+                                    onClick={() => updateFiltersAndNavigate(null)}
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
@@ -56,7 +56,7 @@ export function SortOption({payload}) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    onClick={() => setListFilters("17~3*17*3*2%2C80~0~1*80*0*2")}
+                                    onClick={() => updateFiltersAndNavigate("17~3*17*3*2%2C80~0~1*80*0*2")}
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
@@ -71,7 +71,7 @@ export function SortOption({payload}) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    onClick={() => setListFilters("17~4*17*4*2%2C80~0~1*80*0*2")}
+                                    onClick={() => updateFiltersAndNavigate("17~4*17*4*2%2C80~0~1*80*0*2")}
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
@@ -86,7 +86,7 @@ export function SortOption({payload}) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    onClick={() => setListFilters("17~6*17*6*2%2C80~0~1*80*0*2")}
+                                    onClick={() => updateFiltersAndNavigate("17~6*17*6*2%2C80~0~1*80*0*2")}
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
