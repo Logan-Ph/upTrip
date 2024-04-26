@@ -29,6 +29,9 @@ router.post('/price-comparison/hotels', userController.priceComparisonHotels)
 // advances search for specific hotels in Trip.com
 router.post('/advanced-search/hotels/trip', userController.advancedSearchSpecificHotelTrip)
 
+// get app configuration for filter options in Trip.com
+router.get('/get-app-config', userController.getAppConfig)
+
 // advanced search for hotels to do price comparison
 router.post('/advanced-search/hotels/agoda', userController.advancedSearchHotelAgoda)
 router.post('/advanced-search/hotels/booking', userController.advancedSearchHotelBooking)
@@ -38,6 +41,20 @@ router.get('/quick-search/hotels/:keyword', userController.quickSearchHotels)
 
 // quick search for attractions
 router.get('/quick-search/attractions/:keyword', userController.quickSearchAttractions)
+
+// flight search
+router.post('/advanced-search/flights', userController.advancedSearchFlights)
+
+// flight search price 
+router.post('/search-tripcom-flights', userController.getTripComFlight)
+router.post('/search-my-trip-flights', userController.getMyTripFlight)
+router.post('/search-bay-dep-flights', userController.getBayDepFlight)
+
+// flight from/to autocomplete
+router.post('/flight-search-autocomplete', userController.flightSearchAutocomplete)
+
+// get flight from agoda (base)
+router.get
 
 // user login success - get new token
 router.get('/refresh', userController.refreshToken)

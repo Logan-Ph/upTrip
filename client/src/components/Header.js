@@ -74,7 +74,7 @@ export default function Header() {
                                     type="button"
                                     onClick={() => setTab("stay")}
                                 >
-                                    Stay
+                                    <i class="fa-solid fa-hotel"></i> Stay
                                 </button>
                             </li>
                             <li className="" role="presentation">
@@ -83,7 +83,7 @@ export default function Header() {
                                     type="button"
                                     onClick={() => setTab("flight")}
                                 >
-                                    Flight
+                                    <i class="fa-solid fa-plane"></i> Flight
                                 </button>
                             </li>
                             <li className="" role="presentation">
@@ -92,6 +92,7 @@ export default function Header() {
                                     type="button"
                                     onClick={() => setTab("experience")}
                                 >
+                                    <i class="fa-solid fa-umbrella-beach"></i>{" "}
                                     Experience
                                 </button>
                             </li>
@@ -639,7 +640,7 @@ function AdvancedSearchHotel() {
             ),
             city: autocompletePayload.city.geoCode,
             cityName: autocompletePayload.resultWord,
-            resultType: autocompletePayload.resultType,
+            resultType: autocompletePayload?.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
             provinceId: autocompletePayload.province.geoCode,
@@ -659,7 +660,7 @@ function AdvancedSearchHotel() {
         };
 
         navigate(
-            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
+            `/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
         );
     };
 
@@ -688,7 +689,7 @@ function AdvancedSearchHotel() {
                                     <ul class="absolute menu bg-white w-full rounded-b-lg">
                                         {data?.keyWordSearchResults?.map(
                                             (element) => {
-                                                switch (element.resultType) {
+                                                switch (element?.resultType) {
                                                     case "H":
                                                         return (
                                                             <>
@@ -920,13 +921,13 @@ function AdvancedSearchHotel() {
                         {/* <!-- Dropdown menu --> */}
                         <div
                             id="dropdownDivider"
-                            class={`z-0 bg-white divide-y divide-gray-100 rounded-lg shadow ${
-                                dropdown ? "block" : "hidden"
+                            class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow ${
+                                dropdown ? "" : "hidden"
                             }`}
                         >
                             {/* Ask user to input room information */}
                             <div
-                                className="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                                className="py-3 text-sm text-gray-700 my-3 mx-5 space-y-4"
                                 aria-labelledby="dropdownDividerButton"
                             >
                                 <div className="flex justify-between">
