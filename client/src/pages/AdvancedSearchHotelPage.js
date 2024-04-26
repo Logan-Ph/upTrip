@@ -42,7 +42,7 @@ export default function AdvancedSearchHotelPage() {
     };
 
     const {data: filterOptions} = useQuery({
-        queryKey: ['get-app-config', payload],
+        queryKey: ['get-app-config'],
         queryFn: getAppConfig,
         retry: false,
         refetchOnWindowFocus: false,
