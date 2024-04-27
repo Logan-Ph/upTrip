@@ -1,17 +1,17 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react';
 
-export function AdvancedHotelFilter({filterOptions, listSort, listFilter}){
+export function AdvancedHotelFilter({filterOptions, listFilter}){
     return(
         <>
         <div className='flex-col space-y-6'>
             <PriceRange/>
             <hr className='md:w-3/4'/>
-            <BedType bedOptions={filterOptions?.data?.bedOptions} listSort={listSort} listFilter={listFilter}/>
+            <BedType bedOptions={filterOptions?.data?.bedOptions} listFilter={listFilter}/>
             <hr className='md:w-3/4'/>
-            <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices} listSort={listSort} listFilter={listFilter}/>
+            <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices} listFilter={listFilter}/>
             <hr className='md:w-3/4'/>
-            <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices} listSort={listSort} listFilter={listFilter}/>
+            <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices} listFilter={listFilter}/>
         </div>
         </>
     )
@@ -46,7 +46,7 @@ function PriceRange(){
     )
 }
 
-function BedType({bedOptions, listSort, listFilter}){
+function BedType({bedOptions, listFilter}){
     const [showAmenities, setShowAmenities] = useState(true);
 
     const toggleListFilter = (item) => {
@@ -88,9 +88,22 @@ function BedType({bedOptions, listSort, listFilter}){
     )
 }
 
-function AmenitiesFilter({amenities, listSort, listFilter}){
+function AmenitiesFilter({amenities, listFilter}){
     const [showAmenities, setShowAmenities] = useState(true);
-
+    const toggleListFilter = (item) => {
+        const newListFilter = `${item.filterId.split("|")[0]}~${item.filterId.split("|")[1]}*${item.type}*${item.value}*${item.subType}`;
+        const filters = String(listFilter.current).split(',');
+        const index = filters.indexOf(newListFilter);
+        if (index === -1) {
+            // Not found, add it
+            listFilter.current = filters.length > 0 && filters[0] !== "" ? `${listFilter.current},${newListFilter}` : newListFilter;
+        } else {
+            // Found, remove it
+            filters.splice(index, 1);
+            listFilter.current = filters.join(',');
+        }
+        console.log(listFilter.current);
+    }
     return(   
     <>
         <div className="md:w-3/4 flex items-center justify-between">
@@ -105,7 +118,7 @@ function AmenitiesFilter({amenities, listSort, listFilter}){
             <div>
                 {amenities?.list.map((item, index) => (
                 <div className="flex items-center space-x-2" key={index}>
-                    <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900 " />
+                    <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900" onClick={() => toggleListFilter(item)} />
                     <label className="font-medium text-md">{item.text}</label>
                 </div>
             ))}
@@ -115,13 +128,22 @@ function AmenitiesFilter({amenities, listSort, listFilter}){
     )
 }
 
-function ProperStyleFilter({properties}){
+function ProperStyleFilter({properties, listFilter}){
     const [showAmenities, setShowAmenities] = useState(true);
-
-    const amenityCat = [
-        {type: "Balcony"},{type: "Bathtub"},{type: "TV"},{type: "Air conditioner"},{type: "Extra Beds Available"},
-        {type: "Washing Machine"},{type: "Electric Kettle"},{type: "Garden/Yard"}
-    ]
+    const toggleListFilter = (item) => {
+        const newListFilter = `${item.filterId.split("|")[0]}~${item.filterId.split("|")[1]}*${item.type}*${item.value}*${item.subType}`;
+        const filters = String(listFilter.current).split(',');
+        const index = filters.indexOf(newListFilter);
+        if (index === -1) {
+            // Not found, add it
+            listFilter.current = filters.length > 0 && filters[0] !== "" ? `${listFilter.current},${newListFilter}` : newListFilter;
+        } else {
+            // Found, remove it
+            filters.splice(index, 1);
+            listFilter.current = filters.join(',');
+        }
+        console.log(listFilter.current);
+    }
 
     return(   
     <>
@@ -137,7 +159,7 @@ function ProperStyleFilter({properties}){
             <div>
                 {properties?.list.map((item, index) => (
                 <div className="flex items-center space-x-2" key={index}>
-                    <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900 " />
+                    <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900 " onClick={() => toggleListFilter(item)}/>
                     <label className="font-medium text-md">{item.text}</label>
                 </div>
             ))}

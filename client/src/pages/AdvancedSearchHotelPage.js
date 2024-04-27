@@ -1,6 +1,6 @@
 import { SortOption } from "../components/SortOption";
 import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
-import { Suspense, lazy, useRef } from "react";
+import { Suspense, lazy, useEffect, useRef } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -42,6 +42,15 @@ export default function AdvancedSearchHotelPage() {
         preHotelIds: searchParams.getAll("preHotelIds"),
         listFilters: `${listSort.current},${listFilter.current}`,
     };
+
+    useEffect(() => {
+        console.log(listFilter.current)
+    },[listFilter.current])
+
+    // useEffect(() => {
+    //     payload.listFilters = `${listSort.current},${listFilter.current}`
+    //     console.log(payload)
+    // }, [listSort, listFilter]);
 
     const filterOptions = useQuery({
         queryKey: ['get-app-config'],
@@ -107,7 +116,7 @@ export default function AdvancedSearchHotelPage() {
                             <div className="font-bold text-xl mb-4">
                                 Filters
                             </div>
-                            <AdvancedHotelFilter filterOptions={filterOptions} listSort={listSort} listFilter={listFilter}/>
+                            <AdvancedHotelFilter filterOptions={filterOptions} listFilter={listFilter}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 
