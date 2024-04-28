@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Datepicker from "flowbite-datepicker/Datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTripAutoComplete } from "../api/fetch";
+import { fetchFlightAutocomplete, fetchTripAutoComplete } from "../api/fetch";
 import { Link, useNavigate } from "react-router-dom";
 import warningNotify from "../utils/warningNotify";
 
@@ -49,7 +49,7 @@ function HandleSelection({ tab, setTab, setKeyword, keyword }) {
             );
         case "Flight":
             return (
-                <QuickSearchFlight
+                <AdvancedSearchFlight
                     setTab={setTab}
                     setKeyword={setKeyword}
                     keyword={keyword}
@@ -74,12 +74,43 @@ function HandleSelection({ tab, setTab, setKeyword, keyword }) {
     }
 }
 
-function QuickSearchFlight({ setTab }) {
-    const [isOneWay, setIsOneWay] = useState(false);
+function AdvancedSearchFlight({ setTab }) {
     const [openMenu, setOpenMenu] = useState(false);
-    const [numberOfAdult, setNumberOfAdult] = useState(0);
+    const [departure, setDeparture] = useState()
+    const [arrival, setArrival] = useState()
+    const [from, setFrom] = useState()
+    const [to, setTo] = useState()
+    const [seatClass, setSeatClass] = useState()
+    const [numberOfAdult, setNumberOfAdult] = useState(1);
     const [numberOfChild, setNumberOfChild] = useState(0);
     const [numberOfInfant, setNumberOfInfant] = useState(0);
+    const [keywordFrom, setKeywordFrom] = useState("");
+    const [keywordTo, setKeywordTo] = useState("");
+    const date = useRef();
+    const navigate = useNavigate();
+
+    const fromAutocomplete = useQuery({
+        queryKey: ['advanced-search', "flight", keywordFrom],
+        queryFn: () => fetchFlightAutocomplete(keywordFrom),
+        refetchOnWindowFocus: false,
+        enabled: !!keywordFrom,
+    })
+    useEffect(() => {
+        let datePicker;
+
+        if (date.current) {
+            datePicker = new Datepicker(date.current, {
+                autohide: true,
+                minDate: new Date()
+            });
+        }
+
+        // Cleanup function to destroy datepickers when component unmounts or rerenders
+        return () => {
+            if (datePicker) datePicker.destroy();
+        };
+    }, []);
+
 
     return (
         <>
@@ -103,29 +134,6 @@ function QuickSearchFlight({ setTab }) {
                                 <option value="Experience">Experience</option>
                             </select>
                         </div>
-                        <div class="flex grow-1 space-x-5">
-                            <div onClick={() => setIsOneWay(true)}>
-                                <input
-                                    type="radio"
-                                    id="one-way"
-                                    name="radio-1"
-                                    className="radio"
-                                    checked
-                                />
-                                <label for="one-way">&ensp; One way</label>
-                            </div>
-                            <div onClick={() => setIsOneWay(false)}>
-                                <input
-                                    type="radio"
-                                    id="round-trip"
-                                    name="radio-1"
-                                    class="radio"
-                                />
-                                <label for="round-trip">
-                                    &ensp; Round trip
-                                </label>
-                            </div>
-                        </div>
                     </div>
                     <div class="flex flex-col md:flex-row space-y-2 md:space-x-4 md:space-y-0 items-center">
                         <div class="relative w-full md:w-1/2">
@@ -138,6 +146,9 @@ function QuickSearchFlight({ setTab }) {
                                     type="text"
                                     class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 "
                                     placeholder="City or airport"
+                                    onChange={(e) =>
+                                        setKeywordFrom(e.target.value)
+                                    }
                                 />
                                 <label
                                     for="floating_filled"
@@ -146,30 +157,20 @@ function QuickSearchFlight({ setTab }) {
                                     Origin
                                 </label>
                             </div>
-                            <div class="relative z-40">
-                                <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
-                                    <li>
-                                        <a>
-                                            <i class="fa-solid fa-plane"></i> Da
-                                            Nang Internation Airport
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {" "}
-                                            <i class="fa-solid fa-plane"></i>{" "}
-                                            Tan Son Nhat Intercontenial Airport
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {" "}
-                                            <i class="fa-solid fa-plane"></i>{" "}
-                                            Noi Bai Intercontenial Airport
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                            {fromAutocomplete.isFetched && (
+                                <div class="relative z-40">
+                                    <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
+                                        {fromAutocomplete.data.map(
+                                            (item) => {
+                                                <li>
+                                                    <a>
+                                                        <i class="fa-solid fa-plane"></i> {item.cityName}
+                                                    </a>
+                                                </li>
+                                            })}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                         <div class="relative w-full md:w-1/2">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -189,7 +190,7 @@ function QuickSearchFlight({ setTab }) {
                                     Destination
                                 </label>
                             </div>
-                            <div class="relative z-40">
+                            {/* <div class="relative z-40">
                                 <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
                                     <li>
                                         <a>
@@ -212,7 +213,7 @@ function QuickSearchFlight({ setTab }) {
                                         </a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
@@ -231,16 +232,17 @@ function QuickSearchFlight({ setTab }) {
                             </div>
                             <div>
                                 <input
+                                    ref={date}
                                     datepicker
                                     datepicker-autohide
                                     name="start"
                                     type="text"
                                     class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5"
                                     placeholder="dd/mm/yyyy"
+                                    value={date.current?.value}
                                     onSelect={(e) =>
                                         console.log(e.target.value)
                                     }
-                                    id="datepickerId3"
                                 />
                                 <label
                                     for="floating_filled"
@@ -252,11 +254,7 @@ function QuickSearchFlight({ setTab }) {
                         </div>
 
                         {/* This field appears only when user choose round trip , hidden when one way */}
-                        <div
-                            class={`relative w-full md:w-1/3 ${
-                                isOneWay ? "hidden" : ""
-                            }`}
-                        >
+                        <div class="relative w-full md:w-1/3">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <svg
                                     class="w-4 h-4 text-gray-500"
@@ -330,9 +328,8 @@ function QuickSearchFlight({ setTab }) {
                             {/* <!-- Dropdown menu --> */}
                             <div
                                 id="dropdown"
-                                class={`z-10 bg-gray-100 divide-y divide-gray-100 rounded-b-lg shadow w-full absolute mt-[1.5px] ${
-                                    openMenu ? "" : "hidden"
-                                }`}
+                                class={`z-10 bg-gray-100 divide-y divide-gray-100 rounded-b-lg shadow w-full absolute mt-[1.5px] ${openMenu ? "" : "hidden"
+                                    }`}
                             >
                                 <div
                                     class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
@@ -341,10 +338,12 @@ function QuickSearchFlight({ setTab }) {
                                     <div class="flex justify-between">
                                         <div class="flex flex-col">
                                             <div>
-                                                <i class="fa-solid fa-child"></i>{" "}
-                                                Adult
+                                                <i
+                                                    class="fa-solid fa-person"
+                                                    aria-hidden="true"
+                                                ></i>{" "}
+                                                Adult(s)
                                             </div>
-                                            <div>(age 12 and over)</div>
                                         </div>
                                         <div>
                                             <div class="flex space-x-3 items-center">
@@ -355,12 +354,18 @@ function QuickSearchFlight({ setTab }) {
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
                                                     class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfAdult(
+                                                            (prev) =>
+                                                                prev - 1 > 0 ? prev - 1 : 1
+                                                        )
+                                                    }
                                                 >
                                                     <path
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    />
+                                                    ></path>
                                                 </svg>
                                                 <span class="text-lg">
                                                     {" "}
@@ -376,7 +381,7 @@ function QuickSearchFlight({ setTab }) {
                                                     class="w-6 h-6"
                                                     onClick={() =>
                                                         setNumberOfAdult(
-                                                            numberOfAdult + 1
+                                                            (prev) => prev + 1 + numberOfChild + numberOfInfant <= 6 ? prev + 1 : prev
                                                         )
                                                     }
                                                 >
@@ -384,7 +389,7 @@ function QuickSearchFlight({ setTab }) {
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    />
+                                                    ></path>
                                                 </svg>
                                             </div>
                                         </div>
@@ -406,14 +411,24 @@ function QuickSearchFlight({ setTab }) {
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
                                                     class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfChild(
+                                                            (prev) =>
+                                                                prev - 1 >= 0
+                                                                    ? prev - 1 : 0
+                                                        )
+                                                    }
                                                 >
                                                     <path
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    />
+                                                    ></path>
                                                 </svg>
-                                                <span class="text-lg">1</span>
+                                                <span class="text-lg">
+                                                    {" "}
+                                                    {numberOfChild}{" "}
+                                                </span>
 
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -422,12 +437,17 @@ function QuickSearchFlight({ setTab }) {
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
                                                     class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfChild(
+                                                            (prev) => prev < numberOfAdult * 2 && prev + 1 + numberOfAdult + numberOfInfant <= 6 ? prev + 1 : prev
+                                                        )
+                                                    }
                                                 >
                                                     <path
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    />
+                                                    ></path>
                                                 </svg>
                                             </div>
                                         </div>
@@ -449,14 +469,25 @@ function QuickSearchFlight({ setTab }) {
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
                                                     class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfInfant(
+                                                            (prev) =>
+                                                                prev - 1 >= 0
+                                                                    ? prev - 1
+                                                                    : prev
+                                                        )
+                                                    }
                                                 >
                                                     <path
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    />
+                                                    ></path>
                                                 </svg>
-                                                <span class="text-lg">1</span>
+                                                <span class="text-lg">
+                                                    {" "}
+                                                    {numberOfInfant}{" "}
+                                                </span>
 
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -465,12 +496,17 @@ function QuickSearchFlight({ setTab }) {
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
                                                     class="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfInfant(
+                                                            (prev) => prev + 1 <= numberOfAdult && prev + 1 + numberOfChild + numberOfAdult <= 6 ? prev + 1 : prev
+                                                        )
+                                                    }
                                                 >
                                                     <path
                                                         stroke-linecap="round"
                                                         stroke-linejoin="round"
                                                         d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    />
+                                                    ></path>
                                                 </svg>
                                             </div>
                                         </div>
@@ -711,7 +747,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                 {data?.keyWordSearchResults?.map(
                                                     (element) => {
                                                         switch (
-                                                            element.resultType
+                                                        element.resultType
                                                         ) {
                                                             case "H":
                                                                 return (
@@ -958,9 +994,8 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                             {/* <!-- Dropdown menu --> */}
                             <div
                                 id="dropdownDivider"
-                                class={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] ${
-                                    dropdown ? "block" : "hidden"
-                                }`}
+                                class={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] ${dropdown ? "block" : "hidden"
+                                    }`}
                             >
                                 {/* Ask user to input room information */}
                                 <div
@@ -1061,7 +1096,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                         setNumberOfAdults(
                                                             (prev) =>
                                                                 prev - 1 > 0 &&
-                                                                prev >
+                                                                    prev >
                                                                     numberOfRooms
                                                                     ? prev - 1
                                                                     : prev
@@ -1134,7 +1169,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                                             prev.slice(
                                                                                 0,
                                                                                 prev.length -
-                                                                                    1
+                                                                                1
                                                                             )
                                                                     );
                                                                     return (
@@ -1169,7 +1204,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                         setNumberOfChildren(
                                                             (prev) =>
                                                                 prev <
-                                                                numberOfRooms *
+                                                                    numberOfRooms *
                                                                     6
                                                                     ? prev + 1
                                                                     : prev

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
 const User = require("../models/user");
+const {stringSimilarity} =  require("string-similarity-js");
 const {
     generateToken,
     generateRefreshToken,
@@ -376,6 +377,7 @@ exports.advancedSearchHotels = async (req, res) => {
         const response = await axios.post(tripGetHotelListIdURL, payload, {
             headers: headers,
         });
+
 
         const hotelName = response.data.hotelList.map(
             (hotel) => hotel.hotelBasicInfo.hotelName
@@ -885,7 +887,7 @@ exports.getMyTripFlight = async (req, res) => {
                 }
             })
             .catch(er => {
-                return res.status(500).json(er)
+                throw er
             })
         while (items.length < totalFlight) {
             await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
@@ -921,7 +923,6 @@ exports.getMyTripFlight = async (req, res) => {
         return res.status(200).json(items)
     } catch (er) {
         return res.status(500).json(er)
-
     }
 }
 
@@ -937,7 +938,7 @@ exports.getBayDepFlight = async (req, res) => {
                 });
                 return response;
             } catch (error) {
-                throw new Error(`Error sending request: ${error.message}`);
+                throw error;
             }
         };
         const requests = bayDepGetFlightPayload(req.body).map(payload => {
@@ -974,7 +975,8 @@ exports.getBayDepFlight = async (req, res) => {
 
 exports.flightSearchAutocomplete = async (req, res) => {
     try {
-        const options = (req.body.options) ? req.body.options : airportOptions
+        console.log(req.body)
+        const options = airportOptions
         const result = []
         for (const opt of options) {
             if (stringSimilarity(req.body.input, opt.cityName) > 0) {

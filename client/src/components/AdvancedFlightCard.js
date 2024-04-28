@@ -162,7 +162,7 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
                                         <img src={heart.imgLogo} alt="website logo" className="w-[100px] h-[34px] object-cover" />
                                     </div>
                                     <div className="mx-auto">
-                                        <p className="text-xs md:text-lg text-[#222160] font-bold">{heart.success  && heart.price !== null ? heart.price : "Null"} VND</p>
+                                        <p className="text-xs md:text-lg text-[#222160] font-bold">{heart.success  && heart.price !== null ? heart.price.toLocaleString("vi-VN") + " VND" : "-" }</p>
                                     </div>
 
                                 </div>
