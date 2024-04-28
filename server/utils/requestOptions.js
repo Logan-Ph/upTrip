@@ -991,7 +991,10 @@ const agodaGetFlightPayload = (data) => {
                         "departureDate": date,
                         "filter": {
                             "arrivalTime": null,
-                            "departureTime": null
+                            "departureTime": null,
+                            "carrier": {
+                                "preferred": data.prefer,
+                            }
                         }
                     }
                 ],

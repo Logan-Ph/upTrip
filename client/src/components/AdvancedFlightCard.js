@@ -58,7 +58,9 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
             isFilled: false, 
             imgLogo: logo.imgLogo, 
             price: logo.price, 
-            success: logo.success })));
+            success: logo.success }))
+    );
+            
     const toggleHeart = (index) => {
         const updatedHearts = hearts.map((heart, i) => ({
             ...heart,

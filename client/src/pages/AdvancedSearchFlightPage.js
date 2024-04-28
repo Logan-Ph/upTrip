@@ -21,6 +21,7 @@ export default function AdvancedSearchFlightPage() {
     const [searchParams] = useSearchParams();
     const [sortField, setSortField] = useState("best");
     const [sortDir, setSortDir] = useState("asc");
+    const [prefer, setPrefer] = useState([]);
     const payload = {
         year: searchParams.get("year"),
         month: searchParams.get("month"),
@@ -32,13 +33,13 @@ export default function AdvancedSearchFlightPage() {
         infant: searchParams.get("infant"),
         seatClass: searchParams.get("seatClass"),
         sortField: sortField,
-        sortDir: sortDir
+        sortDir: sortDir,
+        prefer: prefer
     }
 
     const defaultSort = () => {
         setSortField("best");
         setSortDir("asc");
-
     }
 
     const priceAscSort = () => {
@@ -50,7 +51,10 @@ export default function AdvancedSearchFlightPage() {
         setSortField("price");
         setSortDir("desc");
     }
-
+    
+    function airlineFilter(arr) {
+        setPrefer(arr)
+    }
     const agoda = useQuery({
         queryKey: ["advanced-search-flight"],
         queryFn: () => fetchFlightAdvancedSearch(payload),
@@ -60,7 +64,7 @@ export default function AdvancedSearchFlightPage() {
 
     useEffect(()=>{
         agoda.refetch();
-    }, [sortField, sortDir])
+    }, [sortField, sortDir, prefer])
 
 
     const tripCom = useQuery({
@@ -85,6 +89,7 @@ export default function AdvancedSearchFlightPage() {
         refetchOnWindowFocus: false,
     })
 
+
     return (
         <>
             <div className='bg-[#FAFBFC] md:p-10'>
@@ -93,7 +98,7 @@ export default function AdvancedSearchFlightPage() {
 
                         <div className="relative">
                             <div className="font-bold text-xl mb-4">Filters</div>
-                            <AdvancedFlightFilter />
+                            <AdvancedFlightFilter setPrefer={setPrefer}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 
