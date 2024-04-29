@@ -76,12 +76,12 @@ export default function Header() {
                                 </ul>
                             </div>
                             <div class="flex-none md:pl-3 drop-shadow-xl lg:block">
-                                <a
-                                    href="/login"
-                                    class="bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg hidden" //hidden
+                                <Link
+                                    to="/login"
+                                    class={`bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg ${auth?.accessToken ? 'hidden' : ''}`}
                                 >
                                     Login
-                                </a>
+                                </Link>
 
                                 {auth?.accessToken && (
                                     <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
@@ -183,12 +183,12 @@ export default function Header() {
                     <ul class="menu p-4 w-80 min-h-full bg-base-200">
                         {/* If user havent login */}
                         <div class="flex justify-end drop-shadow-xl">
-                            <a
-                                href="/login"
-                                class="bg-transparent btn btn-sm rounded-xl text-black font-semibold shadow-lg text-lg border-black hidden"
+                            <Link
+                                to="/login"
+                                class={`bg-transparent btn btn-sm rounded-xl text-black font-semibold shadow-lg text-lg border-black ${auth?.accessToken ? 'hidden' : ''}`}
                             >
                                 Login
-                            </a>
+                            </Link>
 
                             {/* if the user is logged in */}
                             <div class="avatar hidden">
@@ -199,13 +199,13 @@ export default function Header() {
                                     />
                                 </div>
                             </div>
-
-                            {/* If user havent uploaded their profile picture */}
-                            <div class="avatar placeholder">
-                                <div class="bg-neutral text-neutral-content rounded-full w-12">
-                                    <span class="text-xl">D</span>
+                            {auth?.accessToken && (
+                                <div class="avatar placeholder">
+                                    <div class="bg-neutral text-neutral-content rounded-full w-12">
+                                        <span class="text-xl">{auth.email[0].toUpperCase()}</span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                         {/* <!-- Sidebar content here --> */}
                         <li>

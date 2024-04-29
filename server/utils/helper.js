@@ -734,7 +734,7 @@ exports.bedOptions = () => {
  * @returns {Array} An array of filter objects, each containing properties like filterId, value, type, subType, and sceneType.
  */
 exports.getListFiltersTrip = (listFilters) => {
-    const baseFilters = [
+    let baseFilters = [
         {
             filterId: "80|0|1",
             value: "0",
@@ -749,46 +749,61 @@ exports.getListFiltersTrip = (listFilters) => {
         },
     ];
 
-    let specificFilter;
-    switch (listFilters) {
-        case "17~6*17*6*2%2C80~0~1*80*0*2": // highest rating
-            specificFilter = {
-                filterId: "17|6",
-                value: "6",
-                type: "17",
-                subType: "2",
-                sceneType: "17",
-            };
-            break;
-        case "17~3*17*3*2,80~0~1*80*0*2": // lowest price
-            specificFilter = {
-                filterId: "17|3",
-                value: "3",
-                type: "17",
-                subType: "2",
-                sceneType: "17",
-            };
-            break;
-        case "17~4*17*4*2,80~0~1*80*0*2": // highest price
-            specificFilter = {
-                filterId: "17|4",
-                value: "4",
-                type: "17",
-                subType: "2",
-                sceneType: "17",
-            };
-            break;
-        default:
-            specificFilter = {
-                filterId: "17|1",
-                value: "1",
-                type: "17",
-                subType: "2",
-                sceneType: "17",
-            };
+    const filterItems = listFilters.split(",")
+    for (let item of filterItems) {
+        if (!item) continue
+        const listItem = item.split("*")
+        const filter = listItem[0].split("~")
+        baseFilters.push( {
+            filterId: `${filter[0]}|${filter[1]}`,
+            value: item.split("*")[2],
+            type: item.split("*")[1],
+            subType: item.split("*")[3],
+            sceneType: item.split("*")[1],
+        })
     }
 
-    return [specificFilter, ...baseFilters];
+    // switch (listFilters) {
+    //     case "17~6*17*6*2%2C80~0~1*80*0*2": // highest rating
+    //         specificFilter = {
+    //             filterId: "17|6",
+    //             value: "6",
+    //             type: "17",
+    //             subType: "2",
+    //             sceneType: "17",
+    //         };
+    //         break;
+    //     case "17~3*17*3*2,80~0~1*80*0*2": // lowest price
+    //         specificFilter = {
+    //             filterId: "17|3",
+    //             value: "3",
+    //             type: "17",
+    //             subType: "2",
+    //             sceneType: "17",
+    //         };
+    //         break;
+    //     case "17~4*17*4*2,80~0~1*80*0*2": // highest price
+    //         specificFilter = {
+    //             filterId: "17|4",
+    //             value: "4",
+    //             type: "17",
+    //             subType: "2",
+    //             sceneType: "17",
+    //         };
+    //         break;
+    //     default:
+    //         specificFilter = {
+    //             filterId: "17|1",
+    //             value: "1",
+    //             type: "17",
+    //             subType: "2",
+    //             sceneType: "17",
+    //         };
+    // }
+
+    // console.log(baseFilters)
+
+    return baseFilters;
 };
 
 
