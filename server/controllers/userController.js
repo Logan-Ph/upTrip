@@ -975,7 +975,6 @@ exports.getBayDepFlight = async (req, res) => {
 
 exports.flightSearchAutocomplete = async (req, res) => {
     try {
-        console.log(req.body)
         const options = airportOptions
         const result = []
         for (const opt of options) {
