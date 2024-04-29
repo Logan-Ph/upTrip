@@ -31,8 +31,7 @@ function PriceRange() {
     };
     const valueLabelFormat = (value) => {
         return `$${value}`;
-    };
-  
+    };  
     return (
         <>
      
@@ -52,8 +51,8 @@ function PriceRange() {
               getAriaLabel={() => 'Price range'}
               value={value}
               onChange={handleChange}
-              valueLabelDisplay="auto" // Display the label on the slider thumb
-              valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
+              valueLabelDisplay="auto"
+              valueLabelFormat={valueLabelFormat}
               min={50}
               max={1200}
               step={25}
@@ -66,33 +65,49 @@ function PriceRange() {
 }
 
 function DepartureTime(){
-    const [showDepartureTime, setDepartureTime] = useState(true);
-    return(
+    const [showPriceRang, setPriceRange] = useState(true);
+    const [value, setValue] = useState([0, 12]);
+  
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+      // Function to format the value for display
+    const valueLabelFormat = (value) => {
+        const hour = Math.floor(value);
+        const amPm = hour >= 12 ? 'PM' : 'AM';
+        const formattedHour = hour % 12 === 0 ? 12 : hour % 12; // Convert 24h to 12h format
+        return `${formattedHour} ${amPm}`;
+    };
+    
+  
+    return (
         <>
-        <div className="md:w-3/4 flex items-center justify-between">
+        <div className='md:w-3/4 flex items-center justify-between'>
             <div className="font-bold text-md">Departure Time</div>
-            {showDepartureTime ? (
-                <ChevronUpIcon onClick={() => setDepartureTime(!showDepartureTime)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true" />
+
+             {showPriceRang ? (
+                <ChevronUpIcon onClick={() => setPriceRange(!showPriceRang)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
             ) : (
-                <ChevronDownIcon onClick={() => setDepartureTime(!showDepartureTime)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true" />
+                <ChevronDownIcon onClick={() => setPriceRange(!showPriceRang)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
             )}
         </div>
         
-        {showDepartureTime && (
-            <div className='flex-col'>
-                <div>
-                    <input type="range" min={50} max="1200" step="25" className="range-secondary w-full md:w-3/4"  />
-                </div>
-                <div className="md:w-3/4 flex justify-between">
-                    <span>12:01 AM</span>
-                    <span>11:59 PM</span>
-                </div>
-            </div>
+        {showPriceRang && (
+            <div className='md:w-3/4'>
+            <Slider
+              getAriaLabel={() => 'Price range'}
+              value={value}
+              onChange={handleChange}
+              valueLabelDisplay="auto" // Display the label on the slider thumb
+              valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
+              min={50}
+              max={1200}
+              step={25}
+            />
+          </div>
         )}
-        
-
-        </>
-    )
+    </>
+    );
 }
 
 
