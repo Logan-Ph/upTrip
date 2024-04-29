@@ -754,13 +754,25 @@ exports.getListFiltersTrip = (listFilters) => {
         if (!item) continue
         const listItem = item.split("*")
         const filter = listItem[0].split("~")
-        baseFilters.push( {
-            filterId: `${filter[0]}|${filter[1]}`,
-            value: item.split("*")[2],
-            type: item.split("*")[1],
-            subType: item.split("*")[3],
-            sceneType: item.split("*")[1],
-        })
+        if (filter[0] === "15"){
+            const price = listItem[2].split("~")
+            baseFilters.push({
+                filterId: `${filter[0]}|${filter[1]}`,
+                value: item.split("*")[2],
+                type: filter[0],
+                subType: listItem[3],
+                priceBarMax: 4200000,
+                value: `${price[0]}|${(price[1] === "4200000" ? "max" : price[1])}`
+            })
+        }else{
+            baseFilters.push( {
+                filterId: `${filter[0]}|${filter[1]}`,
+                value: listItem[2],
+                type: listItem[1],
+                subType: listItem[3],
+                sceneType: listItem[1],
+            })
+        }
     }
     return baseFilters;
 };

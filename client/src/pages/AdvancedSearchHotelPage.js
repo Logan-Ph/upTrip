@@ -1,6 +1,6 @@
 import { SortOption } from "../components/SortOption";
 import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
-import { Suspense, lazy, useEffect, useRef } from "react";
+import { Suspense, lazy, useRef } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -107,7 +107,7 @@ export default function AdvancedSearchHotelPage() {
                             <div className="font-bold text-xl mb-4">
                                 Filters
                             </div>
-                            <AdvancedHotelFilter filterOptions={filterOptions} listFilter={listFilter} payload={payload}/>
+                            <AdvancedHotelFilter filterOptions={filterOptions} listFilter={listFilter} payload={payload} listSort={listSort}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 

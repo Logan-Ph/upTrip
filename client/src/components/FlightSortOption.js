@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,15 +7,8 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
 
-export function SortOption({payload, listSort, listFilter}) {
-    const navigate = useNavigate()
-
-    const updateFiltersAndNavigate = (filters) => {
-        listSort.current = filters;
-        let listFilters = `${listSort.current},${listFilter.current}`
-        const url = `/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload?.city}&cityName=${payload?.cityName}&provinceId=${payload?.provinceId}&countryId=${payload?.countryId}&districtId=${payload?.districtId}&checkin=${payload?.checkin}&checkout=${payload?.checkout}&barCurr=USD&cityType=${payload?.cityType}&latitude=${payload?.latitude}&longitude=${payload?.longitude}&searchCoordinate=${payload?.searchCoordinate}&crn=${payload?.crn}&adult=${payload?.adult}&children=${payload?.children}&listFilters=${listFilters}&domestic=${payload?.domestic}`;
-        navigate(url);
-    };
+export function FlightSortOption({defaultSort, priceAscSort, priceDescSort}) {
+    const [listFilters, setListFilters] = useState()
 
     return (
         <Menu as="div" className="relative inline-block text-left">
@@ -43,7 +36,10 @@ export function SortOption({payload, listSort, listFilter}) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    onClick={() => updateFiltersAndNavigate(null)}
+                                    onClick={() => {
+                                        setListFilters(""); 
+                                        defaultSort()
+                                    }}
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
@@ -58,7 +54,10 @@ export function SortOption({payload, listSort, listFilter}) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    onClick={() => updateFiltersAndNavigate("17~3*17*3*2")}
+                                    onClick={() => {
+                                        setListFilters("17~3*17*3*2%2C80~0~1*80*0*2");
+                                        priceAscSort()
+                                    }}
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
@@ -73,7 +72,10 @@ export function SortOption({payload, listSort, listFilter}) {
                         <Menu.Item>
                             {({ active }) => (
                                 <Link
-                                    onClick={() => updateFiltersAndNavigate("17~4*17*4*2")}
+                                    onClick={() => {
+                                        setListFilters("17~4*17*4*2%2C80~0~1*80*0*2");
+                                        priceDescSort()
+                                }}
                                     className={classNames(
                                         active
                                             ? "bg-gray-100 text-gray-900"
@@ -82,21 +84,6 @@ export function SortOption({payload, listSort, listFilter}) {
                                     )}
                                 >
                                     Price High to Low
-                                </Link>
-                            )}
-                        </Menu.Item>
-                        <Menu.Item>
-                            {({ active }) => (
-                                <Link
-                                    onClick={() => updateFiltersAndNavigate("17~6*17*6*2")}
-                                    className={classNames(
-                                        active
-                                            ? "bg-gray-100 text-gray-900"
-                                            : "text-gray-700",
-                                        "block px-4 py-2 text-sm"
-                                    )}
-                                >
-                                    Most popular
                                 </Link>
                             )}
                         </Menu.Item>

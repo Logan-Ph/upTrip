@@ -82,6 +82,18 @@ export function fetchBayDepFlight(payload) {
         });
 }
 
+export function fetchFlightAutocomplete(keyword) {
+    const payload = {
+        "input": keyword
+    }
+    return axios
+        .post('flight-search-autocomplete', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        })
+}
+
 export function getAppConfig() {
     return axios
         .get("/get-app-config", options)
