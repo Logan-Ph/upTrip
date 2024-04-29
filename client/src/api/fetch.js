@@ -40,7 +40,10 @@ export function fetchHotelAdvancedSearch(payload) {
         });
 }
 
-export function fetchHotelPriceComparison(payload) {
+export function fetchHotelPriceComparison(keyword) {
+    const payload = {
+        "input": keyword,
+    }
     return axios
         .post(`/price-comparison/hotels`, payload, options)
         .then((res) => res.data)
@@ -80,6 +83,18 @@ export function fetchBayDepFlight(payload) {
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));
         });
+}
+
+export function fetchFlightAutocomplete(keyword) {
+    const payload = {
+        "input": keyword
+    }
+    return axios
+        .post('flight-search-autocomplete', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        })
 }
 
 export function getAppConfig() {

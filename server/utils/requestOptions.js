@@ -991,7 +991,10 @@ const agodaGetFlightPayload = (data) => {
                         "departureDate": date,
                         "filter": {
                             "arrivalTime": null,
-                            "departureTime": null
+                            "departureTime": null,
+                            "carrier": {
+                                "preferred": data.prefer,
+                            }
                         }
                     }
                 ],
@@ -999,7 +1002,8 @@ const agodaGetFlightPayload = (data) => {
                     "cabinType": data.seatClass.charAt(0) + data.seatClass.slice(1).toLowerCase(),
                 },
                 "sort": {
-                    "field": "best",
+                    "field": data.sortField,
+                    "direction": data.sortDir,
                 },
             }
         ],

@@ -53,9 +53,6 @@ router.post('/search-bay-dep-flights', userController.getBayDepFlight)
 // flight from/to autocomplete
 router.post('/flight-search-autocomplete', userController.flightSearchAutocomplete)
 
-// get flight from agoda (base)
-router.get
-
 // user login success - get new token
 router.get('/refresh', userController.refreshToken)
 
