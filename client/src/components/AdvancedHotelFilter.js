@@ -1,6 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import React, { useState } from 'react';
-import Box from '@mui/material/Box';
+import Checkbox from '@mui/joy/Checkbox';
 import Slider from '@mui/material/Slider';
 
 export function AdvancedHotelFilter({filterOptions, listFilter}){
@@ -99,7 +99,11 @@ function BedType({bedOptions, listFilter}){
             <div>
                 {bedOptions?.subItems.map((item, index) => (
                 <div className="flex items-center space-x-2" key={index}>
-                    <input type="radio" name="radio-1" className="radio border-gray-900 rounded-sm valid:border-gray-900"  onClick={() => toggleListFilter(item.data)} />
+                    <Checkbox
+                        className="radio border-gray-900 rounded-sm valid:border-gray-900"  
+                        label={item.title}
+                        onClick={() => toggleListFilter(item.data)} />
+                        
                     <label className="font-medium text-md">{item.title}</label>
                 </div>
             ))}
