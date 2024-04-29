@@ -311,8 +311,6 @@ exports.advancedSearchHotels = async (req, res) => {
             listFilters,
         } = req.body;
 
-        console.log(listFilters)
-
         const queryParam = {
             // city: 286,
             city: Number(city),

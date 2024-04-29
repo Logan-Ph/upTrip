@@ -1,17 +1,18 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export function AdvancedHotelFilter({filterOptions, listFilter}){
+export function AdvancedHotelFilter({filterOptions, listFilter, payload}){
     return(
         <>
         <div className='flex-col space-y-6'>
             <PriceRange/>
             <hr className='md:w-3/4'/>
-            <BedType bedOptions={filterOptions?.data?.bedOptions} listFilter={listFilter}/>
+            <BedType bedOptions={filterOptions?.data?.bedOptions} listFilter={listFilter} payload={payload}/>
             <hr className='md:w-3/4'/>
-            <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices} listFilter={listFilter}/>
+            <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices} listFilter={listFilter} payload={payload}/>
             <hr className='md:w-3/4'/>
-            <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices} listFilter={listFilter}/>
+            <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices} listFilter={listFilter} payload={payload}/>
         </div>
         </>
     )
@@ -46,8 +47,9 @@ function PriceRange(){
     )
 }
 
-function BedType({bedOptions, listFilter}){
+function BedType({bedOptions, listFilter, payload}){
     const [showAmenities, setShowAmenities] = useState(true);
+    const navigate = useNavigate()
 
     const toggleListFilter = (item) => {
         const newListFilter = `${item.filterId.split("|")[0]}~${item.filterId.split("|")[1]}*${item.type}*${item.value}*${item.subType}`;
@@ -61,7 +63,9 @@ function BedType({bedOptions, listFilter}){
             filters.splice(index, 1);
             listFilter.current = filters.join(',');
         }
-        console.log(listFilter.current);
+        navigate(
+            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+        );
     }
  
     return(   
@@ -88,8 +92,9 @@ function BedType({bedOptions, listFilter}){
     )
 }
 
-function AmenitiesFilter({amenities, listFilter}){
+function AmenitiesFilter({amenities, listFilter, payload}){
     const [showAmenities, setShowAmenities] = useState(true);
+    const navigate = useNavigate();
     const toggleListFilter = (item) => {
         const newListFilter = `${item.filterId.split("|")[0]}~${item.filterId.split("|")[1]}*${item.type}*${item.value}*${item.subType}`;
         const filters = String(listFilter.current).split(',');
@@ -102,7 +107,9 @@ function AmenitiesFilter({amenities, listFilter}){
             filters.splice(index, 1);
             listFilter.current = filters.join(',');
         }
-        console.log(listFilter.current);
+        navigate(
+            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+        );
     }
     return(   
     <>
@@ -128,8 +135,10 @@ function AmenitiesFilter({amenities, listFilter}){
     )
 }
 
-function ProperStyleFilter({properties, listFilter}){
+function ProperStyleFilter({properties, listFilter, payload}){
     const [showAmenities, setShowAmenities] = useState(true);
+    const navigate = useNavigate();
+
     const toggleListFilter = (item) => {
         const newListFilter = `${item.filterId.split("|")[0]}~${item.filterId.split("|")[1]}*${item.type}*${item.value}*${item.subType}`;
         const filters = String(listFilter.current).split(',');
@@ -142,7 +151,9 @@ function ProperStyleFilter({properties, listFilter}){
             filters.splice(index, 1);
             listFilter.current = filters.join(',');
         }
-        console.log(listFilter.current);
+        navigate(
+            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+        );
     }
 
     return(   

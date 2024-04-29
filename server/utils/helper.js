@@ -762,47 +762,6 @@ exports.getListFiltersTrip = (listFilters) => {
             sceneType: item.split("*")[1],
         })
     }
-
-    // switch (listFilters) {
-    //     case "17~6*17*6*2%2C80~0~1*80*0*2": // highest rating
-    //         specificFilter = {
-    //             filterId: "17|6",
-    //             value: "6",
-    //             type: "17",
-    //             subType: "2",
-    //             sceneType: "17",
-    //         };
-    //         break;
-    //     case "17~3*17*3*2,80~0~1*80*0*2": // lowest price
-    //         specificFilter = {
-    //             filterId: "17|3",
-    //             value: "3",
-    //             type: "17",
-    //             subType: "2",
-    //             sceneType: "17",
-    //         };
-    //         break;
-    //     case "17~4*17*4*2,80~0~1*80*0*2": // highest price
-    //         specificFilter = {
-    //             filterId: "17|4",
-    //             value: "4",
-    //             type: "17",
-    //             subType: "2",
-    //             sceneType: "17",
-    //         };
-    //         break;
-    //     default:
-    //         specificFilter = {
-    //             filterId: "17|1",
-    //             value: "1",
-    //             type: "17",
-    //             subType: "2",
-    //             sceneType: "17",
-    //         };
-    // }
-
-    // console.log(baseFilters)
-
     return baseFilters;
 };
 

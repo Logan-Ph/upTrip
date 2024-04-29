@@ -43,15 +43,6 @@ export default function AdvancedSearchHotelPage() {
         listFilters: `${listSort.current},${listFilter.current}`,
     };
 
-    useEffect(() => {
-        console.log(listFilter.current)
-    },[listFilter.current])
-
-    // useEffect(() => {
-    //     payload.listFilters = `${listSort.current},${listFilter.current}`
-    //     console.log(payload)
-    // }, [listSort, listFilter]);
-
     const filterOptions = useQuery({
         queryKey: ['get-app-config'],
         queryFn:  getAppConfig,
@@ -116,7 +107,7 @@ export default function AdvancedSearchHotelPage() {
                             <div className="font-bold text-xl mb-4">
                                 Filters
                             </div>
-                            <AdvancedHotelFilter filterOptions={filterOptions} listFilter={listFilter}/>
+                            <AdvancedHotelFilter filterOptions={filterOptions} listFilter={listFilter} payload={payload}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 
