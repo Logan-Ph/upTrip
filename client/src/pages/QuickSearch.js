@@ -5,8 +5,8 @@ import {
     fetchQuickSearchHotels,
 } from "../api/fetch";
 import { QuickSearchSkeletonCard } from "../components/LazyLoadingComponents";
-import { QuickStayCard } from "../components/QuickSearchCard";
-import { QuickExperienceCard } from "../components/QuickSearchCard";
+import { QuickStayCard } from "../components/InfoCard";
+import { QuickExperienceCard } from "../components/InfoCard";
 import { Suspense, useState } from "react";
 
 export default function QuickSearch() {

@@ -12,6 +12,7 @@ import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
 import Favorites from "../pages/Favorites";
+import FavoriteItems from "../pages/FavoriteItems";
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {
@@ -51,6 +52,10 @@ export default function Router() {
                 {
                     path: "/favorites",
                     element: <Favorites />,
+                },
+                {
+                    path: "/favorite-items",
+                    element: <FavoriteItems />,
                 },
                 {
                     path: "/advanced-hotel-search",
