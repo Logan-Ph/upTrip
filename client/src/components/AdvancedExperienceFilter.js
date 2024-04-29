@@ -28,6 +28,9 @@ function PriceRange() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+    const valueLabelFormat = (value) => {
+        return `$${value}`;
+    };
   
     return (
         <>
@@ -43,19 +46,20 @@ function PriceRange() {
         </div>
         
         {showPriceRang && (
-            <Box sx={{ width: 300 }}>
+            <div className='md:w-3/4'>
             <Slider
               getAriaLabel={() => 'Price range'}
               value={value}
               onChange={handleChange}
-              valueLabelDisplay="auto"
+              valueLabelDisplay="auto" // Display the label on the slider thumb
+              valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
               getAriaValueText={valuetext}
               min={50}
               max={1200}
               step={25}
               color = "dark"
             />
-          </Box>
+          </div>
         )}
     </>
     );
