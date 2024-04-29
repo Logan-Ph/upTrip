@@ -15,9 +15,9 @@ export function AdvancedHotelFilter({filterOptions, listFilter}){
         <div className='flex-col space-y-6'>
             <PriceRange/>
             <hr className='md:w-3/4'/>
-            <BedType bedOptions={filterOptions?.data?.bedOptions} listFilter={listFilter}/>
-            <hr className='md:w-3/4'/>
             <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices} listFilter={listFilter}/>
+            <hr className='md:w-3/4'/>
+            <BedType bedOptions={filterOptions?.data?.bedOptions} listFilter={listFilter}/>
             <hr className='md:w-3/4'/>
             <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices} listFilter={listFilter}/>
         </div>
