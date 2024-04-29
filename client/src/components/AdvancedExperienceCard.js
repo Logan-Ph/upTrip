@@ -102,7 +102,7 @@ const visibilityClass = isIntersecting ? "opacity-100 translate-y-10 transition 
                         </div>
                     </div>
 
-                    {/* cai nay luc rap backend, Nhi de no display cai keyword ngta search duoc hong */}
+                    {/* cai nay luc rap backend,de no display cai keyword ngta search duoc hong */}
                     <div className="text-sm md:text-md font-light">
                         Departs from <span className="font-bold text-[#FF8682] text-sm md:text-md">Ho Chi Minh City</span>
                     </div>

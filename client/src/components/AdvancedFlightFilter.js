@@ -1,6 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import React, { useState } from 'react';
-import Box from '@mui/material/Box';
+import Checkbox from '@mui/joy/Checkbox';
 import Slider from '@mui/material/Slider';
 
 export  function AdvancedFlightFilter(){
@@ -131,7 +131,10 @@ function Airlines(){
             <div>
                 {amenityCat.map((item, index) => (
                 <div className="flex items-center space-x-2" key={index}>
-                    <input type="checkbox" className="border-gray-900 rounded-sm valid:border-gray-900 " />
+                    <Checkbox
+                        variant='outlined'
+                        color='success'
+                    />
                     <label className="font-medium text-md">{item.type}</label>
                 </div>
             ))}
