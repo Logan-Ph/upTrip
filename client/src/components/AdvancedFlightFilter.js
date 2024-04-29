@@ -29,6 +29,9 @@ function PriceRange() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+    const valueLabelFormat = (value) => {
+        return `$${value}`;
+    };
   
     return (
         <>
@@ -49,8 +52,8 @@ function PriceRange() {
               getAriaLabel={() => 'Price range'}
               value={value}
               onChange={handleChange}
-              valueLabelDisplay="auto"
-              getAriaValueText={valuetext}
+              valueLabelDisplay="auto" // Display the label on the slider thumb
+                valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
               min={50}
               max={1200}
               step={25}
