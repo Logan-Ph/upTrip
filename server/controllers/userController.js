@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
 const User = require("../models/user");
-const {stringSimilarity} =  require("string-similarity-js");
+const Favorites = require("../models/favorites");
+const { stringSimilarity } = require("string-similarity-js");
 const {
     generateToken,
     generateRefreshToken,
@@ -799,14 +800,11 @@ exports.advancedSearchFlights = async (req, res) => {
                     }
                     items.push({
                         flightNo: flightNo,
-                        departureTime: item.outboundSlice.segments[0].departDateTime.substring(11, 16),
-                        arrivalTime: arrival.substring(11, 16),
+                        departureTime: item.outboundSlice.segments[0].departDateTime,
+                        arrivalTime: arrival,
                         airline: airline,
                         duration: formatMinutesToHoursAndMinutes(item.outboundSlice.duration),
                         agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
-                        // tripComPrice: "null",
-                        // myTripPrice: "null",
-                        // bayDepPrice: "null",
                     })
                 }
             })
@@ -840,8 +838,6 @@ exports.getTripComFlight = async (req, res) => {
                     items.push({
                         flightNo: flightNo,
                         airline: airline,
-                        // departure: item.segmentList[0].departDateTime.replace(' ', 'T'),
-                        // arrival: item.segmentList[0].arriveDateTime.replace(' ', 'T'),
                         price: item.price.averagePrice
                     })
                 }
@@ -879,9 +875,6 @@ exports.getMyTripFlight = async (req, res) => {
                     }
                     items.push({
                         flightNo: flightNo,
-                        //airline: airline,
-                        //departure: item.bounds[0].segments[0].departuredAt,
-                        //arrival: arrival,
                         price: item.travelerPrices[0].price.price.value / 100 * 25000,
                     })
                 }
@@ -986,7 +979,44 @@ exports.flightSearchAutocomplete = async (req, res) => {
         result.sort((a, b) => b.similarity - a.similarity);
         return res.status(200).json(result)
     } catch (err) {
-        console.log(err)
         return res.status(500).json(err)
+    }
+}
+
+exports.addTofavorites = async (req, res) => {
+    try {
+        let favorites = await Favorites.findOne({ userID: req.body.userID });
+
+        if (!favorites) {
+            favorites = new Favorites({
+                userID: new mongoose.ObjectId(req.body.userID),
+                flights: [],
+                hotels: [],
+                attractions: [],
+            });
+        }
+
+        switch (req.body.itemType) {
+            case "hotel":
+                favorites.hotels.push(req.body.hotelName);
+                break;
+            case "flight":
+                favorites.flights.push({
+                    flightNo: req.body.flightNo,
+                    departure: req.body.departure,
+                    arrival: req.body.arrival,
+                    from: req.body.from,
+                    to: req.body.to,
+                    agency: req.body.agency,
+                });
+                break;
+            case "attraction":
+                favorites.attractions.push(req.body.attractionName);
+                break;
+        }
+        await favorites.save();
+        return res.status(200).json("Added to Favorites")
+    } catch (err) {
+        return res.status(500).json("Error. Try again later")
     }
 }

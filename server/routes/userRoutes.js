@@ -64,5 +64,11 @@ router.post('/signup', userController.signup)
 
 router.get('/user/:token/verify-email', userController.verifyEmail) 
 
+// add to favorites
+router.post('/add-to-favorites', userController.addToFavorites)
+
+// remove from favorites
+
+
 
 module.exports = router;
