@@ -1,7 +1,7 @@
 export default function DetailedPageHotelInformation(){
     return(
         <>
-        <div className="border-black border-2 p-4">
+        <div className="border-[#8DD3BB] border-2 p-4 rounded-lg">
             <div className="flex items-center space-x-4 mb-2">
                 <p className="font-extrabold text-2xl">Hotel Perle dOrient Cat Ba-MGallery</p>
 
@@ -48,12 +48,43 @@ export default function DetailedPageHotelInformation(){
                             <path fill="red" d="M560 64c8.8 0 16-7.2 16-16V16c0-8.8-7.2-16-16-16H16C7.2 0 0 7.2 0 16v32c0 8.8 7.2 16 16 16h16v384H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h240v-80c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v80h240c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16h-16V64h16zm-304 44.8c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm0 96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zm-128-96c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4zM179.2 256h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4c0 6.4-6.4 12.8-12.8 12.8zM192 384c0-53 43-96 96-96s96 43 96 96H192zm256-140.8c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4zm0-96c0 6.4-6.4 12.8-12.8 12.8h-38.4c-6.4 0-12.8-6.4-12.8-12.8v-38.4c0-6.4 6.4-12.8 12.8-12.8h38.4c6.4 0 12.8 6.4 12.8 12.8v38.4z"/>
                         </svg>
                     </div>
-                    <p>About Accommodation</p>
+                    <p className="font-bold text-black text-sm md:text-lg">About Accommodation</p>
                 </div>
                 <p>Get your trip off to a great start with a stay at this property, which offers free Wi-Fi in all rooms. Conveniently situated in the Cát Bà Town Beach part of Cat Ba Island, this property puts you close to attractions and interesting dining options. Don't leave before paying a visit to the famous Quiri Pub Cocktail & Restaurant. Rated with 5 stars, this high-quality property provides guests with access to massage, restaurant and fitness center on-site.</p>
             </div>
-            
         </div>
+        <div className="my-6">
+            <HotelPriceComparison/>
+        </div>
+        </>
+    )
+}
+
+function HotelPriceComparison(){
+    const website = [
+        
+        {imgSrc: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252", price: "3.455.000 VND"},
+        {imgSrc: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655", price: "3.650.000 VND"},
+        {imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png", price: "3.406.750 VND"},
+    ]
+
+    return(
+        <>
+        {website.map((item, index) => (
+            <div className="bg-[#CDEAE1] border-transparent grid grid-cols-2 rounded-lg my-2">
+                <div className="my-auto pl-5">
+                    <img src={item.imgSrc} alt="website logo" className="w-[120px] h-[60px] object-cover"/>
+                </div>
+
+                <div className="grid grid-cols-3 my-auto">
+                    <div>{item.price}</div>
+                    <div>Book Now</div>
+                    <div> Heart</div>
+                </div>
+            </div>
+        ))}
+        
+
         </>
     )
 }
