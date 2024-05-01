@@ -782,7 +782,10 @@ exports.advancedSearchHotelBooking = async (req, res) => {
 exports.advancedSearchFlights = async (req, res) => {
     try {
         const url = agodaGetFlightURL;
-        const items = [];
+        let items = {
+            flights: [],
+            priceMax: 0,
+        };
         const payload = agodaGetFlightPayload(req.body)
         await axios.post(url, payload, {
             headers: {
@@ -799,7 +802,7 @@ exports.advancedSearchFlights = async (req, res) => {
                         airline.push(flight.carrierContent.carrierName)
                         arrival = flight.arrivalDateTime
                     }
-                    items.push({
+                    items.flights.push({
                         flightNo: flightNo,
                         departureTime: item.outboundSlice.segments[0].departDateTime,
                         arrivalTime: arrival,
@@ -808,6 +811,7 @@ exports.advancedSearchFlights = async (req, res) => {
                         agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
                     })
                 }
+                items.priceMax = res.data.trips[0].filters.price.to;
             })
             .catch(er => {
                 throw er

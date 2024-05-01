@@ -98,14 +98,14 @@ export default function AdvancedSearchFlightPage() {
 
                         <div className="relative">
                             <div className="font-bold text-xl mb-4">Filters</div>
-                            <AdvancedFlightFilter setPrefer={setPrefer}/>
+                            <AdvancedFlightFilter setPrefer={setPrefer} priceMax={!agoda.isSuccess ? 0 : agoda.data.priceMax}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 
                         <div className="col-span-2">
                             <div className="flex items-center justify-between mt-10 md:mt-0">
                                 <div className="w-1/2">
-                                    <p className="text-sm md:text-lg">Showing {!agoda.isSuccess ? 0 : agoda.data.length} flights</p>
+                                    <p className="text-sm md:text-lg">Showing {!agoda.isSuccess ? 0 : agoda.data.flights.length} flights</p>
                                 </div>
 
                                 <div>
@@ -114,7 +114,7 @@ export default function AdvancedSearchFlightPage() {
                             </div>
 
                             {agoda.isSuccess &&
-                                agoda.data.map((flight) => {
+                                agoda.data.flights.map((flight) => {
                                     const tripComPrice = tripCom.isSuccess && tripCom.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)) ? Math.round(tripCom.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)).price) : null
                                     const myTripPrice = myTrip.isSuccess && myTrip.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)) ? Math.round(myTrip.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)).price) : null
                                     const bayDepPrice = bayDep.isSuccess && bayDep.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)) ? Math.round(bayDep.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)).price) : null

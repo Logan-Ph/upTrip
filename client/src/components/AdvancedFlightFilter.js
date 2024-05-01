@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Checkbox from '@mui/joy/Checkbox';
 import Slider from '@mui/material/Slider';
 
-export function AdvancedFlightFilter({setPrefer}) {
+export function AdvancedFlightFilter({setPrefer, priceMax}) {
     return (
         <>
             <div className='flex-col space-y-6'>
@@ -23,7 +23,7 @@ function valuetext(value) {
 }
 
 function PriceRange() {
-    const [showPriceRang, setPriceRange] = useState(true);
+    const [showPriceRange, setPriceRange] = useState(true);
     const [value, setValue] = useState([50, 1200]);
   
     const handleChange = (event, newValue) => {
@@ -38,14 +38,14 @@ function PriceRange() {
         <div className='md:w-3/4 flex items-center justify-between'>
             <div className="font-bold text-md">Price</div>
 
-             {showPriceRang ? (
-                <ChevronUpIcon onClick={() => setPriceRange(!showPriceRang)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
+             {showPriceRange ? (
+                <ChevronUpIcon onClick={() => setPriceRange(!showPriceRange)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
             ) : (
-                <ChevronDownIcon onClick={() => setPriceRange(!showPriceRang)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
+                <ChevronDownIcon onClick={() => setPriceRange(!showPriceRange)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
             )}
         </div>
         
-        {showPriceRang && (
+        {showPriceRange && (
             <div className='md:w-3/4'>
             <Slider
               getAriaLabel={() => 'Price range'}
@@ -53,7 +53,7 @@ function PriceRange() {
               onChange={handleChange}
               valueLabelDisplay="auto"
               valueLabelFormat={valueLabelFormat}
-              min={50}
+              min={0}
               max={1200}
               step={25}
               color = "dark"
