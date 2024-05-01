@@ -983,13 +983,13 @@ exports.flightSearchAutocomplete = async (req, res) => {
     }
 }
 
-exports.addTofavorites = async (req, res) => {
+exports.addToFavorites = async (req, res) => {
     try {
         let favorites = await Favorites.findOne({ userID: req.body.userID });
 
         if (!favorites) {
             favorites = new Favorites({
-                userID: new mongoose.ObjectId(req.body.userID),
+                userID: req.body.userID,
                 flights: [],
                 hotels: [],
                 attractions: [],
@@ -1016,6 +1016,28 @@ exports.addTofavorites = async (req, res) => {
         }
         await favorites.save();
         return res.status(200).json("Added to Favorites")
+    } catch (err) {
+        return res.status(500).json("Error. Try again later")
+    }
+}
+
+exports.deleteFromFavorites = async (req, res) => {
+    try {
+        const favorites = await Favorites.findOne({ userID: req.params.id });
+        if (!favorites) throw "Favorites is empty";
+
+        switch (req.body.itemType) {
+            case "hotel":
+                favorites.hotels = favorites.hotels.filter(hotel => hotel !== req.body.hotelName);
+                break;
+            case "flight":
+                favorites.flights = favorites.flights.filter(flight => flight.flightNo !== req.body.flightNo);
+                break;
+            case "attraction":
+                favorites.attractions = favorites.attractions.filter(attraction => attraction !== req.body.attractionName);
+                break;
+        }
+        return res.status(200).json("Deleted successfully")
     } catch (err) {
         return res.status(500).json("Error. Try again later")
     }

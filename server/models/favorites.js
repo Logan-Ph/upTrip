@@ -1,25 +1,28 @@
-const mongoose = require( 'mongoose' );
+const mongoose = require('mongoose');
 
 const favortitesSchema = new mongoose.Schema({
     userID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type: mongoose.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
-    flights: [{
-        flightNo: [
-            String
-        ],
-        from: String,
-        to: String,
-        departure: Date,
-        arrival: Date,
-        agency: String,
-    }],
+    flights: [
+        {
+            flightNo: [
+                String
+            ],
+            from: String,
+            to: String,
+            departure: Date,
+            arrival: Date,
+            agency: String,
+        },
+    ],
     hotels: [{
-        String
+        type: String
     }],
     attractions: [{
-        name: String
+        type: String
     }]
 })
 
