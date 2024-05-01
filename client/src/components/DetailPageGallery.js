@@ -11,13 +11,13 @@ export default function DetailPageGallery(){
 
     return(
         <>
-        <div className="grid grid-cols-3 gap-6 shadow-md">
+        <div className="grid grid-cols-3 gap-6">
 
             {/* right image */}
             <div className="relative">
                 <div>
                     <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"
-                    className="w-full h-[440px] object-cover rounded-lg"/>
+                    className="w-full h-[440px] object-cover rounded-lg" onClick={handleOpen}/>
                 </div>
 
                 <div onClick={handleOpen} className="absolute bottom-0 right-0 py-2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
@@ -39,7 +39,7 @@ export default function DetailPageGallery(){
                             <path d="M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h404c3.3 0 6 2.7 6 6v340zM356.5 194.6L295.1 256l61.4 61.4c4.6 4.6 4.6 12.1 0 16.8l-22.3 22.3c-4.6 4.6-12.1 4.6-16.8 0L256 295.1l-61.4 61.4c-4.6 4.6-12.1 4.6-16.8 0l-22.3-22.3c-4.6-4.6-4.6-12.1 0-16.8l61.4-61.4-61.4-61.4c-4.6-4.6-4.6-12.1 0-16.8l22.3-22.3c4.6-4.6 12.1-4.6 16.8 0l61.4 61.4 61.4-61.4c4.6-4.6 12.1-4.6 16.8 0l22.3 22.3c4.7 4.6 4.7 12.1 0 16.8z"/></svg>
                         </span>
                         <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Text in a modal
+                            Hotel Uploads
                         </Typography>
                         
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
@@ -84,15 +84,15 @@ export default function DetailPageGallery(){
             {/* left image */}
             <div className="grid col-span-2 gap-y-2">
                 <div className="grid grid-cols-3 gap-x-4">
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
+                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer' onClick={handleOpen}/></div>
+                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
+                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-x-4">
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
+                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
+                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
+                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
                 </div>
             </div>
         </div>
