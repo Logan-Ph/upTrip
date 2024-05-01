@@ -125,6 +125,7 @@ export default function AdvancedSearchFlightPage() {
                         </div>
 
                     </div>
+                    <ScrollUpButton/>
                 </section>
             </div>
         </>

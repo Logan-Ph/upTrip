@@ -100,10 +100,7 @@ export function fetchFlightAutocomplete(keyword) {
 export function getAppConfig() {
     return axios
         .get("/get-app-config", options)
-        .then((res) => {
-            console.log(res.data)
-            return res.data
-        })
+        .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));
         });

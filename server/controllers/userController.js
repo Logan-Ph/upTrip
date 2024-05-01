@@ -313,6 +313,8 @@ exports.advancedSearchHotels = async (req, res) => {
             listFilters,
         } = req.body;
 
+        console.log(listFilters)
+
         const queryParam = {
             // city: 286,
             city: Number(city),
@@ -351,7 +353,7 @@ exports.advancedSearchHotels = async (req, res) => {
             travelPurpose: 0,
             ctm_ref: "ix_sb_dl",
             domestic: domestic,
-            listFilters: listFilters || "80|0|1*80*0*2,29|1*29*1|2*2",
+            listFilters: listFilters,
             locale: "en_US",
             curr: "USD",
         };
@@ -378,7 +380,6 @@ exports.advancedSearchHotels = async (req, res) => {
         const response = await axios.post(tripGetHotelListIdURL, payload, {
             headers: headers,
         });
-
 
         const hotelName = response.data.hotelList.map(
             (hotel) => hotel.hotelBasicInfo.hotelName
@@ -880,7 +881,7 @@ exports.getMyTripFlight = async (req, res) => {
                 }
             })
             .catch(er => {
-                throw er
+                return res.status(500).json(er)
             })
         while (items.length < totalFlight) {
             await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
@@ -916,6 +917,7 @@ exports.getMyTripFlight = async (req, res) => {
         return res.status(200).json(items)
     } catch (er) {
         return res.status(500).json(er)
+
     }
 }
 
@@ -931,7 +933,7 @@ exports.getBayDepFlight = async (req, res) => {
                 });
                 return response;
             } catch (error) {
-                throw error;
+                throw new Error(`Error sending request: ${error.message}`);
             }
         };
         const requests = bayDepGetFlightPayload(req.body).map(payload => {
@@ -968,7 +970,7 @@ exports.getBayDepFlight = async (req, res) => {
 
 exports.flightSearchAutocomplete = async (req, res) => {
     try {
-        const options = airportOptions
+        const options = (req.body.options) ? req.body.options : airportOptions
         const result = []
         for (const opt of options) {
             if (stringSimilarity(req.body.input, opt.cityName) > 0) {

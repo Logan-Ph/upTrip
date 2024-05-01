@@ -124,7 +124,7 @@ const tripQuickSearchURL =
 
 // URL to get initial hotels id from Trip.com
 const tripGetHotelListIdURL =
-    "https://us.trip.com/htls/getHotelList?testab=0502f4ac23477daa3876caecb69ba02036210d281634f8bd9c42ed3b3c10be5f&x-traceID=1711297830645.f17ebYxB7ZgE-1714060812625-1902858376";
+    "https://us.trip.com/htls/getHotelList?testab=b5918617310ea782dbde0ffce1b5ebb0e89e92d57cc52c134ee206ecde837ab7&x-traceID=1712307657637.c8behGBonFVG-1714116857771-1342195682";
 
 // URL to get specific hotels from Trip.com
 const tripAdvancedSearchSpecificHotelURL = "https://us.trip.com/hotels/list";
