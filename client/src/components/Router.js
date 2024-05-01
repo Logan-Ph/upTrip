@@ -13,6 +13,7 @@ import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
 import AdvancedSearchExperiencePage from "../pages/AdvancedSearchExperiencePage";
+import HotelDetailedPage from "../pages/HotelDetailedPage";
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {
@@ -50,6 +51,10 @@ export default function Router() {
                 {
                     path: "/advanced-experience-search",
                     element: <AdvancedSearchExperiencePage />,
+                },
+                {
+                    path: "/hotel-detailed-page",
+                    element: <HotelDetailedPage />,
                 },
             ],
         },
