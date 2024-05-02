@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy } from "react";
 import HomeHeader from "./HomeHeader";
-import Footer from "./Footer";
 import Header from "./Header";
 import Login from "../pages/Login";
 import Unauthorized from "../pages/Unauthorized";
@@ -11,7 +10,6 @@ import PageNotFound from "../pages/PageNotFound";
 import SignUp from "../pages/SignUp";
 import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
-import AdvancedSearchHotelSpecificPage from "../pages/AdvancedSearchHotelSpecificPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
 import AdvancedSearchExperiencePage from "../pages/AdvancedSearchExperiencePage";
 const Homepage = lazy(() => import("../pages/Homepage"));
