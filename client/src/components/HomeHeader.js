@@ -669,7 +669,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
             return;
         }
 
-        const payload = {
+        let payload = {
             checkin: checkinDate.current.value.replace(
                 /(\d{2})\/(\d{2})\/(\d{4})/,
                 "$3$1$2"
@@ -679,7 +679,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                 "$3$1$2"
             ),
             city: autocompletePayload.city.geoCode,
-            cityName: autocompletePayload.resultWord,
+            
             resultType: autocompletePayload.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
@@ -698,11 +698,28 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
             children: numberOfChildren,
             domestic: false,
             listFilters: "17~1*17*1*2"
-        };
+        }
 
-        navigate(
-            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
-        );
+        if (payload.resultType === "H"){
+            payload= {
+                ...payload,
+                hotelName: autocompletePayload.resultWord,
+                searchValue: `${autocompletePayload.item.data.filterID}_${autocompletePayload.item.data.type}_${autocompletePayload.item.data.value}_${autocompletePayload.item.data.subType}`,
+                cityName: autocompletePayload.city.currentLocaleName,
+                preHotelIds: autocompletePayload.code
+            }
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        }else{
+            payload = {
+                ...payload,
+                cityName: autocompletePayload.resultWord,
+            };
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        }
     };
 
     return (
@@ -770,6 +787,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                                     </>
                                                                 );
                                                             case "CT":
+                                                            case "P":
                                                             case "D":
                                                                 return (
                                                                     <>

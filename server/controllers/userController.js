@@ -598,7 +598,7 @@ exports.priceComparisonHotels = async (req, res) => {
 exports.advancedSearchSpecificHotelTrip = async (req, res) => {
     try {
         const {
-            cityId,
+            city,
             cityName,
             provinceId,
             countryId,
@@ -606,6 +606,8 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
             checkin, // type: yyyymmdd
             checkout, // type: yyyymmdd
             hotelName,
+            lat,
+            lon,
             searchValue,
             searchCoordinate,
             adult,
@@ -616,13 +618,15 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
         } = req.body;
 
         const queryParam = advancedSearchSpecificHotelQueryParam(
-            Number(cityId), // 1777: Number
+            Number(city), // 1777: Number
             cityName, // "Nha Trang": String
             Number(provinceId), // 11120: Number
             Number(countryId), // 111: Number
             Number(districtId), // 0: Number
             String(checkin), // "2024/05/24": String
             String(checkout), // "2024/05/25": String
+            lat,
+            lon,
             String(hotelName),
             String(searchValue),
             String(searchCoordinate),
@@ -654,14 +658,32 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
         const name = targetDiv.find(".list-card-title").text();
         const starNum = targetDiv.find(".list-card-title > div > i").length;
         const saleOff = targetDiv.find(".favour").text();
-        const transportInfo = targetDiv.find(".list-card-transport-v8").text();
-        const price = targetDiv.find(".price-explain").text();
+        const transportInfo = targetDiv
+            .find(".list-card-transport-v8 .transport span:not(.split-dot.trans-icon)")
+            .map((i, el) => {
+                return $(el).text().trim(); // Trim to remove any extra whitespace
+            })
+            .filter((i, el) => {
+                return el !== "";
+            })
+            .get();
+        const priceExplain = targetDiv.find(".price-explain");
+        const price = priceExplain?.contents()?.filter(function() {
+            // Filter out the <br/> elements
+            return this.type === 'text';
+        }).map(function() {
+            // Map over each text node and trim it
+            return $(this).text().trim();
+        })?.get()?.join(' ');
+        const priceMatch = price?.match(/VND ([\d,]+)/);
+        const nightsMatch = price?.match(/× (\d+) nights/);
+        const realPrice = parseInt(priceMatch?.[1]?.replace(/,/g, ''), 10) / parseInt(nightsMatch?.[1], 10)
 
         const matchHotel = {
             img,
             name,
             saleOff,
-            price,
+            price: realPrice,
             starNum,
             describe,
             reviewCounts,
@@ -670,6 +692,7 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
         };
         res.status(200).json({ matchHotel });
     } catch (er) {
+        console.log(er)
         return res.status(500).json(error);
     }
 };

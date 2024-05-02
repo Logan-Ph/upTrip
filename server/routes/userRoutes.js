@@ -27,7 +27,7 @@ router.post('/advanced-search/hotels', userController.advancedSearchHotels)
 router.post('/price-comparison/hotels', userController.priceComparisonHotels)
 
 // advances search for specific hotels in Trip.com
-router.post('/advanced-search/hotels/trip', userController.advancedSearchSpecificHotelTrip)
+router.post('/advanced-search-specific/hotels', userController.advancedSearchSpecificHotelTrip)
 
 // get app configuration for filter options in Trip.com
 router.get('/get-app-config', userController.getAppConfig)
