@@ -1,6 +1,7 @@
 import { SortOption } from "../components/SortOption";
 import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
-import { Suspense, lazy, useMemo, useRef, useState } from "react";
+import {useInView} from "react-intersection-observer"
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -17,6 +18,7 @@ const AdvancedHotelCardLazy = lazy(() =>
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
+    const {ref, inView} = useInView()
     const hotelNamesRef = useRef([])
     const listSort = useRef(searchParams.get("listFilters")?.split(",")?.[0]);
     const listFilter = useRef(
@@ -100,7 +102,7 @@ export default function AdvancedSearchHotelPage() {
     const hotelNames = useMemo(() => {
         const lastPage = hotelList?.pages?.[hotelList.pages.length - 1];
         if (!lastPage) return [];
-        return lastPage.hotelList.map(hotel => hotel.hotelBasicInfo.hotelName);
+        return lastPage.hotelName;
     }, [hotelList?.pages]);
 
     const getHotelPriceComparison = useQuery({
@@ -108,19 +110,28 @@ export default function AdvancedSearchHotelPage() {
         queryFn: () => fetchHotelPriceComparison({ ...payload, hotelNames }),
         retry: false,
         refetchOnWindowFocus: false,
-        enabled: !!(hotelNames?.length > 0),
-        onSuccess: (newPriceData) => {
-            // Update the price data state only with new data
+        enabled: !!(hotelNames.length > 0),
+    });
+
+    useEffect(() => {
+        if (getHotelPriceComparison.isSuccess && getHotelPriceComparison.data) {
+            console.log('New price data received:', getHotelPriceComparison.data);
             setPriceData(prevData => ({
                 ...prevData,
-                ...newPriceData.reduce((acc, data, index) => {
+                ...getHotelPriceComparison.data.reduce((acc, data, index) => {
                     acc[hotelNames[index]] = data; // Map price data to hotel names
                     return acc;
                 }, {})
             }));
         }
-    });
+    }, [getHotelPriceComparison.isSuccess, getHotelPriceComparison.data]);
 
+
+    useEffect(() => {
+        if (inView) {
+            fetchNextPage()
+        }
+    }, [inView])
 
     return (
         <>
@@ -183,7 +194,7 @@ export default function AdvancedSearchHotelPage() {
                                                         agodaPrice={agodaPrice}
                                                         bookingPrice={bookingPrice}
                                                         isSpecific={false}
-                                                        isSuccess={getHotelPriceComparison.isSuccess}
+                                                        isSuccess={Boolean(hotelPriceInfo)}
                                                     />
                                                 </Suspense>
                                             );
@@ -193,14 +204,15 @@ export default function AdvancedSearchHotelPage() {
                                 <ASearchSkeleton />
                             )}
 
-                            <button
+                            {/* <button
                                 onClick={() => fetchNextPage()}
-                                className="mt-[300px]"
+                                className="mt-[20px]"
                             >
                                 Load moreeeeeeeeeeee
-                            </button>
+                            </button> */}
                         </div>
                     </div>
+                    {/* <div ref={ref}/> */}
                 </section>
                 <ScrollUpButton />
             </div>
