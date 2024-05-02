@@ -17,7 +17,6 @@ const AdvancedHotelCardLazy = lazy(() =>
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
-    const hotelNamesRef = useRef([])
     const listSort = useRef(searchParams.get("listFilters")?.split(",")?.[0]);
     const listFilter = useRef(
         searchParams.get("listFilters")?.split(",")?.slice(1)
@@ -58,7 +57,7 @@ export default function AdvancedSearchHotelPage() {
         domestic: searchParams.get("domestic"),
         preHotelIds: searchParams.getAll("preHotelIds"),
         listFilters: `${listSort.current},${listFilter.current}`,
-    }
+    };  
 
     const filterOptions = useQuery({
         queryKey: ["get-app-config"],
@@ -121,7 +120,6 @@ export default function AdvancedSearchHotelPage() {
         }
     });
 
-
     return (
         <>
             <div className="bg-[#FAFBFC] md:p-10">
@@ -159,20 +157,21 @@ export default function AdvancedSearchHotelPage() {
                                     />
                                 </div>
                             </div>
-                            {hotelListStatus === "success" &&
+                                {hotelListStatus === "success" &&
                                 hotelList.pages.map((page, pageIndex) => {
                                     return page.hotelList.map(
                                         (hotel, hotelIndex) => {
-                                            const hotelName = hotel.hotelBasicInfo.hotelName;
-                                            const hotelPriceInfo = priceData[hotelName];
-                                            const agodaPrice = hotelPriceInfo?.agodaPrice
-                                                    ? Math.round(hotelPriceInfo.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN")
+                                            const priceData = pageIndex === hotelList.pages.length - 1 && getHotelPriceComparison.isSuccess
+                                                    ? getHotelPriceComparison.data[hotelIndex]
                                                     : null;
-                                            const bookingPrice = hotelPriceInfo?.bookingPrice
-                                                    ? Math.round(hotelPriceInfo.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0) /
-                                                        (Number(payload.adult) *
-                                                        Number(daysBetween(payload.checkin, payload.checkout)))
-                                                        ).toLocaleString("vi-VN")
+                                            const agodaPrice = priceData?.agodaPrice
+                                                    ? Math.round(priceData.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN")
+                                                    : null;
+                                            const bookingPrice = priceData?.bookingPrice
+                                                    ? Math.round(priceData.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0) /
+                                                    (Number(payload.adult) *
+                                                    Number(daysBetween(payload.checkin, payload.checkout)))
+                                                    ).toLocaleString("vi-VN")
                                                     : null;
                                             return (
                                                 <Suspense
@@ -187,12 +186,12 @@ export default function AdvancedSearchHotelPage() {
                                                     />
                                                 </Suspense>
                                             );
-                                        });
+                                            });
                                 })}
                             {(hotelListLoading ) && (
                                 <ASearchSkeleton />
                             )}
-
+                            
                             <button
                                 onClick={() => fetchNextPage()}
                                 className="mt-[300px]"
