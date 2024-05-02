@@ -1,6 +1,7 @@
 import { SortOption } from "../components/SortOption";
 import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
-import { Suspense, lazy, useMemo, useRef, useState } from "react";
+import {useInView} from "react-intersection-observer"
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -17,6 +18,8 @@ const AdvancedHotelCardLazy = lazy(() =>
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
+    const {ref, inView} = useInView()
+    const hotelNamesRef = useRef([])
     const listSort = useRef(searchParams.get("listFilters")?.split(",")?.[0]);
     const listFilter = useRef(
         searchParams.get("listFilters")?.split(",")?.slice(1)
@@ -57,7 +60,7 @@ export default function AdvancedSearchHotelPage() {
         domestic: searchParams.get("domestic"),
         preHotelIds: searchParams.getAll("preHotelIds"),
         listFilters: `${listSort.current},${listFilter.current}`,
-    };  
+    }
 
     const filterOptions = useQuery({
         queryKey: ["get-app-config"],
@@ -99,7 +102,7 @@ export default function AdvancedSearchHotelPage() {
     const hotelNames = useMemo(() => {
         const lastPage = hotelList?.pages?.[hotelList.pages.length - 1];
         if (!lastPage) return [];
-        return lastPage.hotelList.map(hotel => hotel.hotelBasicInfo.hotelName);
+        return lastPage.hotelName;
     }, [hotelList?.pages]);
 
     const getHotelPriceComparison = useQuery({
@@ -107,18 +110,28 @@ export default function AdvancedSearchHotelPage() {
         queryFn: () => fetchHotelPriceComparison({ ...payload, hotelNames }),
         retry: false,
         refetchOnWindowFocus: false,
-        enabled: !!(hotelNames?.length > 0),
-        onSuccess: (newPriceData) => {
-            // Update the price data state only with new data
+        enabled: !!(hotelNames.length > 0),
+    });
+
+    useEffect(() => {
+        if (getHotelPriceComparison.isSuccess && getHotelPriceComparison.data) {
+            console.log('New price data received:', getHotelPriceComparison.data);
             setPriceData(prevData => ({
                 ...prevData,
-                ...newPriceData.reduce((acc, data, index) => {
+                ...getHotelPriceComparison.data.reduce((acc, data, index) => {
                     acc[hotelNames[index]] = data; // Map price data to hotel names
                     return acc;
                 }, {})
             }));
         }
-    });
+    }, [getHotelPriceComparison.isSuccess, getHotelPriceComparison.data, hotelNames]);
+
+
+    useEffect(() => {
+        if (inView && !hotelListLoading && !getHotelPriceComparison.isLoading) {
+            fetchNextPage()
+        }
+    }, [inView, hotelListLoading, fetchNextPage, getHotelPriceComparison.isLoading])
 
     return (
         <>
@@ -157,21 +170,20 @@ export default function AdvancedSearchHotelPage() {
                                     />
                                 </div>
                             </div>
-                                {hotelListStatus === "success" &&
+                            {hotelListStatus === "success" &&
                                 hotelList.pages.map((page, pageIndex) => {
                                     return page.hotelList.map(
                                         (hotel, hotelIndex) => {
-                                            const priceData = pageIndex === hotelList.pages.length - 1 && getHotelPriceComparison.isSuccess
-                                                    ? getHotelPriceComparison.data[hotelIndex]
+                                            const hotelName = hotel.hotelBasicInfo.hotelName;
+                                            const hotelPriceInfo = priceData[hotelName];
+                                            const agodaPrice = hotelPriceInfo?.agodaPrice
+                                                    ? Math.round(hotelPriceInfo.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN")
                                                     : null;
-                                            const agodaPrice = priceData?.agodaPrice
-                                                    ? Math.round(priceData.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN")
-                                                    : null;
-                                            const bookingPrice = priceData?.bookingPrice
-                                                    ? Math.round(priceData.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0) /
-                                                    (Number(payload.adult) *
-                                                    Number(daysBetween(payload.checkin, payload.checkout)))
-                                                    ).toLocaleString("vi-VN")
+                                            const bookingPrice = hotelPriceInfo?.bookingPrice
+                                                    ? Math.round(hotelPriceInfo.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0) /
+                                                        (Number(payload.adult) *
+                                                        Number(daysBetween(payload.checkin, payload.checkout)))
+                                                        ).toLocaleString("vi-VN")
                                                     : null;
                                             return (
                                                 <Suspense
@@ -182,24 +194,18 @@ export default function AdvancedSearchHotelPage() {
                                                         agodaPrice={agodaPrice}
                                                         bookingPrice={bookingPrice}
                                                         isSpecific={false}
-                                                        isSuccess={getHotelPriceComparison.isSuccess}
+                                                        isSuccess={Boolean(hotelPriceInfo)}
                                                     />
                                                 </Suspense>
                                             );
-                                            });
+                                        });
                                 })}
                             {(hotelListLoading ) && (
                                 <ASearchSkeleton />
                             )}
-                            
-                            <button
-                                onClick={() => fetchNextPage()}
-                                className="mt-[300px]"
-                            >
-                                Load moreeeeeeeeeeee
-                            </button>
                         </div>
                     </div>
+                    <div ref={ref}/>
                 </section>
                 <ScrollUpButton />
             </div>
