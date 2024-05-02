@@ -11,6 +11,7 @@ import PageNotFound from "../pages/PageNotFound";
 import SignUp from "../pages/SignUp";
 import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
+import AdvancedSearchHotelSpecificPage from "../pages/AdvancedSearchHotelSpecificPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
 import AdvancedSearchExperiencePage from "../pages/AdvancedSearchExperiencePage";
 const Homepage = lazy(() => import("../pages/Homepage"));
@@ -38,6 +39,10 @@ export default function Router() {
                 {
                     path: "/quick-search",
                     element: <QuickSearch />,
+                },
+                {
+                    path: "/advanced-hotel-specifc-search",
+                    element: <AdvancedSearchHotelSpecificPage />,
                 },
                 {
                     path: "/advanced-hotel-search",
