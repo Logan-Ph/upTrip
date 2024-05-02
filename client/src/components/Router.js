@@ -41,10 +41,6 @@ export default function Router() {
                     element: <QuickSearch />,
                 },
                 {
-                    path: "/advanced-hotel-specifc-search",
-                    element: <AdvancedSearchHotelSpecificPage />,
-                },
-                {
                     path: "/advanced-hotel-search",
                     element: <AdvancedSearchResultPage />,
                 },
