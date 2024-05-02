@@ -17,6 +17,7 @@ const AdvancedHotelCardLazy = lazy(() =>
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
+    const hotelNamesRef = useRef([])
     const listSort = useRef(searchParams.get("listFilters")?.split(",")?.[0]);
     const listFilter = useRef(
         searchParams.get("listFilters")?.split(",")?.slice(1)
@@ -57,7 +58,7 @@ export default function AdvancedSearchHotelPage() {
         domestic: searchParams.get("domestic"),
         preHotelIds: searchParams.getAll("preHotelIds"),
         listFilters: `${listSort.current},${listFilter.current}`,
-    };  
+    }
 
     const filterOptions = useQuery({
         queryKey: ["get-app-config"],
@@ -119,6 +120,7 @@ export default function AdvancedSearchHotelPage() {
             }));
         }
     });
+
 
     return (
         <>
@@ -190,7 +192,7 @@ export default function AdvancedSearchHotelPage() {
                             {(hotelListLoading ) && (
                                 <ASearchSkeleton />
                             )}
-                            
+
                             <button
                                 onClick={() => fetchNextPage()}
                                 className="mt-[300px]"
