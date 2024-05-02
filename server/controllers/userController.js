@@ -1031,24 +1031,39 @@ exports.addToFavorites = async (req, res) => {
     }
 }
 
-exports.deleteFromFavorites = async (req, res) => {
+exports.deleteHotel = async (req, res) => {
     try {
         const favorites = await Favorites.findOne({ userID: req.params.id });
-        if (!favorites) throw "Favorites is empty";
-
-        switch (req.body.itemType) {
-            case "hotel":
-                favorites.hotels = favorites.hotels.filter(hotel => hotel !== req.body.hotelName);
-                break;
-            case "flight":
-                favorites.flights = favorites.flights.filter(flight => flight.flightNo !== req.body.flightNo);
-                break;
-            case "attraction":
-                favorites.attractions = favorites.attractions.filter(attraction => attraction !== req.body.attractionName);
-                break;
-        }
+        if (!favorites || favorites.hotels.length == 0) throw new Error("Favorites is empty");
+        favorites.hotels = favorites.hotels.filter(hotel => hotel !== req.params.hotelName);
+        await favorites.save()
         return res.status(200).json("Deleted successfully")
     } catch (err) {
-        return res.status(500).json("Error. Try again later")
+        console.log(err)
+        return res.status(500).json(err.message || "Error. Try again later")
+    }
+}
+
+exports.deleteFlight = async (req, res) => {
+    try {
+        const favorites = await Favorites.findOne({ userID: req.params.id });
+        if (!favorites || favorites.flights.length == 0) throw new Error("Favorites is empty");
+        favorites.flights = favorites.flights.filter(flight => flight.flightNo !== req.params.flightNo);
+        await favorites.save()
+        return res.status(200).json("Deleted successfully")
+    } catch(err) {
+        return res.status(500).json(err.message || "Error. Try again later")
+    }
+}
+
+exports.deleteAttraction = async(req, res) => {
+    try {
+        const favorites = await Favorites.findOne({ userID: req.params.id });
+        if (!favorites || favorites.attractions.length == 0) throw new Error("Favorites is empty");
+        favorites.attractions = favorites.attractions.filter(attraction => attraction !== req.params.attractionName);
+        await favorites.save()
+        return res.status(200).json("Deleted successfully")
+    } catch(err) {
+        return res.status(500).json(err.message || "Error. Try again later")
     }
 }
