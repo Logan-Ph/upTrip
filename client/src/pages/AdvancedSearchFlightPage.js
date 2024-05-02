@@ -22,6 +22,9 @@ export default function AdvancedSearchFlightPage() {
     const [sortField, setSortField] = useState("best");
     const [sortDir, setSortDir] = useState("asc");
     const [prefer, setPrefer] = useState([]);
+    const [priceFilter, setPriceFilter] = useState([]);
+    const [departureTime, setDepartureTime] = useState([0, 1440])
+    const [arrivalTime, setArrivalTime] = useState([0, 1440])
     const payload = {
         year: searchParams.get("year"),
         month: searchParams.get("month"),
@@ -34,7 +37,10 @@ export default function AdvancedSearchFlightPage() {
         seatClass: searchParams.get("seatClass"),
         sortField: sortField,
         sortDir: sortDir,
-        prefer: prefer
+        prefer: prefer,
+        priceFilter: priceFilter,
+        departureTime: departureTime,
+        arrivalTime: arrivalTime
     }
 
     const defaultSort = () => {
@@ -52,9 +58,6 @@ export default function AdvancedSearchFlightPage() {
         setSortDir("desc");
     }
     
-    function airlineFilter(arr) {
-        setPrefer(arr)
-    }
     const agoda = useQuery({
         queryKey: ["advanced-search-flight"],
         queryFn: () => fetchFlightAdvancedSearch(payload),
@@ -62,9 +65,11 @@ export default function AdvancedSearchFlightPage() {
         refetchOnWindowFocus: false,
     });
 
+    const priceMax = agoda.isSuccess ? agoda.data.priceMax : 0;
+
     useEffect(()=>{
         agoda.refetch();
-    }, [sortField, sortDir, prefer])
+    }, [sortField, sortDir, prefer, priceFilter, departureTime, arrivalTime])
 
 
     const tripCom = useQuery({
@@ -98,7 +103,7 @@ export default function AdvancedSearchFlightPage() {
 
                         <div className="relative">
                             <div className="font-bold text-xl mb-4">Filters</div>
-                            <AdvancedFlightFilter setPrefer={setPrefer} priceMax={!agoda.isSuccess ? 0 : agoda.data.priceMax}/>
+                            <AdvancedFlightFilter setPrefer={setPrefer} setPriceFilter={setPriceFilter} setDepartureTime={setDepartureTime} setArrivalTime={setArrivalTime} priceMax={priceMax} priceStep={!agoda.isSuccess ? 0 : agoda.data.priceStep}/>
                             <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
                         </div>
 

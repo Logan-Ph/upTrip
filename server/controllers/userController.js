@@ -50,6 +50,7 @@ const {
     bookingSecondaryAutocompleteURL,
     secondaryAutocompletePayloadBooking,
 } = require("../utils/requestOptions");
+const { errorMonitor } = require("nodemailer/lib/xoauth2");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
@@ -785,6 +786,7 @@ exports.advancedSearchFlights = async (req, res) => {
         let items = {
             flights: [],
             priceMax: 0,
+            priceStep: 0
         };
         const payload = agodaGetFlightPayload(req.body)
         await axios.post(url, payload, {
@@ -812,12 +814,14 @@ exports.advancedSearchFlights = async (req, res) => {
                     })
                 }
                 items.priceMax = res.data.trips[0].filters.price.to;
+                items.priceStep = res.data.trips[0].filters.price.step
             })
             .catch(er => {
                 throw er
             })
         return res.status(200).json(items)
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 }
@@ -946,6 +950,9 @@ exports.getBayDepFlight = async (req, res) => {
         Promise.all(requests)
             .then(response => {
                 for (const res of response) {
+                    if (!res.data.ListFareOption) {
+                        throw new Error('Invalid response: ListFareOption not found');
+                    }
                     for (const item of res.data.ListFareOption) {
                         const flightNo = []
                         const airline = []
@@ -955,17 +962,14 @@ exports.getBayDepFlight = async (req, res) => {
                         }
                         items.push({
                             flightNo: flightNo,
-                            //airline: airline,
-                            //departure: item.ListFareData[0].ListFlight[0].StartDate,
-                            //arrival: item.ListFareData[0].ListFlight[0].EndDate,
                             price: item.PriceAdt
                         })
                     }
                 }
                 return res.status(200).json(items)
             })
-            .catch(error => {
-                throw error
+            .catch(er => {
+                return res.status(500).json(er);
             });
     } catch (error) {
         return res.status(500).json(error);

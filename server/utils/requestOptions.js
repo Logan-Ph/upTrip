@@ -940,6 +940,9 @@ const agodaAdvancedSearchHotelPayload = (
 // payload to get flights from agoda
 const agodaGetFlightPayload = (data) => {
     const date = `${data.year}-${data.month}-${data.day}`
+    let filter = {
+        "cabinType": data.seatClass.charAt(0) + data.seatClass.slice(1).toLowerCase(),
+    }
     const passengers = [
         {
             "number": data.adult,
@@ -961,6 +964,13 @@ const agodaGetFlightPayload = (data) => {
                 "passengerType": 3
             }
         )
+    }
+
+    if (data.priceFilter.length !== 0) {
+        filter.price = {
+            from: data.priceFilter[0],
+            to: data.priceFilter[1]
+        }
     }
     return {
         "flightsRequestId": "02bed71b-cbdc-43bd-ac49-003d1e3edf7b",
@@ -990,17 +1000,21 @@ const agodaGetFlightPayload = (data) => {
                         "id": 1,
                         "departureDate": date,
                         "filter": {
-                            "arrivalTime": null,
-                            "departureTime": null,
+                            "arrivalTime": {
+                                "from": data.arrivalTime[0],
+                                "to": data.arrivalTime[1],
+                            },
+                            "departureTime": {
+                                "from": data.departureTime[0],
+                                "to": data.departureTime[1],
+                            },
                             "carrier": {
                                 "preferred": data.prefer,
                             }
                         }
                     }
                 ],
-                "filter": {
-                    "cabinType": data.seatClass.charAt(0) + data.seatClass.slice(1).toLowerCase(),
-                },
+                "filter": filter,
                 "sort": {
                     "field": data.sortField,
                     "direction": data.sortDir,
