@@ -1,6 +1,6 @@
 import { SortOption } from "../components/SortOption";
 import { AdvancedHotelFilter } from "../components/AdvancedHotelFilter";
-import { Suspense, lazy, useMemo, useRef } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ const AdvancedHotelCardLazy = lazy(() =>
 
 export default function AdvancedSearchHotelPage() {
     const [searchParams] = useSearchParams();
+    const hotelNamesRef = useRef([])
     const listSort = useRef(searchParams.get("listFilters")?.split(",")?.[0]);
     const listFilter = useRef(
         searchParams.get("listFilters")?.split(",")?.slice(1)
@@ -57,7 +58,7 @@ export default function AdvancedSearchHotelPage() {
         domestic: searchParams.get("domestic"),
         preHotelIds: searchParams.getAll("preHotelIds"),
         listFilters: `${listSort.current},${listFilter.current}`,
-    };  
+    }
 
     const filterOptions = useQuery({
         queryKey: ["get-app-config"],
@@ -108,23 +109,37 @@ export default function AdvancedSearchHotelPage() {
         enabled: !!(payload.resultType === "CT"),
     });
 
-    const hotelNames = useMemo(() => {
-        return specificHotel?.matchHotel?.name
-            ? [specificHotel.matchHotel.name]
-            : hotelList?.pages?.[0]?.hotelList.map(
-                  (hotel) => hotel.hotelBasicInfo.hotelName
-              );
-    }, [specificHotel, hotelList]);
+    const addingHotelNames = () => {
+        if (specificHotel?.matchHotel?.name) {
+            if (!hotelNamesRef.current.includes(specificHotel.matchHotel.name)) {
+                hotelNamesRef.current.push(specificHotel.matchHotel.name);
+            }
+        }
 
-    payload = { ...payload, hotelNames };
+        if (hotelList?.pages) {
+            hotelList.pages.forEach(page => {
+                page.hotelList.forEach(hotel => {
+                    if (!hotelNamesRef.current.includes(hotel.hotelBasicInfo.hotelName)) {
+                        hotelNamesRef.current.push(hotel.hotelBasicInfo.hotelName);
+                    }
+                });
+            });
+        }
 
-    const getHotelPriceComparison = useQuery({
-        queryKey: ["hotel-price-comparison", hotelNames],
-        queryFn: () => fetchHotelPriceComparison(payload),
-        retry: false,
-        refetchOnWindowFocus: false,
-        enabled: !!(hotelNames?.length > 0),
-    });
+        if (moreHotels?.pages) {
+            moreHotels.pages.forEach(page => {
+                page.hotelList.forEach(hotel => {
+                    if (!hotelNamesRef.current.includes(hotel.hotelBasicInfo.hotelName)) {
+                        hotelNamesRef.current.push(hotel.hotelBasicInfo.hotelName);
+                    }
+                });
+            });
+        }
+
+        console.log(hotelNamesRef.current)
+        return hotelNamesRef.current
+    }
+
 
     const {
         data: moreHotels,
@@ -132,7 +147,7 @@ export default function AdvancedSearchHotelPage() {
         status: moreHotelsStatus,
         fetchNextPage
     } = useInfiniteQuery({
-        queryKey: ["advanced-search-more-hotels"],
+        queryKey: ["advanced-search-more-hotels", payload],
         queryFn: ({ pageParam = payload }) =>
             fetchHotelAdvancedSearch(pageParam),
         retry: false,
@@ -154,8 +169,20 @@ export default function AdvancedSearchHotelPage() {
             }
             return undefined;
         },
-        enabled: !!(hotelNames?.length > 0)
     });
+
+    const hotelNames = useMemo(() => {
+        return addingHotelNames()
+    }, [specificHotel, hotelList, moreHotels])
+
+    const getHotelPriceComparison = useQuery({
+        queryKey: ["hotel-price-comparison", hotelNames],
+        queryFn: () => fetchHotelPriceComparison(payload, hotelNames),
+        retry: false,
+        refetchOnWindowFocus: false,
+        enabled: !!(hotelNames && hotelNames?.length > 0),
+    });
+
 
     return (
         <>
@@ -202,29 +229,29 @@ export default function AdvancedSearchHotelPage() {
                                             : null;
                                     const agodaPrice = priceData?.agodaPrice
                                         ? Math.round(
-                                              priceData.agodaPrice?.[0]?.price
-                                                  ?.perRoomPerNight?.exclusive
-                                                  ?.display
-                                          ).toLocaleString("vi-VN")
+                                            priceData.agodaPrice?.[0]?.price
+                                                ?.perRoomPerNight?.exclusive
+                                                ?.display
+                                        ).toLocaleString("vi-VN")
                                         : null;
                                     const bookingPrice = priceData?.bookingPrice
                                         ? Math.round(
-                                              priceData.bookingPrice?.price?.reduce(
-                                                  (acc, curr) =>
-                                                      acc +
-                                                      Number(
-                                                          curr.finalPrice.amount
-                                                      ),
-                                                  0
-                                              ) /
-                                                  (Number(payload.adult) *
-                                                      Number(
-                                                          daysBetween(
-                                                              payload.checkin,
-                                                              payload.checkout
-                                                          )
-                                                      ))
-                                          ).toLocaleString("vi-VN")
+                                            priceData.bookingPrice?.price?.reduce(
+                                                (acc, curr) =>
+                                                    acc +
+                                                    Number(
+                                                        curr.finalPrice.amount
+                                                    ),
+                                                0
+                                            ) /
+                                            (Number(payload.adult) *
+                                                Number(
+                                                    daysBetween(
+                                                        payload.checkin,
+                                                        payload.checkout
+                                                    )
+                                                ))
+                                        ).toLocaleString("vi-VN")
                                         : null;
                                     return (
                                         <Suspense
@@ -242,7 +269,7 @@ export default function AdvancedSearchHotelPage() {
                                         </Suspense>
                                     );
                                 })()}
-                        
+
                             {hotelListStatus === "success" &&
                                 hotelList.pages.map((page, pageIndex) => {
                                     return page.hotelList.map(
@@ -250,42 +277,42 @@ export default function AdvancedSearchHotelPage() {
                                             const priceData =
                                                 getHotelPriceComparison.isSuccess
                                                     ? getHotelPriceComparison
-                                                          .data[hotelIndex]
+                                                        .data[hotelIndex]
                                                     : null;
                                             const agodaPrice =
                                                 priceData?.agodaPrice
                                                     ? Math.round(
-                                                          priceData
-                                                              .agodaPrice?.[0]
-                                                              ?.price
-                                                              ?.perRoomPerNight
-                                                              ?.exclusive
-                                                              ?.display
-                                                      ).toLocaleString("vi-VN")
+                                                        priceData
+                                                            .agodaPrice?.[0]
+                                                            ?.price
+                                                            ?.perRoomPerNight
+                                                            ?.exclusive
+                                                            ?.display
+                                                    ).toLocaleString("vi-VN")
                                                     : null;
                                             const bookingPrice =
                                                 priceData?.bookingPrice
                                                     ? Math.round(
-                                                          priceData.bookingPrice?.price?.reduce(
-                                                              (acc, curr) =>
-                                                                  acc +
-                                                                  Number(
-                                                                      curr
-                                                                          .finalPrice
-                                                                          .amount
-                                                                  ),
-                                                              0
-                                                          ) /
-                                                              (Number(
-                                                                  payload.adult
-                                                              ) *
-                                                                  Number(
-                                                                      daysBetween(
-                                                                          payload.checkin,
-                                                                          payload.checkout
-                                                                      )
-                                                                  ))
-                                                      ).toLocaleString("vi-VN")
+                                                        priceData.bookingPrice?.price?.reduce(
+                                                            (acc, curr) =>
+                                                                acc +
+                                                                Number(
+                                                                    curr
+                                                                        .finalPrice
+                                                                        .amount
+                                                                ),
+                                                            0
+                                                        ) /
+                                                        (Number(
+                                                            payload.adult
+                                                        ) *
+                                                            Number(
+                                                                daysBetween(
+                                                                    payload.checkin,
+                                                                    payload.checkout
+                                                                )
+                                                            ))
+                                                    ).toLocaleString("vi-VN")
                                                     : null;
                                             return (
                                                 <Suspense
@@ -331,7 +358,7 @@ export default function AdvancedSearchHotelPage() {
                             {(hotelListLoading || specificHotelLoading || moreHotelsLoading) && (
                                 <ASearchSkeleton />
                             )}
-                            
+
                             <button
                                 onClick={() => fetchNextPage()}
                                 className="mt-[300px]"

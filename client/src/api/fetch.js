@@ -49,7 +49,8 @@ export function fetchHotelAdvancedSearch(payload) {
         });
 }
 
-export function fetchHotelPriceComparison(payload) {
+export function fetchHotelPriceComparison(payload, hotelNames) {
+    payload = {...payload, hotelNames}
     return axios
         .post(`/price-comparison/hotels`, payload, options)
         .then((res) => res.data)
