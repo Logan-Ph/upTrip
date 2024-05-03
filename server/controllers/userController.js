@@ -978,17 +978,17 @@ exports.getBayDepFlight = async (req, res) => {
 
 exports.flightSearchAutocomplete = async (req, res) => {
     try {
-        const options = (req.body.options) ? req.body.options : airportOptions
         const result = []
-        for (const opt of options) {
-            if (stringSimilarity(req.body.input, opt.cityName) > 0) {
-                opt.similarity = stringSimilarity(req.body.input, opt.cityName)
+        for (const opt of airportOptions) {
+            if (stringSimilarity(req.body.input, opt.cityName) > 0 || stringSimilarity(req.body.input, opt.airportCode) > 0) {
+                opt.similarity = Math.max(stringSimilarity(req.body.input, opt.cityName), stringSimilarity(req.body.input, opt.airportCode))
                 result.push(opt)
             }
         }
         result.sort((a, b) => b.similarity - a.similarity);
         return res.status(200).json(result)
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 }

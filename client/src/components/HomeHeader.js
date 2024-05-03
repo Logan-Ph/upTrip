@@ -86,12 +86,24 @@ function AdvancedSearchFlight({ setTab }) {
     const [numberOfInfant, setNumberOfInfant] = useState(0);
     const [keywordFrom, setKeywordFrom] = useState("");
     const [keywordTo, setKeywordTo] = useState("");
+    const [debouncedKeyword, setDebouncedKeyword] = useState(null)
     const date = useRef();
+    const [payload, setPayload] = useState();
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedKeyword(keywordFrom);
+        }, 250); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keywordFrom]);
     const navigate = useNavigate();
 
     const fromAutocomplete = useQuery({
-        queryKey: ['advanced-search', "flight", keywordFrom],
-        queryFn: () => fetchFlightAutocomplete(keywordFrom),
+        queryKey: ['advanced-search', "flight", debouncedKeyword],
+        queryFn: () => fetchFlightAutocomplete(debouncedKeyword),
         refetchOnWindowFocus: false,
         enabled: !!keywordFrom,
     })
@@ -111,6 +123,9 @@ function AdvancedSearchFlight({ setTab }) {
         };
     }, []);
 
+    const handleSubmit  = (e) => {
+        e.preventDefault();
+    }
 
     return (
         <>
@@ -159,15 +174,18 @@ function AdvancedSearchFlight({ setTab }) {
                             </div>
                             {fromAutocomplete.isFetched && (
                                 <div class="relative z-40">
-                                    <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
-                                        {fromAutocomplete.data.map(
-                                            (item) => {
+                                    <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
+                                        {fromAutocomplete?.data?.map(
+                                            (item) => (
                                                 <li>
+                                                    onClick{() => 
+                                                    setPayload({...payload})}
                                                     <a>
-                                                        <i class="fa-solid fa-plane"></i> {item.cityName}
+                                                        <i class="fa-solid fa-plane"></i> {item?.cityName} - {item?.airportCode}
                                                     </a>
                                                 </li>
-                                            })}
+                                            )
+                                        )}
                                     </ul>
                                 </div>
                             )}
@@ -190,30 +208,6 @@ function AdvancedSearchFlight({ setTab }) {
                                     Destination
                                 </label>
                             </div>
-                            {/* <div class="relative z-40">
-                                <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
-                                    <li>
-                                        <a>
-                                            <i class="fa-solid fa-plane"></i> Da
-                                            Nang Internation Airport
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {" "}
-                                            <i class="fa-solid fa-plane"></i>{" "}
-                                            Tan Son Nhat Intercontenial Airport
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {" "}
-                                            <i class="fa-solid fa-plane"></i>{" "}
-                                            Noi Bai Intercontenial Airport
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div> */}
                         </div>
                     </div>
 

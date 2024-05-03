@@ -3,6 +3,7 @@
 // keyword: "hanoi", -> search keyword
 // tab: "restaurant",
 // tab: "hotel",
+require("dotenv").config
 
 const {
     convertDateFormat,
@@ -173,7 +174,7 @@ const advancedSearchSpecificHotelQueryParam = (
     };
 };
 
-const tripClientID = "1711297830645.f17ebYxB7ZgE";
+const tripClientID = process.env.TRIP_CLIENT_ID;
 
 const tripAdvancedSearchHeaders = () => {
     return {
