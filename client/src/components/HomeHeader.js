@@ -577,7 +577,7 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedKeyword(keyword);
-        }, 250); // Delay of 1 second
+        }, 250);
 
         return () => {
             clearTimeout(handler);

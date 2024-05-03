@@ -19,6 +19,9 @@ router.post('/tour-attractions/autocomplete', userController.tourAttractionsAuto
 
 // autocomplete for Agoda.com
 router.post('/agoda/autocomplete', userController.agodaAutocomplete);
+router.post('/agoda/autocomplete/tour-attractions', userController.agodaTourAttractionsAutocomplete);
+
+router.post('/agoda/tour-attractions', userController.agodaTourAttractionsAdvancedSearch);
 
 // autocomplete for Booking.com
 router.post('/booking/autocomplete', userController.bookingAutoComplete);
