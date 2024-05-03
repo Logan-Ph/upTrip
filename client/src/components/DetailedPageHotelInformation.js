@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 export default function DetailedPageHotelInformation(){
     return(
         <>
@@ -64,26 +65,35 @@ function HotelPriceComparison(){
     const website = [
         
         {imgSrc: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252", price: "3.455.000 VND"},
-        {imgSrc: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655", price: "3.650.000 VND"},
-        {imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png", price: "3.406.750 VND"},
+        {imgSrc: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655", 
+        price: "3.650.000 VND",
+        linkTo: "https://us.trip.com/hotels/detail/?cityId=6942&hotelId=758788&checkIn=2024-06-23&checkOut=2024-06-24&adult=4&children=0&subStamp=1479&crn=1&ages=&travelpurpose=0&curr=USD&link=button&hoteluniquekey=H4sIAAAAAAAAAONazsjFJMEixMTBKDWHkWNJz71pzEKMRgb3GS22yjvKt74O3NEwwcHT42GVyLptixwCeCYxSnKePQMEa1IcBEGi7iuTHJxYOb7xSDDNYGxZobeCkXEjI1j9-kKHHYxMJxgnMS5g6m-ZLbuLiZXjjaQE0yEgfUROguUUE8MlJoZbTAyPmBheMTF8YmL4xQQxqImZoYuZYRIzK8cifgmWWcwMi5gZpHhTzU0MUy2TTQ2M0kxNFYQ0Viw7sZHNSGkSI1No8ClGKUNzQ0NjU0sTI2MLQyM9S0vjlOwKt7KUMN8UK2YpRjcPxiA2N1dzRyfnKC0u5tBgF0EGMPhgLwXiKcJ4WiCe4fyzq85f_SbjkMSamqcbGpxxgb-AsYuRQ4DRgzGCsYLxFSNI1Q-QfwEpEo_CQgEAAA&subChannel=&masterhotelid_tracelogid=e741e9c502f55&NewTaxDescForAmountshowtype0=T&detailFilters=17%7C1~17~1*80%7C0%7C1~80~0&hotelType=normal&barcurr=USD&locale=en-US"
+        },
+        {imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png", price: "3.406.750 VND",
+       
+        },
     ]
 
     return(
         <>
         {website.map((item, index) => (
-            <div className="bg-[#CDEAE1] border-transparent grid grid-cols-2 rounded-lg my-2">
+            <div className="bg-[#CDEAE1] border-transparent grid grid-cols-2 rounded-lg my-2 shadow-md">
                 <div className="my-auto pl-5">
                     <img src={item.imgSrc} alt="website logo" className="w-[120px] h-[60px] object-cover"/>
                 </div>
 
-                <div className="grid grid-cols-3 my-auto">
-                    <div>{item.price}</div>
-                    <div>Book Now</div>
+                <div className="grid grid-cols-3">
+                    <div className="font-bold text-xl text-[#222160] my-auto">{item.price}</div>
+                    <Link to={item.linkTo} target="_blank" className="my-auto">
+                        <div className="btn w-3/4 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
+                            <span className="mx-auto py-2">Book Now</span>
+                        </div>
+                    </Link>
+                    
                     <div> Heart</div>
                 </div>
             </div>
         ))}
-        
 
         </>
     )

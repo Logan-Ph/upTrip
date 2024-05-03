@@ -20,7 +20,7 @@ export default function DetailPageGallery(){
                     className="w-full h-[440px] object-cover rounded-lg" onClick={handleOpen}/>
                 </div>
 
-                <div onClick={handleOpen} className="absolute bottom-0 right-0 py-2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
+                <div onClick={handleOpen} className="absolute bottom-0 right-0 py-2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg btn btn-outline ">
                     <svg xmlns="http://www.w3.org/2000/svg" 
                         viewBox="0 0 512 512"
                         className='w-4 h-4 mr-2'>
