@@ -3,7 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import Datepicker from "flowbite-datepicker/Datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
-import { fetchFlightAutocomplete, fetchTripAutoComplete } from "../api/fetch";
+import {
+    fetchFlightAutocomplete,
+    fetchTourAttractionsAutocomplete,
+    fetchTripAutoComplete,
+} from "../api/fetch";
 import { Link, useNavigate } from "react-router-dom";
 import warningNotify from "../utils/warningNotify";
 
@@ -76,11 +80,11 @@ function HandleSelection({ tab, setTab, setKeyword, keyword }) {
 
 function AdvancedSearchFlight({ setTab }) {
     const [openMenu, setOpenMenu] = useState(false);
-    const [departure, setDeparture] = useState()
-    const [arrival, setArrival] = useState()
-    const [from, setFrom] = useState()
-    const [to, setTo] = useState()
-    const [seatClass, setSeatClass] = useState()
+    const [departure, setDeparture] = useState();
+    const [arrival, setArrival] = useState();
+    const [from, setFrom] = useState();
+    const [to, setTo] = useState();
+    const [seatClass, setSeatClass] = useState();
     const [numberOfAdult, setNumberOfAdult] = useState(1);
     const [numberOfChild, setNumberOfChild] = useState(0);
     const [numberOfInfant, setNumberOfInfant] = useState(0);
@@ -90,18 +94,18 @@ function AdvancedSearchFlight({ setTab }) {
     const navigate = useNavigate();
 
     const fromAutocomplete = useQuery({
-        queryKey: ['advanced-search', "flight", keywordFrom],
+        queryKey: ["advanced-search", "flight", keywordFrom],
         queryFn: () => fetchFlightAutocomplete(keywordFrom),
         refetchOnWindowFocus: false,
         enabled: !!keywordFrom,
-    })
+    });
     useEffect(() => {
         let datePicker;
 
         if (date.current) {
             datePicker = new Datepicker(date.current, {
                 autohide: true,
-                minDate: new Date()
+                minDate: new Date(),
             });
         }
 
@@ -110,7 +114,6 @@ function AdvancedSearchFlight({ setTab }) {
             if (datePicker) datePicker.destroy();
         };
     }, []);
-
 
     return (
         <>
@@ -160,14 +163,14 @@ function AdvancedSearchFlight({ setTab }) {
                             {fromAutocomplete.isFetched && (
                                 <div class="relative z-40">
                                     <ul class="absolute menu bg-base-200 w-full rounded-b-lg">
-                                        {fromAutocomplete.data.map(
-                                            (item) => {
-                                                <li>
-                                                    <a>
-                                                        <i class="fa-solid fa-plane"></i> {item.cityName}
-                                                    </a>
-                                                </li>
-                                            })}
+                                        {fromAutocomplete.data.map((item) => {
+                                            <li>
+                                                <a>
+                                                    <i class="fa-solid fa-plane"></i>{" "}
+                                                    {item.cityName}
+                                                </a>
+                                            </li>;
+                                        })}
                                     </ul>
                                 </div>
                             )}
@@ -328,8 +331,9 @@ function AdvancedSearchFlight({ setTab }) {
                             {/* <!-- Dropdown menu --> */}
                             <div
                                 id="dropdown"
-                                class={`z-10 bg-gray-100 divide-y divide-gray-100 rounded-b-lg shadow w-full absolute mt-[1.5px] ${openMenu ? "" : "hidden"
-                                    }`}
+                                class={`z-10 bg-gray-100 divide-y divide-gray-100 rounded-b-lg shadow w-full absolute mt-[1.5px] ${
+                                    openMenu ? "" : "hidden"
+                                }`}
                             >
                                 <div
                                     class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
@@ -357,7 +361,9 @@ function AdvancedSearchFlight({ setTab }) {
                                                     onClick={() =>
                                                         setNumberOfAdult(
                                                             (prev) =>
-                                                                prev - 1 > 0 ? prev - 1 : 1
+                                                                prev - 1 > 0
+                                                                    ? prev - 1
+                                                                    : 1
                                                         )
                                                     }
                                                 >
@@ -381,7 +387,14 @@ function AdvancedSearchFlight({ setTab }) {
                                                     class="w-6 h-6"
                                                     onClick={() =>
                                                         setNumberOfAdult(
-                                                            (prev) => prev + 1 + numberOfChild + numberOfInfant <= 6 ? prev + 1 : prev
+                                                            (prev) =>
+                                                                prev +
+                                                                    1 +
+                                                                    numberOfChild +
+                                                                    numberOfInfant <=
+                                                                6
+                                                                    ? prev + 1
+                                                                    : prev
                                                         )
                                                     }
                                                 >
@@ -415,7 +428,8 @@ function AdvancedSearchFlight({ setTab }) {
                                                         setNumberOfChild(
                                                             (prev) =>
                                                                 prev - 1 >= 0
-                                                                    ? prev - 1 : 0
+                                                                    ? prev - 1
+                                                                    : 0
                                                         )
                                                     }
                                                 >
@@ -439,7 +453,17 @@ function AdvancedSearchFlight({ setTab }) {
                                                     class="w-6 h-6"
                                                     onClick={() =>
                                                         setNumberOfChild(
-                                                            (prev) => prev < numberOfAdult * 2 && prev + 1 + numberOfAdult + numberOfInfant <= 6 ? prev + 1 : prev
+                                                            (prev) =>
+                                                                prev <
+                                                                    numberOfAdult *
+                                                                        2 &&
+                                                                prev +
+                                                                    1 +
+                                                                    numberOfAdult +
+                                                                    numberOfInfant <=
+                                                                    6
+                                                                    ? prev + 1
+                                                                    : prev
                                                         )
                                                     }
                                                 >
@@ -498,7 +522,16 @@ function AdvancedSearchFlight({ setTab }) {
                                                     class="w-6 h-6"
                                                     onClick={() =>
                                                         setNumberOfInfant(
-                                                            (prev) => prev + 1 <= numberOfAdult && prev + 1 + numberOfChild + numberOfAdult <= 6 ? prev + 1 : prev
+                                                            (prev) =>
+                                                                prev + 1 <=
+                                                                    numberOfAdult &&
+                                                                prev +
+                                                                    1 +
+                                                                    numberOfChild +
+                                                                    numberOfAdult <=
+                                                                    6
+                                                                    ? prev + 1
+                                                                    : prev
                                                         )
                                                     }
                                                 >
@@ -527,6 +560,39 @@ function AdvancedSearchFlight({ setTab }) {
 }
 
 function QuickSearchExperience({ setTab, setKeyword, keyword }) {
+    const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
+    const [autocompletePayload, setAutocompletePayload] = useState();
+    const navigate = useNavigate();
+    useEffect(() => {
+        setAutocompletePayload(null);
+    }, [debouncedKeyword]);
+
+    const { data, isFetched } = useQuery({
+        queryKey: ["tour-attractions", "autocomplete", debouncedKeyword],
+        queryFn: () => fetchTourAttractionsAutocomplete(debouncedKeyword),
+        refetchOnWindowFocus: false,
+        enabled: !!debouncedKeyword,
+    });
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedKeyword(keyword);
+        }, 250); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keyword]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!autocompletePayload) {
+            warningNotify("Please select a location");
+            return;
+        }
+        navigate(`/advanced-experience-search/?districtId=${autocompletePayload.districtId}&districtName=${autocompletePayload.districtName}`);
+    };
+
     return (
         <>
             <div
@@ -553,35 +619,30 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
                                 <input
                                     class="w-full input input-bordered rounded-l-none h-[52px] bg-white"
                                     placeholder="Search for activities in the location"
+                                    value={autocompletePayload?.districtPathNames}
+                                    onChange={(e) => setKeyword(e.target.value)}
                                 />
                             </div>
-                            <div class="relative z-40">
-                                <ul class="absolute menu bg-white w-full rounded-b-lg">
-                                    <li>
-                                        <a>
-                                            <i class="fa-solid fa-location-dot"></i>{" "}
-                                            Da Nang
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {" "}
-                                            <i class="fa-solid fa-location-dot"></i>{" "}
-                                            Ho Chi Minh
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {" "}
-                                            <i class="fa-solid fa-location-dot"></i>{" "}
-                                            Ha Noi
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                            {isFetched && !autocompletePayload && (
+                                <div class="relative z-40">
+                                    <ul class="absolute menu bg-white w-full rounded-b-lg">
+                                        {data.length === 0 ? (
+                                            <li>No results found</li>
+                                        ) : (
+                                            data.map((item) => (
+                                                <li onClick={() =>setAutocompletePayload(item)}>
+                                                <div>
+                                                    <i class="fa-solid fa-location-dot"></i>{" "}
+                                                    {item.districtPathNames}
+                                                </div>
+                                            </li>
+                                        )))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <div class="md:ml-1.5">
+                    <div class="md:ml-1.5" onClick={handleSubmit}>
                         <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
                             Search
                         </button>
@@ -669,7 +730,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
             return;
         }
 
-        const payload = {
+        let payload = {
             checkin: checkinDate.current.value.replace(
                 /(\d{2})\/(\d{2})\/(\d{4})/,
                 "$3$1$2"
@@ -679,7 +740,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                 "$3$1$2"
             ),
             city: autocompletePayload.city.geoCode,
-            cityName: autocompletePayload.resultWord,
+
             resultType: autocompletePayload.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
@@ -697,12 +758,29 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
             adult: numberOfAdults,
             children: numberOfChildren,
             domestic: false,
-            listFilters: "17~1*17*1*2"
+            listFilters: "17~1*17*1*2",
         };
 
-        navigate(
-            `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
-        );
+        if (payload.resultType === "H") {
+            payload = {
+                ...payload,
+                hotelName: autocompletePayload.resultWord,
+                searchValue: `${autocompletePayload.item.data.filterID}_${autocompletePayload.item.data.type}_${autocompletePayload.item.data.value}_${autocompletePayload.item.data.subType}`,
+                cityName: autocompletePayload.city.currentLocaleName,
+                preHotelIds: autocompletePayload.code,
+            };
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        } else {
+            payload = {
+                ...payload,
+                cityName: autocompletePayload.resultWord,
+            };
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        }
     };
 
     return (
@@ -748,7 +826,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                 {data?.keyWordSearchResults?.map(
                                                     (element) => {
                                                         switch (
-                                                        element.resultType
+                                                            element.resultType
                                                         ) {
                                                             case "H":
                                                                 return (
@@ -770,6 +848,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                                     </>
                                                                 );
                                                             case "CT":
+                                                            case "P":
                                                             case "D":
                                                                 return (
                                                                     <>
@@ -995,8 +1074,9 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                             {/* <!-- Dropdown menu --> */}
                             <div
                                 id="dropdownDivider"
-                                class={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] ${dropdown ? "block" : "hidden"
-                                    }`}
+                                class={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] ${
+                                    dropdown ? "block" : "hidden"
+                                }`}
                             >
                                 {/* Ask user to input room information */}
                                 <div
@@ -1097,7 +1177,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                         setNumberOfAdults(
                                                             (prev) =>
                                                                 prev - 1 > 0 &&
-                                                                    prev >
+                                                                prev >
                                                                     numberOfRooms
                                                                     ? prev - 1
                                                                     : prev
@@ -1170,7 +1250,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                                             prev.slice(
                                                                                 0,
                                                                                 prev.length -
-                                                                                1
+                                                                                    1
                                                                             )
                                                                     );
                                                                     return (
@@ -1205,7 +1285,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                         setNumberOfChildren(
                                                             (prev) =>
                                                                 prev <
-                                                                    numberOfRooms *
+                                                                numberOfRooms *
                                                                     6
                                                                     ? prev + 1
                                                                     : prev

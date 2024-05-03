@@ -47,6 +47,10 @@ const {
     advancedSearchSpecificHotelQueryParam,
     bookingSecondaryAutocompleteURL,
     secondaryAutocompletePayloadBooking,
+    tripComGetTourAttractionsAutocompletePayload,
+    tripComGetTourAttractionsAutocompleteURL,
+    tripComGetTourAttractionsURL,
+    tripGetTourAttractionsPayload,
 } = require("../utils/requestOptions");
 
 exports.homePage = (req, res) => {
@@ -221,11 +225,11 @@ exports.verifyEmail = async (req, res) => {
 
 exports.quickSearchHotels = async (req, res) => {
     try {
-        const { keyword, pageIndex } = req.params;
+        const { keyword, pageIndex } = req.body;
         const options = quickSearchHotelTripOptions(
             keyword,
             pageIndex || 1,
-            18
+            10
         );
         const response = await axios.post(tripQuickSearchURL, options);
         const data = response.data.data[0]["itemList"];
@@ -244,11 +248,11 @@ exports.quickSearchHotels = async (req, res) => {
 
 exports.quickSearchAttractions = async (req, res) => {
     try {
-        const { keyword, pageIndex } = req.params;
+        const { keyword, pageIndex } = req.body;
         const options = quickSearchAttractionsTripOptions(
             keyword,
             pageIndex || 1,
-            18
+            10
         );
         const response = await axios.post(tripQuickSearchURL, options);
         const data = response.data.data[0]["itemList"];
@@ -598,7 +602,7 @@ exports.priceComparisonHotels = async (req, res) => {
 exports.advancedSearchSpecificHotelTrip = async (req, res) => {
     try {
         const {
-            cityId,
+            city,
             cityName,
             provinceId,
             countryId,
@@ -606,6 +610,8 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
             checkin, // type: yyyymmdd
             checkout, // type: yyyymmdd
             hotelName,
+            lat,
+            lon,
             searchValue,
             searchCoordinate,
             adult,
@@ -616,13 +622,15 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
         } = req.body;
 
         const queryParam = advancedSearchSpecificHotelQueryParam(
-            Number(cityId), // 1777: Number
+            Number(city), // 1777: Number
             cityName, // "Nha Trang": String
             Number(provinceId), // 11120: Number
             Number(countryId), // 111: Number
             Number(districtId), // 0: Number
             String(checkin), // "2024/05/24": String
             String(checkout), // "2024/05/25": String
+            lat,
+            lon,
             String(hotelName),
             String(searchValue),
             String(searchCoordinate),
@@ -654,14 +662,32 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
         const name = targetDiv.find(".list-card-title").text();
         const starNum = targetDiv.find(".list-card-title > div > i").length;
         const saleOff = targetDiv.find(".favour").text();
-        const transportInfo = targetDiv.find(".list-card-transport-v8").text();
-        const price = targetDiv.find(".price-explain").text();
+        const transportInfo = targetDiv
+            .find(".list-card-transport-v8 .transport span:not(.split-dot.trans-icon)")
+            .map((i, el) => {
+                return $(el).text().trim(); // Trim to remove any extra whitespace
+            })
+            .filter((i, el) => {
+                return el !== "";
+            })
+            .get();
+        const priceExplain = targetDiv.find(".price-explain");
+        const price = priceExplain?.contents()?.filter(function() {
+            // Filter out the <br/> elements
+            return this.type === 'text';
+        }).map(function() {
+            // Map over each text node and trim it
+            return $(this).text().trim();
+        })?.get()?.join(' ');
+        const priceMatch = price?.match(/VND ([\d,]+)/);
+        const nightsMatch = price?.match(/× (\d+) nights/);
+        const realPrice = parseInt(priceMatch?.[1]?.replace(/,/g, ''), 10) / parseInt(nightsMatch?.[1], 10)
 
         const matchHotel = {
             img,
             name,
             saleOff,
-            price,
+            price: realPrice,
             starNum,
             describe,
             reviewCounts,
@@ -670,6 +696,7 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
         };
         res.status(200).json({ matchHotel });
     } catch (er) {
+        console.log(er)
         return res.status(500).json(error);
     }
 };
@@ -814,6 +841,38 @@ exports.advancedSearchFlights = async (req, res) => {
         return res.status(200).json(items)
     } catch (err) {
         return res.status(500).json(err)
+    }
+}
+
+exports.tourAttractionsAutocomplete = async (req, res) => {
+    try{
+        const {keyword} = req.body
+        const payload = tripComGetTourAttractionsAutocompletePayload(keyword)
+        const response = await axios.post(tripComGetTourAttractionsAutocompleteURL, payload, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            }
+        })
+        return res.status(200).json(response?.data?.cityItems || [])
+    }catch(er){
+        console.log(er)
+        return res.status(500).json(er)
+    }
+}
+
+exports.tourAttractions = async (req, res) => {
+    try {
+        const {districtId, pageIndex} = req.body
+        const payload = tripGetTourAttractionsPayload(districtId, pageIndex)
+        const response = await axios.post(tripComGetTourAttractionsURL, payload, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            }
+        })
+        return res.status(200).json(response?.data?.attractionList || [])
+    }catch(er){
+        console.log(er)
+        return res.status(500).json(er)
     }
 }
 

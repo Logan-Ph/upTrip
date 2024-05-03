@@ -629,7 +629,7 @@ function AdvancedSearchHotel() {
             return;
         }
 
-        const payload = {
+        let payload = {
             checkin: checkinDate.current.value.replace(
                 /(\d{2})\/(\d{2})\/(\d{4})/,
                 "$3$1$2"
@@ -639,8 +639,8 @@ function AdvancedSearchHotel() {
                 "$3$1$2"
             ),
             city: autocompletePayload.city.geoCode,
-            cityName: autocompletePayload.resultWord,
-            resultType: autocompletePayload?.resultType,
+
+            resultType: autocompletePayload.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
             provinceId: autocompletePayload.province.geoCode,
@@ -657,11 +657,29 @@ function AdvancedSearchHotel() {
             adult: numberOfAdults,
             children: numberOfChildren,
             domestic: false,
+            listFilters: "17~1*17*1*2",
         };
 
-        navigate(
-            `/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
-        );
+        if (payload.resultType === "H") {
+            payload= {
+                ...payload,
+                hotelName: autocompletePayload.resultWord,
+                searchValue: `${autocompletePayload.item.data.filterID}_${autocompletePayload.item.data.type}_${autocompletePayload.item.data.value}_${autocompletePayload.item.data.subType}`,
+                cityName: autocompletePayload.city.currentLocaleName,
+                preHotelIds: autocompletePayload.code
+            }
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        } else {
+            payload = {
+                ...payload,
+                cityName: autocompletePayload.resultWord,
+            };
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        }
     };
 
     return (
@@ -680,7 +698,7 @@ function AdvancedSearchHotel() {
                         <input
                             className="h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
                             placeholder="Where are you going?"
-                            value={keyword}
+                            value={autocompletePayload?.resultWord}
                             onChange={(e) => setKeyword(e.target.value)}
                         />
                         <div className="relative z-40 drop-shadow-lg">
@@ -710,6 +728,7 @@ function AdvancedSearchHotel() {
                                                             </>
                                                         );
                                                     case "CT":
+                                                    case "P":
                                                     case "D":
                                                         return (
                                                             <>
@@ -1169,23 +1188,53 @@ function AdvancedSearchHotel() {
                                                         maxLength={2}
                                                         min={0}
                                                         max={17}
-                                                        value={childrenAges[index]}
+                                                        value={
+                                                            childrenAges[index]
+                                                        }
                                                         onChange={(e) => {
-                                                            if (e.target.value === "") {
-                                                                setChildrenAges((prev) => {
-                                                                    const temp = [...prev];
-                                                                    temp[index] = null;
-                                                                    return temp;
-                                                                });
+                                                            if (
+                                                                e.target
+                                                                    .value ===
+                                                                ""
+                                                            ) {
+                                                                setChildrenAges(
+                                                                    (prev) => {
+                                                                        const temp =
+                                                                            [
+                                                                                ...prev,
+                                                                            ];
+                                                                        temp[
+                                                                            index
+                                                                        ] =
+                                                                            null;
+                                                                        return temp;
+                                                                    }
+                                                                );
                                                             }
 
-                                                            const newValue = parseInt(e.target.value, 10);
-                                                            if ( newValue >= 0 && newValue <= 17) {
-                                                                setChildrenAges((prev) => {
-                                                                    const temp = [...prev];
-                                                                    temp[index] = newValue;
-                                                                    return temp;
-                                                                });
+                                                            const newValue =
+                                                                parseInt(
+                                                                    e.target
+                                                                        .value,
+                                                                    10
+                                                                );
+                                                            if (
+                                                                newValue >= 0 &&
+                                                                newValue <= 17
+                                                            ) {
+                                                                setChildrenAges(
+                                                                    (prev) => {
+                                                                        const temp =
+                                                                            [
+                                                                                ...prev,
+                                                                            ];
+                                                                        temp[
+                                                                            index
+                                                                        ] =
+                                                                            newValue;
+                                                                        return temp;
+                                                                    }
+                                                                );
                                                             }
                                                         }}
                                                     />
@@ -1201,7 +1250,8 @@ function AdvancedSearchHotel() {
                     <div className="md:ml-1.5">
                         <button
                             onClick={(e) => handleSubmit(e)}
-                            className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
+                            className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit"
+                        >
                             Search
                         </button>
                     </div>
