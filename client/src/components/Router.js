@@ -13,13 +13,20 @@ import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
 import AdvancedSearchExperiencePage from "../pages/AdvancedSearchExperiencePage";
+import Itinerary from "../pages/Itinerary";
+import DetailedItinerary from "../pages/DetailedItinerary";
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {
     const BrowserRoutes = createBrowserRouter([
         {
             path: "/",
-            element: <PersistAndRequireAuth header={<HomeHeader />} footer={<footer />} />,
+            element: (
+                <PersistAndRequireAuth
+                    header={<HomeHeader />}
+                    footer={<footer />}
+                />
+            ),
             children: [
                 {
                     path: "/",
@@ -33,7 +40,12 @@ export default function Router() {
         },
         {
             path: "/",
-            element: <PersistAndRequireAuth header={<Header />} footer={<footer />} />,
+            element: (
+                <PersistAndRequireAuth
+                    header={<Header />}
+                    footer={<footer />}
+                />
+            ),
             children: [
                 {
                     path: "/quick-search",
@@ -50,6 +62,14 @@ export default function Router() {
                 {
                     path: "/advanced-experience-search",
                     element: <AdvancedSearchExperiencePage />,
+                },
+                {
+                    path: "/itinerary",
+                    element: <Itinerary />,
+                },
+                {
+                    path: "/detailed-itinerary",
+                    element: <DetailedItinerary />,
                 },
             ],
         },
