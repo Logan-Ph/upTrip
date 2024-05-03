@@ -1,39 +1,76 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import {
     fetchQuickSearchAttractions,
     fetchQuickSearchHotels,
 } from "../api/fetch";
 import { QuickSearchSkeletonCard } from "../components/LazyLoadingComponents";
-import { QuickStayCard } from "../components/QuickSearchCard";
-import { QuickExperienceCard } from "../components/QuickSearchCard";
-import { Suspense, useState } from "react";
+import { QuickStayCard } from "../components/InfoCard";
+import { QuickExperienceCard } from "../components/InfoCard";
+import { Suspense, useEffect, useState } from "react";
 import ScrollUpButton from "../components/ScrollUpButton";
+import { useInView } from "react-intersection-observer";
 
 export default function QuickSearch() {
+    const { ref, inView } = useInView();
     const [searchParams] = useSearchParams();
     const keyword = searchParams.get("keyword");
     const [type, setType] = useState("All");
 
-    const { data: hotels, isLoading: hotelsLoading, isSuccess: hotelsSuccess } = useQuery({
+    const {
+        data: hotels,
+        isLoading: hotelsLoading,
+        isSuccess: hotelsSuccess,
+        fetchNextPage: fetchHotelsNextPage,
+        isFetchingNextPage: hotelsFetchingNextPage,
+    } = useInfiniteQuery({
         queryKey: ["quick-search", "hotels", keyword],
-        queryFn: () => fetchQuickSearchHotels(keyword),
+        queryFn: ({ pageParam = 1 }) =>
+            fetchQuickSearchHotels({ keyword: keyword, pageIndex: pageParam }),
+        getNextPageParam: (lastPage, pages) => {
+            return pages.length + 1;
+        },
         retry: false,
         refetchOnWindowFocus: false,
     });
 
-    const { data: attractions, isLoading: attractionsLoading, isSuccess: attractionsSuccess } = useQuery({
+    const {
+        data: attractions,
+        isLoading: attractionsLoading,
+        isSuccess: attractionsSuccess,
+        fetchNextPage: fetchAttractionsNextPage,
+        isFetchingNextPage: attractionsFetchingNextPage,
+    } = useInfiniteQuery({
         queryKey: ["quick-search", "attractions", keyword],
-        queryFn: () => fetchQuickSearchAttractions(keyword),
+        queryFn: ({ pageParam = 1 }) =>
+            fetchQuickSearchAttractions({
+                keyword: keyword,
+                pageIndex: pageParam,
+            }),
+        getNextPageParam: (lastPage, pages) => {
+            return pages.length + 1;
+        },
         retry: false,
         refetchOnWindowFocus: false,
     });
+
+    useEffect(() => {
+        if (inView || attractionsSuccess || hotelsSuccess) {
+            fetchHotelsNextPage();
+            fetchAttractionsNextPage();
+        }
+    }, [
+        inView,
+        fetchHotelsNextPage,
+        fetchAttractionsNextPage,
+        attractionsSuccess,
+        hotelsSuccess,
+    ]);
 
     return (
         <>
             <div className="md:px-10">
                 <div className="flex flex-col md:flex-row mx-auto max-w-8xl px-6 py-6">
-
                     {/* filter section */}
                     <div className="hidden md:block">
                         <ul className="menu bg-white drop-shadow-lg w-56">
@@ -42,23 +79,37 @@ export default function QuickSearch() {
                             </p>
                             <li>
                                 <div
-                                    className={`${type === "All" ? "font-semibold underline" : ""}`}
+                                    className={`${
+                                        type === "All"
+                                            ? "font-semibold underline"
+                                            : ""
+                                    }`}
                                     onClick={() => setType("All")}
                                 >
                                     All
                                 </div>
                             </li>
                             <li>
-                                <div 
-                                    className={`${type === "Stays" ? "font-semibold underline" : ""}`}
-									onClick={() => setType("Stays")}>
+                                <div
+                                    className={`${
+                                        type === "Stays"
+                                            ? "font-semibold underline"
+                                            : ""
+                                    }`}
+                                    onClick={() => setType("Stays")}
+                                >
                                     Stays
                                 </div>
                             </li>
                             <li>
-                                <div 
-                                    className={`${type === "Experiences" ? "font-semibold underline" : ""}`}
-									onClick={() => setType("Experiences")}>
+                                <div
+                                    className={`${
+                                        type === "Experiences"
+                                            ? "font-semibold underline"
+                                            : ""
+                                    }`}
+                                    onClick={() => setType("Experiences")}
+                                >
                                     Experiences
                                 </div>
                             </li>
@@ -76,7 +127,7 @@ export default function QuickSearch() {
                         </div>
                     </div>
                     <div className="divider lg:divider-horizontal"></div>
-                    
+
                     {/*  result section */}
                     <div className="grow">
                         <div>
@@ -89,44 +140,74 @@ export default function QuickSearch() {
                         </div>
 
                         <div className="my-3 space-x-3">
-                            {type === "All" && hotelsSuccess && attractionsSuccess && (
-                                <>
-                                    <Suspense
-                                        fallback={<QuickSearchSkeletonCard />}
-                                    >
-                                        {hotels.map((hotel) => (
-                                            <QuickStayCard key={hotel.id} hotel={hotel} />
-                                        ))}
-                                    </Suspense>
-                                    <Suspense
-                                        fallback={<QuickSearchSkeletonCard />}
-                                    >
-                                        {attractions.map((attr) => (
-                                            <QuickExperienceCard key={attr.id} attraction={attr} />
-                                        ))}
-                                    </Suspense>
-                                </>
-                            )}
+                            {type === "All" &&
+                                hotelsSuccess &&
+                                attractionsSuccess && (
+                                    <>
+                                        <Suspense
+                                            fallback={
+                                                <QuickSearchSkeletonCard />
+                                            }
+                                        >
+                                            {hotels.pages.map((page) =>
+                                                page.map((hotel) => (
+                                                    <QuickStayCard
+                                                        key={hotel.id}
+                                                        hotel={hotel}
+                                                    />
+                                                ))
+                                            )}
+                                        </Suspense>
+                                        <Suspense
+                                            fallback={
+                                                <QuickSearchSkeletonCard />
+                                            }
+                                        >
+                                            {attractions.pages.map((page) =>
+                                                page.map((attr) => (
+                                                    <QuickExperienceCard
+                                                        key={attr.id}
+                                                        attraction={attr}
+                                                    />
+                                                ))
+                                            )}
+                                        </Suspense>
+                                    </>
+                                )}
                             {type === "Stays" && hotelsSuccess && (
                                 <Suspense
                                     fallback={<QuickSearchSkeletonCard />}
                                 >
-                                    {hotels.map((hotel) => (
-                                        <QuickStayCard key={hotel.id} hotel={hotel} />
-                                    ))}
+                                    {hotels.pages.map((page) =>
+                                        page.map((hotel) => (
+                                            <QuickStayCard
+                                                key={hotel.id}
+                                                hotel={hotel}
+                                            />
+                                        ))
+                                    )}
                                 </Suspense>
                             )}
                             {type === "Experiences" && attractionsSuccess && (
                                 <Suspense
                                     fallback={<QuickSearchSkeletonCard />}
                                 >
-                                    {attractions.map((attr) => (
-                                        <QuickExperienceCard key={attr.id} attraction={attr} />
-                                    ))}
+                                    {attractions.pages.map((page) =>
+                                        page.map((attr) => (
+                                            <QuickExperienceCard
+                                                key={attr.id}
+                                                attraction={attr}
+                                            />
+                                        ))
+                                    )}
                                 </Suspense>
                             )}
+                            <div ref={ref} />
                             {/* Skeleton */}
-                            {hotelsLoading || attractionsLoading ? (
+                            {hotelsLoading ||
+                            attractionsLoading ||
+                            hotelsFetchingNextPage ||
+                            attractionsFetchingNextPage ? (
                                 <>
                                     <QuickSearchSkeletonCard />
                                     <QuickSearchSkeletonCard />
@@ -138,7 +219,7 @@ export default function QuickSearch() {
                         </div>
                     </div>
                 </div>
-                <ScrollUpButton/>
+                <ScrollUpButton />
             </div>
         </>
     );

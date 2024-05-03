@@ -47,6 +47,10 @@ const {
     advancedSearchSpecificHotelQueryParam,
     bookingSecondaryAutocompleteURL,
     secondaryAutocompletePayloadBooking,
+    tripComGetTourAttractionsAutocompletePayload,
+    tripComGetTourAttractionsAutocompleteURL,
+    tripComGetTourAttractionsURL,
+    tripGetTourAttractionsPayload,
 } = require("../utils/requestOptions");
 
 exports.homePage = (req, res) => {
@@ -221,11 +225,11 @@ exports.verifyEmail = async (req, res) => {
 
 exports.quickSearchHotels = async (req, res) => {
     try {
-        const { keyword, pageIndex } = req.params;
+        const { keyword, pageIndex } = req.body;
         const options = quickSearchHotelTripOptions(
             keyword,
             pageIndex || 1,
-            18
+            10
         );
         const response = await axios.post(tripQuickSearchURL, options);
         const data = response.data.data[0]["itemList"];
@@ -244,11 +248,11 @@ exports.quickSearchHotels = async (req, res) => {
 
 exports.quickSearchAttractions = async (req, res) => {
     try {
-        const { keyword, pageIndex } = req.params;
+        const { keyword, pageIndex } = req.body;
         const options = quickSearchAttractionsTripOptions(
             keyword,
             pageIndex || 1,
-            18
+            10
         );
         const response = await axios.post(tripQuickSearchURL, options);
         const data = response.data.data[0]["itemList"];
@@ -837,6 +841,38 @@ exports.advancedSearchFlights = async (req, res) => {
         return res.status(200).json(items)
     } catch (err) {
         return res.status(500).json(err)
+    }
+}
+
+exports.tourAttractionsAutocomplete = async (req, res) => {
+    try{
+        const {keyword} = req.body
+        const payload = tripComGetTourAttractionsAutocompletePayload(keyword)
+        const response = await axios.post(tripComGetTourAttractionsAutocompleteURL, payload, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            }
+        })
+        return res.status(200).json(response?.data?.cityItems || [])
+    }catch(er){
+        console.log(er)
+        return res.status(500).json(er)
+    }
+}
+
+exports.tourAttractions = async (req, res) => {
+    try {
+        const {districtId, pageIndex} = req.body
+        const payload = tripGetTourAttractionsPayload(districtId, pageIndex)
+        const response = await axios.post(tripComGetTourAttractionsURL, payload, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            }
+        })
+        return res.status(200).json(response?.data?.attractionList || [])
+    }catch(er){
+        console.log(er)
+        return res.status(500).json(er)
     }
 }
 

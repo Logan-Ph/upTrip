@@ -1033,6 +1033,76 @@ const agodaGetFlightPayload = (data) => {
     };
 };
 
+// url to get tour and attractions from Trip.com
+const tripComGetTourAttractionsURL =
+    "https://us.trip.com/restapi/soa2/19913/getTripAttractionList";
+
+// payload to get tour and attractions from Trip.com
+const tripGetTourAttractionsPayload = (districtId, pageIndex) => {
+    return {
+        head: {
+            extension: [
+                {
+                    name: "platform",
+                    value: "Online",
+                },
+                {
+                    name: "locale",
+                    value: "en-US",
+                },
+                {
+                    name: "currency",
+                    value: "VND",
+                },
+            ],
+            cid: "1711297830645.f17ebYxB7ZgE",
+        },
+        scene: "ticket",
+        districtId: districtId,
+        index: pageIndex || 1, // pageIndex
+        count: 10,
+        sortType: 1,
+        returnModuleType: "all",
+        filter: {
+            filterItems: [],
+            coordinateFilter: {
+                coordinateType: "",
+                latitude: null,
+                longitude: null,
+            },
+            itemType: "",
+        },
+        token: null,
+        keyword: "",
+        cityId: 0,
+        pageId: "10650012750",
+    };
+};
+
+// url to get tour and attractions autocomplete from Trip.com
+const tripComGetTourAttractionsAutocompleteURL = "https://m.trip.com/restapi/soa2/24528/getSuggestDistrictList?x-traceID=09031044413087365594-1714673116803-43088";
+
+// payload to get tour and attractions autocomplete from Trip.com
+const tripComGetTourAttractionsAutocompletePayload = (keyword) => {
+    return {
+        head: {
+            extension: [
+                {
+                    name: "bookingTransactionId",
+                    value: "1714673493692_3523",
+                },
+            ],
+        },
+        clientInfo: {
+            platformId: 24,
+            locale: "en-US",
+            currency: "VND",
+        },
+        keyword: keyword,
+        biz: "TTD",
+    };
+};
+
 // url to get flight from agoda
 const agodaGetFlightURL = "https://www.agoda.com/api/gw/flight/searchunbundled";
 
@@ -1282,6 +1352,10 @@ const airportOptions = [
 ];
 
 module.exports = {
+    tripComGetTourAttractionsAutocompleteURL,
+    tripComGetTourAttractionsAutocompletePayload,
+    tripGetTourAttractionsPayload,
+    tripComGetTourAttractionsURL,
     bookingSecondaryAutocompleteURL,
     secondaryAutocompletePayloadBooking,
     advancedSearchSpecificHotelQueryParam,

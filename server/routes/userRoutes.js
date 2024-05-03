@@ -14,6 +14,9 @@ router.post('/google/auth/login', userController.googleLogin);
 // autocomplete for Trip.com
 router.post('/oauth/v0/autocomplete', userController.autocomplete);
 
+// autocomplete tour & attractions from Trip.com
+router.post('/tour-attractions/autocomplete', userController.tourAttractionsAutocomplete);
+
 // autocomplete for Agoda.com
 router.post('/agoda/autocomplete', userController.agodaAutocomplete);
 
@@ -29,6 +32,9 @@ router.post('/price-comparison/hotels', userController.priceComparisonHotels)
 // advances search for specific hotels in Trip.com
 router.post('/advanced-search-specific/hotels', userController.advancedSearchSpecificHotelTrip)
 
+// advanced search for attractions in Trip.com
+router.post('/tour-attractions', userController.tourAttractions)
+
 // get app configuration for filter options in Trip.com
 router.get('/get-app-config', userController.getAppConfig)
 
@@ -37,10 +43,10 @@ router.post('/advanced-search/hotels/agoda', userController.advancedSearchHotelA
 router.post('/advanced-search/hotels/booking', userController.advancedSearchHotelBooking)
 
 // quick search for hotels
-router.get('/quick-search/hotels/:keyword', userController.quickSearchHotels)
+router.post('/quick-search/hotels', userController.quickSearchHotels)
 
 // quick search for attractions
-router.get('/quick-search/attractions/:keyword', userController.quickSearchAttractions)
+router.post('/quick-search/attractions', userController.quickSearchAttractions)
 
 // flight search
 router.post('/advanced-search/flights', userController.advancedSearchFlights)
