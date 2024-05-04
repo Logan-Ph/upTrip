@@ -179,7 +179,7 @@ function Tours({ districtName }) {
             <div className="flex items-center justify-between mt-10 md:mt-0">
                 <div className="w-1/2 ">
                     <p className="text-sm md:text-lg">
-                        Activities found in {" "}
+                        Tours found in {" "}
                         <span className="font-bold text-sm md:text-lg text-wrap md:text-nowrap text-[#FF8682]">
                             {districtName}
                         </span>
