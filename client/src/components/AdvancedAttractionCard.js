@@ -194,7 +194,7 @@ function AttractionCards({data}){
                 </div>
 
                 <div className="px-4 py-6 space-y-2">
-                    <p className="font-extrabold text-xl line-clamp-1">{data.card.poiName}</p>
+                    <p className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-1">{data.card.poiName}</p>
                     <div className="flex items-center">
                         <div className="pr-1">
                             <svg

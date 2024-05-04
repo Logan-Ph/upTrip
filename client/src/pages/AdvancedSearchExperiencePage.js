@@ -7,13 +7,14 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchTourAttractions } from "../api/fetch";
 import { Suspense, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
+// import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import AdvancedAttractionCard from "../components/AdvancedAttractionCard";
+import TourAttractionSkeleton from "../components/skeletonLoadings/TourAttractionSkeleton";
 
 export default function AdvancedSearchExperiencePage() {
     const [searchParams] = useSearchParams();
@@ -115,7 +116,7 @@ export default function AdvancedSearchExperiencePage() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {data?.pages.map((page, index) =>
                                         page.map((item, index) => (
-                                            <Suspense fallback={<ASearchSkeleton />}>
+                                            <Suspense fallback={<TourAttractionSkeleton/>}>
                                                 <AdvancedAttractionCard
                                                     key={index}
                                                     data={item}
@@ -125,11 +126,7 @@ export default function AdvancedSearchExperiencePage() {
                                     )}
                                     {(isLoading || isFetchingNextPage) && (
                                         <>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
+                                            <TourAttractionSkeleton/>
                                         </>
                                     )}      
                                 </div>
@@ -141,7 +138,7 @@ export default function AdvancedSearchExperiencePage() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                     {data?.pages.map((page, index) =>
                                         page.map((item, index) => (
-                                            <Suspense fallback={<ASearchSkeleton />}>
+                                            <Suspense fallback={<TourAttractionSkeleton/>}>
                                                 <AdvancedExperienceCard
                                                     key={index}
                                                     data={item}
@@ -151,19 +148,13 @@ export default function AdvancedSearchExperiencePage() {
                                     )}
                                     {(isLoading || isFetchingNextPage) && (
                                         <>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
-                                            <ASearchSkeleton/>
+                                            <TourAttractionSkeleton/>
                                         </>
                                     )}      
                                 </div>
                                 </>
                             )}
                         </div>
-
-
                     </div>
                     <div ref={ref}/>
                     <SrollUpButton />

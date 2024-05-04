@@ -71,7 +71,7 @@ function ExperienceCard({data}){
 
                 <div className="px-4 py-6 space-y-2">
                     {/* tours' name can be long (max 2 rows) */}
-                    <p className="font-extrabold text-xl line-clamp-2">{data.card.poiName}</p>
+                    <p className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-2">{data.card.poiName}</p>
                     <div className="flex items-center">
                         <div className="pr-1">
                             <svg
