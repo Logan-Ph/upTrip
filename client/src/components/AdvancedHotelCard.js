@@ -17,7 +17,11 @@ export default function AdvancedHotelCard({ hotel, agodaPrice, bookingPrice, isS
                     isSuccess={isSuccess}
                     isSpecific={isSpecific}
                 />
+                {isSpecific && (
+                <div className="visible text-black">Popular hotels nearby</div>
+            )}
             </div>
+            
         </>
     );
 }
@@ -98,7 +102,7 @@ export function HotelCard({
         <>
             <div
                 ref={ref}
-                className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md hover:border-[#CDEAE1] ${isSpecific ? "border-8" : ""} ${visibilityClass}`}
+                className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md  ${isSpecific ? "border-8 p-2 border-[#8DD3BB]" : ""} ${visibilityClass}`}
             >
                 <div className="">
                     <img

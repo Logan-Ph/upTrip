@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { IconCamera } from '@tabler/icons-react';
 
 export default function DetailPageGallery(){
     const [open, setOpen] = React.useState(false);
@@ -21,10 +22,7 @@ export default function DetailPageGallery(){
                 </div>
 
                 <div onClick={handleOpen} className="absolute bottom-0 right-0 py-2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg btn btn-outline ">
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                        viewBox="0 0 512 512"
-                        className='w-4 h-4 mr-2'>
-                            <path d="M512 144v288c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48h88l12.3-32.9c7-18.7 24.9-31.1 44.9-31.1h125.5c20 0 37.9 12.4 44.9 31.1L376 96h88c26.5 0 48 21.5 48 48zM376 288c0-66.2-53.8-120-120-120s-120 53.8-120 120 53.8 120 120 120 120-53.8 120-120zm-32 0c0 48.5-39.5 88-88 88s-88-39.5-88-88 39.5-88 88-88 88 39.5 88 88z"/></svg>
+                    <IconCamera stroke={2} />
                     See all photos
                 </div>
                 <Modal

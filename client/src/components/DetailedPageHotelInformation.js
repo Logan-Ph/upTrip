@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { IconSwimming, IconGlassChampagne, IconHomeBolt, IconHorseToy,IconToolsKitchen2, IconMassage, IconBarbell, IconDoor, IconPool,IconDesk } from '@tabler/icons-react';
 export default function DetailedPageHotelInformation(){
     return(
         <>
@@ -57,6 +58,9 @@ export default function DetailedPageHotelInformation(){
         <div className="my-6">
             <HotelPriceComparison/>
         </div>
+        <div className="my-6">
+            <HotelRelatedInformation/>
+        </div>
         </>
     )
 }
@@ -77,24 +81,61 @@ function HotelPriceComparison(){
     return(
         <>
         {website.map((item, index) => (
-            <div className="bg-[#CDEAE1] border-transparent grid grid-cols-2 rounded-lg my-2 shadow-md">
+            <div className="bg-[#CDEAE1] border-transparent grid grid-cols-2 rounded-lg my-2 shadow-md px-10">
                 <div className="my-auto pl-5">
                     <img src={item.imgSrc} alt="website logo" className="w-[120px] h-[60px] object-cover"/>
                 </div>
 
-                <div className="grid grid-cols-3">
+                <div className="grid grid-cols-2">
                     <div className="font-bold text-xl text-[#222160] my-auto">{item.price}</div>
                     <Link to={item.linkTo} target="_blank" className="my-auto">
-                        <div className="btn w-3/4 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
+                        <div className="btn w-1/2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
                             <span className="mx-auto py-2">Book Now</span>
                         </div>
                     </Link>
-                    
-                    <div> Heart</div>
                 </div>
             </div>
         ))}
+        </>
+    )
+}
 
+function HotelRelatedInformation(){
+    const amenities = [
+        { IconComponent: IconSwimming, text: 'Outdoor Swimming Pool' },
+        { IconComponent: IconGlassChampagne, text: 'Bar' },
+        { IconComponent: IconHorseToy, text: "Kid's Club" },
+        { IconComponent: IconHomeBolt, text: 'Sauna' },
+        { IconComponent: IconToolsKitchen2, text: 'Restaurant' },
+        { IconComponent: IconDesk, text: '24-Hour Front Desk' },
+        { IconComponent: IconMassage, text: 'Spa' },
+        { IconComponent: IconBarbell, text: 'Fitness Room' },
+        { IconComponent: IconDoor, text: 'Meeting Room' },
+        { IconComponent: IconPool, text: "Children's Pool" },
+    ];
+    
+    return(
+        <>
+        <div className="grid grid-cols-2 gap-x-8">
+            <div className="border-4 border-[#8DD3BB]">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3731.862860055853!2d107.0471119759641!3d20.715792798452966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a45841b71f5e1%3A0x52df34f512ccce2f!2sH%C3%B4tel%20Perle%20d&#39;Orient%20Cat%20Ba%20-%20MGallery!5e0!3m2!1sen!2s!4v1714836200569!5m2!1sen!2s" 
+                className="w-full h-[300px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"/>
+            </div>
+            <div className="border-4 border-[#8DD3BB] py-4 px-6">
+                <div className="pb-6 font-bold text-xl">Most Popular Amenities</div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {amenities.map((amenity, index) => (
+                            <div key={index} className="flex items-center">
+                                <amenity.IconComponent stroke={2} size={28} color="#9A9A9A" />
+                                <p className="ml-2 font-semibold text-lg text-gray-900">{amenity.text}</p>
+                            </div>
+                        ))}
+                    </div>
+                    
+                </div>
+            </div>
+     
+       
         </>
     )
 }
