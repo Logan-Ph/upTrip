@@ -1,6 +1,14 @@
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { ItineraryCard } from "../components/ItineraryCard";
+import ItineraryCardSkeleton from "../components/skeletonLoadings/ItinerarySkeleton";
 
 export default function Itinerary() {
+    const [activeTab, setActiveTab] = useState(1); // Default active tab is 1
+
+    const handleTabClick = (tabNumber) => {
+        setActiveTab(tabNumber);
+    };
     return (
         <>
             <div className="md:px-10 bg-[#FAFBFC]">
@@ -19,7 +27,7 @@ export default function Itinerary() {
                             itinerary
                         </button>
                         <dialog id="create_itinerary_modal" className="modal">
-                            <div className="modal-box">
+                            <div className="modal-box px-10">
                                 <form method="dialog">
                                     {/* if there is a button in form, it will close the modal */}
                                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -111,9 +119,98 @@ export default function Itinerary() {
                                         <textarea
                                             type="text"
                                             id="description"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5 focus:ring-black focus:border-black"
                                             required
                                         />
+                                    </div>
+                                    <div className="mb-5 text-start">
+                                        <label
+                                            for="date"
+                                            className="block mb-2 text-base font-medium text-gray-900"
+                                        >
+                                            Dates or Length of stay (optional)
+                                        </label>
+
+                                        {/*  */}
+
+                                        <div className="max-w-md mx-auto">
+                                            <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
+                                                <button
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                        activeTab === 1
+                                                            ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                            : "text-black font-thin"
+                                                    }`}
+                                                    onClick={() =>
+                                                        handleTabClick(1)
+                                                    }
+                                                >
+                                                    Dates
+                                                </button>
+                                                <button
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                        activeTab === 2
+                                                            ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                            : "text-black font-thin"
+                                                    }`}
+                                                    onClick={() =>
+                                                        handleTabClick(2)
+                                                    }
+                                                >
+                                                    Trip length
+                                                </button>
+                                            </div>
+                                            <div className="mt-4">
+                                                {activeTab === 1 && (
+                                                    <div>
+                                                        {/* Datepicker */}
+                                                    </div>
+                                                )}
+                                                {activeTab === 2 && (
+                                                    <div className="flex justify-between my-6 mb-10">
+                                                        <p className="text-base">
+                                                            Number of days
+                                                        </p>
+                                                        <div className="flex space-x-3 items-center">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke-width="1.5"
+                                                                stroke="currentColor"
+                                                                className="w-6 h-6"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                ></path>
+                                                            </svg>
+                                                            <span className="text-lg">
+                                                                1
+                                                            </span>
+
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke-width="1.5"
+                                                                stroke="currentColor"
+                                                                className="w-6 h-6"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                ></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/*  */}
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
@@ -125,83 +222,10 @@ export default function Itinerary() {
                         </dialog>
                     </div>
 
-                    <div class="card card-side rounded-sm md:bg-base-100 md:shadow-xl">
-                        <Link>
-                            <figure class="">
-                                <img
-                                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/228033379.jpg?k=5559966043302855e467dfa2c28ad78034f95b8ffaec437ca19004ba936c7b49&o=&hp=1"
-                                    alt="Itinerary Cover Pic"
-                                    className="w-[150px] h-[150px] md:w-[380px] md:h-full object-cover"
-                                />
-                            </figure>
-                        </Link>
-
-                        <div class="card-body flex-1 p-0 px-4 md:p-7">
-                            <Link>
-                                <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4">
-                                    Summer Trip
-                                </h2>
-                            </Link>
-                            <div>
-                                <p class="text-gray-500 text-sm md:text-lg mt-4 mb-2">
-                                    <i class="fa-regular fa-calendar"></i>&ensp;
-                                    Mar 6{" "}
-                                    <i class="fa-solid fa-arrow-right"></i> Mar
-                                    20, 2024
-                                </p>
-                                <p class="text-gray-500 text-sm md:text-lg">
-                                    <i class="fa-solid fa-location-dot"></i>
-                                    &ensp; Ho Chi Minh City
-                                </p>
-                            </div>
-                            <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1">
-                                <button
-                                    className="btn bg-transparent border-[1.5px] text-red-400 hover:text-red-500"
-                                    onClick={() =>
-                                        document
-                                            .getElementById("delete_modal")
-                                            .showModal()
-                                    }
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                        class="w-6 h-6"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                        />
-                                    </svg>
-                                </button>
-                                <dialog
-                                    id="delete_modal"
-                                    className="modal modal-bottom sm:modal-middle"
-                                >
-                                    <div className="modal-box">
-                                        <h3 className="font-bold text-lg text-center">
-                                            Are you sure you want to delete
-                                        </h3>
-                                        <p className="py-4 text-center">
-                                            "Summer Trip" itinerary
-                                        </p>
-                                        <div className="modal-action">
-                                            <form method="dialog">
-                                                {/* if there is a button in form, it will close the modal */}
-                                                <button className="btn">
-                                                    Close
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </dialog>
-                            </div>
-                        </div>
-                    </div>
+                    {/* Itinerary Card */}
+                    <ItineraryCard />
+                    <ItineraryCard />
+                    <ItineraryCardSkeleton />
                 </div>
             </div>
         </>
