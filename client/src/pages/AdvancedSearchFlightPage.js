@@ -1,6 +1,5 @@
-// import { AdvancedFlightCard } from "../components/AdvancedFlightCard";
 import { AdvancedFlightFilter } from "../components/AdvancedFlightFilter";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Suspense, lazy, useEffect, useState } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";

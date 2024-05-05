@@ -13,19 +13,28 @@ export async function fetchTripAutoComplete(keyword) {
         });
 }
 
-export async function fetchQuickSearchHotels(keyword) {
+export async function fetchQuickSearchHotels({keyword, pageIndex}) {
     return axios
-        .get(`/quick-search/hotels/${keyword}`, options)
+        .post(`/quick-search/hotels`, {keyword, pageIndex}, options)
         .then((res) => res.data.hotels)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));
         });
 }
 
-export function fetchQuickSearchAttractions(keyword) {
+export function fetchQuickSearchAttractions({keyword, pageIndex}) {
     return axios
-        .get(`/quick-search/attractions/${keyword}`, options)
+        .post(`/quick-search/attractions`, {keyword, pageIndex}, options)
         .then((res) => res.data.attractions)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+
+export function fetchSpecificHotel(payload) {
+    return axios
+        .post(`/advanced-search-specific/hotels`, payload, options)
+        .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));
         });
@@ -40,10 +49,7 @@ export function fetchHotelAdvancedSearch(payload) {
         });
 }
 
-export function fetchHotelPriceComparison(keyword) {
-    const payload = {
-        "input": keyword,
-    }
+export function fetchHotelPriceComparison(payload) {
     return axios
         .post(`/price-comparison/hotels`, payload, options)
         .then((res) => res.data)
@@ -95,6 +101,24 @@ export function fetchFlightAutocomplete(keyword) {
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));
         })
+}
+
+export function fetchTourAttractionsAutocomplete(keyword) {
+    return axios
+        .post('/tour-attractions/autocomplete', { keyword }, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+
+export function fetchTourAttractions(payload) {
+    return axios
+        .post('/tour-attractions', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
 }
 
 export function getAppConfig() {

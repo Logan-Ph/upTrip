@@ -3,7 +3,7 @@ import NavBar from "./Navbar";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
 import Datepicker from "flowbite-datepicker/Datepicker";
-import { fetchTripAutoComplete, fetchFlightAutocomplete } from "../api/fetch";
+import { fetchTourAttractionsAutocomplete, fetchTripAutoComplete, fetchFlightAutocomplete } from "../api/fetch";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import warningNotify from "../utils/warningNotify";
@@ -127,6 +127,40 @@ function HandleSelection({ tab }) {
 }
 
 function AdvancedSearchExperience() {
+    const [keyword, setKeyword] = useState()
+    const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
+    const [autocompletePayload, setAutocompletePayload] = useState();
+    const navigate = useNavigate();
+    useEffect(() => {
+        setAutocompletePayload(null);
+    }, [debouncedKeyword]);
+
+    const { data, isFetched } = useQuery({
+        queryKey: ["tour-attractions", "autocomplete", debouncedKeyword],
+        queryFn: () => fetchTourAttractionsAutocomplete(debouncedKeyword),
+        refetchOnWindowFocus: false,
+        enabled: !!debouncedKeyword,
+    });
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedKeyword(keyword);
+        }, 250); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keyword]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!autocompletePayload) {
+            warningNotify("Please select a location");
+            return;
+        }
+        navigate(`/advanced-experience-search/?districtId=${autocompletePayload.districtId}&districtName=${autocompletePayload.districtName}`);
+    };
+
     return (
         <div
             className="p-4 rounded-r-lg rounded-bl-lg bg-white shadow-lg"
@@ -143,34 +177,29 @@ function AdvancedSearchExperience() {
                         <input
                             className="block rounded-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px] truncate"
                             placeholder="Search for activities in the location"
+                            value={autocompletePayload?.districtPathNames}
+                            onChange={(e) => setKeyword(e.target.value)}
                         />
                     </div>
-                    <div className="relative z-40">
-                        <ul className="absolute menu bg-base-200 w-full rounded-lg mt-1.5 drop-shadow-lg">
-                            <li>
-                                <div>
-                                    <i className="fa-solid fa-location-dot"></i>{" "}
-                                    Da Nang
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    {" "}
-                                    <i className="fa-solid fa-location-dot"></i>{" "}
-                                    Ho Chi Minh
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    {" "}
-                                    <i className="fa-solid fa-location-dot"></i>{" "}
-                                    Ha Noi
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                    {isFetched && !autocompletePayload && (
+                        <div class="relative z-40">
+                            <ul class="absolute menu bg-white w-full rounded-b-lg">
+                                {data.length === 0 ? (
+                                    <li>No results found</li>
+                                ) : (
+                                    data.map((item) => (
+                                        <li onClick={() => setAutocompletePayload(item)}>
+                                            <div>
+                                                <i class="fa-solid fa-location-dot"></i>{" "}
+                                                {item.districtPathNames}
+                                            </div>
+                                        </li>
+                                    )))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
-                <div className="ml-2.5">
+                <div className="ml-2.5" onClick={handleSubmit}>
                     <button className="btn rounded-lg bg-[#FFA732] text-white border-none h-[56px] w-full">
                         Search
                     </button>
@@ -676,7 +705,7 @@ function AdvancedSearchHotel() {
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedKeyword(keyword);
-        }, 250); // Delay of 1 second
+        }, 250); 
 
         return () => {
             clearTimeout(handler);
@@ -725,7 +754,7 @@ function AdvancedSearchHotel() {
             return;
         }
 
-        const payload = {
+        let payload = {
             checkin: checkinDate.current.value.replace(
                 /(\d{2})\/(\d{2})\/(\d{4})/,
                 "$3$1$2"
@@ -735,8 +764,8 @@ function AdvancedSearchHotel() {
                 "$3$1$2"
             ),
             city: autocompletePayload.city.geoCode,
-            cityName: autocompletePayload.resultWord,
-            resultType: autocompletePayload?.resultType,
+
+            resultType: autocompletePayload.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
             provinceId: autocompletePayload.province.geoCode,
@@ -753,11 +782,29 @@ function AdvancedSearchHotel() {
             adult: numberOfAdults,
             children: numberOfChildren,
             domestic: false,
+            listFilters: "17~1*17*1*2",
         };
 
-        navigate(
-            `/advanced-hotel-search/?resultType=${payload?.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&domestic=${payload.domestic}`
-        );
+        if (payload.resultType === "H") {
+            payload = {
+                ...payload,
+                hotelName: autocompletePayload.resultWord,
+                searchValue: `${autocompletePayload.item.data.filterID}_${autocompletePayload.item.data.type}_${autocompletePayload.item.data.value}_${autocompletePayload.item.data.subType}`,
+                cityName: autocompletePayload.city.currentLocaleName,
+                preHotelIds: autocompletePayload.code
+            }
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        } else {
+            payload = {
+                ...payload,
+                cityName: autocompletePayload.resultWord,
+            };
+            navigate(
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+            );
+        }
     };
 
     return (
@@ -776,7 +823,7 @@ function AdvancedSearchHotel() {
                         <input
                             className="h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
                             placeholder="Where are you going?"
-                            value={keyword}
+                            value={autocompletePayload?.resultWord}
                             onChange={(e) => setKeyword(e.target.value)}
                         />
                         <div className="relative z-40 drop-shadow-lg">
@@ -806,6 +853,7 @@ function AdvancedSearchHotel() {
                                                             </>
                                                         );
                                                     case "CT":
+                                                    case "P":
                                                     case "D":
                                                         return (
                                                             <>
@@ -1264,23 +1312,53 @@ function AdvancedSearchHotel() {
                                                         maxLength={2}
                                                         min={0}
                                                         max={17}
-                                                        value={childrenAges[index]}
+                                                        value={
+                                                            childrenAges[index]
+                                                        }
                                                         onChange={(e) => {
-                                                            if (e.target.value === "") {
-                                                                setChildrenAges((prev) => {
-                                                                    const temp = [...prev];
-                                                                    temp[index] = null;
-                                                                    return temp;
-                                                                });
+                                                            if (
+                                                                e.target
+                                                                    .value ===
+                                                                ""
+                                                            ) {
+                                                                setChildrenAges(
+                                                                    (prev) => {
+                                                                        const temp =
+                                                                            [
+                                                                                ...prev,
+                                                                            ];
+                                                                        temp[
+                                                                            index
+                                                                        ] =
+                                                                            null;
+                                                                        return temp;
+                                                                    }
+                                                                );
                                                             }
 
-                                                            const newValue = parseInt(e.target.value, 10);
-                                                            if (newValue >= 0 && newValue <= 17) {
-                                                                setChildrenAges((prev) => {
-                                                                    const temp = [...prev];
-                                                                    temp[index] = newValue;
-                                                                    return temp;
-                                                                });
+                                                            const newValue =
+                                                                parseInt(
+                                                                    e.target
+                                                                        .value,
+                                                                    10
+                                                                );
+                                                            if (
+                                                                newValue >= 0 &&
+                                                                newValue <= 17
+                                                            ) {
+                                                                setChildrenAges(
+                                                                    (prev) => {
+                                                                        const temp =
+                                                                            [
+                                                                                ...prev,
+                                                                            ];
+                                                                        temp[
+                                                                            index
+                                                                        ] =
+                                                                            newValue;
+                                                                        return temp;
+                                                                    }
+                                                                );
                                                             }
                                                         }}
                                                     />
@@ -1296,7 +1374,8 @@ function AdvancedSearchHotel() {
                     <div className="md:ml-1.5">
                         <button
                             onClick={(e) => handleSubmit(e)}
-                            className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit">
+                            className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit"
+                        >
                             Search
                         </button>
                     </div>

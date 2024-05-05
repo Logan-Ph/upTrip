@@ -1,20 +1,21 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 
-export default function AdvancedHotelCard({ hotel, agodaPrice, bookingPrice, isSuccess }) {
+export default function AdvancedHotelCard({ hotel, agodaPrice, bookingPrice, isSuccess, isSpecific }) {
     return (
         <>
-            <div className="mt-0">
+            <div className="mt-4">
                 <HotelCard
-                    key={hotel.hotelBasicInfo.hotelId}
-                    imgSrc={hotel.hotelBasicInfo.hotelImg}
-                    hotelName={hotel.hotelBasicInfo.hotelName}
-                    district={hotel.positionInfo.positionDesc}
-                    city={hotel.positionInfo.cityName}
-                    price={hotel.hotelBasicInfo.price.toLocaleString("vi-VN")}
-                    starRating={hotel.hotelStarInfo.star}
+                    key={hotel?.hotelBasicInfo?.hotelId || hotel?.name}
+                    imgSrc={hotel?.hotelBasicInfo?.hotelImg || hotel?.img}
+                    hotelName={hotel?.hotelBasicInfo?.hotelName || hotel?.name}
+                    district={hotel?.positionInfo?.positionDesc || hotel?.transportInfo[0]}
+                    city={hotel?.positionInfo?.cityName || hotel?.transportInfo[1]}
+                    price={hotel?.hotelBasicInfo?.price?.toLocaleString("vi-VN") || hotel?.price?.toLocaleString("vi-VN") || "-"}
+                    starRating={hotel?.hotelStarInfo?.star || hotel?.starNum}
                     agodaPrice={agodaPrice}
                     bookingPrice={bookingPrice}
                     isSuccess={isSuccess}
+                    isSpecific={isSpecific}
                 />
             </div>
         </>
@@ -30,7 +31,8 @@ export function HotelCard({
     starRating,
     agodaPrice,
     bookingPrice,
-    isSuccess
+    isSuccess,
+    isSpecific
 }) {
     const websiteLogo = useMemo(() => [
         {
@@ -96,7 +98,7 @@ export function HotelCard({
         <>
             <div
                 ref={ref}
-                className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md hover:border-[#CDEAE1] hover:border-8 ${visibilityClass}`}
+                className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md hover:border-[#CDEAE1] ${isSpecific ? "border-8" : ""} ${visibilityClass}`}
             >
                 <div className="">
                     <img

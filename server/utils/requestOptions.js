@@ -4,6 +4,7 @@
 // tab: "restaurant",
 // tab: "hotel",
 require("dotenv").config
+require("dotenv").config
 
 const {
     convertDateFormat,
@@ -138,6 +139,8 @@ const advancedSearchSpecificHotelQueryParam = (
     districtId,
     checkin,
     checkout,
+    lat,
+    lon,
     searchWord,
     searchValue,
     searchCoordinate,
@@ -156,6 +159,8 @@ const advancedSearchSpecificHotelQueryParam = (
         checkin: convertDateFormat(checkin), // accept: yyyy/mm/dd
         checkout: convertDateFormat(checkout), // accept: yyyy/mm/dd
         barCurr: "VND",
+        lat: lat,
+        lon: lon,
         searchType: "H",
         searchWord: searchWord,
         searchValue: searchValue, // filterID_type_value_subType
@@ -937,7 +942,7 @@ const agodaAdvancedSearchHotelPayload = (
         },
         query: "query citySearch($CitySearchRequest: CitySearchRequest!, $ContentSummaryRequest: ContentSummaryRequest!, $PricingSummaryRequest: PricingRequestParameters, $PriceStreamMetaLabRequest: PriceStreamMetaLabRequest) {\n  citySearch(CitySearchRequest: $CitySearchRequest) {\n    featuredPulseProperties(ContentSummaryRequest: $ContentSummaryRequest, PricingSummaryRequest: $PricingSummaryRequest) {\n      propertyId\n      propertyResultType\n      pricing {\n        pulseCampaignMetadata {\n          promotionTypeId\n          webCampaignId\n          campaignTypeId\n          campaignBadgeText\n          campaignBadgeDescText\n          dealExpiryTime\n          showPulseMerchandise\n        }\n        isAvailable\n        isReady\n        offers {\n          roomOffers {\n            room {\n              pricing {\n                currency\n                price {\n                  perNight {\n                    exclusive {\n                      crossedOutPrice\n                      display\n                    }\n                    inclusive {\n                      crossedOutPrice\n                      display\n                    }\n                  }\n                  perRoomPerNight {\n                    exclusive {\n                      crossedOutPrice\n                      display\n                    }\n                    inclusive {\n                      crossedOutPrice\n                      display\n                    }\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n      content {\n        reviews {\n          contentReview {\n            isDefault\n            providerId\n            cumulative {\n              reviewCount\n              score\n            }\n          }\n          cumulative {\n            reviewCount\n            score\n          }\n        }\n        images {\n          hotelImages {\n            urls {\n              value\n            }\n          }\n        }\n        informationSummary {\n          hasHostExperience\n          displayName\n          rating\n          propertyLinks {\n            propertyPage\n          }\n          address {\n            country {\n              id\n            }\n            area {\n              name\n            }\n            city {\n              name\n            }\n          }\n          nhaSummary {\n            hostType\n          }\n        }\n      }\n    }\n    searchResult {\n      sortMatrix {\n        result {\n          fieldId\n          sorting {\n            sortField\n            sortOrder\n            sortParams {\n              id\n            }\n          }\n          display {\n            name\n          }\n          childMatrix {\n            fieldId\n            sorting {\n              sortField\n              sortOrder\n              sortParams {\n                id\n              }\n            }\n            display {\n              name\n            }\n            childMatrix {\n              fieldId\n              sorting {\n                sortField\n                sortOrder\n                sortParams {\n                  id\n                }\n              }\n              display {\n                name\n              }\n            }\n          }\n        }\n      }\n      searchInfo {\n        flexibleSearch {\n          currentDate {\n            checkIn\n            price\n          }\n          alternativeDates {\n            checkIn\n            price\n          }\n        }\n        hasSecretDeal\n        isComplete\n        totalFilteredHotels\n        hasEscapesPackage\n        searchStatus {\n          searchCriteria {\n            checkIn\n          }\n          searchStatus\n        }\n        objectInfo {\n          objectName\n          cityName\n          cityEnglishName\n          countryId\n          countryEnglishName\n          mapLatitude\n          mapLongitude\n          mapZoomLevel\n          wlPreferredCityName\n          wlPreferredCountryName\n          cityId\n          cityCenterPolygon {\n            geoPoints {\n              lon\n              lat\n            }\n            touristAreaCenterPoint {\n              lon\n              lat\n            }\n          }\n        }\n      }\n      urgencyDetail {\n        urgencyScore\n      }\n      histogram {\n        bins {\n          numOfElements\n          upperBound {\n            perNightPerRoom\n            perPax\n          }\n        }\n      }\n      nhaProbability\n    }\n    properties(ContentSummaryRequest: $ContentSummaryRequest, PricingSummaryRequest: $PricingSummaryRequest, PriceStreamMetaLabRequest: $PriceStreamMetaLabRequest) {\n      propertyId\n      sponsoredDetail {\n        sponsoredType\n        trackingData\n        isShowSponsoredFlag\n      }\n      propertyResultType\n      content {\n        informationSummary {\n          hotelCharacter {\n            hotelTag {\n              name\n              symbol\n            }\n            hotelView {\n              name\n              symbol\n            }\n          }\n          propertyLinks {\n            propertyPage\n          }\n          atmospheres {\n            id\n            name\n          }\n          isSustainableTravel\n          localeName\n          defaultName\n          displayName\n          accommodationType\n          awardYear\n          hasHostExperience\n          nhaSummary {\n            hostPropertyCount\n          }\n          address {\n            countryCode\n            country {\n              id\n              name\n            }\n            city {\n              id\n              name\n            }\n            area {\n              id\n              name\n            }\n          }\n          propertyType\n          rating\n          agodaGuaranteeProgram\n          remarks {\n            renovationInfo {\n              renovationType\n              year\n            }\n          }\n          spokenLanguages {\n            id\n          }\n          geoInfo {\n            latitude\n            longitude\n          }\n        }\n        propertyEngagement {\n          lastBooking\n          peopleLooking\n        }\n        nonHotelAccommodation {\n          masterRooms {\n            noOfBathrooms\n            noOfBedrooms\n            noOfBeds\n            roomSizeSqm\n            highlightedFacilities\n          }\n          hostLevel {\n            id\n            name\n          }\n          supportedLongStay\n        }\n        facilities {\n          id\n        }\n        images {\n          hotelImages {\n            id\n            caption\n            providerId\n            urls {\n              key\n              value\n            }\n          }\n        }\n        reviews {\n          contentReview {\n            isDefault\n            providerId\n            demographics {\n              groups {\n                id\n                grades {\n                  id\n                  score\n                }\n              }\n            }\n            summaries {\n              recommendationScores {\n                recommendationScore\n              }\n              snippets {\n                countryId\n                countryCode\n                countryName\n                date\n                demographicId\n                demographicName\n                reviewer\n                reviewRating\n                snippet\n              }\n            }\n            cumulative {\n              reviewCount\n              score\n            }\n          }\n          cumulative {\n            reviewCount\n            score\n          }\n          cumulativeForHost {\n            hostAvgHotelReviewRating\n            hostHotelReviewTotalCount\n          }\n        }\n        familyFeatures {\n          hasChildrenFreePolicy\n          isFamilyRoom\n          hasMoreThanOneBedroom\n          isInterConnectingRoom\n          isInfantCottageAvailable\n          hasKidsPool\n          hasKidsClub\n        }\n        personalizedInformation {\n          childrenFreePolicy {\n            fromAge\n            toAge\n          }\n        }\n        localInformation {\n          landmarks {\n            transportation {\n              landmarkName\n              distanceInM\n            }\n            topLandmark {\n              landmarkName\n              distanceInM\n            }\n            beach {\n              landmarkName\n              distanceInM\n            }\n          }\n          hasAirportTransfer\n        }\n        highlight {\n          cityCenter {\n            distanceFromCityCenter\n          }\n          favoriteFeatures {\n            features {\n              id\n              title\n              category\n            }\n          }\n          hasNearbyPublicTransportation\n        }\n        rateCategories {\n          escapeRateCategories {\n            rateCategoryId\n            localizedRateCategoryName\n          }\n        }\n      }\n      soldOut {\n        soldOutPrice {\n          averagePrice\n        }\n      }\n      pricing {\n        pulseCampaignMetadata {\n          promotionTypeId\n          webCampaignId\n          campaignTypeId\n          campaignBadgeText\n          campaignBadgeDescText\n          dealExpiryTime\n          showPulseMerchandise\n        }\n        isAvailable\n        isReady\n        benefits\n        cheapestRoomOffer {\n          agodaCash {\n            showBadge\n            giftcardGuid\n            dayToEarn\n            earnId\n            percentage\n            expiryDay\n          }\n          cashback {\n            cashbackGuid\n            showPostCashbackPrice\n            cashbackVersion\n            percentage\n            earnId\n            dayToEarn\n            expiryDay\n            cashbackType\n            appliedCampaignName\n          }\n        }\n        isEasyCancel\n        isInsiderDeal\n        isMultiHotelEligible\n        suggestPriceType {\n          suggestPrice\n        }\n        roomBundle {\n          bundleId\n          bundleType\n          saveAmount {\n            perNight {\n              ...Frag02a24e4gi2ha6a482i4h\n            }\n          }\n        }\n        pointmax {\n          channelId\n          point\n        }\n        priceChange {\n          changePercentage\n          searchDate\n        }\n        payment {\n          cancellation {\n            cancellationType\n            freeCancellationDate\n          }\n          payLater {\n            isEligible\n          }\n          payAtHotel {\n            isEligible\n          }\n          noCreditCard {\n            isEligible\n          }\n          taxReceipt {\n            isEligible\n          }\n        }\n        cheapestStayPackageRatePlans {\n          stayPackageType\n          ratePlanId\n        }\n        pricingMessages {\n          location\n          ids\n        }\n        suppliersSummaries {\n          id\n          supplierHotelId\n        }\n        supplierInfo {\n          id\n          name\n          isAgodaBand\n        }\n        childPolicy {\n          freeChildren\n        }\n        offers {\n          roomOffers {\n            room {\n              extraPriceInfo {\n                displayPriceWithSurchargesPRPN\n                corDisplayPriceWithSurchargesPRPN\n              }\n              availableRooms\n              isPromoEligible\n              promotions {\n                typeId\n                promotionDiscount {\n                  value\n                }\n                isRatePlanAsPromotion\n                cmsTypeId\n                description\n              }\n              bookingDuration {\n                unit\n                value\n              }\n              supplierId\n              corSummary {\n                hasCor\n                corType\n                isOriginal\n                hasOwnCOR\n                isBlacklistedCor\n              }\n              localVoucher {\n                currencyCode\n                amount\n              }\n              pricing {\n                currency\n                price {\n                  perNight {\n                    exclusive {\n                      display\n                      cashbackPrice\n                      displayAfterCashback\n                      originalPrice\n                    }\n                    inclusive {\n                      display\n                      cashbackPrice\n                      displayAfterCashback\n                      originalPrice\n                    }\n                  }\n                  perBook {\n                    exclusive {\n                      display\n                      cashbackPrice\n                      displayAfterCashback\n                      rebatePrice\n                      originalPrice\n                      autoAppliedPromoDiscount\n                    }\n                    inclusive {\n                      display\n                      cashbackPrice\n                      displayAfterCashback\n                      rebatePrice\n                      originalPrice\n                      autoAppliedPromoDiscount\n                    }\n                  }\n                  perRoomPerNight {\n                    exclusive {\n                      display\n                      crossedOutPrice\n                      cashbackPrice\n                      displayAfterCashback\n                      rebatePrice\n                      pseudoCouponPrice\n                      originalPrice\n                      loyaltyOfferSummary {\n                        basePrice {\n                          exclusive\n                          allInclusive\n                        }\n                        status\n                        offers {\n                          identifier\n                          status\n                          burn {\n                            points\n                            payableAmount\n                          }\n                          earn {\n                            points\n                          }\n                          offerType\n                          isSelected\n                        }\n                      }\n                    }\n                    inclusive {\n                      display\n                      crossedOutPrice\n                      cashbackPrice\n                      displayAfterCashback\n                      rebatePrice\n                      pseudoCouponPrice\n                      originalPrice\n                      loyaltyOfferSummary {\n                        basePrice {\n                          exclusive\n                          allInclusive\n                        }\n                        status\n                        offers {\n                          identifier\n                          status\n                          burn {\n                            points\n                            payableAmount\n                          }\n                          earn {\n                            points\n                          }\n                          offerType\n                          isSelected\n                        }\n                      }\n                    }\n                  }\n                  totalDiscount\n                  priceAfterAppliedAgodaCash {\n                    perBook {\n                      ...Frag1db2he9f324ce63jh2j8\n                    }\n                    perRoomPerNight {\n                      ...Frag1db2he9f324ce63jh2j8\n                    }\n                  }\n                }\n                apsPeek {\n                  perRoomPerNight {\n                    ...Frag02a24e4gi2ha6a482i4h\n                  }\n                }\n                promotionPricePeek {\n                  display {\n                    perBook {\n                      ...Frag02a24e4gi2ha6a482i4h\n                    }\n                    perRoomPerNight {\n                      ...Frag02a24e4gi2ha6a482i4h\n                    }\n                    perNight {\n                      ...Frag02a24e4gi2ha6a482i4h\n                    }\n                  }\n                  discountType\n                  promotionCodeType\n                  promotionCode\n                  promoAppliedOnFinalPrice\n                  childPromotions {\n                    campaignId\n                  }\n                  campaignName\n                }\n                channelDiscountSummary {\n                  channelDiscountBreakdown {\n                    display\n                    discountPercent\n                    channelId\n                  }\n                }\n                promotionsCumulative {\n                  promotionCumulativeType\n                  amountPercentage\n                  minNightsStay\n                }\n              }\n              uid\n              payment {\n                cancellation {\n                  cancellationType\n                }\n              }\n              discount {\n                deals\n                channelDiscount\n              }\n              saveUpTo {\n                perRoomPerNight\n              }\n              benefits {\n                id\n                targetType\n              }\n              channel {\n                id\n              }\n              mseRoomSummaries {\n                supplierId\n                subSupplierId\n                pricingSummaries {\n                  currency\n                  channelDiscountSummary {\n                    channelDiscountBreakdown {\n                      channelId\n                      discountPercent\n                      display\n                    }\n                  }\n                  price {\n                    perRoomPerNight {\n                      exclusive {\n                        display\n                      }\n                      inclusive {\n                        display\n                      }\n                    }\n                  }\n                }\n              }\n              cashback {\n                cashbackGuid\n                showPostCashbackPrice\n                cashbackVersion\n                percentage\n                earnId\n                dayToEarn\n                expiryDay\n                cashbackType\n                appliedCampaignName\n              }\n              agodaCash {\n                showBadge\n                giftcardGuid\n                dayToEarn\n                expiryDay\n                percentage\n              }\n              corInfo {\n                corBreakdown {\n                  taxExPN {\n                    ...Frag6jf568bh3ibcb44f2107\n                  }\n                  taxInPN {\n                    ...Frag6jf568bh3ibcb44f2107\n                  }\n                  taxExPRPN {\n                    ...Frag6jf568bh3ibcb44f2107\n                  }\n                  taxInPRPN {\n                    ...Frag6jf568bh3ibcb44f2107\n                  }\n                }\n                corInfo {\n                  corType\n                }\n              }\n              loyaltyDisplay {\n                items\n              }\n              capacity {\n                extraBedsAvailable\n              }\n              pricingMessages {\n                formatted {\n                  location\n                  texts {\n                    index\n                    text\n                  }\n                }\n              }\n              campaign {\n                selected {\n                  campaignId\n                  promotionId\n                  messages {\n                    campaignName\n                    title\n                    titleWithDiscount\n                    description\n                    linkOutText\n                    url\n                  }\n                }\n              }\n              stayPackageType\n            }\n          }\n        }\n      }\n      metaLab {\n        attributes {\n          attributeId\n          dataType\n          value\n          version\n        }\n      }\n      enrichment {\n        topSellingPoint {\n          tspType\n          value\n        }\n        pricingBadges {\n          badges\n        }\n        uniqueSellingPoint {\n          rank\n          segment\n          uspType\n          uspPropertyType\n        }\n        bookingHistory {\n          bookingCount {\n            count\n            timeFrame\n          }\n        }\n        showReviewSnippet\n        isPopular\n        roomInformation {\n          cheapestRoomSizeSqm\n          facilities {\n            id\n            propertyFacilityName\n            symbol\n          }\n        }\n      }\n    }\n    searchEnrichment {\n      suppliersInformation {\n        supplierId\n        supplierName\n        isAgodaBand\n      }\n    }\n    aggregation {\n      matrixGroupResults {\n        matrixGroup\n        matrixItemResults {\n          id\n          name\n          count\n          filterKey\n          filterRequestType\n          extraDataResults {\n            text\n            matrixExtraDataType\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment Frag1db2he9f324ce63jh2j8 on DisplayPrice {\n  exclusive\n  allInclusive\n}\n\nfragment Frag02a24e4gi2ha6a482i4h on DFDisplayPrice {\n  exclusive\n  allInclusive\n}\n\nfragment Frag6jf568bh3ibcb44f2107 on DFCorBreakdownItem {\n  price\n  id\n}\n",
     };
-}
+};
 // payload to get flights from agoda
 const agodaGetFlightPayload = (data) => {
     const date = `${data.year}-${data.month}-${data.day}`
@@ -946,17 +951,15 @@ const agodaGetFlightPayload = (data) => {
     }
     const passengers = [
         {
-            "number": data.adult,
-            "passengerType": 1,
-        }
-    ]
+            number: data.adult,
+            passengerType: 1,
+        },
+    ];
     if (data.child > 0) {
-        passengers.push(
-            {
-                "number": data.child,
-                "passengerType": 2
-            }
-        )
+        passengers.push({
+            number: data.child,
+            passengerType: 2,
+        });
     }
     if (data.infant > 0) {
         passengers.push(
@@ -974,29 +977,29 @@ const agodaGetFlightPayload = (data) => {
         }
     }
     return {
-        "flightsRequestId": "02bed71b-cbdc-43bd-ac49-003d1e3edf7b",
-        "passengers": passengers,
-        "trips": [
+        flightsRequestId: "02bed71b-cbdc-43bd-ac49-003d1e3edf7b",
+        passengers: passengers,
+        trips: [
             {
-                "id": 1,
-                "priority": 1,
-                "pagination": {
-                    "number": 1,
-                    "size": 500
+                id: 1,
+                priority: 1,
+                pagination: {
+                    number: 1,
+                    size: 500,
                 },
-                "slices": [
+                slices: [
                     {
-                        "origin": [
+                        origin: [
                             {
-                                "type": 1,
-                                "code": data.from
-                            }
+                                type: 1,
+                                code: data.from,
+                            },
                         ],
-                        "destination": [
+                        destination: [
                             {
-                                "type": 1,
-                                "code": data.to
-                            }
+                                type: 1,
+                                code: data.to,
+                            },
                         ],
                         "id": 1,
                         "departureDate": date,
@@ -1020,9 +1023,9 @@ const agodaGetFlightPayload = (data) => {
                     "field": data.sortField,
                     "direction": data.sortDir,
                 },
-            }
+            },
         ],
-        "supportedFeatures": [
+        supportedFeatures: [
             "CrossOutPrice",
             "Agency",
             "SupportChildrenInfants",
@@ -1030,255 +1033,519 @@ const agodaGetFlightPayload = (data) => {
             "Streaming",
             "IncompletePassportRequired",
             "VirtualInterlining",
-            "QuickSort"
+            "QuickSort",
         ],
-        "context": {
-            "userSettings": {
-                "currencyCode": "VND",
-                "language": "en-us"
+        context: {
+            userSettings: {
+                currencyCode: "VND",
+                language: "en-us",
             },
-            "clientInfo": {
-                "clientVersion": "1.0",
-                "userId": "079be7ee-c418-4795-845f-7ccac2636c16",
-                "applicationName": "DesktopWeb"
+            clientInfo: {
+                clientVersion: "1.0",
+                userId: "079be7ee-c418-4795-845f-7ccac2636c16",
+                applicationName: "DesktopWeb",
+            },
+        },
+    };
+};
+
+// url to get tour and attractions from Trip.com
+const tripComGetTourAttractionsURL =
+    "https://us.trip.com/restapi/soa2/19913/getTripAttractionList";
+
+// payload to get tour and attractions from Trip.com
+const tripGetTourAttractionsPayload = (districtId, pageIndex) => {
+    return {
+        head: {
+            extension: [
+                {
+                    name: "platform",
+                    value: "Online",
+                },
+                {
+                    name: "locale",
+                    value: "en-US",
+                },
+                {
+                    name: "currency",
+                    value: "VND",
+                },
+            ],
+            cid: "1711297830645.f17ebYxB7ZgE",
+        },
+        scene: "ticket",
+        districtId: districtId,
+        index: pageIndex || 1, // pageIndex
+        count: 10,
+        sortType: 1,
+        returnModuleType: "all",
+        filter: {
+            filterItems: [],
+            coordinateFilter: {
+                coordinateType: "",
+                latitude: null,
+                longitude: null,
+            },
+            itemType: "",
+        },
+        token: null,
+        keyword: "",
+        cityId: 0,
+        pageId: "10650012750",
+    };
+};
+
+// url to get tour and attractions autocomplete from Trip.com
+const tripComGetTourAttractionsAutocompleteURL = "https://m.trip.com/restapi/soa2/24528/getSuggestDistrictList?x-traceID=09031044413087365594-1714673116803-43088";
+
+// payload to get tour and attractions autocomplete from Trip.com
+const tripComGetTourAttractionsAutocompletePayload = (keyword) => {
+    return {
+        head: {
+            extension: [
+                {
+                    name: "bookingTransactionId",
+                    value: "1714673493692_3523",
+                },
+            ],
+        },
+        clientInfo: {
+            platformId: 24,
+            locale: "en-US",
+            currency: "VND",
+        },
+        keyword: keyword,
+        biz: "TTD",
+    };
+};
+
+// url to get tour and attractions autocomplete from Agoda
+const agodaTourAttractionsAutocompleteURL = "https://www.agoda.com/activities/api/cronos/GetResultSuggestion/24"
+
+// payload to get tour and attractions autocomplete from Agoda
+const agodaTourAttractionsAutocompletePayload = (keyword) => {
+    return {
+        searchText: keyword,
+    };
+};
+
+// url to get tour and attractions advanced search from Agoda
+const agodaTourAttractionsAdvancedSearchURL = "https://www.agoda.com/api/activities/graphql"
+
+// params to get tour and attractions advanced search from Agoda
+const agodaTourAttractionsAdvancedSearchParams = ({cityId, pageNumber}) => {
+    return {
+        operation: "search",
+        cityId: cityId,
+        pageNumber: pageNumber,
+    }
+}
+
+// advanced search tour and attractions headers for Agoda
+const agodaTourAttractionsAdvancedSearchHeaders = () => {
+    return {
+        'Ag-Cid': '1888052',
+        'Ag-Language-Id': '1',
+        "Ag-Platform-Id": '1',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    }
+}
+
+const agodaTourAttractionsAdvancedSearchPayload = ({queryString, cityId, pageIndex}) => {
+    return {
+        "queryString": queryString, // ?operation=search&cityId=2679&pageNumber=1
+        "variables": {
+            "SearchRequest": {
+                "context": {
+                    "currency": "VND",
+                    "experimentInfo": {
+                        "forcedExperiments": [
+                            {
+                                "experiment": "ACT-3105",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3321",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3370",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3474",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3475",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3489",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3596",
+                                "variant": "B"
+                            },
+                            {
+                                "experiment": "ACT-3633",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3839",
+                                "variant": "B"
+                            },
+                            {
+                                "experiment": "ACT-3850",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3882",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACT-3883",
+                                "variant": "B"
+                            },
+                            {
+                                "experiment": "ADSWEB-CSS-BOX-ACTIVITY",
+                                "variant": "B"
+                            },
+                            {
+                                "experiment": "MPW-1696",
+                                "variant": "B"
+                            },
+                            {
+                                "experiment": "MPW-1880",
+                                "variant": "B"
+                            },
+                            {
+                                "experiment": "MPW-2031",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "MPW-2212",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ICB-228",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "WLBC-915",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "WLBC-1059",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "AFT-88",
+                                "variant": "B"
+                            },
+                            {
+                                "experiment": "AFT-99",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "AFT-218",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACTB-685",
+                                "variant": "A"
+                            },
+                            {
+                                "experiment": "ACTB-SEO",
+                                "variant": "A"
+                            }
+                        ]
+                    }
+                },
+                "searchRequest": {
+                    "searchType": "CITY",
+                    "searchValue": cityId,
+                    "languageId": 1,
+                    "searchCriteria": {
+                        "pagination": {
+                            "size": 10,
+                            "number": pageIndex
+                        },
+                        "sort": {
+                            "code": "",
+                            "order": ""
+                        },
+                        "filters": {
+                            "valueFilters": [],
+                            "rangeFilters": []
+                        }
+                    }
+                }
             }
-        }
+        },
+        "query": "query search ($SearchRequest: SearchRequest!) { search (SearchRequest: $SearchRequest) { isSuccess, result { isCompleted, resultInfo { totalActivities, totalFilteredActivities, pagination { number, size } }, activities { masterActivityId, masterSupplierId, rankScore { value }, activityRepresentativeInfo { activityId, activityToken, pricingSummary { pricing { currency, display { perBook { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } }, perPax { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } } } } }, supplierActivityCode, cancellationPolicy { cancellationType, policies { hoursFrom, hoursUntil, penaltyCode } } }, content { activity { title, categories, description, duration { minutes, minutesUntil, durationType }, location { city { id, name }, addressLine, geo { lat, long }, country { id, name }, postalCode } }, images { url, description, imageType, imageSize { height, width } }, reviewSummary { averageScore, totalCount }, detail { offerDetails { supplierInfo { providerName } } }, contentLocale, badges { activityHighlights { badgeType, badgeData }, deals { badgeType, badgeData } } } }, matrix { sort { availableCode, availableOrder }, filter { rangeFilterMatrix { code, min, max, bucket { count, min, max } }, valueFilterMatrix { availableValue { count, id }, code } } } }, errors { errorCode, subErrorCode, message } } } ",
+        "pageTypeId": 9101
     }
 }
 
 // url to get flight from agoda
-const agodaGetFlightURL = 'https://www.agoda.com/api/gw/flight/searchunbundled'
+const agodaGetFlightURL = "https://www.agoda.com/api/gw/flight/searchunbundled";
 
 // payload to get flight from trip.com
 
 const tripComGetFlightPayload = (data) => {
-    const date = `${data.year}-${data.month}-${data.day}`
+    const date = `${data.year}-${data.month}-${data.day}`;
     let cabinClass;
-    if (data.seatClass == "ECONOMY") { cabinClass = 'YSGroup' }
-    else if (data.seatClass == "PREMIUM") { cabinClass = 'Premium' }
-    else if (data.seatClass == "BUSINESS") { cabinClass = 'Business' }
-    else if (data.seatClass == "FIRST") { cabinClass = 'First' }
-    return {
-        "operationName": "flightListSearch",
-        "variables": {
-            "request": {
-                "criteriaToken": "tripType:OW|criteriaToken:NEWTOKEN|KLUv_QBYnQsAFpdYQTBr4wbACotIGOjgYMCSsLgNBq15M_7kQhL_JeKiJb5fvEk3qYEWREK06Myvs_t_PPRbTDE0juKuSMAsdxwej00CTQBEAEcAu9rA3MsdU8qY961tzIBJ60bHx5HQM4iU8cez0dNscsbqpHSBxnXYFVCRGDQgAFAhJyQgChmR0aQa4BAVkIAmoEhEh2hCCfHBA4iPiAbas2PGRL47na5JJq0UKYnht7MPF8N7YNJqpbQJMwhunHkn8t3pPpHTwe4z4Qs7xaT1pbTZzx4580rEfbN5BoHApBXkAT_-Z1CVvTBae309Bncfw77mrctSnrGzsKhM6-tHi8PzVIZdq0cHb2WmCDbTWeAwGfKCxwZVQBI0NckD2oBBrblzMYCUtacDF8vlYrpUIHLDhUWBpTJRIDKDlB8J8KYx_abxwTpPmAOzsKjLgzW2eHO0fe711djrx7_f_36Fv0_h7-v_6i37mddUBAARhIRudV3iHIhXYQI=|cabinClass:YSGROUP|adult:1|child:0|infant:0|subChannel:17|channel:EnglishSite|currency:VND|extensionFlag:16|ExtensionOptions:|list:true|idc:SHARB|detailSearch:false|issuer:CT|SeparateJourneyType:null|searchScene:flight-list|airlineCodes:|nearbyCities:|listTime:202404140304|agencyModelAgg:false|SessionId:a35779ad-fd6a-434e-9014-7ba4af7c2925|dCity_1:SGN|date_1:2024-05-31|aCity_1:HAN",
-                "searchCriteria": {
-                    "cabinClass": cabinClass,
-                    "searchSegmentList": [
-                        {
-                            "departDate": date,
-                            "departCity": data.from,
-                            "arriveCity": data.to,
-                            "departAirport": "",
-                            "arriveAirport": ""
-                        }
-                    ],
-                    "passengerCount": {
-                        "adult": parseInt(data.adult),
-                        "child": parseInt(data.child),
-                        "infant": parseInt(data.infant)
-                    },
-                    "tripType": 1
-                },
-            }
-        },
-        "extensions": {
-            "persistedQuery": {
-                "version": 1,
-                "sha256Hash": "f780a5131343144e62058f856dedea297f40123bcf6220d59cc6127667d87055"
-            }
-        },
+    if (data.seatClass == "ECONOMY") {
+        cabinClass = "YSGroup";
+    } else if (data.seatClass == "PREMIUM") {
+        cabinClass = "Premium";
+    } else if (data.seatClass == "BUSINESS") {
+        cabinClass = "Business";
+    } else if (data.seatClass == "FIRST") {
+        cabinClass = "First";
     }
-}
+    return {
+        operationName: "flightListSearch",
+        variables: {
+            request: {
+                criteriaToken:
+                    "tripType:OW|criteriaToken:NEWTOKEN|KLUv_QBYnQsAFpdYQTBr4wbACotIGOjgYMCSsLgNBq15M_7kQhL_JeKiJb5fvEk3qYEWREK06Myvs_t_PPRbTDE0juKuSMAsdxwej00CTQBEAEcAu9rA3MsdU8qY961tzIBJ60bHx5HQM4iU8cez0dNscsbqpHSBxnXYFVCRGDQgAFAhJyQgChmR0aQa4BAVkIAmoEhEh2hCCfHBA4iPiAbas2PGRL47na5JJq0UKYnht7MPF8N7YNJqpbQJMwhunHkn8t3pPpHTwe4z4Qs7xaT1pbTZzx4580rEfbN5BoHApBXkAT_-Z1CVvTBae309Bncfw77mrctSnrGzsKhM6-tHi8PzVIZdq0cHb2WmCDbTWeAwGfKCxwZVQBI0NckD2oBBrblzMYCUtacDF8vlYrpUIHLDhUWBpTJRIDKDlB8J8KYx_abxwTpPmAOzsKjLgzW2eHO0fe711djrx7_f_36Fv0_h7-v_6i37mddUBAARhIRudV3iHIhXYQI=|cabinClass:YSGROUP|adult:1|child:0|infant:0|subChannel:17|channel:EnglishSite|currency:VND|extensionFlag:16|ExtensionOptions:|list:true|idc:SHARB|detailSearch:false|issuer:CT|SeparateJourneyType:null|searchScene:flight-list|airlineCodes:|nearbyCities:|listTime:202404140304|agencyModelAgg:false|SessionId:a35779ad-fd6a-434e-9014-7ba4af7c2925|dCity_1:SGN|date_1:2024-05-31|aCity_1:HAN",
+                searchCriteria: {
+                    cabinClass: cabinClass,
+                    searchSegmentList: [
+                        {
+                            departDate: date,
+                            departCity: data.from,
+                            arriveCity: data.to,
+                            departAirport: "",
+                            arriveAirport: "",
+                        },
+                    ],
+                    passengerCount: {
+                        adult: parseInt(data.adult),
+                        child: parseInt(data.child),
+                        infant: parseInt(data.infant),
+                    },
+                    tripType: 1,
+                },
+            },
+        },
+        extensions: {
+            persistedQuery: {
+                version: 1,
+                sha256Hash:
+                    "f780a5131343144e62058f856dedea297f40123bcf6220d59cc6127667d87055",
+            },
+        },
+    };
+};
 
 // url to get flight from trip.com
-const tripComGetFlightURL = 'https://us.trip.com/flights/graphql/intlCTFlightListSearch'
+const tripComGetFlightURL =
+    "https://us.trip.com/flights/graphql/intlCTFlightListSearch";
 
 // payload to get flight from myTrip
 
 const myTripGetFlightPayload = (data) => {
-    const childAges = []
-    const date = `${data.year}-${data.month}-${data.day}`
+    const childAges = [];
+    const date = `${data.year}-${data.month}-${data.day}`;
     if (data.child > 0) {
         for (let i = 0; i < data.child; i++) {
-            childAges.push(7)
+            childAges.push(7);
         }
     }
     if (data.infant > 0) {
         for (let i = 0; i < data.infant; i++) {
-            childAges.push(1)
+            childAges.push(1);
         }
     }
     return {
-        "operationName": "SearchOnResultPage",
-        "variables": {
-            "adults": data.adult,
-            "cabinClass": data.seatClass,
-            "childAges": childAges,
-            "direct": false,
-            "filters": [],
-            "routes": [
+        operationName: "SearchOnResultPage",
+        variables: {
+            adults: data.adult,
+            cabinClass: data.seatClass,
+            childAges: childAges,
+            direct: false,
+            filters: [],
+            routes: [
                 {
-                    "origin": data.from,
-                    "destination": data.to,
-                    "departureDate": date,
-                }
+                    origin: data.from,
+                    destination: data.to,
+                    departureDate: date,
+                },
             ],
-            "sortTypeCode": "CHEAP_TRIP"
+            sortTypeCode: "CHEAP_TRIP",
         },
-        "query": "query SearchOnResultPage($routes: [Route!]!, $cabinClass: CabinClass, $direct: Boolean, $carrierCodes: [String], $adults: Int!, $childAges: [Int], $offset: Int, $sortTypeCode: String, $filters: [Filter!], $validWithVoucher: Boolean) {\n  search(routes: $routes, cabinClass: $cabinClass, direct: $direct, carrierCodes: $carrierCodes, adults: $adults, childAges: $childAges, offset: $offset, sortTypeCode: $sortTypeCode, filters: $filters, validWithVoucher: $validWithVoucher) {\n    availableFilters {\n      code\n      group\n      label\n      ... on RangeFilter {\n        __typename\n        code\n        group\n        label\n        max\n        min\n        type\n      }\n      ... on SelectionFilter {\n        __typename\n        code\n        group\n        label\n        isMultiChoice\n        options {\n          label\n          value\n          __typename\n        }\n        type\n      }\n      __typename\n    }\n    availableSortTypes {\n      code\n      name\n      __typename\n    }\n    carrierCodes\n    carrierNames\n    flights {\n      ...Flights\n      __typename\n    }\n    flightsCount\n    filteredFlightsCount\n    quickSortPrices {\n      carrierPromo {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      cheapTrip {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      shortTrip {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      recommendation {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      bestValue {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    resultSetMetaData {\n      priceRange {\n        min\n        max\n        __typename\n      }\n      travelTimeRange {\n        min\n        max\n        __typename\n      }\n      marketingCarriers {\n        code\n        name\n        __typename\n      }\n      __typename\n    }\n    routes {\n      origin {\n        code\n        name\n        cityCode\n        cityName\n        countryCode\n        countryName\n        continentCode\n        continentName\n        __typename\n      }\n      destination {\n        code\n        name\n        cityCode\n        cityName\n        countryCode\n        countryName\n        continentCode\n        continentName\n        __typename\n      }\n      departureAt\n      departureDate\n      departureTimeOfDay\n      __typename\n    }\n    searchPath\n    sponsoredTrips {\n      ...Flights\n      __typename\n    }\n    travelers {\n      ageType\n      __typename\n    }\n    type\n    tripCampaigns {\n      campaignImageUrlDesktop\n      campaignImageUrlMobile\n      selectionKey\n      __typename\n    }\n    validWithVoucher\n    __typename\n  }\n}\n\nfragment Flights on Trip {\n  id\n  tripId\n  isVI\n  includedCabinBaggage {\n    includedPersonalItem\n    size3d {\n      height\n      length\n      width\n      __typename\n    }\n    ...IncludedCabinBaggage\n    __typename\n  }\n  includedCheckedBaggage {\n    ...IncludedCheckedBaggage\n    __typename\n  }\n  bounds {\n    boundId: id\n    includedCabinBaggage {\n      ...IncludedCabinBaggage\n      __typename\n    }\n    includedCheckedBaggage {\n      ...IncludedCheckedBaggage\n      __typename\n    }\n    segments {\n      ... on TripSegment {\n        __typename\n        segmentId: id\n        aircraftType\n        arrivedAt\n        brandedFareInformation {\n          name\n          __typename\n        }\n        includedCabinBaggage {\n          ...IncludedCabinBaggage\n          __typename\n        }\n        includedCheckedBaggage {\n          ...IncludedCheckedBaggage\n          __typename\n        }\n        brandedFareInformation {\n          name\n          __typename\n        }\n        cabinClassName\n        departuredAt\n        destination {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        duration\n        equipmentCode\n        flightNumber\n        marketingCarrier {\n          code\n          name\n          __typename\n        }\n        numberOfTechnicalStops\n        operatingCarrier {\n          code\n          name\n          __typename\n        }\n        operatingInformation\n        origin {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        segmentDetails {\n          paxType\n          numberOfSeatsLeft\n          __typename\n        }\n      }\n      ... on EventSegment {\n        __typename\n        segmentId: id\n        types\n        duration\n      }\n      __typename\n    }\n    __typename\n  }\n  brandedFares {\n    name\n    __typename\n  }\n  availableExtraProducts {\n    ...AvailableExtraProducts\n    __typename\n  }\n  includedExtraProducts {\n    id\n    texts {\n      name\n      productSummaryAlternativeName\n      readMoreText\n      receiptText\n      salesAbstract\n      __typename\n    }\n    __typename\n  }\n  selectionKey\n  type\n  tripCharacteristics\n  tripTravelers: travelers {\n    id\n    ageType\n    __typename\n  }\n  paymentMethodPrices {\n    ...PaymentMethodPrices\n    __typename\n  }\n  travelerPrices {\n    ...TravelerPrices\n    __typename\n  }\n  travelerPricesWithoutPaymentDiscounts {\n    price {\n      markup {\n        value\n        __typename\n      }\n      price {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      vat {\n        value\n        __typename\n      }\n      __typename\n    }\n    taxesAndFees {\n      category\n      taxes {\n        code\n        title\n        amount {\n          value\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    travelerId\n    __typename\n  }\n  tripTags\n  systems\n  voucherAmount {\n    value\n    __typename\n  }\n  shareableUrl\n  __typename\n}\n\nfragment IncludedCabinBaggage on IncludedCabinBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment IncludedCheckedBaggage on IncludedCheckedBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment AvailableExtraProducts on ExtraProduct {\n  configuration {\n    productPreSelection\n    __typename\n  }\n  productId: id\n  name\n  selectedWithTrip\n  sellSpecification {\n    ... on SellSpecificationTravelerNew {\n      sellPriceTravelers {\n        price {\n          price {\n            value\n            __typename\n          }\n          markup {\n            value\n            __typename\n          }\n          vat {\n            value\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationNoneNew {\n      price {\n        price {\n          value\n          currency {\n            code\n            exponent\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationBaggageNew {\n      sellPriceBaggage {\n        maxWeight\n        numberOfUnits\n        weightUnit\n        price {\n          price {\n            value\n            currency {\n              code\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment PaymentMethodPrices on PaymentMethodPrice {\n  name\n  price {\n    value\n    __typename\n  }\n  type\n  __typename\n}\n\nfragment TravelerPrices on TravelerPrice {\n  id\n  price {\n    markup {\n      value\n      __typename\n    }\n    price {\n      value\n      currency {\n        code\n        __typename\n      }\n      __typename\n    }\n    vat {\n      value\n      __typename\n    }\n    __typename\n  }\n  taxesAndFees {\n    category\n    taxes {\n      code\n      title\n      amount {\n        value\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  travelerId\n  __typename\n}\n"
-    }
-}
+        query: "query SearchOnResultPage($routes: [Route!]!, $cabinClass: CabinClass, $direct: Boolean, $carrierCodes: [String], $adults: Int!, $childAges: [Int], $offset: Int, $sortTypeCode: String, $filters: [Filter!], $validWithVoucher: Boolean) {\n  search(routes: $routes, cabinClass: $cabinClass, direct: $direct, carrierCodes: $carrierCodes, adults: $adults, childAges: $childAges, offset: $offset, sortTypeCode: $sortTypeCode, filters: $filters, validWithVoucher: $validWithVoucher) {\n    availableFilters {\n      code\n      group\n      label\n      ... on RangeFilter {\n        __typename\n        code\n        group\n        label\n        max\n        min\n        type\n      }\n      ... on SelectionFilter {\n        __typename\n        code\n        group\n        label\n        isMultiChoice\n        options {\n          label\n          value\n          __typename\n        }\n        type\n      }\n      __typename\n    }\n    availableSortTypes {\n      code\n      name\n      __typename\n    }\n    carrierCodes\n    carrierNames\n    flights {\n      ...Flights\n      __typename\n    }\n    flightsCount\n    filteredFlightsCount\n    quickSortPrices {\n      carrierPromo {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      cheapTrip {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      shortTrip {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      recommendation {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      bestValue {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    resultSetMetaData {\n      priceRange {\n        min\n        max\n        __typename\n      }\n      travelTimeRange {\n        min\n        max\n        __typename\n      }\n      marketingCarriers {\n        code\n        name\n        __typename\n      }\n      __typename\n    }\n    routes {\n      origin {\n        code\n        name\n        cityCode\n        cityName\n        countryCode\n        countryName\n        continentCode\n        continentName\n        __typename\n      }\n      destination {\n        code\n        name\n        cityCode\n        cityName\n        countryCode\n        countryName\n        continentCode\n        continentName\n        __typename\n      }\n      departureAt\n      departureDate\n      departureTimeOfDay\n      __typename\n    }\n    searchPath\n    sponsoredTrips {\n      ...Flights\n      __typename\n    }\n    travelers {\n      ageType\n      __typename\n    }\n    type\n    tripCampaigns {\n      campaignImageUrlDesktop\n      campaignImageUrlMobile\n      selectionKey\n      __typename\n    }\n    validWithVoucher\n    __typename\n  }\n}\n\nfragment Flights on Trip {\n  id\n  tripId\n  isVI\n  includedCabinBaggage {\n    includedPersonalItem\n    size3d {\n      height\n      length\n      width\n      __typename\n    }\n    ...IncludedCabinBaggage\n    __typename\n  }\n  includedCheckedBaggage {\n    ...IncludedCheckedBaggage\n    __typename\n  }\n  bounds {\n    boundId: id\n    includedCabinBaggage {\n      ...IncludedCabinBaggage\n      __typename\n    }\n    includedCheckedBaggage {\n      ...IncludedCheckedBaggage\n      __typename\n    }\n    segments {\n      ... on TripSegment {\n        __typename\n        segmentId: id\n        aircraftType\n        arrivedAt\n        brandedFareInformation {\n          name\n          __typename\n        }\n        includedCabinBaggage {\n          ...IncludedCabinBaggage\n          __typename\n        }\n        includedCheckedBaggage {\n          ...IncludedCheckedBaggage\n          __typename\n        }\n        brandedFareInformation {\n          name\n          __typename\n        }\n        cabinClassName\n        departuredAt\n        destination {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        duration\n        equipmentCode\n        flightNumber\n        marketingCarrier {\n          code\n          name\n          __typename\n        }\n        numberOfTechnicalStops\n        operatingCarrier {\n          code\n          name\n          __typename\n        }\n        operatingInformation\n        origin {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        segmentDetails {\n          paxType\n          numberOfSeatsLeft\n          __typename\n        }\n      }\n      ... on EventSegment {\n        __typename\n        segmentId: id\n        types\n        duration\n      }\n      __typename\n    }\n    __typename\n  }\n  brandedFares {\n    name\n    __typename\n  }\n  availableExtraProducts {\n    ...AvailableExtraProducts\n    __typename\n  }\n  includedExtraProducts {\n    id\n    texts {\n      name\n      productSummaryAlternativeName\n      readMoreText\n      receiptText\n      salesAbstract\n      __typename\n    }\n    __typename\n  }\n  selectionKey\n  type\n  tripCharacteristics\n  tripTravelers: travelers {\n    id\n    ageType\n    __typename\n  }\n  paymentMethodPrices {\n    ...PaymentMethodPrices\n    __typename\n  }\n  travelerPrices {\n    ...TravelerPrices\n    __typename\n  }\n  travelerPricesWithoutPaymentDiscounts {\n    price {\n      markup {\n        value\n        __typename\n      }\n      price {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      vat {\n        value\n        __typename\n      }\n      __typename\n    }\n    taxesAndFees {\n      category\n      taxes {\n        code\n        title\n        amount {\n          value\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    travelerId\n    __typename\n  }\n  tripTags\n  systems\n  voucherAmount {\n    value\n    __typename\n  }\n  shareableUrl\n  __typename\n}\n\nfragment IncludedCabinBaggage on IncludedCabinBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment IncludedCheckedBaggage on IncludedCheckedBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment AvailableExtraProducts on ExtraProduct {\n  configuration {\n    productPreSelection\n    __typename\n  }\n  productId: id\n  name\n  selectedWithTrip\n  sellSpecification {\n    ... on SellSpecificationTravelerNew {\n      sellPriceTravelers {\n        price {\n          price {\n            value\n            __typename\n          }\n          markup {\n            value\n            __typename\n          }\n          vat {\n            value\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationNoneNew {\n      price {\n        price {\n          value\n          currency {\n            code\n            exponent\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationBaggageNew {\n      sellPriceBaggage {\n        maxWeight\n        numberOfUnits\n        weightUnit\n        price {\n          price {\n            value\n            currency {\n              code\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment PaymentMethodPrices on PaymentMethodPrice {\n  name\n  price {\n    value\n    __typename\n  }\n  type\n  __typename\n}\n\nfragment TravelerPrices on TravelerPrice {\n  id\n  price {\n    markup {\n      value\n      __typename\n    }\n    price {\n      value\n      currency {\n        code\n        __typename\n      }\n      __typename\n    }\n    vat {\n      value\n      __typename\n    }\n    __typename\n  }\n  taxesAndFees {\n    category\n    taxes {\n      code\n      title\n      amount {\n        value\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  travelerId\n  __typename\n}\n",
+    };
+};
 
 const myTripGetMoreFlightPayload = (data, itemsLength) => {
-    const childAges = []
-    const date = `${data.year}-${data.month}-${data.day}`
+    const childAges = [];
+    const date = `${data.year}-${data.month}-${data.day}`;
     if (data.child > 0) {
         for (let i = 0; i < data.child; i++) {
-            childAges.push(7)
+            childAges.push(7);
         }
     }
     if (data.infant > 0) {
         for (let i = 0; i < data.infant; i++) {
-            childAges.push(1)
+            childAges.push(1);
         }
     }
     return {
-        "operationName": "SearchMoreOnResultPage",
-        "variables": {
-            "adults": data.adult,
-            "cabinClass": data.seatClass,
-            "childAges": childAges,
-            "direct": false,
-            "filters": [],
-            "routes": [
+        operationName: "SearchMoreOnResultPage",
+        variables: {
+            adults: data.adult,
+            cabinClass: data.seatClass,
+            childAges: childAges,
+            direct: false,
+            filters: [],
+            routes: [
                 {
-                    "origin": data.from,
-                    "destination": data.to,
-                    "departureDate": date
-                }
+                    origin: data.from,
+                    destination: data.to,
+                    departureDate: date,
+                },
             ],
-            "sortTypeCode": "CHEAP_TRIP",
-            "offset": itemsLength
+            sortTypeCode: "CHEAP_TRIP",
+            offset: itemsLength,
         },
-        "query": "query SearchMoreOnResultPage($routes: [Route!]!, $cabinClass: CabinClass, $direct: Boolean, $carrierCodes: [String], $adults: Int!, $childAges: [Int], $offset: Int, $sortTypeCode: String, $filters: [Filter!], $validWithVoucher: Boolean) {\n  search(routes: $routes, cabinClass: $cabinClass, direct: $direct, carrierCodes: $carrierCodes, adults: $adults, childAges: $childAges, offset: $offset, sortTypeCode: $sortTypeCode, filters: $filters, validWithVoucher: $validWithVoucher) {\n    flights {\n      ...Flights\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment Flights on Trip {\n  id\n  tripId\n  isVI\n  includedCabinBaggage {\n    includedPersonalItem\n    size3d {\n      height\n      length\n      width\n      __typename\n    }\n    ...IncludedCabinBaggage\n    __typename\n  }\n  includedCheckedBaggage {\n    ...IncludedCheckedBaggage\n    __typename\n  }\n  bounds {\n    boundId: id\n    includedCabinBaggage {\n      ...IncludedCabinBaggage\n      __typename\n    }\n    includedCheckedBaggage {\n      ...IncludedCheckedBaggage\n      __typename\n    }\n    segments {\n      ... on TripSegment {\n        __typename\n        segmentId: id\n        aircraftType\n        arrivedAt\n        brandedFareInformation {\n          name\n          __typename\n        }\n        includedCabinBaggage {\n          ...IncludedCabinBaggage\n          __typename\n        }\n        includedCheckedBaggage {\n          ...IncludedCheckedBaggage\n          __typename\n        }\n        brandedFareInformation {\n          name\n          __typename\n        }\n        cabinClassName\n        departuredAt\n        destination {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        duration\n        equipmentCode\n        flightNumber\n        marketingCarrier {\n          code\n          name\n          __typename\n        }\n        numberOfTechnicalStops\n        operatingCarrier {\n          code\n          name\n          __typename\n        }\n        operatingInformation\n        origin {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        segmentDetails {\n          paxType\n          numberOfSeatsLeft\n          __typename\n        }\n      }\n      ... on EventSegment {\n        __typename\n        segmentId: id\n        types\n        duration\n      }\n      __typename\n    }\n    __typename\n  }\n  brandedFares {\n    name\n    __typename\n  }\n  availableExtraProducts {\n    ...AvailableExtraProducts\n    __typename\n  }\n  includedExtraProducts {\n    id\n    texts {\n      name\n      productSummaryAlternativeName\n      readMoreText\n      receiptText\n      salesAbstract\n      __typename\n    }\n    __typename\n  }\n  selectionKey\n  type\n  tripCharacteristics\n  tripTravelers: travelers {\n    id\n    ageType\n    __typename\n  }\n  paymentMethodPrices {\n    ...PaymentMethodPrices\n    __typename\n  }\n  travelerPrices {\n    ...TravelerPrices\n    __typename\n  }\n  travelerPricesWithoutPaymentDiscounts {\n    price {\n      markup {\n        value\n        __typename\n      }\n      price {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      vat {\n        value\n        __typename\n      }\n      __typename\n    }\n    taxesAndFees {\n      category\n      taxes {\n        code\n        title\n        amount {\n          value\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    travelerId\n    __typename\n  }\n  tripTags\n  systems\n  voucherAmount {\n    value\n    __typename\n  }\n  shareableUrl\n  __typename\n}\n\nfragment IncludedCabinBaggage on IncludedCabinBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment IncludedCheckedBaggage on IncludedCheckedBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment AvailableExtraProducts on ExtraProduct {\n  configuration {\n    productPreSelection\n    __typename\n  }\n  productId: id\n  name\n  selectedWithTrip\n  sellSpecification {\n    ... on SellSpecificationTravelerNew {\n      sellPriceTravelers {\n        price {\n          price {\n            value\n            __typename\n          }\n          markup {\n            value\n            __typename\n          }\n          vat {\n            value\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationNoneNew {\n      price {\n        price {\n          value\n          currency {\n            code\n            exponent\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationBaggageNew {\n      sellPriceBaggage {\n        maxWeight\n        numberOfUnits\n        weightUnit\n        price {\n          price {\n            value\n            currency {\n              code\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment PaymentMethodPrices on PaymentMethodPrice {\n  name\n  price {\n    value\n    __typename\n  }\n  type\n  __typename\n}\n\nfragment TravelerPrices on TravelerPrice {\n  id\n  price {\n    markup {\n      value\n      __typename\n    }\n    price {\n      value\n      currency {\n        code\n        __typename\n      }\n      __typename\n    }\n    vat {\n      value\n      __typename\n    }\n    __typename\n  }\n  taxesAndFees {\n    category\n    taxes {\n      code\n      title\n      amount {\n        value\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  travelerId\n  __typename\n}\n"
-    }
-}
+        query: "query SearchMoreOnResultPage($routes: [Route!]!, $cabinClass: CabinClass, $direct: Boolean, $carrierCodes: [String], $adults: Int!, $childAges: [Int], $offset: Int, $sortTypeCode: String, $filters: [Filter!], $validWithVoucher: Boolean) {\n  search(routes: $routes, cabinClass: $cabinClass, direct: $direct, carrierCodes: $carrierCodes, adults: $adults, childAges: $childAges, offset: $offset, sortTypeCode: $sortTypeCode, filters: $filters, validWithVoucher: $validWithVoucher) {\n    flights {\n      ...Flights\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment Flights on Trip {\n  id\n  tripId\n  isVI\n  includedCabinBaggage {\n    includedPersonalItem\n    size3d {\n      height\n      length\n      width\n      __typename\n    }\n    ...IncludedCabinBaggage\n    __typename\n  }\n  includedCheckedBaggage {\n    ...IncludedCheckedBaggage\n    __typename\n  }\n  bounds {\n    boundId: id\n    includedCabinBaggage {\n      ...IncludedCabinBaggage\n      __typename\n    }\n    includedCheckedBaggage {\n      ...IncludedCheckedBaggage\n      __typename\n    }\n    segments {\n      ... on TripSegment {\n        __typename\n        segmentId: id\n        aircraftType\n        arrivedAt\n        brandedFareInformation {\n          name\n          __typename\n        }\n        includedCabinBaggage {\n          ...IncludedCabinBaggage\n          __typename\n        }\n        includedCheckedBaggage {\n          ...IncludedCheckedBaggage\n          __typename\n        }\n        brandedFareInformation {\n          name\n          __typename\n        }\n        cabinClassName\n        departuredAt\n        destination {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        duration\n        equipmentCode\n        flightNumber\n        marketingCarrier {\n          code\n          name\n          __typename\n        }\n        numberOfTechnicalStops\n        operatingCarrier {\n          code\n          name\n          __typename\n        }\n        operatingInformation\n        origin {\n          code\n          name\n          cityCode\n          cityName\n          airportCode\n          airportName\n          __typename\n        }\n        segmentDetails {\n          paxType\n          numberOfSeatsLeft\n          __typename\n        }\n      }\n      ... on EventSegment {\n        __typename\n        segmentId: id\n        types\n        duration\n      }\n      __typename\n    }\n    __typename\n  }\n  brandedFares {\n    name\n    __typename\n  }\n  availableExtraProducts {\n    ...AvailableExtraProducts\n    __typename\n  }\n  includedExtraProducts {\n    id\n    texts {\n      name\n      productSummaryAlternativeName\n      readMoreText\n      receiptText\n      salesAbstract\n      __typename\n    }\n    __typename\n  }\n  selectionKey\n  type\n  tripCharacteristics\n  tripTravelers: travelers {\n    id\n    ageType\n    __typename\n  }\n  paymentMethodPrices {\n    ...PaymentMethodPrices\n    __typename\n  }\n  travelerPrices {\n    ...TravelerPrices\n    __typename\n  }\n  travelerPricesWithoutPaymentDiscounts {\n    price {\n      markup {\n        value\n        __typename\n      }\n      price {\n        value\n        currency {\n          code\n          __typename\n        }\n        __typename\n      }\n      vat {\n        value\n        __typename\n      }\n      __typename\n    }\n    taxesAndFees {\n      category\n      taxes {\n        code\n        title\n        amount {\n          value\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    travelerId\n    __typename\n  }\n  tripTags\n  systems\n  voucherAmount {\n    value\n    __typename\n  }\n  shareableUrl\n  __typename\n}\n\nfragment IncludedCabinBaggage on IncludedCabinBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment IncludedCheckedBaggage on IncludedCheckedBaggage {\n  pieces\n  weight\n  weightUnit\n  __typename\n}\n\nfragment AvailableExtraProducts on ExtraProduct {\n  configuration {\n    productPreSelection\n    __typename\n  }\n  productId: id\n  name\n  selectedWithTrip\n  sellSpecification {\n    ... on SellSpecificationTravelerNew {\n      sellPriceTravelers {\n        price {\n          price {\n            value\n            __typename\n          }\n          markup {\n            value\n            __typename\n          }\n          vat {\n            value\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationNoneNew {\n      price {\n        price {\n          value\n          currency {\n            code\n            exponent\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    ... on SellSpecificationBaggageNew {\n      sellPriceBaggage {\n        maxWeight\n        numberOfUnits\n        weightUnit\n        price {\n          price {\n            value\n            currency {\n              code\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n\nfragment PaymentMethodPrices on PaymentMethodPrice {\n  name\n  price {\n    value\n    __typename\n  }\n  type\n  __typename\n}\n\nfragment TravelerPrices on TravelerPrice {\n  id\n  price {\n    markup {\n      value\n      __typename\n    }\n    price {\n      value\n      currency {\n        code\n        __typename\n      }\n      __typename\n    }\n    vat {\n      value\n      __typename\n    }\n    __typename\n  }\n  taxesAndFees {\n    category\n    taxes {\n      code\n      title\n      amount {\n        value\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  travelerId\n  __typename\n}\n",
+    };
+};
 
 // url to get flight from myTrip
-const myTripGetFlightURL = 'https://us.mytrip.com/graphql/SearchOnResultPage'
-const myTripGetMoreFlightURL = 'https://us.mytrip.com/graphql/SearchMoreOnResultPage'
+const myTripGetFlightURL = "https://us.mytrip.com/graphql/SearchOnResultPage";
+const myTripGetMoreFlightURL =
+    "https://us.mytrip.com/graphql/SearchMoreOnResultPage";
 
-// payload to get flight from baydep 
+// payload to get flight from baydep
 const bayDepGetFlightPayload = (data) => {
-    const airlineList = ["VN", "VJ", "QH", "VU"]
-    const payload = []
+    const airlineList = ["VN", "VJ", "QH", "VU"];
+    const payload = [];
     for (const airlineCode of airlineList) {
-        payload.push(`requestType=Search&legArr=${data.from}${data.to}${data.day}${data.month}${data.year}&adt=${data.adult}&chd=${data.child}&inf=${data.infant}&airline=${airlineCode}&searchType=standard&currency=VND&lang=en-US&nearbyAirport=yes&fareclass=${data.seatClass.toLowerCase()}`)
+        payload.push(
+            `requestType=Search&legArr=${data.from}${data.to}${data.day}${data.month
+            }${data.year}&adt=${data.adult}&chd=${data.child}&inf=${data.infant
+            }&airline=${airlineCode}&searchType=standard&currency=VND&lang=en-US&nearbyAirport=yes&fareclass=${data.seatClass.toLowerCase()}`
+        );
     }
     return payload;
-}
+};
 
 // url to get fligh from baydep
-const bayDepGetFlightURL = 'https://baydep.vn/Handler/FlightHandler.ashx/ProcessRequest'
+const bayDepGetFlightURL =
+    "https://baydep.vn/Handler/FlightHandler.ashx/ProcessRequest";
 
 const airportOptions = [
     {
         cityName: "Can Tho",
-        airportCode: "VCA"
+        airportCode: "VCA",
     },
     {
         cityName: "Da Nang",
-        airportCode: "DAD"
+        airportCode: "DAD",
     },
     {
         cityName: "Haiphong",
-        airportCode: "HPH"
-    }, 
+        airportCode: "HPH",
+    },
     {
         cityName: "Hanoi",
-        airportCode: "HAN"
+        airportCode: "HAN",
     },
     {
         cityName: "Ho Chi Minh City",
-        airportCode: "SGN"
+        airportCode: "SGN",
     },
     {
         cityName: "Hue",
-        airportCode: "HUI"
+        airportCode: "HUI",
     },
     {
         cityName: "Nha Trang",
-        airportCode: "CXR"
+        airportCode: "CXR",
     },
     {
         cityName: "Phu Quoc",
-        airportCode: "PQC"
+        airportCode: "PQC",
     },
     {
         cityName: "Ha Long",
-        airportCode: "VDO"
+        airportCode: "VDO",
     },
     {
         cityName: "Vinh",
-        airportCode: "VII"
+        airportCode: "VII",
     },
     {
         cityName: "Buon Ma Thuot",
-        airportCode: "BMV"
+        airportCode: "BMV",
     },
     {
         cityName: "Ca Mau",
-        airportCode: "CAH"
+        airportCode: "CAH",
     },
     {
         cityName: "Con Dao",
-        airportCode: "VCS"
+        airportCode: "VCS",
     },
     {
         cityName: "Quang Ngai",
-        airportCode: "VCL"
+        airportCode: "VCL",
     },
     {
         cityName: "Da Lat",
-        airportCode: "DLI"
+        airportCode: "DLI",
     },
     {
         cityName: "Dien Bien Phu",
-        airportCode: "DIN"
+        airportCode: "DIN",
     },
     {
         cityName: "Dong Hoi",
-        airportCode: "VDH"
+        airportCode: "VDH",
     },
     {
         cityName: "Pleiku",
-        airportCode: "PXU"
+        airportCode: "PXU",
     },
     {
         cityName: "Quy Nhon",
-        airportCode: "UIH"
+        airportCode: "UIH",
     },
     {
         cityName: "Vung Tau",
-        airportCode: "VTG"
+        airportCode: "VTG",
     },
     {
         cityName: "Rach Gia",
-        airportCode: "VKG"
+        airportCode: "VKG",
     },
     {
         cityName: "Tuy Hoa",
-        airportCode: "TBB"
+        airportCode: "TBB",
     },
     {
         cityName: "Thanh Hoa",
-        airportCode: "THD"
+        airportCode: "THD",
     },
-]
+];
 
 module.exports = {
+    agodaTourAttractionsAdvancedSearchParams,
+    agodaTourAttractionsAdvancedSearchURL,
+    agodaTourAttractionsAdvancedSearchPayload,
+    agodaTourAttractionsAdvancedSearchHeaders,
+    agodaTourAttractionsAutocompleteURL,
+    agodaTourAttractionsAutocompletePayload,
+    tripComGetTourAttractionsAutocompleteURL,
+    tripComGetTourAttractionsAutocompletePayload,
+    tripGetTourAttractionsPayload,
+    tripComGetTourAttractionsURL,
     bookingSecondaryAutocompleteURL,
     secondaryAutocompletePayloadBooking,
     advancedSearchSpecificHotelQueryParam,
@@ -1310,5 +1577,5 @@ module.exports = {
     myTripGetMoreFlightURL,
     bayDepGetFlightPayload,
     bayDepGetFlightURL,
-    airportOptions
+    airportOptions,
 };

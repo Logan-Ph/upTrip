@@ -1,6 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
 import React, { useState } from 'react';
-import Checkbox from '@mui/joy/Checkbox';
 import Slider from '@mui/material/Slider';
 
 
