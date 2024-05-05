@@ -75,56 +75,102 @@ function HandleSelection({ tab, setTab, setKeyword, keyword }) {
 }
 
 function AdvancedSearchFlight({ setTab }) {
+    const navigate = useNavigate();
+    const [from, setFrom] = useState({})
+    const [to, setTo] = useState({})
     const [openMenu, setOpenMenu] = useState(false);
-    const [departure, setDeparture] = useState()
-    const [arrival, setArrival] = useState()
-    const [from, setFrom] = useState()
-    const [to, setTo] = useState()
-    const [seatClass, setSeatClass] = useState()
+    const [seatClass, setSeatClass] = useState("ECONOMY")
     const [numberOfAdult, setNumberOfAdult] = useState(1);
     const [numberOfChild, setNumberOfChild] = useState(0);
     const [numberOfInfant, setNumberOfInfant] = useState(0);
     const [keywordFrom, setKeywordFrom] = useState("");
     const [keywordTo, setKeywordTo] = useState("");
-    const [debouncedKeyword, setDebouncedKeyword] = useState(null)
+    const [fromEdit, setFromEdit] = useState(true);
+    const [toEdit, setToEdit] = useState(true);
+    const [debouncedKeywordFrom, setDebouncedKeywordFrom] = useState(null)
+    const [debouncedKeywordTo, setDebouncedKeywordTo] = useState(null)
     const date = useRef();
-    const [payload, setPayload] = useState();
 
     useEffect(() => {
+        setFromEdit(true)
         const handler = setTimeout(() => {
-            setDebouncedKeyword(keywordFrom);
+            setDebouncedKeywordFrom(keywordFrom);
         }, 250); // Delay of 1 second
 
         return () => {
             clearTimeout(handler);
         };
     }, [keywordFrom]);
-    const navigate = useNavigate();
+
+    useEffect(() => {
+        setToEdit(true)
+        const handler = setTimeout(() => {
+            setDebouncedKeywordTo(keywordTo);
+        }, 250); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keywordTo]);
 
     const fromAutocomplete = useQuery({
-        queryKey: ['advanced-search', "flight", debouncedKeyword],
-        queryFn: () => fetchFlightAutocomplete(debouncedKeyword),
+        queryKey: ['advanced-search', "flight", debouncedKeywordFrom],
+        queryFn: () => fetchFlightAutocomplete(debouncedKeywordFrom),
         refetchOnWindowFocus: false,
         enabled: !!keywordFrom,
     })
+
+    const toAutocomplete = useQuery({
+        queryKey: ['advanced-search', "flight", debouncedKeywordTo],
+        queryFn: () => fetchFlightAutocomplete(debouncedKeywordTo),
+        refetchOnWindowFocus: false,
+        enabled: !!keywordTo,
+    })
+
     useEffect(() => {
         let datePicker;
 
         if (date.current) {
             datePicker = new Datepicker(date.current, {
                 autohide: true,
-                minDate: new Date()
+                minDate: new Date(),
             });
         }
-
         // Cleanup function to destroy datepickers when component unmounts or rerenders
         return () => {
             if (datePicker) datePicker.destroy();
         };
     }, []);
 
-    const handleSubmit  = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
+
+        const payload = {
+            from: from.airportCode,
+            fromCity: from.cityName,
+            to: to.airportCode,
+            toCity: to.cityName,
+            seatClass: seatClass,
+            adult: numberOfAdult,
+            child: numberOfChild,
+            infant: numberOfInfant,
+            year: date.current?.value.substring(6, 10),
+            month: date.current?.value.substring(0, 2),
+            day: date.current?.value.substring(3, 5),
+        }
+
+        for (let key in payload) {
+            if (payload.hasOwnProperty(key) && payload[key] === null) {
+                console.log(key)
+                warningNotify("Please provide all information.")
+                return;
+            }
+        }
+
+        navigate(
+            `advanced-flight-search?ori=${payload.fromCity}&des=${payload.toCity}&from=${payload.from}&to=${payload.to}&adult=${payload.adult}&child=${payload.child}&infant=${payload.infant}&seatClass=${payload.seatClass}&year=${payload.year}&month=${payload.month}&day=${payload.day}`
+        );
+
     }
 
     return (
@@ -161,9 +207,10 @@ function AdvancedSearchFlight({ setTab }) {
                                     type="text"
                                     class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 "
                                     placeholder="City or airport"
-                                    onChange={(e) =>
+                                    value={fromEdit ? keywordFrom : from.cityName}
+                                    onChange={(e) => {
                                         setKeywordFrom(e.target.value)
-                                    }
+                                    }}
                                 />
                                 <label
                                     for="floating_filled"
@@ -172,19 +219,23 @@ function AdvancedSearchFlight({ setTab }) {
                                     Origin
                                 </label>
                             </div>
-                            {fromAutocomplete.isFetched && (
+                            {fromAutocomplete.isFetched && fromEdit && (
                                 <div class="relative z-40">
                                     <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
                                         {fromAutocomplete?.data?.map(
-                                            (item) => (
-                                                <li>
-                                                    onClick{() => 
-                                                    setPayload({...payload})}
-                                                    <a>
-                                                        <i class="fa-solid fa-plane"></i> {item?.cityName} - {item?.airportCode}
-                                                    </a>
-                                                </li>
-                                            )
+                                            (item) => {
+                                                return (
+                                                    <li
+                                                        onClick={() => {
+                                                            setFrom(item)
+                                                            setFromEdit(false)
+                                                        }}>
+                                                        <a>
+                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
+                                                        </a>
+                                                    </li>
+                                                )
+                                            }
                                         )}
                                     </ul>
                                 </div>
@@ -200,6 +251,10 @@ function AdvancedSearchFlight({ setTab }) {
                                     type="text"
                                     class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5"
                                     placeholder="City or airport"
+                                    value={toEdit ? keywordTo : to.cityName}
+                                    onChange={(e) =>
+                                        setKeywordTo(e.target.value)
+                                    }
                                 />
                                 <label
                                     for="floating_filled"
@@ -208,9 +263,29 @@ function AdvancedSearchFlight({ setTab }) {
                                     Destination
                                 </label>
                             </div>
+                            {toAutocomplete.isFetched && toEdit && (
+                                <div class="relative z-40">
+                                    <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
+                                        {toAutocomplete?.data?.map(
+                                            (item) => {
+                                                return (
+                                                    <li
+                                                        onClick={() => {
+                                                            setTo(item);
+                                                            setToEdit(false)
+                                                        }}>
+                                                        <a>
+                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
+                                                        </a>
+                                                    </li>
+                                                )
+                                            }
+                                        )}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
-
                     <div class="flex flex-col md:flex-row space-y-2 md:space-x-4 md:space-y-0 items-center justify-between	">
                         <div class="relative w-full md:w-1/3">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -229,14 +304,13 @@ function AdvancedSearchFlight({ setTab }) {
                                     ref={date}
                                     datepicker
                                     datepicker-autohide
+                                    datepicker-format="dd/mm/yyyy"
                                     name="start"
                                     type="text"
                                     class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5"
                                     placeholder="dd/mm/yyyy"
                                     value={date.current?.value}
-                                    onSelect={(e) =>
-                                        console.log(e.target.value)
-                                    }
+                                    id="datepickerId4"
                                 />
                                 <label
                                     for="floating_filled"
@@ -262,15 +336,10 @@ function AdvancedSearchFlight({ setTab }) {
                             </div>
                             <div>
                                 <input
-                                    datepicker
-                                    datepicker-autohide
                                     name="end"
                                     type="text"
                                     class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5"
                                     placeholder="dd/mm/yyyy"
-                                    onSelect={(e) =>
-                                        console.log(e.target.value)
-                                    }
                                     id="datepickerId4"
                                 />
                                 <label
@@ -511,7 +580,9 @@ function AdvancedSearchFlight({ setTab }) {
                     </div>
                 </div>
                 <div class="md:ml-1.5">
-                    <button class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
+                    <button
+                        onClick={(e) => handleSubmit(e)}
+                        class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
                         Search
                     </button>
                 </div>
