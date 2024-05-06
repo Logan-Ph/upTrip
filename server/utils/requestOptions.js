@@ -3,9 +3,9 @@
 // keyword: "hanoi", -> search keyword
 // tab: "restaurant",
 // tab: "hotel",
-require("dotenv").config
+require("dotenv").config;
 
-require("dotenv").config
+require("dotenv").config;
 const {
     convertDateFormat,
     getDecodedCurrentTimeAgoda,
@@ -179,7 +179,7 @@ const advancedSearchSpecificHotelQueryParam = (
     };
 };
 
-const tripClientID = process.env.TRIP_CLIENT_ID ;
+const tripClientID = process.env.TRIP_CLIENT_ID;
 
 const tripAdvancedSearchHeaders = () => {
     return {
@@ -946,6 +946,10 @@ const agodaAdvancedSearchHotelPayload = (
 // payload to get flights from agoda
 const agodaGetFlightPayload = (data) => {
     const date = `${data.year}-${data.month}-${data.day}`;
+    let filter = {
+        cabinType:
+            data.seatClass.charAt(0) + data.seatClass.slice(1).toLowerCase(),
+    };
     const passengers = [
         {
             number: data.adult,
@@ -963,6 +967,13 @@ const agodaGetFlightPayload = (data) => {
             number: data.infant,
             passengerType: 3,
         });
+    }
+
+    if (data.priceFilter.length !== 0) {
+        filter.price = {
+            from: data.priceFilter[0],
+            to: data.priceFilter[1],
+        };
     }
     return {
         flightsRequestId: "02bed71b-cbdc-43bd-ac49-003d1e3edf7b",
@@ -992,19 +1003,21 @@ const agodaGetFlightPayload = (data) => {
                         id: 1,
                         departureDate: date,
                         filter: {
-                            arrivalTime: null,
-                            departureTime: null,
+                            arrivalTime: {
+                                from: data.arrivalTime[0],
+                                to: data.arrivalTime[1],
+                            },
+                            departureTime: {
+                                from: data.departureTime[0],
+                                to: data.departureTime[1],
+                            },
                             carrier: {
                                 preferred: data.prefer,
                             },
                         },
                     },
                 ],
-                filter: {
-                    cabinType:
-                        data.seatClass.charAt(0) +
-                        data.seatClass.slice(1).toLowerCase(),
-                },
+                filter: filter,
                 sort: {
                     field: data.sortField,
                     direction: data.sortDir,
@@ -1082,7 +1095,8 @@ const tripGetTourAttractionsPayload = (districtId, pageIndex) => {
 };
 
 // url to get tour and attractions autocomplete from Trip.com
-const tripComGetTourAttractionsAutocompleteURL = "https://m.trip.com/restapi/soa2/24528/getSuggestDistrictList?x-traceID=09031044413087365594-1714673116803-43088";
+const tripComGetTourAttractionsAutocompleteURL =
+    "https://m.trip.com/restapi/soa2/24528/getSuggestDistrictList?x-traceID=09031044413087365594-1714673116803-43088";
 
 // payload to get tour and attractions autocomplete from Trip.com
 const tripComGetTourAttractionsAutocompletePayload = (keyword) => {
@@ -1106,7 +1120,8 @@ const tripComGetTourAttractionsAutocompletePayload = (keyword) => {
 };
 
 // url to get tour and attractions autocomplete from Agoda
-const agodaTourAttractionsAutocompleteURL = "https://www.agoda.com/activities/api/cronos/GetResultSuggestion/24"
+const agodaTourAttractionsAutocompleteURL =
+    "https://www.agoda.com/activities/api/cronos/GetResultSuggestion/24";
 
 // payload to get tour and attractions autocomplete from Agoda
 const agodaTourAttractionsAutocompletePayload = (keyword) => {
@@ -1116,164 +1131,189 @@ const agodaTourAttractionsAutocompletePayload = (keyword) => {
 };
 
 // url to get tour and attractions advanced search from Agoda
-const agodaTourAttractionsAdvancedSearchURL = "https://www.agoda.com/api/activities/graphql"
+const agodaTourAttractionsAdvancedSearchURL =
+    "https://www.agoda.com/api/activities/graphql";
 
 // params to get tour and attractions advanced search from Agoda
-const agodaTourAttractionsAdvancedSearchParams = ({cityId, pageNumber}) => {
+const agodaTourAttractionsAdvancedSearchParams = ({ cityId, pageNumber }) => {
     return {
         operation: "search",
         cityId: cityId,
         pageNumber: pageNumber,
-    }
-}
+    };
+};
 
 // advanced search tour and attractions headers for Agoda
 const agodaTourAttractionsAdvancedSearchHeaders = () => {
     return {
-        'Ag-Cid': '1888052',
-        'Ag-Language-Id': '1',
-        "Ag-Platform-Id": '1',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-    }
-}
+        "Ag-Cid": "1888052",
+        "Ag-Language-Id": "1",
+        "Ag-Platform-Id": "1",
+        "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    };
+};
 
-const agodaTourAttractionsAdvancedSearchPayload = ({queryString, cityId, pageIndex}) => {
+const agodaTourAttractionsAdvancedSearchPayload = ({
+    queryString,
+    cityId,
+    pageIndex,
+}) => {
     return {
-        "queryString": queryString, // ?operation=search&cityId=2679&pageNumber=1
-        "variables": {
-            "SearchRequest": {
-                "context": {
-                    "currency": "VND",
-                    "experimentInfo": {
-                        "forcedExperiments": [
+        queryString: queryString,
+        variables: {
+            SearchRequest: {
+                context: {
+                    currency: "VND",
+                    experimentInfo: {
+                        forcedExperiments: [
                             {
-                                "experiment": "ACT-3105",
-                                "variant": "A"
+                                experiment: "ACT-3105",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3321",
-                                "variant": "A"
+                                experiment: "ACT-3321",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3370",
-                                "variant": "A"
+                                experiment: "ACT-3370",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3474",
-                                "variant": "A"
+                                experiment: "ACT-3474",
+                                variant: "B",
                             },
                             {
-                                "experiment": "ACT-3475",
-                                "variant": "A"
+                                experiment: "ACT-3475",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3489",
-                                "variant": "A"
+                                experiment: "ACT-3489",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3596",
-                                "variant": "B"
+                                experiment: "ACT-3596",
+                                variant: "B",
                             },
                             {
-                                "experiment": "ACT-3633",
-                                "variant": "A"
+                                experiment: "ACT-3633",
+                                variant: "B",
                             },
                             {
-                                "experiment": "ACT-3839",
-                                "variant": "B"
+                                experiment: "ACT-3839",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3850",
-                                "variant": "A"
+                                experiment: "ACT-3850",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3882",
-                                "variant": "A"
+                                experiment: "ACT-3882",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACT-3883",
-                                "variant": "B"
+                                experiment: "ACT-3883",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ADSWEB-CSS-BOX-ACTIVITY",
-                                "variant": "B"
+                                experiment: "ADSWEB-CSS-BOX-ACTIVITY",
+                                variant: "B",
                             },
                             {
-                                "experiment": "MPW-1696",
-                                "variant": "B"
+                                experiment: "MPW-1696",
+                                variant: "A",
                             },
                             {
-                                "experiment": "MPW-1880",
-                                "variant": "B"
+                                experiment: "MPW-1880",
+                                variant: "B",
                             },
                             {
-                                "experiment": "MPW-2031",
-                                "variant": "A"
+                                experiment: "MPW-2031",
+                                variant: "A",
                             },
                             {
-                                "experiment": "MPW-2212",
-                                "variant": "A"
+                                experiment: "MPW-2212",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ICB-228",
-                                "variant": "A"
+                                experiment: "ICB-228",
+                                variant: "A",
                             },
                             {
-                                "experiment": "WLBC-915",
-                                "variant": "A"
+                                experiment: "WLBC-915",
+                                variant: "A",
                             },
                             {
-                                "experiment": "WLBC-1059",
-                                "variant": "A"
+                                experiment: "WLBC-1059",
+                                variant: "A",
                             },
                             {
-                                "experiment": "AFT-88",
-                                "variant": "B"
+                                experiment: "AFT-88",
+                                variant: "B",
                             },
                             {
-                                "experiment": "AFT-99",
-                                "variant": "A"
+                                experiment: "AFT-99",
+                                variant: "B",
                             },
                             {
-                                "experiment": "AFT-218",
-                                "variant": "A"
+                                experiment: "AFT-218",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACTB-685",
-                                "variant": "A"
+                                experiment: "ACTB-685",
+                                variant: "A",
                             },
                             {
-                                "experiment": "ACTB-SEO",
-                                "variant": "A"
-                            }
-                        ]
-                    }
+                                experiment: "ACTB-SEO",
+                                variant: "A",
+                            },
+                        ],
+                    },
                 },
-                "searchRequest": {
-                    "searchType": "CITY",
-                    "searchValue": cityId,
-                    "languageId": 1,
-                    "searchCriteria": {
-                        "pagination": {
-                            "size": 10,
-                            "number": pageIndex
+                searchRequest: {
+                    searchType: "CITY",
+                    searchValue: cityId,
+                    searchCriteria: {
+                        pagination: {
+                            size: 12,
+                            number: pageIndex,
                         },
-                        "sort": {
-                            "code": "",
-                            "order": ""
+                        sort: {
+                            code: "Recommended",
+                            order: "Descending",
                         },
-                        "filters": {
-                            "valueFilters": [],
-                            "rangeFilters": []
-                        }
-                    }
-                }
-            }
+                        filters: {
+                            valueFilters: [],
+                            rangeFilters: [],
+                        },
+                    },
+                },
+            },
         },
-        "query": "query search ($SearchRequest: SearchRequest!) { search (SearchRequest: $SearchRequest) { isSuccess, result { isCompleted, resultInfo { totalActivities, totalFilteredActivities, pagination { number, size } }, activities { masterActivityId, masterSupplierId, rankScore { value }, activityRepresentativeInfo { activityId, activityToken, pricingSummary { pricing { currency, display { perBook { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } }, perPax { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } } } } }, supplierActivityCode, cancellationPolicy { cancellationType, policies { hoursFrom, hoursUntil, penaltyCode } } }, content { activity { title, categories, description, duration { minutes, minutesUntil, durationType }, location { city { id, name }, addressLine, geo { lat, long }, country { id, name }, postalCode } }, images { url, description, imageType, imageSize { height, width } }, reviewSummary { averageScore, totalCount }, detail { offerDetails { supplierInfo { providerName } } }, contentLocale, badges { activityHighlights { badgeType, badgeData }, deals { badgeType, badgeData } } } }, matrix { sort { availableCode, availableOrder }, filter { rangeFilterMatrix { code, min, max, bucket { count, min, max } }, valueFilterMatrix { availableValue { count, id }, code } } } }, errors { errorCode, subErrorCode, message } } } ",
-        "pageTypeId": 9101
-    }
-}
+        query: "query search ($SearchRequest: SearchRequest!) { search (SearchRequest: $SearchRequest) { isSuccess, result { isCompleted, resultInfo { totalActivities, totalFilteredActivities, pagination { number, size } }, activities { masterActivityId, masterSupplierId, rankScore { value }, activityRepresentativeInfo { activityId, activityToken, pricingSummary { pricing { currency, display { perBook { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } }, perPax { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } } } } }, supplierActivityCode, cancellationPolicy { cancellationType, policies { hoursFrom, hoursUntil, penaltyCode } } }, content { activity { title, categories, description, duration { minutes, minutesUntil, durationType }, location { city { id, name }, addressLine, geo { lat, long }, country { id, name }, postalCode } }, images { url, description, imageType, imageSize { height, width } }, reviewSummary { averageScore, totalCount }, detail { offerDetails { supplierInfo { providerName } } }, contentLocale, badges { activityHighlights { badgeType, badgeData }, deals { badgeType, badgeData } } } }, matrix { sort { availableCode, availableOrder }, filter { rangeFilterMatrix { code, min, max, bucket { count, min, max } }, valueFilterMatrix { availableValue { count, id }, code } } } }, errors { errorCode, subErrorCode, message } } } ",
+        logTags: {
+            id: "15932",
+            name: "Đà Lạt",
+            activityId: "0",
+            cityId: "15932",
+            cityName: "Đà Lạt",
+            countryId: "38",
+            countryName: "Việt Nam",
+            countryISO2: "VN",
+            areaId: "0",
+            areaName: "undefined",
+            stateName: "Tỉnh Lâm Ðồng",
+            operation: "search",
+            selectedActivity: "",
+            searchType: "CITY",
+            pageSize: "12",
+            pageNumber: "1",
+            sortCode: "Recommended",
+            sortOrder: "Descending",
+        },
+        pageTypeId: 9109,
+    };
+};
 
 // url to get flight from agoda
 const agodaGetFlightURL = "https://www.agoda.com/api/gw/flight/searchunbundled";
@@ -1414,8 +1454,10 @@ const bayDepGetFlightPayload = (data) => {
     const payload = [];
     for (const airlineCode of airlineList) {
         payload.push(
-            `requestType=Search&legArr=${data.from}${data.to}${data.day}${data.month
-            }${data.year}&adt=${data.adult}&chd=${data.child}&inf=${data.infant
+            `requestType=Search&legArr=${data.from}${data.to}${data.day}${
+                data.month
+            }${data.year}&adt=${data.adult}&chd=${data.child}&inf=${
+                data.infant
             }&airline=${airlineCode}&searchType=standard&currency=VND&lang=en-US&nearbyAirport=yes&fareclass=${data.seatClass.toLowerCase()}`
         );
     }

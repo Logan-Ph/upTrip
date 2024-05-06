@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
 const User = require("../models/user");
+const Favorites = require("../models/favorites");
+const { stringSimilarity } = require("string-similarity-js");
 const {
     generateToken,
     generateRefreshToken,
@@ -58,6 +60,7 @@ const {
     agodaTourAttractionsAdvancedSearchHeaders,
     agodaTourAttractionsAdvancedSearchParams,
 } = require("../utils/requestOptions");
+const { errorMonitor } = require("nodemailer/lib/xoauth2");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
@@ -453,10 +456,14 @@ exports.bookingAutoComplete = async (req, res) => {
     }
 };
 
-exports.agodaTourAttractionsAutocomplete = async (req,res) => {
+exports.agodaTourAutocomplete = async (req,res) => {
     try {
         const { keyword } = req.body;
-        const response = await axios.get(agodaTourAttractionsAutocompleteURL, agodaTourAttractionsAutocompletePayload(keyword));
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        }
+        const response = await axios.get(agodaTourAttractionsAutocompleteURL, {params: agodaTourAttractionsAutocompletePayload(keyword), headers: headers});
         return res.status(200).json(response.data.suggestionList[0] || null);
     } catch (error) {
         console.log(error);
@@ -815,14 +822,14 @@ exports.advancedSearchHotelBooking = async (req, res) => {
     }
 };
 
-exports.agodaTourAttractionsAdvancedSearch = async (req,res) => {
+exports.agodaTourAdvancedSearch = async (req,res) => {
     try{
         const {cityId, pageIndex} = req.body
         const queryString = `?operation=search&cityId=${cityId}&pageNumber=${pageIndex}`
-        const payload = agodaTourAttractionsAdvancedSearchPayload(queryString, cityId, pageIndex)
+        const payload = agodaTourAttractionsAdvancedSearchPayload({queryString, cityId: Number(cityId), pageIndex: Number(pageIndex)})
         const response = await axios.post(agodaTourAttractionsAdvancedSearchURL, payload, {
             headers: agodaTourAttractionsAdvancedSearchHeaders(),
-            params: agodaTourAttractionsAdvancedSearchParams(cityId, pageIndex)
+            params: agodaTourAttractionsAdvancedSearchParams({cityId:cityId, pageNumber:pageIndex})
         })
         return res.status(200).json(response?.data?.data?.search?.result?.activities)
     }catch(er){
@@ -834,7 +841,11 @@ exports.agodaTourAttractionsAdvancedSearch = async (req,res) => {
 exports.advancedSearchFlights = async (req, res) => {
     try {
         const url = agodaGetFlightURL;
-        const items = [];
+        let items = {
+            flights: [],
+            priceMax: 0,
+            priceStep: 0
+        };
         const payload = agodaGetFlightPayload(req.body)
         await axios.post(url, payload, {
             headers: {
@@ -851,29 +862,29 @@ exports.advancedSearchFlights = async (req, res) => {
                         airline.push(flight.carrierContent.carrierName)
                         arrival = flight.arrivalDateTime
                     }
-                    items.push({
+                    items.flights.push({
                         flightNo: flightNo,
-                        departureTime: item.outboundSlice.segments[0].departDateTime.substring(11, 16),
-                        arrivalTime: arrival.substring(11, 16),
+                        departureTime: item.outboundSlice.segments[0].departDateTime,
+                        arrivalTime: arrival,
                         airline: airline,
                         duration: formatMinutesToHoursAndMinutes(item.outboundSlice.duration),
                         agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
-                        // tripComPrice: "null",
-                        // myTripPrice: "null",
-                        // bayDepPrice: "null",
                     })
                 }
+                items.priceMax = res.data.trips[0].filters.price.to;
+                items.priceStep = res.data.trips[0].filters.price.step
             })
             .catch(er => {
                 throw er
             })
         return res.status(200).json(items)
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 }
 
-exports.tourAttractionsAutocomplete = async (req, res) => {
+exports.attractionsAutocomplete = async (req, res) => {
     try{
         const {keyword} = req.body
         const payload = tripComGetTourAttractionsAutocompletePayload(keyword)
@@ -926,8 +937,6 @@ exports.getTripComFlight = async (req, res) => {
                     items.push({
                         flightNo: flightNo,
                         airline: airline,
-                        // departure: item.segmentList[0].departDateTime.replace(' ', 'T'),
-                        // arrival: item.segmentList[0].arriveDateTime.replace(' ', 'T'),
                         price: item.price.averagePrice
                     })
                 }
@@ -965,9 +974,6 @@ exports.getMyTripFlight = async (req, res) => {
                     }
                     items.push({
                         flightNo: flightNo,
-                        //airline: airline,
-                        //departure: item.bounds[0].segments[0].departuredAt,
-                        //arrival: arrival,
                         price: item.travelerPrices[0].price.price.value / 100 * 25000,
                     })
                 }
@@ -1034,6 +1040,9 @@ exports.getBayDepFlight = async (req, res) => {
         Promise.all(requests)
             .then(response => {
                 for (const res of response) {
+                    if (!res.data.ListFareOption) {
+                        throw new Error('Invalid response: ListFareOption not found');
+                    }
                     for (const item of res.data.ListFareOption) {
                         const flightNo = []
                         const airline = []
@@ -1043,17 +1052,14 @@ exports.getBayDepFlight = async (req, res) => {
                         }
                         items.push({
                             flightNo: flightNo,
-                            //airline: airline,
-                            //departure: item.ListFareData[0].ListFlight[0].StartDate,
-                            //arrival: item.ListFareData[0].ListFlight[0].EndDate,
                             price: item.PriceAdt
                         })
                     }
                 }
                 return res.status(200).json(items)
             })
-            .catch(error => {
-                throw error
+            .catch(er => {
+                return res.status(500).json(er);
             });
     } catch (error) {
         return res.status(500).json(error);
@@ -1062,11 +1068,10 @@ exports.getBayDepFlight = async (req, res) => {
 
 exports.flightSearchAutocomplete = async (req, res) => {
     try {
-        const options = (req.body.options) ? req.body.options : airportOptions
         const result = []
-        for (const opt of options) {
-            if (stringSimilarity(req.body.input, opt.cityName) > 0) {
-                opt.similarity = stringSimilarity(req.body.input, opt.cityName)
+        for (const opt of airportOptions) {
+            if (stringSimilarity(req.body.input, opt.cityName) > 0 || stringSimilarity(req.body.input, opt.airportCode) > 0) {
+                opt.similarity = Math.max(stringSimilarity(req.body.input, opt.cityName), stringSimilarity(req.body.input, opt.airportCode))
                 result.push(opt)
             }
         }
@@ -1075,5 +1080,80 @@ exports.flightSearchAutocomplete = async (req, res) => {
     } catch (err) {
         console.log(err)
         return res.status(500).json(err)
+    }
+}
+
+exports.addToFavorites = async (req, res) => {
+    try {
+        let favorites = await Favorites.findOne({ userID: req.body.userID });
+
+        if (!favorites) {
+            favorites = new Favorites({
+                userID: req.body.userID,
+                flights: [],
+                hotels: [],
+                attractions: [],
+            });
+        }
+
+        switch (req.body.itemType) {
+            case "hotel":
+                favorites.hotels.push(req.body.hotelName);
+                break;
+            case "flight":
+                favorites.flights.push({
+                    flightNo: req.body.flightNo,
+                    departure: req.body.departure,
+                    arrival: req.body.arrival,
+                    from: req.body.from,
+                    to: req.body.to,
+                    agency: req.body.agency,
+                });
+                break;
+            case "attraction":
+                favorites.attractions.push(req.body.attractionName);
+                break;
+        }
+        await favorites.save();
+        return res.status(200).json("Added to Favorites")
+    } catch (err) {
+        return res.status(500).json("Error. Try again later")
+    }
+}
+
+exports.deleteHotel = async (req, res) => {
+    try {
+        const favorites = await Favorites.findOne({ userID: req.params.id });
+        if (!favorites || favorites.hotels.length == 0) throw new Error("Favorites is empty");
+        favorites.hotels = favorites.hotels.filter(hotel => hotel !== req.params.hotelName);
+        await favorites.save()
+        return res.status(200).json("Deleted successfully")
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json(err.message || "Error. Try again later")
+    }
+}
+
+exports.deleteFlight = async (req, res) => {
+    try {
+        const favorites = await Favorites.findOne({ userID: req.params.id });
+        if (!favorites || favorites.flights.length == 0) throw new Error("Favorites is empty");
+        favorites.flights = favorites.flights.filter(flight => flight.flightNo !== req.params.flightNo);
+        await favorites.save()
+        return res.status(200).json("Deleted successfully")
+    } catch(err) {
+        return res.status(500).json(err.message || "Error. Try again later")
+    }
+}
+
+exports.deleteAttraction = async(req, res) => {
+    try {
+        const favorites = await Favorites.findOne({ userID: req.params.id });
+        if (!favorites || favorites.attractions.length == 0) throw new Error("Favorites is empty");
+        favorites.attractions = favorites.attractions.filter(attraction => attraction !== req.params.attractionName);
+        await favorites.save()
+        return res.status(200).json("Deleted successfully")
+    } catch(err) {
+        return res.status(500).json(err.message || "Error. Try again later")
     }
 }

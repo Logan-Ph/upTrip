@@ -103,18 +103,36 @@ export function fetchFlightAutocomplete(keyword) {
         })
 }
 
-export function fetchTourAttractionsAutocomplete(keyword) {
+export function fetchAttractionsAutocomplete(keyword) {
     return axios
-        .post('/tour-attractions/autocomplete', { keyword }, options)
+        .post('/attractions/autocomplete', { keyword }, options)
         .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));
         });
 }
 
-export function fetchTourAttractions(payload) {
+export function fetchToursAutocomplete(keyword) {
     return axios
-        .post('/tour-attractions', payload, options)
+        .post('/tours/autocomplete', { keyword }, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+
+export function fetchAttractions(payload) {
+    return axios
+        .post('/attractions', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+
+export function fetchTours(payload) {
+    return axios
+        .post('/tours', {cityId: payload.id, pageIndex: payload.pageIndex}, options)
         .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));

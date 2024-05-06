@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 export function AdvancedExperienceCard({ data }) {
 
     return (
@@ -13,7 +12,6 @@ export function AdvancedExperienceCard({ data }) {
 
 function ExperienceCard({data}){
     const textRef = useRef(null);
-    const [isTruncated, setIsTruncated] = useState(false);
 
     useEffect(() => {
         const calculateRows = () => {
@@ -23,7 +21,6 @@ function ExperienceCard({data}){
                 const lineHeight = parseInt(computedStyle.lineHeight, 10);
                 const divHeight = divElement.clientHeight;
                 const lines = divHeight / lineHeight;
-                setIsTruncated(lines > 3);
             }
         };
 
@@ -65,13 +62,15 @@ function ExperienceCard({data}){
         <div ref={ref}
          className={`relative border border-[#CDEAE1] rounded-lg transition ease-in-out delay-100  hover:translate-x-1 hover:scale-105 duration-300 shadow-md ${visibilityClass}`}>
                 <div>
-                    <img src={data.card.coverImageUrl}
-                        className="w-full h-[245px] object-cover rounded-lg"/>
+                    <img src={data?.content?.images?.[0]?.url}
+                        className="w-full h-[245px] object-cover rounded-lg"
+                        alt="tourist cover"    
+                    />
                 </div>
 
                 <div className="px-4 py-6 space-y-2">
                     {/* tours' name can be long (max 2 rows) */}
-                    <p className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-2">{data.card.poiName}</p>
+                    <p className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-2">{data?.content?.activity?.title}</p>
                     <div className="flex items-center">
                         <div className="pr-1">
                             <svg
@@ -87,7 +86,7 @@ function ExperienceCard({data}){
                         </div>
                         {/* cái này m để nó theo cái tên mà ngta search á  */}
                         <div className="font-light text-sm md:text-md">
-                            <span className="font-semibold text-sm md:text-md">{data.card.location}</span> {" | "} {data.card.distanceStr}
+                            <span className="font-semibold text-sm md:text-md">{data?.content?.activity?.location?.city?.name}</span> {" | "} {data?.content?.activity?.location?.country?.name}
                         </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -105,32 +104,29 @@ function ExperienceCard({data}){
                         </div>
                         <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
                             <p className="font-bold text-sm md:text-md">
-                                {data.card.commentInfo.commentScore}
+                                {data?.card?.commentInfo?.commentScore || data?.content?.reviewSummary?.averageScore}
                                 <span className="text-sm md:text-md font-light">
                                     /5
                                 </span>
                             </p>
                         </div>
-                        <p className="text-sm font-light">86 reviews</p>
+                        <p className="text-sm font-light">{data?.content?.reviewSummary?.totalCount} reviews</p>
                     </div>
 
                     {/* Only tour hasthis section */}
-                    <div className="bg-[#CDEAE1] w-1/2 px-2">
-                        <p className="font-semibold mx-auto">Free cancellation</p>
+                    <div className="bg-[#CDEAE1] w-1/2 px-3">
+                        {data?.content?.badges?.activityHighlights?.map((badge, index) => (
+                            <p className="font-semibold mx-auto">{badge?.badgeType.split("_").join(" ").toLowerCase()}</p>
+                        ))}
                     </div>
                 </div>
                 <div className="flex flex-col items-end px-4 pb-4">
                     <div className="flex items-center">
-                        <p className="text-sm font-light mr-1 line-through">1.500.000 VND</p>
+                        <p className="text-sm font-light mr-1 line-through">{Number(data?.activityRepresentativeInfo?.pricingSummary?.pricing?.[0]?.display?.perBook?.total?.allInclusive?.crossedOut).toLocaleString("vi-VN")} VND</p>
                         <p className="font-semibold text-lg text-red-500">
-                                {Number(data.card.priceInfo.price).toLocaleString("vi-VN")} VND
+                                {Number(data?.activityRepresentativeInfo?.pricingSummary?.pricing?.[0]?.display?.perBook?.total?.allInclusive?.chargeTotal).toLocaleString("vi-VN")} VND
                         </p>
                     </div>
-                    
-                    {/* Followed Agoda */}
-                    <div className="bg-[#fac800] px-4 py-1">
-                        <p className="font-bold text-black">Top tour</p>
-                    </div>  
                 </div>
                 <div className="absolute top-0 right-0 border border-transparent w-[40px] h-[40px] flex items-center justify-between rounded-md cursor-pointer py-2 bg-[#8DD3BB]" 
                     onClick={toggleHeart}>

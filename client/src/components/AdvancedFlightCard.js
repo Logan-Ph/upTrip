@@ -155,8 +155,8 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
                         </div>
 
                         <div className="flex-col">
-                            <div className="font-bold text-sm md:text-lg">{departure}-{arrival}</div>
-                            <div className="font-extralight text-sm md:text-lg text-[#9A9A9A] text-nowrap">{carrier}</div>
+                            <div className="font-bold text-xs md:text-md">{departure.substring(11, 16)}-{arrival.substring(11, 16)}</div>
+                            <div className="font-extralight text-xs md:text-sm text-[#9A9A9A] text-nowrap">{carrier}</div>
                         </div>
 
                         <div className="mx-auto font-light text-sm md:text-lg  text-black">{stop}</div>

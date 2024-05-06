@@ -15,6 +15,8 @@ import AdvancedSearchExperiencePage from "../pages/AdvancedSearchExperiencePage"
 import Favorites from "../pages/Favorites";
 import FavoriteItems from "../pages/FavoriteItems";
 import HotelDetailedPage from "../pages/HotelDetailedPage";
+import Itinerary from "../pages/Itinerary";
+import DetailedItinerary from "../pages/DetailedItinerary";
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {
@@ -70,6 +72,14 @@ export default function Router() {
                 {
                     path: "/advanced-experience-search",
                     element: <AdvancedSearchExperiencePage />,
+                },
+                {
+                    path: "/itinerary",
+                    element: <Itinerary />,
+                },
+                {
+                    path: "/detailed-itinerary",
+                    element: <DetailedItinerary />,
                 },
                 {
                     path: "/hotel-detailed-page",
