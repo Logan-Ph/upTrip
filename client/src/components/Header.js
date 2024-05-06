@@ -3,13 +3,14 @@ import NavBar from "./Navbar";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
 import Datepicker from "flowbite-datepicker/Datepicker";
-import { fetchTourAttractionsAutocomplete, fetchTripAutoComplete } from "../api/fetch";
+import { fetchTourAttractionsAutocomplete, fetchTripAutoComplete, fetchFlightAutocomplete } from "../api/fetch";
 import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import warningNotify from "../utils/warningNotify";
 
 export default function Header() {
     const [keyword, setKeyword] = useState("");
-    const [tab, setTab] = useState("stay");
+    const [tab, setTab] = useState("flight");
 
     const handleNavigate = useHandleNavigate(
         `/quick-search/?keyword=${keyword}`
@@ -209,6 +210,115 @@ function AdvancedSearchExperience() {
 }
 
 function AdvancedSearchFlight() {
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const [from, setFrom] = useState({
+        cityName: searchParams.get("ori"),
+        airportCode: searchParams.get("from")
+    })
+    const [to, setTo] = useState({
+        cityName: searchParams.get("des"),
+        airportCode: searchParams.get("to")
+    })
+    const [seatClass, setSeatClass] = useState(searchParams.get("seatClass"))
+    const [numberOfAdult, setNumberOfAdult] = useState(searchParams.get("adult"));
+    const [numberOfChild, setNumberOfChild] = useState(searchParams.get("child"));
+    const [numberOfInfant, setNumberOfInfant] = useState(searchParams.get("infant"));
+    const [keywordFrom, setKeywordFrom] = useState();
+    const [keywordTo, setKeywordTo] = useState();
+    const [fromEdit, setFromEdit] = useState(false);
+    const [toEdit, setToEdit] = useState(false);
+    const [debouncedKeywordFrom, setDebouncedKeywordFrom] = useState(null)
+    const [debouncedKeywordTo, setDebouncedKeywordTo] = useState(null)
+    const [isChanged, setIsChanged] = useState(false)
+    const date = useRef();
+
+
+    useEffect(() => {
+        setFromEdit(true)
+        const handler = setTimeout(() => {
+            setDebouncedKeywordFrom(keywordFrom);
+        }, 250); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keywordFrom]);
+
+    useEffect(() => {
+        setToEdit(true)
+        const handler = setTimeout(() => {
+            setDebouncedKeywordTo(keywordTo);
+        }, 250); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keywordTo]);
+
+    const fromAutocomplete = useQuery({
+        queryKey: ['advanced-search', "flight", debouncedKeywordFrom],
+        queryFn: () => fetchFlightAutocomplete(debouncedKeywordFrom),
+        refetchOnWindowFocus: false,
+        enabled: !!keywordFrom,
+    })
+
+    const toAutocomplete = useQuery({
+        queryKey: ['advanced-search', "flight", debouncedKeywordTo],
+        queryFn: () => fetchFlightAutocomplete(debouncedKeywordTo),
+        refetchOnWindowFocus: false,
+        enabled: !!keywordTo,
+    })
+
+    useEffect(() => {
+        let datePicker;
+
+        if (date.current) {
+            datePicker = new Datepicker(date.current, {
+                autohide: true,
+                minDate: new Date(),
+            });
+            setIsChanged(true)
+        }
+        // Cleanup function to destroy datepickers when component unmounts or rerenders
+        return () => {
+            if (datePicker) datePicker.destroy();
+        };
+    }, []);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        console.log("run")
+
+        const payload = {
+            from: from.airportCode,
+            fromCity: from.cityName,
+            to: to.airportCode,
+            toCity: to.cityName,
+            seatClass: seatClass,
+            adult: numberOfAdult,
+            child: numberOfChild,
+            infant: numberOfInfant,
+            year: date.current?.value.substring(6, 10),
+            month: date.current?.value.substring(0, 2),
+            day: date.current?.value.substring(3, 5),
+        }
+
+        for (let key in payload) {
+            if (payload.hasOwnProperty(key) && payload[key] === null) {
+                console.log(key)
+                warningNotify("Please provide all information.")
+                return;
+            }
+        }
+
+        navigate(
+            `advanced-flight-search?ori=${payload.fromCity}&des=${payload.toCity}&from=${payload.from}&to=${payload.to}&adult=${payload.adult}&child=${payload.child}&infant=${payload.infant}&seatClass=${payload.seatClass}&year=${payload.year}&month=${payload.month}&day=${payload.day}`
+        );
+
+    }
+
     return (
         <div
             className="p-6 rounded-r-lg rounded-bl-lg bg-white shadow-lg"
@@ -218,27 +328,6 @@ function AdvancedSearchFlight() {
         >
             <div className="my-4 md:my-0">
                 <div className="">
-                    <div className="flex grow-1 space-x-10 mb-4">
-                        <div>
-                            <input
-                                type="radio"
-                                id="one-way"
-                                name="radio-1"
-                                className="radio"
-                                checked
-                            />
-                            <label for="one-way">&ensp; One way</label>
-                        </div>
-                        <div>
-                            <input
-                                type="radio"
-                                id="round-trip"
-                                name="radio-1"
-                                className="radio"
-                            />
-                            <label for="round-trip">&ensp; Round trip</label>
-                        </div>
-                    </div>
                     <div className="flex flex-col md:flex-row items-center md:space-x-4">
                         <div className="relative w-full md:w-1/2 mb-2">
                             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -250,6 +339,11 @@ function AdvancedSearchFlight() {
                                     type="text"
                                     className="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px]"
                                     placeholder="City or airport"
+                                    value={fromEdit ? keywordFrom : from.cityName}
+                                    onChange={(e) => {
+                                        setKeywordFrom(e.target.value)
+                                        setFromEdit(true)
+                                    }}
                                 />
                                 <label
                                     for="floating_filled"
@@ -258,30 +352,27 @@ function AdvancedSearchFlight() {
                                     Origin
                                 </label>
                             </div>
-                            <div className="relative z-40">
-                                <ul className="absolute menu bg-base-200 w-full rounded-b-lg">
-                                    <li>
-                                        <div>
-                                            <i className="fa-solid fa-plane"></i>{" "}
-                                            Da Nang Internation Airport
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div>
-                                            {" "}
-                                            <i className="fa-solid fa-plane"></i>{" "}
-                                            Tan Son Nhat Intercontenial Airport
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <a>
-                                            {" "}
-                                            <i className="fa-solid fa-plane"></i>{" "}
-                                            Noi Bai Intercontenial Airport
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                            {fromAutocomplete.isFetched && fromEdit && (
+                                <div className="relative z-40">
+                                    <ul className="absolute menu bg-base-200 w-full rounded-b-lg">
+                                        {fromAutocomplete?.data?.map(
+                                            (item) => {
+                                                return (
+                                                    <li
+                                                        onClick={() => {
+                                                            setFrom(item)
+                                                            setFromEdit(false)
+                                                        }}>
+                                                        <a>
+                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
+                                                        </a>
+                                                    </li>
+                                                )
+                                            }
+                                        )}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                         <div className="relative w-full md:w-1/2 mb-2">
                             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -293,6 +384,12 @@ function AdvancedSearchFlight() {
                                     type="text"
                                     className="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px]"
                                     placeholder="City or airport"
+                                    value={toEdit ? keywordTo : to.cityName}
+                                    onChange={(e) => {
+                                        setKeywordTo(e.target.value)
+                                        setToEdit(true)
+                                    }
+                                }
                                 />
                                 <label
                                     for="floating_filled"
@@ -300,32 +397,29 @@ function AdvancedSearchFlight() {
                                 >
                                     Destination
                                 </label>
-                                <div className="relative z-40">
-                                    <ul className="absolute menu bg-base-200 w-full rounded-b-lg">
-                                        <li>
-                                            <div>
-                                                <i className="fa-solid fa-plane"></i>{" "}
-                                                Da Nang Internation Airport
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div>
-                                                {" "}
-                                                <i className="fa-solid fa-plane"></i>{" "}
-                                                Tan Son Nhat Intercontenial
-                                                Airport
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div>
-                                                {" "}
-                                                <i className="fa-solid fa-plane"></i>{" "}
-                                                Noi Bai Intercontenial Airport
-                                            </div>
-                                        </li>
+                            </div>
+
+                            {toAutocomplete.isFetched && toEdit && (
+                                <div class="relative z-40">
+                                    <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
+                                        {toAutocomplete?.data?.map(
+                                            (item) => {
+                                                return (
+                                                    <li
+                                                        onClick={() => {
+                                                            setTo(item);
+                                                            setToEdit(false)
+                                                        }}>
+                                                        <a>
+                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
+                                                        </a>
+                                                    </li>
+                                                )
+                                            }
+                                        )}
                                     </ul>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
 
@@ -344,15 +438,15 @@ function AdvancedSearchFlight() {
                             </div>
                             <div>
                                 <input
+                                    ref={date}
                                     datepicker
                                     datepicker-autohide
+                                    datepicker-format="dd/mm/yyyy"
                                     name="start"
                                     type="text"
+                                    value={date.current?.value}
                                     className="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px]"
                                     placeholder="dd/mm/yyyy"
-                                    onSelect={(e) =>
-                                        console.log(e.target.value)
-                                    }
                                     id="datepickerId3"
                                 />
                                 <label
@@ -576,7 +670,9 @@ function AdvancedSearchFlight() {
                     </div>
 
                     <div className="w-full mt-4">
-                        <button className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
+                        <button 
+                            onClick={(e) => handleSubmit(e)}
+                            className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
                             Search
                         </button>
                     </div>
@@ -1240,29 +1336,13 @@ function AdvancedSearchHotel() {
                                                                 );
                                                             }
 
-                                                            const newValue =
-                                                                parseInt(
-                                                                    e.target
-                                                                        .value,
-                                                                    10
-                                                                );
-                                                            if (
-                                                                newValue >= 0 &&
-                                                                newValue <= 17
-                                                            ) {
-                                                                setChildrenAges(
-                                                                    (prev) => {
-                                                                        const temp =
-                                                                            [
-                                                                                ...prev,
-                                                                            ];
-                                                                        temp[
-                                                                            index
-                                                                        ] =
-                                                                            newValue;
-                                                                        return temp;
-                                                                    }
-                                                                );
+                                                            const newValue = parseInt(e.target.value, 10);
+                                                            if (newValue >= 0 && newValue <= 17) {
+                                                                setChildrenAges((prev) => {
+                                                                    const temp = [...prev];
+                                                                    temp[index] = newValue;
+                                                                    return temp;
+                                                                });
                                                             }
                                                         }}
                                                     />

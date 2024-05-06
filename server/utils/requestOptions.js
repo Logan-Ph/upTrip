@@ -945,7 +945,14 @@ const agodaAdvancedSearchHotelPayload = (
 };
 // payload to get flights from agoda
 const agodaGetFlightPayload = (data) => {
+<<<<<<< HEAD
     const date = `${data.year}-${data.month}-${data.day}`;
+=======
+    const date = `${data.year}-${data.month}-${data.day}`
+    let filter = {
+        "cabinType": data.seatClass.charAt(0) + data.seatClass.slice(1).toLowerCase(),
+    }
+>>>>>>> 77350879f30f72b9829b64482cb32b802bd502d7
     const passengers = [
         {
             number: data.adult,
@@ -963,6 +970,13 @@ const agodaGetFlightPayload = (data) => {
             number: data.infant,
             passengerType: 3,
         });
+    }
+
+    if (data.priceFilter.length !== 0) {
+        filter.price = {
+            from: data.priceFilter[0],
+            to: data.priceFilter[1]
+        }
     }
     return {
         flightsRequestId: "02bed71b-cbdc-43bd-ac49-003d1e3edf7b",
@@ -989,6 +1003,7 @@ const agodaGetFlightPayload = (data) => {
                                 code: data.to,
                             },
                         ],
+<<<<<<< HEAD
                         id: 1,
                         departureDate: date,
                         filter: {
@@ -1008,6 +1023,29 @@ const agodaGetFlightPayload = (data) => {
                 sort: {
                     field: data.sortField,
                     direction: data.sortDir,
+=======
+                        "id": 1,
+                        "departureDate": date,
+                        "filter": {
+                            "arrivalTime": {
+                                "from": data.arrivalTime[0],
+                                "to": data.arrivalTime[1],
+                            },
+                            "departureTime": {
+                                "from": data.departureTime[0],
+                                "to": data.departureTime[1],
+                            },
+                            "carrier": {
+                                "preferred": data.prefer,
+                            }
+                        }
+                    }
+                ],
+                "filter": filter,
+                "sort": {
+                    "field": data.sortField,
+                    "direction": data.sortDir,
+>>>>>>> 77350879f30f72b9829b64482cb32b802bd502d7
                 },
             },
         ],

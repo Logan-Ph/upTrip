@@ -73,5 +73,15 @@ router.post('/signup', userController.signup)
 
 router.get('/user/:token/verify-email', userController.verifyEmail) 
 
+// add to favorites
+router.post('/add-to-favorites', userController.addToFavorites)
+
+// remove from favorites
+router.delete('/delete-from-favorites/hotel/:id/:hotelName', userController.deleteHotel)
+router.delete('/delete-from-favorites/flight/:id/:flightNo', userController.deleteFlight)
+router.delete('/delete-from-favorites/attraction/:id/:attractionName', userController.deleteAttraction)
+
+
+
 
 module.exports = router;
