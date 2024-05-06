@@ -268,9 +268,9 @@ export default function AdvancedSearchHotelPage() {
                                         });
                                 })}
                             {(hotelListLoading ) && (
-                                <div className="mt-8">
-                                    <ASearchSkeleton />
-                                </div>
+                                
+                                <ASearchSkeleton />
+                                
                             )}
                         </div>
                     </div>
