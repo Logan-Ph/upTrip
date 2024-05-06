@@ -39,7 +39,7 @@ export function PlanYourTripCard() {
 export function AdvancedSearchCard() {
     return (
         <>
-            <div className="bg-[#F3F3F3] rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8 skeleton">
+            <div className="bg-[#F3F3F3] rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8 skeleton mt-4">
                 <div className="border-[#DDDDDD] bg-[#DDDDDD] h-[252px]"></div>
 
                 <div className="flex-col space-y-2 py-4 col-span-2">
