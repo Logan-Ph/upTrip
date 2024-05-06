@@ -45,7 +45,7 @@ function Carousel() {
             </div>
             <div className="absolute flex justify-between transform -translate-y-1/2 left-2 right-2 top-1/2">
                   <button onClick={(e) => navigateCarousel(e, 0)} className="btn btn-circle">❮</button> 
-                <button onClick={(e) => navigateCarousel(e, wondersOfVn.length - 1)} className="btn btn-circle">❯</button>
+                    <button onClick={(e) => navigateCarousel(e, wondersOfVn.length - 1)} className="btn btn-circle">❯</button>
             </div>
             </div>
 

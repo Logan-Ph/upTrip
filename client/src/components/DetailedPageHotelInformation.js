@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom"
 import { IconSwimming, IconGlassChampagne, IconHomeBolt, IconHorseToy,IconToolsKitchen2, IconMassage, IconBarbell, IconDoor, IconPool,IconDesk } from '@tabler/icons-react';
+import * as React from 'react';
+import Slider from '@mui/material/Slider';
 export default function DetailedPageHotelInformation(){
     return(
         <>
@@ -60,6 +62,9 @@ export default function DetailedPageHotelInformation(){
         </div>
         <div className="my-6">
             <HotelRelatedInformation/>
+        </div>
+        <div className="my-6">
+            <NearbyHotel/>
         </div>
         </>
     )
@@ -134,8 +139,20 @@ function HotelRelatedInformation(){
                     
                 </div>
             </div>
-     
-       
+        </>
+    )
+}
+
+function NearbyHotel(){
+    const value = 30; // Set your rating value here
+    return(
+        <>
+        <div className="relative">
+        <Slider  value={value} />
+            <div className="grid grid-cols">
+
+            </div>
+        </div>
         </>
     )
 }
