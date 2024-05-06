@@ -119,7 +119,7 @@ export default function AdvancedSearchHotelPage() {
     });
 
     const hotelNames = useMemo(() => {
-        const lastPage = hotelList?.pages?.[hotelList.pages.length - 1];
+        const lastPage = hotelList?.pages?.[hotelList?.pages?.length - 1];
         if (!lastPage) return [];
         return lastPage.hotelName;
     }, [hotelList?.pages]);
@@ -129,7 +129,7 @@ export default function AdvancedSearchHotelPage() {
         queryFn: () => fetchHotelPriceComparison({ ...payload, hotelNames }),
         retry: false,
         refetchOnWindowFocus: false,
-        enabled: !!(hotelNames.length > 0),
+        enabled: !!(hotelNames?.length > 0),
     });
 
     useEffect(() => {
@@ -268,7 +268,9 @@ export default function AdvancedSearchHotelPage() {
                                         });
                                 })}
                             {(hotelListLoading ) && (
-                                <ASearchSkeleton />
+                                <div className="mt-8">
+                                    <ASearchSkeleton />
+                                </div>
                             )}
                         </div>
                     </div>

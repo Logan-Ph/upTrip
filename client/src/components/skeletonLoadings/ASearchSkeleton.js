@@ -4,8 +4,6 @@ export default function ASearchSkeleton(){
         <>
             <div className="flex-co w-full">
                 <AdvancedSearchCard/>
-                <AdvancedSearchCard/>
-                <AdvancedSearchCard/>
             </div>       
         </>
     )

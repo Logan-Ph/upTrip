@@ -117,3 +117,23 @@ export function QuickSearchSkeletonCard() {
         </>
     );
 }
+
+export function TourAndAttractionCard(){
+    return(
+        <>
+            <div className="border border-transparent rounded-md shadow-md bg-[#F3F3F3] pb-10">
+                <div className="space-y-4 md:space-y-6">
+                    <div className="p-4">
+                        <div className="h-[220px] border-[#DDDDDD] px-12 py-2 bg-[#DDDDDD] rounded-md"></div>
+                    </div>
+                    <div className="w-3/4 space-y-4 p-4">
+                        <div className="border-[#DDDDDD] px-6 py-2 bg-[#DDDDDD] rounded-md"></div>
+                        <div className="border-[#DDDDDD] px-6 py-2 bg-[#DDDDDD] rounded-md"></div>
+                        <div className="border-[#DDDDDD] px-6 py-2 bg-[#DDDDDD] rounded-md"></div>
+                    </div>
+         
+                </div>
+            </div>
+        </>
+    )
+}

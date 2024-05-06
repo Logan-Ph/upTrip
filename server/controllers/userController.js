@@ -51,6 +51,12 @@ const {
     tripComGetTourAttractionsAutocompleteURL,
     tripComGetTourAttractionsURL,
     tripGetTourAttractionsPayload,
+    agodaTourAttractionsAutocompleteURL,
+    agodaTourAttractionsAutocompletePayload,
+    agodaTourAttractionsAdvancedSearchPayload,
+    agodaTourAttractionsAdvancedSearchURL,
+    agodaTourAttractionsAdvancedSearchHeaders,
+    agodaTourAttractionsAdvancedSearchParams,
 } = require("../utils/requestOptions");
 
 exports.homePage = (req, res) => {
@@ -447,6 +453,17 @@ exports.bookingAutoComplete = async (req, res) => {
     }
 };
 
+exports.agodaTourAttractionsAutocomplete = async (req,res) => {
+    try {
+        const { keyword } = req.body;
+        const response = await axios.get(agodaTourAttractionsAutocompleteURL, agodaTourAttractionsAutocompletePayload(keyword));
+        return res.status(200).json(response.data.suggestionList[0] || null);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+}
+
 exports.priceComparisonHotels = async (req, res) => {
     try {
         const {
@@ -792,15 +809,27 @@ exports.advancedSearchHotelBooking = async (req, res) => {
             scriptContent["ROOT_QUERY"]["searchQueries"]
         );
         const hotel = searchQueriesArray[1]["results"][0]; // select the name by ".displayName.text"
-        // select the price by "blocks"
-        // console.log(Hotel.displayName);
-        // console.log(Hotel.blocks);
-
         return res.status(200).json({ price: hotel.blocks });
     } catch (error) {
         return res.status(500).json(error);
     }
 };
+
+exports.agodaTourAttractionsAdvancedSearch = async (req,res) => {
+    try{
+        const {cityId, pageIndex} = req.body
+        const queryString = `?operation=search&cityId=${cityId}&pageNumber=${pageIndex}`
+        const payload = agodaTourAttractionsAdvancedSearchPayload(queryString, cityId, pageIndex)
+        const response = await axios.post(agodaTourAttractionsAdvancedSearchURL, payload, {
+            headers: agodaTourAttractionsAdvancedSearchHeaders(),
+            params: agodaTourAttractionsAdvancedSearchParams(cityId, pageIndex)
+        })
+        return res.status(200).json(response?.data?.data?.search?.result?.activities)
+    }catch(er){
+        console.log(er)
+        return res.status(500).json(er)
+    }
+}
 
 exports.advancedSearchFlights = async (req, res) => {
     try {

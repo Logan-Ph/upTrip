@@ -3,7 +3,7 @@ import NavBar from "./Navbar";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
 import Datepicker from "flowbite-datepicker/Datepicker";
-import { fetchTripAutoComplete } from "../api/fetch";
+import { fetchTourAttractionsAutocomplete, fetchTripAutoComplete } from "../api/fetch";
 import { useNavigate } from "react-router-dom";
 import warningNotify from "../utils/warningNotify";
 
@@ -126,6 +126,40 @@ function HandleSelection({ tab }) {
 }
 
 function AdvancedSearchExperience() {
+    const [keyword, setKeyword] = useState()
+    const [debouncedKeyword, setDebouncedKeyword] = useState(keyword);
+    const [autocompletePayload, setAutocompletePayload] = useState();
+    const navigate = useNavigate();
+    useEffect(() => {
+        setAutocompletePayload(null);
+    }, [debouncedKeyword]);
+
+    const { data, isFetched } = useQuery({
+        queryKey: ["tour-attractions", "autocomplete", debouncedKeyword],
+        queryFn: () => fetchTourAttractionsAutocomplete(debouncedKeyword),
+        refetchOnWindowFocus: false,
+        enabled: !!debouncedKeyword,
+    });
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedKeyword(keyword);
+        }, 250); // Delay of 1 second
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [keyword]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!autocompletePayload) {
+            warningNotify("Please select a location");
+            return;
+        }
+        navigate(`/advanced-experience-search/?districtId=${autocompletePayload.districtId}&districtName=${autocompletePayload.districtName}`);
+    };
+
     return (
         <div
             className="p-4 rounded-r-lg rounded-bl-lg bg-white shadow-lg"
@@ -142,34 +176,29 @@ function AdvancedSearchExperience() {
                         <input
                             className="block rounded-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px] truncate"
                             placeholder="Search for activities in the location"
+                            value={autocompletePayload?.districtPathNames}
+                            onChange={(e) => setKeyword(e.target.value)}
                         />
                     </div>
-                    <div className="relative z-40">
-                        <ul className="absolute menu bg-base-200 w-full rounded-lg mt-1.5 drop-shadow-lg">
-                            <li>
-                                <div>
-                                    <i className="fa-solid fa-location-dot"></i>{" "}
-                                    Da Nang
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    {" "}
-                                    <i className="fa-solid fa-location-dot"></i>{" "}
-                                    Ho Chi Minh
-                                </div>
-                            </li>
-                            <li>
-                                <div>
-                                    {" "}
-                                    <i className="fa-solid fa-location-dot"></i>{" "}
-                                    Ha Noi
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                    {isFetched && !autocompletePayload && (
+                        <div class="relative z-40">
+                            <ul class="absolute menu bg-white w-full rounded-b-lg">
+                                {data.length === 0 ? (
+                                    <li>No results found</li>
+                                ) : (
+                                    data.map((item) => (
+                                        <li onClick={() => setAutocompletePayload(item)}>
+                                            <div>
+                                                <i class="fa-solid fa-location-dot"></i>{" "}
+                                                {item.districtPathNames}
+                                            </div>
+                                        </li>
+                                    )))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
-                <div className="ml-2.5">
+                <div className="ml-2.5" onClick={handleSubmit}>
                     <button className="btn rounded-lg bg-[#FFA732] text-white border-none h-[56px] w-full">
                         Search
                     </button>
@@ -580,7 +609,7 @@ function AdvancedSearchHotel() {
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedKeyword(keyword);
-        }, 250); // Delay of 1 second
+        }, 250); 
 
         return () => {
             clearTimeout(handler);
@@ -661,7 +690,7 @@ function AdvancedSearchHotel() {
         };
 
         if (payload.resultType === "H") {
-            payload= {
+            payload = {
                 ...payload,
                 hotelName: autocompletePayload.resultWord,
                 searchValue: `${autocompletePayload.item.data.filterID}_${autocompletePayload.item.data.type}_${autocompletePayload.item.data.value}_${autocompletePayload.item.data.subType}`,
@@ -940,9 +969,8 @@ function AdvancedSearchHotel() {
                         {/* <!-- Dropdown menu --> */}
                         <div
                             id="dropdownDivider"
-                            class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow ${
-                                dropdown ? "" : "hidden"
-                            }`}
+                            class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow ${dropdown ? "" : "hidden"
+                                }`}
                         >
                             {/* Ask user to input room information */}
                             <div
@@ -1039,7 +1067,7 @@ function AdvancedSearchHotel() {
                                                 onClick={() =>
                                                     setNumberOfAdults((prev) =>
                                                         prev - 1 > 0 &&
-                                                        prev > numberOfRooms
+                                                            prev > numberOfRooms
                                                             ? prev - 1
                                                             : prev
                                                     )
@@ -1109,7 +1137,7 @@ function AdvancedSearchHotel() {
                                                                         prev.slice(
                                                                             0,
                                                                             prev.length -
-                                                                                1
+                                                                            1
                                                                         )
                                                                 );
                                                                 return prev - 1;
@@ -1142,7 +1170,7 @@ function AdvancedSearchHotel() {
                                                     setNumberOfChildren(
                                                         (prev) =>
                                                             prev <
-                                                            numberOfRooms * 6
+                                                                numberOfRooms * 6
                                                                 ? prev + 1
                                                                 : prev
                                                     )

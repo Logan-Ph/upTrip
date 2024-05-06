@@ -12,13 +12,11 @@ import QuickSearch from "../pages/QuickSearch";
 import AdvancedSearchResultPage from "../pages/AdvancedSearchHotelPage";
 import AdvancedSearchFlightPage from "../pages/AdvancedSearchFlightPage";
 import AdvancedSearchExperiencePage from "../pages/AdvancedSearchExperiencePage";
-<<<<<<< HEAD
 import Favorites from "../pages/Favorites";
 import FavoriteItems from "../pages/FavoriteItems";
-=======
+import HotelDetailedPage from "../pages/HotelDetailedPage";
 import Itinerary from "../pages/Itinerary";
 import DetailedItinerary from "../pages/DetailedItinerary";
->>>>>>> 3e31c1f065d56c9de87b896f1fb8c5e22ac5a830
 const Homepage = lazy(() => import("../pages/Homepage"));
 
 export default function Router() {
@@ -82,6 +80,10 @@ export default function Router() {
                 {
                     path: "/detailed-itinerary",
                     element: <DetailedItinerary />,
+                },
+                {
+                    path: "/hotel-detailed-page",
+                    element: <HotelDetailedPage />,
                 },
             ],
         },
