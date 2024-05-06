@@ -77,7 +77,7 @@ export default function Favorites() {
                             <figure>
                                 <img
                                     src="https://vcdn1-dulich.vnecdn.net/2022/06/03/cauvang-1654247842-9403-1654247849.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=Swd6JjpStebEzT6WARcoOA"
-                                    alt="Cover Image"
+                                    alt="Cover"
                                 />
                             </figure>
                             <div className="card-body my-2">
@@ -183,7 +183,7 @@ export default function Favorites() {
                             <figure>
                                 <img
                                     src="https://vcdn1-dulich.vnecdn.net/2022/06/03/cauvang-1654247842-9403-1654247849.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=Swd6JjpStebEzT6WARcoOA"
-                                    alt="Cover Image"
+                                    alt="Cover"
                                 />
                             </figure>
                             <div className="card-body my-2">
@@ -289,7 +289,7 @@ export default function Favorites() {
                             <figure>
                                 <img
                                     src="https://vcdn1-dulich.vnecdn.net/2022/06/03/cauvang-1654247842-9403-1654247849.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=Swd6JjpStebEzT6WARcoOA"
-                                    alt="Cover Image"
+                                    alt="Cover"
                                 />
                             </figure>
                             <div className="card-body my-2">
@@ -395,7 +395,7 @@ export default function Favorites() {
                             <figure>
                                 <img
                                     src="https://vcdn1-dulich.vnecdn.net/2022/06/03/cauvang-1654247842-9403-1654247849.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=Swd6JjpStebEzT6WARcoOA"
-                                    alt="Cover Image"
+                                    alt="Cover"
                                 />
                             </figure>
                             <div className="card-body my-2">
