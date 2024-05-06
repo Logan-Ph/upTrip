@@ -39,7 +39,7 @@ export function PlanYourTripCard() {
 export function AdvancedSearchCard() {
     return (
         <>
-            <div className="bg-[#F3F3F3] rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8 skeleton">
+            <div className="bg-[#F3F3F3] rounded-md grid grid-cols-3 gap-4 md:gap-8 shadow-md my-8 skeleton mt-4">
                 <div className="border-[#DDDDDD] bg-[#DDDDDD] h-[252px]"></div>
 
                 <div className="flex-col space-y-2 py-4 col-span-2">
@@ -116,4 +116,24 @@ export function QuickSearchSkeletonCard() {
             </Link>
         </>
     );
+}
+
+export function TourAndAttractionCard(){
+    return(
+        <>
+            <div className="border border-transparent rounded-md shadow-md bg-[#F3F3F3] pb-10">
+                <div className="space-y-4 md:space-y-6">
+                    <div className="p-4">
+                        <div className="h-[220px] border-[#DDDDDD] px-12 py-2 bg-[#DDDDDD] rounded-md"></div>
+                    </div>
+                    <div className="w-3/4 space-y-4 p-4">
+                        <div className="border-[#DDDDDD] px-6 py-2 bg-[#DDDDDD] rounded-md"></div>
+                        <div className="border-[#DDDDDD] px-6 py-2 bg-[#DDDDDD] rounded-md"></div>
+                        <div className="border-[#DDDDDD] px-6 py-2 bg-[#DDDDDD] rounded-md"></div>
+                    </div>
+         
+                </div>
+            </div>
+        </>
+    )
 }

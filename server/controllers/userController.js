@@ -456,10 +456,14 @@ exports.bookingAutoComplete = async (req, res) => {
     }
 };
 
-exports.agodaTourAttractionsAutocomplete = async (req,res) => {
+exports.agodaTourAutocomplete = async (req,res) => {
     try {
         const { keyword } = req.body;
-        const response = await axios.get(agodaTourAttractionsAutocompleteURL, agodaTourAttractionsAutocompletePayload(keyword));
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
+        }
+        const response = await axios.get(agodaTourAttractionsAutocompleteURL, {params: agodaTourAttractionsAutocompletePayload(keyword), headers: headers});
         return res.status(200).json(response.data.suggestionList[0] || null);
     } catch (error) {
         console.log(error);
@@ -818,14 +822,14 @@ exports.advancedSearchHotelBooking = async (req, res) => {
     }
 };
 
-exports.agodaTourAttractionsAdvancedSearch = async (req,res) => {
+exports.agodaTourAdvancedSearch = async (req,res) => {
     try{
         const {cityId, pageIndex} = req.body
         const queryString = `?operation=search&cityId=${cityId}&pageNumber=${pageIndex}`
-        const payload = agodaTourAttractionsAdvancedSearchPayload(queryString, cityId, pageIndex)
+        const payload = agodaTourAttractionsAdvancedSearchPayload({queryString, cityId: Number(cityId), pageIndex: Number(pageIndex)})
         const response = await axios.post(agodaTourAttractionsAdvancedSearchURL, payload, {
             headers: agodaTourAttractionsAdvancedSearchHeaders(),
-            params: agodaTourAttractionsAdvancedSearchParams(cityId, pageIndex)
+            params: agodaTourAttractionsAdvancedSearchParams({cityId:cityId, pageNumber:pageIndex})
         })
         return res.status(200).json(response?.data?.data?.search?.result?.activities)
     }catch(er){
@@ -880,7 +884,7 @@ exports.advancedSearchFlights = async (req, res) => {
     }
 }
 
-exports.tourAttractionsAutocomplete = async (req, res) => {
+exports.attractionsAutocomplete = async (req, res) => {
     try{
         const {keyword} = req.body
         const payload = tripComGetTourAttractionsAutocompletePayload(keyword)

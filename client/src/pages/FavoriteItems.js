@@ -2,7 +2,6 @@ import {ExperienceCard } from "../components/InfoCard";
 import { StayCard } from "../components/InfoCard";
 import { FlightCard } from "../components/InfoCard";
 import { InfoCardSkeleton } from "../components/skeletonLoadings/InfoCardSkeleton";
-import { Link } from "react-router-dom";
 
 
 export default function FavoriteItems() {

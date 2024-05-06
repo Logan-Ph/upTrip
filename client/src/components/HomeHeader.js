@@ -4,8 +4,8 @@ import Datepicker from "flowbite-datepicker/Datepicker";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
 import {
+    fetchAttractionsAutocomplete,
     fetchFlightAutocomplete,
-    fetchTourAttractionsAutocomplete,
     fetchTripAutoComplete,
 } from "../api/fetch";
 import { Link, useNavigate } from "react-router-dom";
@@ -634,8 +634,8 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
     }, [debouncedKeyword]);
 
     const { data, isFetched } = useQuery({
-        queryKey: ["tour-attractions", "autocomplete", debouncedKeyword],
-        queryFn: () => fetchTourAttractionsAutocomplete(debouncedKeyword),
+        queryKey: ["attractions", "autocomplete", debouncedKeyword],
+        queryFn: () => fetchAttractionsAutocomplete(debouncedKeyword),
         refetchOnWindowFocus: false,
         enabled: !!debouncedKeyword,
     });
