@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 export default function AdvancedHotelCard({ hotel, agodaPrice, bookingPrice, isSuccess, isSpecific }) {
     return (
         <>
-            <div className="mt-4">
+            <div>
                 <HotelCard
                     key={hotel?.hotelBasicInfo?.hotelId || hotel?.name}
                     imgSrc={hotel?.hotelBasicInfo?.hotelImg || hotel?.img}
