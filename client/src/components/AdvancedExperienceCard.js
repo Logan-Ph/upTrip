@@ -114,11 +114,16 @@ function ExperienceCard({data}){
                     </div>
 
                     {/* Only tour hasthis section */}
-                    <div className="bg-[#CDEAE1] w-1/2 px-3">
+                    
                         {data?.content?.badges?.activityHighlights?.map((badge, index) => (
+                            <>
+                            <div className="bg-[#CDEAE1] w-1/2 px-3" style={{ visibility: badge ? 'visible' : 'hidden' }}>
                             <p className="font-semibold mx-auto">{badge?.badgeType.split("_").join(" ").toLowerCase()}</p>
-                        ))}
-                    </div>
+                        )}
+                            </div>
+                            </>
+                           
+                    
                 </div>
                 <div className="flex flex-col items-end px-4 pb-4">
                     <div className="flex items-center">
