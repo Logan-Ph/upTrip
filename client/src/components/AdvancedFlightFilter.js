@@ -28,15 +28,18 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
     const [showPriceRange, setPriceRange] = useState(true);
     const [value, setValue] = useState([0, priceMax]);
 
-    useEffect(() => {
-        if (value[1] == 0) {
-            setValue([0, priceMax]);
-        }
-    }, [priceMax]); 
+    // useEffect(() => {
+    //     if (value[1] === 0) {
+    //         setValue([0, priceMax]);
+    //     }
+    // }, [priceMax]); 
     
+    const handleFilter = (event, newValue) => {
+        setPriceFilter(value);
+    };
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
-        setPriceFilter(value);
     };
 
     const valueLabelFormat = (value) => {
@@ -62,11 +65,12 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
                         getAriaLabel={() => 'Price range'}
                         value={value}
                         onChange={handleChange}
+                        onChangeCommitted={handleFilter}
                         valueLabelDisplay="auto"
                         valueLabelFormat={valueLabelFormat}
                         min={0}
                         max={priceMax}
-                        step={priceStep}
+                        step={100000}
                         color="dark"
                     />
                 </div>
@@ -81,8 +85,12 @@ function DepartureTime({setDepartureTime}) {
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    };
+
+    const handleFilter = (event, newValue) => {
         setDepartureTime(value.map(v => v * 60)); // convert
     };
+
     // Function to format the value for display
     const valueLabelFormat = (value) => {
         // const hour = Math.floor(value);
@@ -110,6 +118,7 @@ function DepartureTime({setDepartureTime}) {
                         getAriaLabel={() => 'Price range'}
                         value={value}
                         onChange={handleChange}
+                        onChangeCommitted={handleFilter}
                         valueLabelDisplay="auto" // Display the label on the slider thumb
                         valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
                         min={0}
@@ -128,8 +137,12 @@ function ArrivalTime({setArrivalTime}) {
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+    };
+
+    const handleFilter = (event, newValue) => {
         setArrivalTime(value.map(v => v * 60));
     };
+
     // Function to format the value for display
     const valueLabelFormat = (value) => {
         // const hour = Math.floor(value);
@@ -157,6 +170,7 @@ function ArrivalTime({setArrivalTime}) {
                         getAriaLabel={() => 'Price range'}
                         value={value}
                         onChange={handleChange}
+                        onChangeCommitted={handleFilter}
                         valueLabelDisplay="auto" // Display the label on the slider thumb
                         valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
                         min={0}

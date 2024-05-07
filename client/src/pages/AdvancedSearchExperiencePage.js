@@ -1,10 +1,8 @@
-import { SortOption } from "../components/SortOption";
-import { AdvancedExperienceFilter } from "../components/AdvancedExperienceFilter";
 import { AdvancedExperienceCard } from "../components/AdvancedExperienceCard";
 import SrollUpButton from "../components/ScrollUpButton";
 import { useSearchParams } from "react-router-dom";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { fetchAttractions, fetchTourAttractions, fetchTours, fetchToursAutocomplete } from "../api/fetch";
+import { fetchAttractions, fetchTours, fetchToursAutocomplete } from "../api/fetch";
 import { Suspense, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { useState } from "react";
