@@ -8,7 +8,7 @@ const itinerarySchema = new mongoose.Schema({
     },
     itinerary: [
         {
-            name: String,
+            title: String,
             flights: [
                 {
                     flightNo: [
@@ -31,6 +31,6 @@ const itinerarySchema = new mongoose.Schema({
     ]
 })
 
-module.exports = mongoose.model('Itinerary', favortitesSchema)
+module.exports = mongoose.model('Itinerary', itinerarySchema);
 
 

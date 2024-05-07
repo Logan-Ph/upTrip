@@ -62,6 +62,7 @@ const {
     agodaTourAttractionsAdvancedSearchParams,
 } = require("../utils/requestOptions");
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
+const { resolveContent } = require("nodemailer/lib/shared");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
@@ -1134,25 +1135,72 @@ exports.deleteAttraction = async (req, res) => {
     }
 }
 
-exports.addToItinerary = async (req, res) => {
+
+exports.addNewItinerary = async (req, res) => {
     try {
         let list = await Itinerary.findOne({ userID: req.body.userID });
 
         if (!list) {
             list = new Favorites({
                 userID: req.body.userID,
-                flights: [],
-                hotels: [],
-                attractions: [],
+                itinerary: []
             });
         }
 
+        if (list.itinerary.find(item => item[title] === req.body.title)) {
+            return res.status(500).json("Title already exists")
+        }
+
+        list.itinerary.push({
+            name: req.body.itineraryName,
+            flights: [],
+        })
+        await list.save()
+        return res.status(200).json("New itinerary created.")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.editItinerary = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (iti) {
+            iti.title = req.body.newTitle;
+        }
+        await list.save()
+        return res.status(200).json("Title changed.")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteItinerary = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+        if (!list || list.itinerary.length == 0) throw new Error("Favorites is empty");
+        list.itinerary = list.itinerary.filter(item => item.title !== req.params.title);
+        await list.save()
+        return res.status(200).json("Deleted successfully")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.addToItinerary = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        let itinerary =  list.itinerary.find(item => item[title] === req.body.title)
+
         switch (req.body.itemType) {
             case "hotel":
-                favorites.hotels.push(req.body.hotelName);
+                itinerary.push(req.body.hotelName);
                 break;
             case "flight":
-                favorites.flights.push({
+                itinerary.flights.push({
                     flightNo: req.body.flightNo,
                     departure: req.body.departure,
                     arrival: req.body.arrival,
@@ -1162,12 +1210,62 @@ exports.addToItinerary = async (req, res) => {
                 });
                 break;
             case "attraction":
-                favorites.attractions.push(req.body.attractionName);
+                itinerary.attractions.push(req.body.attractionName);
                 break;
         }
-        await favorites.save();
-        return res.status(200).json("Added to Favorites")
+        await list.save();
+        return res.status(200).json("Added to Itinerary")
     } catch (err) {
         return res.status(500).json("Error. Try again later")
+    }
+}
+
+exports.deleteHotelPlan = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (!iti || iti.hotels.length == 0) {
+            throw new Error("Hotel is not in the itinerary")
+        }
+        // remove hotel from array of hotels
+        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
+        await list.save()
+        return res.status(200).json("Hotel removed")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteFlightPlan = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (!iti || iti.flights.length == 0) {
+            throw new Error("Hotel is not in the itinerary")
+        }
+        // remove hotel from array of hotels
+        iti.flights = iti.hotels.filter(item => item.flightNo !== req.params.flightNo);
+        await list.save()
+        return res.status(200).json("Flight removed")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+exports.deleteAttractionPlan = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (!iti || iti.attractions.length == 0) {
+            throw new Error("Attraction is not in the itinerary")
+        }
+        // remove hotel from array of hotels
+        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
+        await list.save()
+        return res.status(200).json("Attraction removed")
+    } catch (err) {
+        return res.status(500).json(er)
     }
 }
