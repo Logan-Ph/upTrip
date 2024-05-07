@@ -58,7 +58,7 @@ export default function AdvancedSearchFlightPage() {
     }
     
     const agoda = useQuery({
-        queryKey: ["advanced-search-flight"],
+        queryKey: ["advanced-search-flight", payload],
         queryFn: () => fetchFlightAdvancedSearch(payload),
         retry: false,
         refetchOnWindowFocus: false,

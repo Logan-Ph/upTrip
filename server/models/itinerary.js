@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const favortitesSchema = new mongoose.Schema({
+const itinerarySchema = new mongoose.Schema({
     userID: {
         type: mongoose.Types.ObjectId,
         ref: 'User',
         required: true,
     },
-    collections: [
+    itinerary: [
         {
             name: String,
             flights: [
@@ -31,4 +31,6 @@ const favortitesSchema = new mongoose.Schema({
     ]
 })
 
-module.exports = mongoose.model('Favorites', favortitesSchema)
+module.exports = mongoose.model('Itinerary', favortitesSchema)
+
+
