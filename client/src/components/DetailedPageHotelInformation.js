@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom"
 import { IconSwimming, IconGlassChampagne, IconHomeBolt, IconHorseToy,IconToolsKitchen2, IconMassage, IconBarbell, IconDoor, IconPool,IconDesk } from '@tabler/icons-react';
-import Slider from '@mui/material/Slider';
 export default function DetailedPageHotelInformation(){
     return(
         <>
