@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
 const User = require("../models/user");
 const Favorites = require("../models/favorites");
+const Itinerary = require("../models/itinerary");
 const { stringSimilarity } = require("string-similarity-js");
 const {
     generateToken,
@@ -61,6 +62,7 @@ const {
     agodaTourAttractionsAdvancedSearchParams,
 } = require("../utils/requestOptions");
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
+const { resolveContent } = require("nodemailer/lib/shared");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
@@ -456,14 +458,14 @@ exports.bookingAutoComplete = async (req, res) => {
     }
 };
 
-exports.agodaTourAutocomplete = async (req,res) => {
+exports.agodaTourAutocomplete = async (req, res) => {
     try {
         const { keyword } = req.body;
         const headers = {
             "User-Agent":
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
         }
-        const response = await axios.get(agodaTourAttractionsAutocompleteURL, {params: agodaTourAttractionsAutocompletePayload(keyword), headers: headers});
+        const response = await axios.get(agodaTourAttractionsAutocompleteURL, { params: agodaTourAttractionsAutocompletePayload(keyword), headers: headers });
         return res.status(200).json(response.data.suggestionList[0] || null);
     } catch (error) {
         console.log(error);
@@ -696,10 +698,10 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
             })
             .get();
         const priceExplain = targetDiv.find(".price-explain");
-        const price = priceExplain?.contents()?.filter(function() {
+        const price = priceExplain?.contents()?.filter(function () {
             // Filter out the <br/> elements
             return this.type === 'text';
-        }).map(function() {
+        }).map(function () {
             // Map over each text node and trim it
             return $(this).text().trim();
         })?.get()?.join(' ');
@@ -822,17 +824,17 @@ exports.advancedSearchHotelBooking = async (req, res) => {
     }
 };
 
-exports.agodaTourAdvancedSearch = async (req,res) => {
-    try{
-        const {cityId, pageIndex} = req.body
+exports.agodaTourAdvancedSearch = async (req, res) => {
+    try {
+        const { cityId, pageIndex } = req.body
         const queryString = `?operation=search&cityId=${cityId}&pageNumber=${pageIndex}`
-        const payload = agodaTourAttractionsAdvancedSearchPayload({queryString, cityId: Number(cityId), pageIndex: Number(pageIndex)})
+        const payload = agodaTourAttractionsAdvancedSearchPayload({ queryString, cityId: Number(cityId), pageIndex: Number(pageIndex) })
         const response = await axios.post(agodaTourAttractionsAdvancedSearchURL, payload, {
             headers: agodaTourAttractionsAdvancedSearchHeaders(),
-            params: agodaTourAttractionsAdvancedSearchParams({cityId:cityId, pageNumber:pageIndex})
+            params: agodaTourAttractionsAdvancedSearchParams({ cityId: cityId, pageNumber: pageIndex })
         })
         return res.status(200).json(response?.data?.data?.search?.result?.activities)
-    }catch(er){
+    } catch (er) {
         console.log(er)
         return res.status(500).json(er)
     }
@@ -847,46 +849,40 @@ exports.advancedSearchFlights = async (req, res) => {
             priceStep: 0
         };
         const payload = agodaGetFlightPayload(req.body)
-        await axios.post(url, payload, {
+        const response = await axios.post(url, payload, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             }
-        })
-            .then(res => {
-                for (const item of res.data.trips[0].bundles) {
-                    const flightNo = []
-                    const airline = []
-                    let arrival
-                    for (const flight of item.outboundSlice.segments) {
-                        flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
-                        airline.push(flight.carrierContent.carrierName)
-                        arrival = flight.arrivalDateTime
-                    }
-                    items.flights.push({
-                        flightNo: flightNo,
-                        departureTime: item.outboundSlice.segments[0].departDateTime,
-                        arrivalTime: arrival,
-                        airline: airline,
-                        duration: formatMinutesToHoursAndMinutes(item.outboundSlice.duration),
-                        agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
-                    })
-                }
-                items.priceMax = res.data.trips[0].filters.price.to;
-                items.priceStep = res.data.trips[0].filters.price.step
+        });
+        for (const item of response.data.trips[0].bundles) {
+            const flightNo = []
+            const airline = []
+            let arrival
+            for (const flight of item.outboundSlice.segments) {
+                flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
+                airline.push(flight.carrierContent.carrierName)
+                arrival = flight.arrivalDateTime
+            }
+            items.flights.push({
+                flightNo: flightNo,
+                departureTime: item.outboundSlice.segments[0].departDateTime,
+                arrivalTime: arrival,
+                airline: airline,
+                duration: formatMinutesToHoursAndMinutes(item.outboundSlice.duration),
+                agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
             })
-            .catch(er => {
-                throw er
-            })
+        }
+        items.priceMax = response.data.trips[0].filters.price.to;
+        items.priceStep = response.data.trips[0].filters.price.step
         return res.status(200).json(items)
     } catch (err) {
-        console.log(err)
         return res.status(500).json(err)
     }
 }
 
 exports.attractionsAutocomplete = async (req, res) => {
-    try{
-        const {keyword} = req.body
+    try {
+        const { keyword } = req.body
         const payload = tripComGetTourAttractionsAutocompletePayload(keyword)
         const response = await axios.post(tripComGetTourAttractionsAutocompleteURL, payload, {
             headers: {
@@ -894,7 +890,7 @@ exports.attractionsAutocomplete = async (req, res) => {
             }
         })
         return res.status(200).json(response?.data?.cityItems || [])
-    }catch(er){
+    } catch (er) {
         console.log(er)
         return res.status(500).json(er)
     }
@@ -902,7 +898,7 @@ exports.attractionsAutocomplete = async (req, res) => {
 
 exports.tourAttractions = async (req, res) => {
     try {
-        const {districtId, pageIndex} = req.body
+        const { districtId, pageIndex } = req.body
         const payload = tripGetTourAttractionsPayload(districtId, pageIndex)
         const response = await axios.post(tripComGetTourAttractionsURL, payload, {
             headers: {
@@ -910,7 +906,7 @@ exports.tourAttractions = async (req, res) => {
             }
         })
         return res.status(200).json(response?.data?.attractionList || [])
-    }catch(er){
+    } catch (er) {
         console.log(er)
         return res.status(500).json(er)
     }
@@ -921,29 +917,24 @@ exports.getTripComFlight = async (req, res) => {
         const items = []
         let url = tripComGetFlightURL;
         let payload = tripComGetFlightPayload(req.body)
-        await axios.post(url, payload, {
+        const response = await axios.post(url, payload, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             }
         })
-            .then(res => {
-                for (const item of res.data.data.flightListSearch.flightProductList) {
-                    const flightNo = []
-                    const airline = []
-                    for (const flight of item.segmentList[0].flightList) {
-                        flightNo.push(flight.flightNo)
-                        airline.push(flight.airline.code)
-                    }
-                    items.push({
-                        flightNo: flightNo,
-                        airline: airline,
-                        price: item.price.averagePrice
-                    })
-                }
+        for (const item of response.data.data.flightListSearch.flightProductList) {
+            const flightNo = []
+            const airline = []
+            for (const flight of item.segmentList[0].flightList) {
+                flightNo.push(flight.flightNo)
+                airline.push(flight.airline.code)
+            }
+            items.push({
+                flightNo: flightNo,
+                airline: airline,
+                price: item.price.averagePrice
             })
-            .catch(er => {
-                throw er
-            })
+        }
         return res.status(200).json(items)
     } catch (er) {
         return res.status(500).json(er)
@@ -954,68 +945,55 @@ exports.getMyTripFlight = async (req, res) => {
     try {
         const items = []
         let totalFlight;
-        await axios.post(myTripGetFlightURL, myTripGetFlightPayload(req.body), {
+        let response = await axios.post(myTripGetFlightURL, myTripGetFlightPayload(req.body), {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
             }
         })
-            .then(res => {
-                totalFlight = res.data.data.search.flightsCount
-                for (const item of res.data.data.search.flights) {
-                    const flightNo = []
-                    const airline = []
-                    let arrival;
-                    for (const flight of item.bounds[0].segments) {
-                        if (flight.__typename == 'TripSegment') {
-                            flightNo.push(flight.flightNumber)
-                            airline.push(flight.marketingCarrier.code)
-                            arrival = flight.arrivedAt
-                        }
-                    }
-                    items.push({
-                        flightNo: flightNo,
-                        price: item.travelerPrices[0].price.price.value / 100 * 25000,
-                    })
+        totalFlight = response.data.data.search.flightsCount
+        for (const item of response.data.data.search.flights) {
+            const flightNo = []
+            const airline = []
+            let arrival;
+            for (const flight of item.bounds[0].segments) {
+                if (flight.__typename == 'TripSegment') {
+                    flightNo.push(flight.flightNumber)
+                    airline.push(flight.marketingCarrier.code)
+                    arrival = flight.arrivedAt
                 }
+            }
+            items.push({
+                flightNo: flightNo,
+                price: item.travelerPrices[0].price.price.value / 100 * 25000,
             })
-            .catch(er => {
-                return res.status(500).json(er)
-            })
+        }
         while (items.length < totalFlight) {
-            await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
+            response = await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
                 }
             })
-                .then(res => {
-                    for (const item of res.data.data.search.flights) {
-                        const flightNo = []
-                        const airline = []
-                        let arrival;
-                        for (const flight of item.bounds[0].segments) {
-                            if (flight.__typename == 'TripSegment') {
-                                flightNo.push(flight.flightNumber)
-                                airline.push(flight.marketingCarrier.code)
-                                arrival = flight.arrivedAt
-                            }
-                        }
-                        items.push({
-                            flightNo: flightNo,
-                            //airline: airline,
-                            //departure: item.bounds[0].segments[0].departuredAt,
-                            //arrival: arrival,
-                            price: item.travelerPrices[0].price.price.value / 100 * 25000,
-                        })
+            for (const item of response.data.data.search.flights) {
+                const flightNo = []
+                const airline = []
+                let arrival;
+                for (const flight of item.bounds[0].segments) {
+                    if (flight.__typename == 'TripSegment') {
+                        flightNo.push(flight.flightNumber)
+                        airline.push(flight.marketingCarrier.code)
+                        arrival = flight.arrivedAt
                     }
+                }
+                items.push({
+                    flightNo: flightNo,
+                    price: item.travelerPrices[0].price.price.value / 100 * 25000,
                 })
-                .catch(er => {
-                    throw er
-                })
+            }
         }
         return res.status(200).json(items)
     } catch (er) {
+        console.log(er)
         return res.status(500).json(er)
-
     }
 }
 
@@ -1037,30 +1015,25 @@ exports.getBayDepFlight = async (req, res) => {
         const requests = bayDepGetFlightPayload(req.body).map(payload => {
             return sendRequest(bayDepGetFlightURL, payload);
         });
-        Promise.all(requests)
-            .then(response => {
-                for (const res of response) {
-                    if (!res.data.ListFareOption) {
-                        throw new Error('Invalid response: ListFareOption not found');
-                    }
-                    for (const item of res.data.ListFareOption) {
-                        const flightNo = []
-                        const airline = []
-                        airline.push(item.Carrier)
-                        for (const flight of (item.ListFareData[0].ListFlight[0].FlightNumber).split(',')) {
-                            flightNo.push(flight)
-                        }
-                        items.push({
-                            flightNo: flightNo,
-                            price: item.PriceAdt
-                        })
-                    }
+        const response = await Promise.all(requests)
+        for (const res of response) {
+            if (!res.data.ListFareOption) {
+                throw new Error('Invalid response: ListFareOption not found');
+            }
+            for (const item of res.data.ListFareOption) {
+                const flightNo = []
+                const airline = []
+                airline.push(item.Carrier)
+                for (const flight of (item.ListFareData[0].ListFlight[0].FlightNumber).split(',')) {
+                    flightNo.push(flight)
                 }
-                return res.status(200).json(items)
-            })
-            .catch(er => {
-                return res.status(500).json(er);
-            });
+                items.push({
+                    flightNo: flightNo,
+                    price: item.PriceAdt
+                })
+            }
+        }
+        return res.status(200).json(items)
     } catch (error) {
         return res.status(500).json(error);
     }
@@ -1081,6 +1054,10 @@ exports.flightSearchAutocomplete = async (req, res) => {
         console.log(err)
         return res.status(500).json(err)
     }
+}
+
+exports.addNewCollection = async (req, res) => {
+
 }
 
 exports.addToFavorites = async (req, res) => {
@@ -1141,19 +1118,154 @@ exports.deleteFlight = async (req, res) => {
         favorites.flights = favorites.flights.filter(flight => flight.flightNo !== req.params.flightNo);
         await favorites.save()
         return res.status(200).json("Deleted successfully")
-    } catch(err) {
+    } catch (err) {
         return res.status(500).json(err.message || "Error. Try again later")
     }
 }
 
-exports.deleteAttraction = async(req, res) => {
+exports.deleteAttraction = async (req, res) => {
     try {
         const favorites = await Favorites.findOne({ userID: req.params.id });
         if (!favorites || favorites.attractions.length == 0) throw new Error("Favorites is empty");
         favorites.attractions = favorites.attractions.filter(attraction => attraction !== req.params.attractionName);
         await favorites.save()
         return res.status(200).json("Deleted successfully")
-    } catch(err) {
+    } catch (err) {
         return res.status(500).json(err.message || "Error. Try again later")
+    }
+}
+
+
+exports.addNewItinerary = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        if (!list) {
+            list = new Favorites({
+                userID: req.body.userID,
+                itinerary: []
+            });
+        }
+
+        if (list.itinerary.find(item => item[title] === req.body.title)) {
+            return res.status(500).json("Title already exists")
+        }
+
+        list.itinerary.push({
+            name: req.body.itineraryName,
+            flights: [],
+        })
+        await list.save()
+        return res.status(200).json("New itinerary created.")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.editItinerary = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (iti) {
+            iti.title = req.body.newTitle;
+        }
+        await list.save()
+        return res.status(200).json("Title changed.")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteItinerary = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+        if (!list || list.itinerary.length == 0) throw new Error("Favorites is empty");
+        list.itinerary = list.itinerary.filter(item => item.title !== req.params.title);
+        await list.save()
+        return res.status(200).json("Deleted successfully")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.addToItinerary = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        let itinerary =  list.itinerary.find(item => item[title] === req.body.title)
+
+        switch (req.body.itemType) {
+            case "hotel":
+                itinerary.push(req.body.hotelName);
+                break;
+            case "flight":
+                itinerary.flights.push({
+                    flightNo: req.body.flightNo,
+                    departure: req.body.departure,
+                    arrival: req.body.arrival,
+                    from: req.body.from,
+                    to: req.body.to,
+                    agency: req.body.agency,
+                });
+                break;
+            case "attraction":
+                itinerary.attractions.push(req.body.attractionName);
+                break;
+        }
+        await list.save();
+        return res.status(200).json("Added to Itinerary")
+    } catch (err) {
+        return res.status(500).json("Error. Try again later")
+    }
+}
+
+exports.deleteHotelPlan = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (!iti || iti.hotels.length == 0) {
+            throw new Error("Hotel is not in the itinerary")
+        }
+        // remove hotel from array of hotels
+        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
+        await list.save()
+        return res.status(200).json("Hotel removed")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteFlightPlan = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (!iti || iti.flights.length == 0) {
+            throw new Error("Hotel is not in the itinerary")
+        }
+        // remove hotel from array of hotels
+        iti.flights = iti.hotels.filter(item => item.flightNo !== req.params.flightNo);
+        await list.save()
+        return res.status(200).json("Flight removed")
+    } catch (err) {
+        return res.status(500).json(er)
+    }
+}
+exports.deleteAttractionPlan = async (req, res) => {
+    try {
+        let list = await Itinerary.findOne({ userID: req.body.userID });
+
+        const iti = list.itinerary.find(item => item[title] === req.body.title)
+        if (!iti || iti.attractions.length == 0) {
+            throw new Error("Attraction is not in the itinerary")
+        }
+        // remove hotel from array of hotels
+        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
+        await list.save()
+        return res.status(200).json("Attraction removed")
+    } catch (err) {
+        return res.status(500).json(er)
     }
 }
