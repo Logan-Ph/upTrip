@@ -46,7 +46,9 @@ router.post('/advanced-search/hotels/agoda', userController.advancedSearchHotelA
 router.post('/advanced-search/hotels/booking', userController.advancedSearchHotelBooking)
 
 // hotel detail page
+router.post("/hotel-info", userController.hotelInfo)
 router.post("/near-by-hotels", userController.nearByHotels)
+router.post("/hotel-albums", userController.hotelAlbums)
 
 // quick search for hotels
 router.post('/quick-search/hotels', userController.quickSearchHotels)

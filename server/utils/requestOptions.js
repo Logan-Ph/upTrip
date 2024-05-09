@@ -3,9 +3,7 @@
 // keyword: "hanoi", -> search keyword
 // tab: "restaurant",
 // tab: "hotel",
-require("dotenv").config;
-
-require("dotenv").config;
+require("dotenv").config
 const {
 	convertDateFormat,
 	getDecodedCurrentTimeAgoda,
@@ -1580,22 +1578,23 @@ const airportOptions = [
 const nearByHotelsURL =
 	"https://us.trip.com/restapi/soa2/28820/ctGetNearbyHotelList";
 
-const nearByHotelPayload = ({adult, child, checkin, checkout, cityId, }) => {
+const nearByHotelPayload = ({ adult, child, checkin, checkout, cityId, hotelId, crn }) => {
+	const formatDate = (date) => `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6)}`;
 	return {
 		searchCondition: {
 			adult: 1,
 			child: 0,
 			age: "",
-			hotelId: 21856735,
-			cityId: 1777,
-			checkIn: "20240608",
-			checkOut: "20240609",
-			roomQuantity: 1,
+			hotelId: hotelId,
+			cityId: cityId,
+			checkIn: checkin,
+			checkOut: checkout,
+			roomQuantity: crn,
 			pageSize: 20,
 			priceType: "0",
 			mapType: "gg",
 			url:
-				"https://us.trip.com/hotels/detail/?cityId=1777&hotelId=21856735&checkIn=2024-06-08&checkOut=2024-06-09&adult=1&children=0&subStamp=1672&crn=1&ages=&travelpurpose=0&curr=VND&link=title&hoteluniquekey=H4sIAAAAAAAAAOM6y8jFJMEoxMTBKHWIkWPHgfYVzBa_BR1bXwfukHsa7-B59gwQXElyCOApZAADDYdJjJacIFZMqaKjIIjR0CLnqCSvwKIJU2EIY1g84wxi4XiwkymKwYmFY91XpRmM95u3cW1kDNoh1_pa0NxhByPTCcZbB6UXMK3vXsy7iwms6BCQ-vKT5RQTwyUmhltMDI-YwGa8YmL4xMTwC6KmiZmhi5lhEjNY5SxmsIJFzAxSvKYWxsZJ5uYWBomWppYKQhrT97zcyGakNImRKTT4FKOUobmhoZGluYWxgZmJqV6aoXlqUmSFk3lUuqsVsxSjmwdjEJulm5GLgUmUFhdzmJ-LIMQrH-ylQDxFGE8LxDP0nv1E7d1CI_sk1tQ83dDgjEX8BYxdjBwCjB6MEYwVjK8YQap-gL0MAANkZ1dpAQAA&subChannel=&masterhotelid_tracelogid=5833b7780a959&NewTaxDescForAmountshowtype0=T&detailFilters=17%7C1~17~1*80%7C0%7C1~80~0&hotelType=normal&barcurr=VND&locale=en-US"
+				`https://us.trip.com/hotels/detail/?cityId=${cityId}&hotelId=${hotelId}&checkIn=${formatDate(checkin)}&checkOut=${formatDate(checkout)}&adult=${adult}&children=${child}&crn=${crn}&ages=&travelpurpose=0&curr=VND&detailFilters=17%7C1~17~1*80%7C0%7C1~80~0&hotelType=normal&barcurr=VND&locale=en-US`
 		},
 		filterCondition: {
 			rate: 0,
@@ -1605,8 +1604,8 @@ const nearByHotelPayload = ({adult, child, checkin, checkout, cityId, }) => {
 			}
 		},
 		nearbyHotHotel: {
-			hotelId: 21856735,
-			hotelCityId: 1777,
+			hotelId: hotelId,
+			hotelCityId: cityId,
 			nearbySubType: "TripHotelDetail"
 		},
 		head: {
@@ -1630,7 +1629,61 @@ const nearByHotelPayload = ({adult, child, checkin, checkout, cityId, }) => {
 	};
 };
 
+const hotelInfoURL = "https://us.trip.com/hotels/detail/"
+
+const hotelInfoParams = ({ cityId, hotelId, checkin, checkout, adult, child, crn }) => {
+	const formatDate = (date) => `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6)}`;
+
+	return {
+		cityId: cityId,
+		hotelId: hotelId,
+		checkIn: formatDate(checkin),
+		checkOut: formatDate(checkout),
+		adult: adult,
+		children: child,
+		crn: crn,
+		ages: "",
+		travelpurpose: 0,
+		curr: "VND",
+		detailFilters: "17|1~17~1*80|0|1~80~0",
+		hotelType: "normal",
+		barcurr: "VND",
+		locale: "en-US"
+	}
+}
+
+const hotelAlbumsURL = "https://us.trip.com/restapi/soa2/28820/ctgethotelalbum"
+const hotelAlbumsPayload = ({hotelId}) => {
+	return {
+		hotelId: hotelId,
+		head: {
+			platform: "PC",
+			cver: "0",
+			cid: "1711297830645.f17ebYxB7ZgE",
+			bu: "IBU",
+			group: "trip",
+			aid: "",
+			sid: "",
+			ouid: "",
+			locale: "en-US",
+			timezone: "7",
+			currency: "VND",
+			pageId: "10320668147",
+			vid: "1711297830645.f17ebYxB7ZgE",
+			guid: "",
+			isSSR: false,
+			frontVersion: "1.1.0"
+		}
+	};
+}
+
 module.exports = {
+	hotelAlbumsPayload,
+	hotelAlbumsURL,
+	hotelInfoURL,
+	hotelInfoParams,
+	nearByHotelPayload,
+	nearByHotelsURL,
 	agodaTourAttractionsAdvancedSearchParams,
 	agodaTourAttractionsAdvancedSearchURL,
 	agodaTourAttractionsAdvancedSearchPayload,

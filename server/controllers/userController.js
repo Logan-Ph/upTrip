@@ -60,6 +60,12 @@ const {
     agodaTourAttractionsAdvancedSearchURL,
     agodaTourAttractionsAdvancedSearchHeaders,
     agodaTourAttractionsAdvancedSearchParams,
+    nearByHotelPayload,
+    nearByHotelsURL,
+    hotelInfoParams,
+    hotelInfoURL,
+    hotelAlbumsPayload,
+    hotelAlbumsURL,
 } = require("../utils/requestOptions");
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
 const { resolveContent } = require("nodemailer/lib/shared");
@@ -1193,7 +1199,7 @@ exports.addToItinerary = async (req, res) => {
     try {
         let list = await Itinerary.findOne({ userID: req.body.userID });
 
-        let itinerary =  list.itinerary.find(item => item[title] === req.body.title)
+        let itinerary = list.itinerary.find(item => item[title] === req.body.title)
 
         switch (req.body.itemType) {
             case "hotel":
@@ -1272,9 +1278,64 @@ exports.deleteAttractionPlan = async (req, res) => {
 
 exports.nearByHotels = async (req, res) => {
     try {
-        const { lat, lng } = req.body
-        const response = await axios.get(`https://nominatim.openstreetmap.org/search?q=${lat},${lng}&format=jsonv2`)
-        return res.status(200).json(response.data)
+        const { adult, child, checkin, checkout, cityId, hotelId, crn } = req.body
+        const payload = nearByHotelPayload({ adult: Number(adult), child: Number(child), checkin, checkout, cityId: Number(cityId), hotelId: Number(hotelId), crn: Number(crn) })
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        };
+        const response = await axios.post(nearByHotelsURL, payload, { headers: headers })
+        const nearByHotels = response.data.data.hotelList
+        return res.status(200).json({ nearByHotels })
+    } catch (err) {
+        return res.status(500).json(err)
+    }
+}
+
+exports.hotelInfo = async (req, res) => {
+    try {
+        const { cityId, hotelId, checkin, checkout, adult, child, crn } = req.body
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        };
+        const payload = hotelInfoParams({ cityId: Number(cityId), hotelId: Number(hotelId), checkin, checkout, adult: Number(adult), child: Number(child), crn: Number(crn) })
+        const response = await axios.get(hotelInfoURL, { params: payload, headers: headers })
+        const html = response.data;
+        const $ = cheerio.load(html);
+
+        const ldJsonScript = $('script[type="application/ld+json"]');
+        const hotelInfo = JSON.parse(ldJsonScript.html());
+        return res.status(200).json({ hotelInfo })
+    } catch (err) {
+        return res.status(500).json(err)
+    }
+}
+
+exports.hotelAlbums = async (req, res) => {
+    try {
+        const { hotelId } = req.body
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        };
+        const payload = hotelAlbumsPayload({ hotelId: Number(hotelId) })
+        const response = await axios.post(hotelAlbumsURL, payload, { headers: headers })
+
+        const hotelTopImages = [];
+        const hotelImagePops = [];
+
+        response.data.data.hotelTopImage.imgUrlList.map(image =>
+            hotelTopImages.push(image.imgUrl)
+        );
+
+        response.data.data.hotelImagePop.hotelProvide.imgTabs.map(tab => {
+            return tab.imgUrlList[0].subImgUrlList.map(subImage =>
+                hotelImagePops.push(subImage.link)
+            );
+        });
+        
+        return res.status(200).json({ hotelTopImages, hotelImagePops })
     } catch (err) {
         return res.status(500).json(err)
     }
