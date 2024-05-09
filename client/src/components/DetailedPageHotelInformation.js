@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom"
 import { IconSwimming, IconGlassChampagne, IconHomeBolt, IconHorseToy,IconToolsKitchen2, IconMassage, IconBarbell, IconDoor, IconPool,IconDesk } from '@tabler/icons-react';
+
+
+
+
+
 export default function DetailedPageHotelInformation(){
     return(
         <>
@@ -137,7 +142,7 @@ function HotelRelatedInformation(){
 
             <div className="border-[#8DD3BB] border-2  rounded-lg">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3731.862860055853!2d107.0471119759641!3d20.715792798452966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a45841b71f5e1%3A0x52df34f512ccce2f!2sH%C3%B4tel%20Perle%20d&#39;Orient%20Cat%20Ba%20-%20MGallery!5e0!3m2!1sen!2s!4v1714836200569!5m2!1sen!2s" 
-                className="w-full h-[300px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"/>
+                className="w-full h-[300px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Cat Ba Hotel"/>
             </div>
 
             <div className="border-[#8DD3BB] border-2 rounded-lg py-4 px-6">
@@ -258,7 +263,7 @@ function Reviews(){
                         {/* avatar */}
                         <div class="avatar">
                             <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
                             </div>
                         </div>
 
@@ -279,7 +284,7 @@ function Reviews(){
                         {/* avatar */}
                         <div class="avatar">
                             <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
                             </div>
                         </div>
 
@@ -300,7 +305,7 @@ function Reviews(){
                         {/* avatar */}
                         <div class="avatar">
                             <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
                             </div>
                         </div>
 
@@ -321,7 +326,7 @@ function Reviews(){
                         {/* avatar */}
                         <div class="avatar">
                             <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
                             </div>
                         </div>
 
@@ -342,7 +347,7 @@ function Reviews(){
                         {/* avatar */}
                         <div class="avatar">
                             <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
                             </div>
                         </div>
 
@@ -363,7 +368,7 @@ function Reviews(){
                         {/* avatar */}
                         <div class="avatar">
                             <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
                             </div>
                         </div>
 
