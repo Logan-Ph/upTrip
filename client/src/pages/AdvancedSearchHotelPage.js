@@ -107,7 +107,6 @@ export default function AdvancedSearchHotelPage() {
             }
             return undefined;
         },
-        // enabled: !!(specificHotel?.matchHotel?.name),
     });
 
     const getSpecificHotelPriceComparison = useQuery({
@@ -225,6 +224,7 @@ export default function AdvancedSearchHotelPage() {
                                             fallback={<ASearchSkeleton />}
                                         >
                                             <AdvancedHotelCardLazy
+                                                payload={payload}
                                                 hotel={specificHotel.matchHotel}
                                                 agodaPrice={agodaPrice}
                                                 bookingPrice={bookingPrice}
@@ -257,6 +257,7 @@ export default function AdvancedSearchHotelPage() {
                                                     fallback={<ASearchSkeleton />}
                                                 >
                                                     <AdvancedHotelCardLazy
+                                                        payload={payload}
                                                         hotel={hotel}
                                                         agodaPrice={agodaPrice}
                                                         bookingPrice={bookingPrice}

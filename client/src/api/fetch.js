@@ -147,3 +147,30 @@ export function getAppConfig() {
             return Promise.reject(new Error(er.response.data.message));
         });
 }
+
+export function getNearByHotels(payload){
+    return axios
+        .post('/near-by-hotels', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+
+export function getHotelInfo(payload){
+    return axios
+        .post('/hotel-info', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
+
+export function getHotelAlbums(payload){
+    return axios
+        .post('/hotel-albums', payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}
