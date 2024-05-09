@@ -3,8 +3,30 @@
 @tailwind utilities;
 
 
-.slide-in{
-    
+/* Custom styles for slick slider arrows */
+.slick-prev,
+.slick-next {
+    /* Light green background */
+    color: black; /* White arrow color */
+    width: 20px;
+    height: 20px;
+}
+
+.slick-prev:before,
+.slick-next:before {
+    color: black; /* Ensures the arrow icon itself is white */
+    width: 20px;
+    height: 20px;
+}
+
+/* Optional: Add hover effects */
+.slick-prev:hover,
+.slick-next:hover,
+.slick-prev:focus,
+.slick-next:focus {
+    color: black;
+    width: 20px;
+    height: 20px;
 }
 
 
