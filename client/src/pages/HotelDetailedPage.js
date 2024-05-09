@@ -3,33 +3,37 @@ import DetailPageGallery from "../components/DetailPageGallery";
 import DetailedPageHotelInformation from "../components/DetailedPageHotelInformation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchHotelPriceComparison, fetchSpecificHotel, getHotelAlbums, getHotelInfo, getNearByHotels } from "../api/fetch";
+import { useRef } from "react";
 
 export default function HotelDetailedPage(){
     const [searchParams] = useSearchParams()
+    const listSort = useRef(searchParams.get("listFilters")?.split(",")?.[0]);
+    const listFilter = useRef(
+        searchParams.get("listFilters")?.split(",")?.slice(1)
+    );
     const payload = {
-        cityId: searchParams.get('city'),
-        hotelId: searchParams.get('hotelId'),
-        adult: searchParams.get('adult'),
-        child: searchParams.get('child'),
-        checkin: searchParams.get('checkin'),
-        checkout: searchParams.get('checkout'),
-        crn: searchParams.get('crn'),
         resultType: searchParams.get("resultType"),
         city: searchParams.get("city"),
+        hotelId: searchParams.get("hotelId"),
         cityName: searchParams.get("cityName"),
-        hotelName: searchParams.get("hotelName"),
+        hotelName: searchParams.get("hotelName"),   
         searchValue: searchParams.get("searchValue"),
         provinceId: searchParams.get("provinceId"),
         countryId: searchParams.get("countryId"),
         districtId: searchParams.get("districtId"),
+        checkin: searchParams.get("checkin"),
+        checkout: searchParams.get("checkout"),
         barCurr: searchParams.get("barCurr"),
         cityType: searchParams.get("cityType"),
         latitude: searchParams.get("latitude"),
         longitude: searchParams.get("longitude"),
         searchCoordinate: searchParams.get("searchCoordinate"),
-        children: searchParams.get("child"),
+        crn: searchParams.get("crn"),
+        adult: searchParams.get("adult"),
+        children: searchParams.get("children"),
         domestic: searchParams.get("domestic"),
         preHotelIds: searchParams.getAll("preHotelIds"),
+        listFilters: `${listSort.current},${listFilter.current}`,
     }
 
     const {

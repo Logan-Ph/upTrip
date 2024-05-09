@@ -40,6 +40,7 @@ export default function AdvancedSearchHotelPage() {
 
     let payload = {
         resultType: searchParams.get("resultType"),
+        hotelId: searchParams.get("hotelId"),
         city: searchParams.get("city"),
         cityName: searchParams.get("cityName"),
         hotelName: searchParams.get("hotelName"),

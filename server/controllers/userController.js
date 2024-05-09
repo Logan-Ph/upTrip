@@ -429,7 +429,7 @@ exports.agodaAutocomplete = async (req, res) => {
             headers: headers,
         });
 
-        const matchHotel = response.data.ViewModelList[1] || null;
+        const matchHotel = response?.data?.ViewModelList?.[1] || null;
 
         return res.status(200).json({ matchHotel });
     } catch (error) {
@@ -1278,11 +1278,11 @@ exports.deleteAttractionPlan = async (req, res) => {
 
 exports.nearByHotels = async (req, res) => {
     try {
-        const { adult, child, checkin, checkout, cityId, hotelId, crn } = req.body
+        const { adult, children: child, checkin, checkout, city: cityId, hotelId: hotelId, crn } = req.body
         const payload = nearByHotelPayload({ adult: Number(adult), child: Number(child), checkin, checkout, cityId: Number(cityId), hotelId: Number(hotelId), crn: Number(crn) })
         const headers = {
             "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
         };
         const response = await axios.post(nearByHotelsURL, payload, { headers: headers })
         const nearByHotels = response.data.data.hotelList
@@ -1294,10 +1294,10 @@ exports.nearByHotels = async (req, res) => {
 
 exports.hotelInfo = async (req, res) => {
     try {
-        const { cityId, hotelId, checkin, checkout, adult, child, crn } = req.body
+        const { city: cityId, hotelId, checkin, checkout, adult, children : child, crn } = req.body
         const headers = {
             "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
         };
         const payload = hotelInfoParams({ cityId: Number(cityId), hotelId: Number(hotelId), checkin, checkout, adult: Number(adult), child: Number(child), crn: Number(crn) })
         const response = await axios.get(hotelInfoURL, { params: payload, headers: headers })
@@ -1317,7 +1317,7 @@ exports.hotelAlbums = async (req, res) => {
         const { hotelId } = req.body
         const headers = {
             "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
         };
         const payload = hotelAlbumsPayload({ hotelId: Number(hotelId) })
         const response = await axios.post(hotelAlbumsURL, payload, { headers: headers })
