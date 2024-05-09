@@ -45,6 +45,9 @@ router.get('/get-app-config', userController.getAppConfig)
 router.post('/advanced-search/hotels/agoda', userController.advancedSearchHotelAgoda)
 router.post('/advanced-search/hotels/booking', userController.advancedSearchHotelBooking)
 
+// hotel detail page
+router.post("/near-by-hotels", userController.nearByHotels)
+
 // quick search for hotels
 router.post('/quick-search/hotels', userController.quickSearchHotels)
 

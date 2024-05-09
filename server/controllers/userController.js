@@ -1269,3 +1269,14 @@ exports.deleteAttractionPlan = async (req, res) => {
         return res.status(500).json(er)
     }
 }
+
+exports.nearByHotels = async (req, res) => {
+    try {
+        const { lat, lng } = req.body
+        const response = await axios.get(`https://nominatim.openstreetmap.org/search?q=${lat},${lng}&format=jsonv2`)
+        return res.status(200).json(response.data)
+    } catch (err) {
+        return res.status(500).json(err)
+    }
+}
+
