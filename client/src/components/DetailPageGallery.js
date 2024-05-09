@@ -18,7 +18,7 @@ export default function DetailPageGallery(){
             <div className="relative">
                 <div>
                     <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"
-                    className="lg:w-full lg:h-[410px] xl:h-[440px] object-cover rounded-lg" onClick={handleOpen}/>
+                    className="lg:w-full lg:h-[410px] 2xl:h-[440px] object-cover rounded-lg" onClick={handleOpen}/>
                 </div>
 
                 <div onClick={handleOpen} className="absolute bottom-0 right-0 py-2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg btn btn-outline ">

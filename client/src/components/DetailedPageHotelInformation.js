@@ -61,6 +61,9 @@ export default function DetailedPageHotelInformation(){
             <HotelRelatedInformation/>
         </div>
         <div className="my-6">
+            <Reviews/>
+        </div>
+        <div className="my-6">
             <NearbyHotel/>
         </div>
         </>
@@ -132,12 +135,12 @@ function HotelRelatedInformation(){
         <>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-6 gap-x-8">
 
-            <div className="border-4 border-[#8DD3BB]">
+            <div className="border-[#8DD3BB] border-2  rounded-lg">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3731.862860055853!2d107.0471119759641!3d20.715792798452966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a45841b71f5e1%3A0x52df34f512ccce2f!2sH%C3%B4tel%20Perle%20d&#39;Orient%20Cat%20Ba%20-%20MGallery!5e0!3m2!1sen!2s!4v1714836200569!5m2!1sen!2s" 
                 className="w-full h-[300px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"/>
             </div>
 
-            <div className="border-4 border-[#8DD3BB] py-4 px-6">
+            <div className="border-[#8DD3BB] border-2 rounded-lg py-4 px-6">
                 <div className="pb-6 font-bold text-xl">Most Popular Amenities</div>
                     <div className="grid grid-cols-2 gap-4">
                         {amenities.map((amenity, index) => (
@@ -157,8 +160,227 @@ function HotelRelatedInformation(){
 function Reviews(){
     return(
         <>
-        <div>
-            
+        <div className="border-[#8DD3BB] border-2 p-4 rounded-lg">
+            {/* Tittle */}
+            <div className="text-xl font-bold mb-4">Guest Reviews <span className="font-light text-sm ml-1">(45)</span></div>
+
+            {/* Rating points */}
+            <div className="grid grid-cols-1 lg:grid-cols-3">
+                <div>
+                    {/* Total rating points of a hotel */}
+                    <div className="flex items-center my-auto">
+                        <div className="border-[#8DD3BB] bg-[#8DD3BB] rounded-full w-1/4 py-1 px-2 flex items-end justify-center">
+                            <span className="text-3xl font-extrabold text-white ">4.7</span>
+                            <span className="text-xl font-semibold text-[#CDEAE1]">/5</span>
+                        </div>
+                        
+                        <div className="text-2xl ml-2 font-bold">Amazing</div>
+                    </div>
+                </div>
+
+                {/* Rating bar section */}
+                <div className="col-span-2">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 md:gap-x-10">
+                        
+                        <div className="mt-6 lg:mt-0  ">
+                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
+                                <div className="font-semibold text-md">Cleanliness</div>
+                                <div className="font-bold text-md text-[#222160]">4.8</div>
+                            </div>
+
+                            {/* > md
+                                1 star = 80px (0.1 star = 8px)                      
+                                2 stars = 160px
+                                3 stars = 240px
+                                4 stars = 320px
+                                4.2 stars = 320 + 0.2*8 = 336px
+                                4.4 stars =  352px
+                                4.6 stars =  368px
+                                4.8 stars =  384px 
+                                5 stars = 400px
+                            */}
+                            {/* < md
+                                1 star = 70px (0.1 star = 7px)                      
+                                2 stars = 140px
+                                3 stars = 210px
+                                4 stars = 280px
+                                5 stars = 350px
+                            */}
+
+                            <div className="relative mt-2 h-4">
+                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
+                                <div className="absolute z-1 top-0 w-[336px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
+                                <div className="font-semibold text-md">Amenities</div>
+                                <div className="font-bold text-md text-[#222160]">4.6</div>
+                            </div>
+                            <div className="relative mt-2 h-4">
+                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
+                                <div className="absolute z-1 top-0 w-[322px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
+                                <div className="font-semibold text-md">Location</div>
+                                <div className="font-bold text-md text-[#222160]">4.6</div>
+                            </div>
+                            <div className="relative mt-2 h-4">
+                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
+                                <div className="absolute z-1 top-0 w-[322px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
+                                <div className="font-semibold text-md">Service</div>
+                                <div className="font-bold text-md text-[#222160]">4.7</div>
+                            </div>
+                            <div className="relative mt-2 h-4">
+                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
+                                <div className="absolute z-1 top-0 w-[329px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {/* Rating comment */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8">
+                <div>
+                    {/* users information */}
+                    <div className="flex items-center ">
+                        {/* avatar */}
+                        <div class="avatar">
+                            <div class="w-12 h-12 rounded-full">
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                            </div>
+                        </div>
+
+                        {/* users information */}
+                        <div className="mx-6 flex flex-col">
+                            <div className="font-bold text-lg">John Doberman</div>
+                            <div className="font-light text-md text-gray-500">May 12 2020</div>
+                        </div>
+                    </div>
+
+                    {/* comment section */}
+                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                </div>
+
+                <div>
+                    {/* users information */}
+                    <div className="flex items-center ">
+                        {/* avatar */}
+                        <div class="avatar">
+                            <div class="w-12 h-12 rounded-full">
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                            </div>
+                        </div>
+
+                        {/* users information */}
+                        <div className="mx-6 flex flex-col">
+                            <div className="font-bold text-lg">John Doberman</div>
+                            <div className="font-light text-md text-gray-500">May 12 2020</div>
+                        </div>
+                    </div>
+
+                    {/* comment section */}
+                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                </div>
+
+                <div>
+                    {/* users information */}
+                    <div className="flex items-center ">
+                        {/* avatar */}
+                        <div class="avatar">
+                            <div class="w-12 h-12 rounded-full">
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                            </div>
+                        </div>
+
+                        {/* users information */}
+                        <div className="mx-6 flex flex-col">
+                            <div className="font-bold text-lg">John Doberman</div>
+                            <div className="font-light text-md text-gray-500">May 12 2020</div>
+                        </div>
+                    </div>
+
+                    {/* comment section */}
+                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                </div>
+
+                <div>
+                    {/* users information */}
+                    <div className="flex items-center ">
+                        {/* avatar */}
+                        <div class="avatar">
+                            <div class="w-12 h-12 rounded-full">
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                            </div>
+                        </div>
+
+                        {/* users information */}
+                        <div className="mx-6 flex flex-col">
+                            <div className="font-bold text-lg">John Doberman</div>
+                            <div className="font-light text-md text-gray-500">May 12 2020</div>
+                        </div>
+                    </div>
+
+                    {/* comment section */}
+                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                </div>
+
+                <div>
+                    {/* users information */}
+                    <div className="flex items-center ">
+                        {/* avatar */}
+                        <div class="avatar">
+                            <div class="w-12 h-12 rounded-full">
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                            </div>
+                        </div>
+
+                        {/* users information */}
+                        <div className="mx-6 flex flex-col">
+                            <div className="font-bold text-lg">John Doberman</div>
+                            <div className="font-light text-md text-gray-500">May 12 2020</div>
+                        </div>
+                    </div>
+
+                    {/* comment section */}
+                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                </div>
+
+                <div>
+                    {/* users information */}
+                    <div className="flex items-center ">
+                        {/* avatar */}
+                        <div class="avatar">
+                            <div class="w-12 h-12 rounded-full">
+                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                            </div>
+                        </div>
+
+                        {/* users information */}
+                        <div className="mx-6 flex flex-col">
+                            <div className="font-bold text-lg">John Doberman</div>
+                            <div className="font-light text-md text-gray-500">May 12 2020</div>
+                        </div>
+                    </div>
+
+                    {/* comment section */}
+                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+                </div>
+
+
+            </div>
+
         </div>
         </>
     )
