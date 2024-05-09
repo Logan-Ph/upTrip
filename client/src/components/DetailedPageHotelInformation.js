@@ -1,14 +1,13 @@
 import { Link } from "react-router-dom"
 import { IconSwimming, IconGlassChampagne, IconHomeBolt, IconHorseToy,IconToolsKitchen2, IconMassage, IconBarbell, IconDoor, IconPool,IconDesk } from '@tabler/icons-react';
-import Slider from '@mui/material/Slider';
 export default function DetailedPageHotelInformation(){
     return(
         <>
-        <div className="border-[#8DD3BB] border-2 p-4 rounded-lg">
-            <div className="flex items-center space-x-4 mb-2">
+        <div className="border-[#8DD3BB] border-2 p-4 rounded-lg space-y-2">
+            <div className="flex flex-col space-y-2 lg:flex-row md:items-center lg:space-x-4 mb-2">
                 <p className="font-extrabold text-2xl">Hotel Perle dOrient Cat Ba-MGallery</p>
 
-                <div class="flex items-center space-x-2">
+                <div class="flex flex-row items-center space-x-2">
                     <div className="flex items-center space-x-1">
                         <div>
                             <svg className="w-4 h-4 md:w-5 md:h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
@@ -18,10 +17,9 @@ export default function DetailedPageHotelInformation(){
                             <p className="font-bold text-sm md:text-md">5<span className="text-sm md:text-md font-light">/5</span></p>
                         </div>
                     </div>
-                    <p className="font-bold text-sm md:text-md">Very good</p>      
+                    <p className="font-bold text-sm md:text-md">Very good</p>  
+                    <p>371 reviews</p>    
                 </div>
-
-                <p>371 reviews</p>
             </div>
 
             {/* Hotel location */}
@@ -85,19 +83,31 @@ function HotelPriceComparison(){
     return(
         <>
         {website.map((item, index) => (
-            <div className="bg-[#CDEAE1] border-transparent grid grid-cols-2 rounded-lg my-2 shadow-md px-10">
-                <div className="my-auto pl-5">
-                    <img src={item.imgSrc} alt="website logo" className="w-[120px] h-[60px] object-cover"/>
+            <div className="bg-[#CDEAE1] border-transparent grid grid-cols-4 rounded-lg my-2 shadow-md px-2 lg:px-10">
+
+                <div className="my-auto md:pl-5">
+                    <img src={item.imgSrc} alt="website logo" className="w-[90px] h-[45px] md:w-[120px] md:h-[60px] object-cover"/>
                 </div>
 
-                <div className="grid grid-cols-2">
-                    <div className="font-bold text-xl text-[#222160] my-auto">{item.price}</div>
-                    <Link to={item.linkTo} target="_blank" className="my-auto">
-                        <div className="btn w-1/2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
-                            <span className="mx-auto py-2">Book Now</span>
-                        </div>
-                    </Link>
+                <div className="col-span-3">
+                    <div className="grid grid-cols-3">
+                        <div className="font-bold text-xs md:text-xl text-[#222160] my-auto">{item.price}</div>
+
+                            <button onClick={() => window.open(item.linkTo, '_blank')}
+                                    className=" mr-2 md:mr-4  btn btn-accent hover:text-white my-2 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
+                                <span className="mx-auto md:py-2 text-sm ">Book Now</span>
+                            </button>
+                      
+                            {/* price drop */}
+                            <button href={item.linkTo} target="_blank" 
+                                    className="ml-2 md:ml-4  my-2 btn glass btn-success hover:text-white bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
+                                <span className="mx-auto md:py-2 text-xs">Alert Price Drop </span>
+                            </button>
+                       
+                    </div>
                 </div>
+
+                
             </div>
         ))}
         </>
@@ -120,11 +130,13 @@ function HotelRelatedInformation(){
     
     return(
         <>
-        <div className="grid grid-cols-2 gap-x-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-6 gap-x-8">
+
             <div className="border-4 border-[#8DD3BB]">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3731.862860055853!2d107.0471119759641!3d20.715792798452966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a45841b71f5e1%3A0x52df34f512ccce2f!2sH%C3%B4tel%20Perle%20d&#39;Orient%20Cat%20Ba%20-%20MGallery!5e0!3m2!1sen!2s!4v1714836200569!5m2!1sen!2s" 
                 className="w-full h-[300px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"/>
             </div>
+
             <div className="border-4 border-[#8DD3BB] py-4 px-6">
                 <div className="pb-6 font-bold text-xl">Most Popular Amenities</div>
                     <div className="grid grid-cols-2 gap-4">
@@ -138,6 +150,16 @@ function HotelRelatedInformation(){
                     
                 </div>
             </div>
+        </>
+    )
+}
+
+function Reviews(){
+    return(
+        <>
+        <div>
+            
+        </div>
         </>
     )
 }
