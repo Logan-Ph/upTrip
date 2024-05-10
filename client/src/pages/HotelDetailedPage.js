@@ -1,9 +1,9 @@
 import { useSearchParams } from "react-router-dom";
-import DetailPageGallery from "../components/DetailPageGallery";
 import DetailedPageHotelInformation from "../components/DetailedPageHotelInformation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchHotelPriceComparison, fetchSpecificHotel, fetchTripAutoComplete, getHotelAlbums, getHotelComments, getHotelInfo, getNearByHotels } from "../api/fetch";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
+import DetailedPageGallerySkeleton from "../components/skeletonLoadings/DetailedPageGallerySkeleton";
 
 export default function HotelDetailedPage(){
     const [searchParams] = useSearchParams()
@@ -114,11 +114,18 @@ export default function HotelDetailedPage(){
         enabled: !!(payload.searchValue && payload.searchCoordinate && payload.latitude && payload.longitude)
     });
 
+    const DetailPageGallery = lazy(() =>
+        import('../components/DetailPageGallery'));
+
     return(
         <>
         <div className="bg-[#FAFBFC] md:p-10">
                 <section className="mx-auto max-w-8xl px-6 py-6">
-                    <DetailPageGallery hotelAlbums={hotelAlbums}/>
+
+                    <Suspense fallback={<DetailedPageGallerySkeleton />}>
+                        <DetailPageGallery hotelAlbums={hotelAlbums}/>
+                    </Suspense>
+
                     <div className="my-6"></div>
                     <DetailedPageHotelInformation nearByHotels={nearByHotels} hotelInfo={hotelInfo} hotelComments={hotelComments} specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload}/>
                 </section>
