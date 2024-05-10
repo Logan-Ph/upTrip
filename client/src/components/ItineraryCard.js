@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 
-
-
 export function ItineraryCard() {
     return (
         <>
@@ -89,7 +87,6 @@ export function ItineraryCard() {
         </>
     );
 }
-
 
 export function AddItemButton() {
     const [isOpen, setIsOpen] = useState(false);
@@ -529,6 +526,61 @@ function OtherPageContent({ handleBackButtonClick }) {
                         </div>
                     </div>
                 </div>
+                {/* Search for price*/}
+                <div className="flex justify-center">
+                    <div className="btn btn-sm text-center rounded-full text-sm text-gray-800">
+                        Search
+                    </div>
+                </div>
+                {/* Price */}
+                <div className="my-4">
+                    {/* Loading price */}
+                    <div className="flex justify-center my-10">
+                        <span className="loading loading-dots loading-md"></span>
+                    </div>
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                        <div class="mx-auto">
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+                                alt="website logo"
+                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                            />
+                        </div>
+                        <div class="mx-auto">
+                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                346.405 VND
+                            </p>
+                        </div>
+                    </div>
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                        <div class="mx-auto">
+                            <img
+                                src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
+                                alt="website logo"
+                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                            />
+                        </div>
+                        <div class="mx-auto">
+                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                412.397 VND
+                            </p>
+                        </div>
+                    </div>
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                        <div class="mx-auto">
+                            <img
+                                src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+                                alt="website logo"
+                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                            />
+                        </div>
+                        <div class="mx-auto">
+                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                330.614 VND
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
             {/* For Flight */}
             <div className="my-4">
@@ -567,7 +619,9 @@ function OtherPageContent({ handleBackButtonClick }) {
                     </div>
                 </div>
                 {/* Ask Flight Details */}
-                <div class="text-start font-semibold text-lg">Flight Information</div>
+                <div class="text-start font-semibold text-lg">
+                    Flight Information
+                </div>
                 <div className="relative w-full my-2 grow border-gray-300">
                     {/* Ask for number of passenger */}
                     <button
@@ -745,6 +799,61 @@ function OtherPageContent({ handleBackButtonClick }) {
                         </div>
                     </div>
                 </div>
+                {/* Search for price*/}
+                <div className="flex justify-center">
+                    <div className="btn btn-sm text-center rounded-full text-sm text-gray-800">
+                        Search
+                    </div>
+                </div>
+                {/* Price */}
+                <div className="my-4">
+                    {/* Loading price */}
+                    <div className="flex justify-center my-10">
+                        <span className="loading loading-dots loading-md"></span>
+                    </div>
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                        <div class="mx-auto">
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+                                alt="website logo"
+                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                            />
+                        </div>
+                        <div class="mx-auto">
+                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                346.405 VND
+                            </p>
+                        </div>
+                    </div>
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                        <div class="mx-auto">
+                            <img
+                                src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
+                                alt="website logo"
+                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                            />
+                        </div>
+                        <div class="mx-auto">
+                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                412.397 VND
+                            </p>
+                        </div>
+                    </div>
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                        <div class="mx-auto">
+                            <img
+                                src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+                                alt="website logo"
+                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                            />
+                        </div>
+                        <div class="mx-auto">
+                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                330.614 VND
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
             {/* For Experience */}
             <div className="my-4">
@@ -855,7 +964,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                     )}
                 </div>
             </div>
-            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2">
+            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2 z-50">
                 {/* Add any other content or buttons */}
                 <div className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full">
                     Add to itinerary
@@ -864,10 +973,6 @@ function OtherPageContent({ handleBackButtonClick }) {
         </React.Fragment>
     );
 }
-
-
-
-
 
 export function EmptySection() {
     return (
@@ -1378,9 +1483,13 @@ export function SavedFlightCard() {
                             <div className="text-gray-500">SGN</div>
                         </div>
                         <div className="flex flex-col">
-                            <div className="text-gray-500 pb-1 font-thin">2h 0m</div>
+                            <div className="text-gray-500 pb-1 font-thin">
+                                2h 0m
+                            </div>
                             <hr className="text-gray-500"></hr>
-                            <div className="text-gray-500 mt-1 font-thin">non stop</div>
+                            <div className="text-gray-500 mt-1 font-thin">
+                                non stop
+                            </div>
                         </div>
                         <div className="flex flex-col">
                             <div className="font-semibold">23:15</div>
