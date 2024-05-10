@@ -206,7 +206,7 @@ function Reviews({ hotelComments, hotelInfo }) {
                                     <div className="relative mt-2 h-4">
                                         <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
                                         <div className="absolute z-1 top-0 w-[316px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]" style={{
-                width: `${hotelInfo?.ratingsMap?.[key] * (windowWidth < 768 ? 70 : 80)}px`}}></div>
+                                            width: `${hotelInfo?.ratingsMap?.[key] * (windowWidth < 768 ? 70 : 80)}px`}}></div>
                                     </div>
                                 </div>
                             ))}
@@ -215,30 +215,30 @@ function Reviews({ hotelComments, hotelInfo }) {
                 </div>
 
                 {/* Rating comment */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8">
+                {/*<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8">
                     {hotelComments?.map((comment, index) => (
                         <div>
                             {/* users information */}
-                            <div className="flex items-center ">
+                            {/* <div className="flex items-center "> */}
                                 {/* avatar */}
-                                <div class="avatar">
+                                {/* <div class="avatar">
                                     <div class="w-12 h-12 rounded-full">
                                         <img src={comment?.userInfo?.headPictureUrl} alt="ava" />
                                     </div>
-                                </div>
+                                </div> */}
 
                                 {/* users information */}
-                                <div className="mx-6 flex flex-col">
+                                {/* <div className="mx-6 flex flex-col">
                                     <div className="font-bold text-lg">{comment?.userInfo?.nickName}</div>
                                     <div className="font-light text-md text-gray-500">{comment?.createDate?.split(" ")[0]}</div>
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* comment section */}
-                            <div className="mt-4 text-md font-medium text-[#9A9A9A] line-clamp-4">{comment?.content}</div>
-                        </div>
-                    ))}
-                </div>
+                            {/* <div className="mt-4 text-md font-medium text-[#9A9A9A] line-clamp-4">{comment?.content}</div>
+                        </div> */}
+                    {/* ))}
+                </div>*/}
             </div>
         </>
     )
