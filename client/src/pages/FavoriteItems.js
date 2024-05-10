@@ -7,7 +7,7 @@ import { InfoCardSkeleton } from "../components/skeletonLoadings/InfoCardSkeleto
 export default function FavoriteItems() {
     return (
         <>
-            <div className="md:px-10">
+            <div className="md:px-10 bg-[#FAFBFC]">
                 <div className="mx-auto max-w-8xl px-6 py-10">
                     <div className="text-base breadcrumbs">
                         <ul>
@@ -60,7 +60,7 @@ export default function FavoriteItems() {
                             <FlightCard />
                         </div>
                         <div className="my-4">
-                            <InfoCardSkeleton/>
+                            <InfoCardSkeleton />
                         </div>
                     </div>
                 </div>

@@ -133,15 +133,15 @@ export function ExperienceCard() {
     return (
         <>
             <Link>
-                <div class="card card-side rounded-sm md:bg-base-100 md:shadow-xl">
-                    <figure class="">
+                <div class="card flex-col md:flex-row card-side rounded-lg bg-white shadow-xl">
+                    <figure class="rounded-t-lg rounded-b-none md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
                             src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/228033379.jpg?k=5559966043302855e467dfa2c28ad78034f95b8ffaec437ca19004ba936c7b49&o=&hp=1"
                             alt="Experience Pic"
-                            className="w-[150px] h-[150px] md:w-[450px] md:h-full object-cover"
+                            className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
                     </figure>
-                    <div class="card-body flex-1 p-0 px-4 md:p-7">
+                    <div class="card-body flex-1 px-5 pt-3 pb-7 md:p-7">
                         <h2 class="card-title text-base md:text-xl">
                             Legacy Yen Tu
                         </h2>
@@ -178,7 +178,7 @@ export function ExperienceCard() {
                             <i class="fa-solid fa-location-dot"></i> Ho Chi Minh
                             City
                         </p>
-                        <div class="card-actions md:justify-between flex-col md:flex-row md:items-end">
+                        <div class="card-actions md:justify-between flex-col md:flex-row md:items-end mt-3 md:mt-0">
                             <button class="btn bg-transparent border-black border-[1.5px]">
                                 <i class="fa-solid fa-parachute-box"></i>{" "}
                                 Experience
@@ -198,15 +198,15 @@ export function StayCard() {
     return (
         <>
             <Link>
-                <div class="card card-side rounded-sm md:bg-base-100 md:shadow-xl">
-                    <figure class="items-start">
+                <div class="card flex-col md:flex-row card-side rounded-lg bg-white shadow-xl">
+                    <figure class="rounded-t-lg rounded-b-none md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRa_5OJN_XEx_Km09e8erSQbdrQbgDpJ1J2-e6o_PD1ow&s"
                             alt="Hotel"
-                            className="w-[150px] h-[150px] md:w-[450px] md:h-full object-cover"
+                            className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
                     </figure>
-                    <div class="card-body flex-1 p-0 px-4 md:p-7">
+                    <div class="card-body flex-1 px-5 pt-3 pb-7 md:p-7">
                         <h2 class="card-title text-base md:text-xl">
                             Legacy Yen Tu
                         </h2>
@@ -243,7 +243,7 @@ export function StayCard() {
                             <i class="fa-solid fa-location-dot"></i> Ho Chi Minh
                             City
                         </p>
-                        <div class="card-actions md:justify-between flex-col md:flex-row md:items-end">
+                        <div class="card-actions md:justify-between flex-col md:flex-row md:items-end mt-3 md:mt-0">
                             <button class="btn bg-transparent border-black border-[1.5px]">
                                 <i class="fa-solid fa-hotel"></i> Stay
                             </button>
@@ -258,19 +258,19 @@ export function StayCard() {
     );
 }
 
-export function FlightCard({ hotel }) {
+export function FlightCard() {
     return (
         <>
             <Link>
-                <div class="card card-side rounded-sm md:bg-base-100 md:shadow-xl">
-                    <figure class="items-start">
+                <div class="card flex-col md:flex-row card-side rounded-lg bg-white shadow-xl">
+                    <figure class="rounded-t-lg rounded-b-none md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
                             src="https://static.wixstatic.com/media/9d8ed5_70663b41e71e4453a550be85fbd85b1d~mv2.png/v1/fill/w_980,h_613,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/9d8ed5_70663b41e71e4453a550be85fbd85b1d~mv2.png"
                             alt="Airline"
-                            className="w-[150px] h-[150px] md:w-[450px] md:h-full object-cover"
+                            className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
                     </figure>
-                    <div class="card-body flex-1 p-0 px-4 md:p-7 justify-between">
+                    <div class="card-body flex-1 px-5 pt-3 pb-7 md:p-7 justify-between">
                         <div className="flex justify-between flex-col md:flex-row">
                             <div className="flex flex-col">
                                 <div className="font-semibold">
@@ -288,7 +288,7 @@ export function FlightCard({ hotel }) {
                                 <div className="text-gray-500">SGN - DAD</div>
                             </div>
                         </div>
-                        <div class="card-actions md:justify-between flex-col md:flex-row md:items-end">
+                        <div class="card-actions md:justify-between flex-col md:flex-row md:items-end mt-3 md:mt-0">
                             <button class="btn bg-transparent border-black border-[1.5px]">
                                 <i class="fa-solid fa-plane"></i> Flight
                             </button>

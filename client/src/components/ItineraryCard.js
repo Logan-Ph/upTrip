@@ -1,29 +1,31 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
+import { SavedCollectionCard } from "./CollectionCard";
+
 
 
 export function ItineraryCard() {
     return (
         <>
-            <div class="card card-side rounded-md md:bg-base-100 md:shadow-xl my-4">
+            <div class="card flex-col md:flex-row card-side rounded-md bg-white shadow-xl my-4">
                 <Link>
-                    <figure class="rounded-l-md">
+                    <figure class="rounded-t-md md:rounded-tr-none md:rounded-l-md h-full">
                         <img
                             src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/228033379.jpg?k=5559966043302855e467dfa2c28ad78034f95b8ffaec437ca19004ba936c7b49&o=&hp=1"
                             alt="Itinerary Cover Pic"
-                            className="w-[150px] h-[150px] md:w-[380px] md:h-full object-cover"
+                            className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
                     </figure>
                 </Link>
 
-                <div class="card-body flex-1 p-0 px-5 md:p-7">
+                <div class="card-body flex-1 px-5 p-7">
                     <Link>
                         <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4">
                             Summer Trip
                         </h2>
                     </Link>
                     <div>
-                        <p class="text-gray-500 text-sm md:text-lg mt-4 mb-2">
+                        <p class="text-gray-500 text-sm md:text-lg mt-1 md:mt-4 mb-2">
                             <i class="fa-regular fa-calendar"></i>&ensp; Mar 6{" "}
                             <i class="fa-solid fa-arrow-right"></i> Mar 20, 2024
                         </p>
@@ -32,7 +34,7 @@ export function ItineraryCard() {
                             &ensp; Ho Chi Minh City
                         </p>
                     </div>
-                    <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1">
+                    <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1 mt-4 md:mt-0">
                         <button
                             className="btn bg-transparent border-[1.5px] text-red-400 hover:text-red-500"
                             onClick={() =>
@@ -66,14 +68,17 @@ export function ItineraryCard() {
                                     Delete itinerary?
                                 </h3>
                                 <p className="pt-4 text-lg">
-                                    Are you sure you want to delete
-                                    Summer Trip?
+                                    Are you sure you want to delete Summer Trip?
                                 </p>
                                 <div className="modal-action mt-3">
                                     <form method="dialog">
                                         {/* if there is a button in form, it will close the modal */}
-                                        <button className="btn rounded-3xl mx-2">Cancel</button>
-                                        <button className="btn bg-black text-white rounded-3xl">Delete</button>
+                                        <button className="btn rounded-3xl mx-2">
+                                            Cancel
+                                        </button>
+                                        <button className="btn bg-black text-white rounded-3xl">
+                                            Delete
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -85,12 +90,31 @@ export function ItineraryCard() {
     );
 }
 
+
 export function AddItemButton() {
     const [isOpen, setIsOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState("main");
 
     const toggleDrawer = () => {
         setIsOpen(!isOpen);
     };
+
+    const handleNextButtonClickMain = () => {
+        setCurrentPage("chooseSavedItem");
+    };
+
+    const handleNextButtonClickSaved = () => {
+        setCurrentPage("otherPage");
+    };
+
+    const handleBackButtonClick = () => {
+        if (currentPage === "chooseSavedItem") {
+            setCurrentPage("main");
+        } else {
+            setCurrentPage("chooseSavedItem");
+        }
+    };
+
     return (
         <>
             {/* Button */}
@@ -106,19 +130,37 @@ export function AddItemButton() {
             <div className="relative">
                 {/* Drawer */}
                 <div
-                    className={`fixed top-0 right-0 h-full w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 p-8 ${
+                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 pt-2 md:px-8 md:pt-8  ${
                         isOpen ? "translate-x-0" : "translate-x-full"
-                    }`}
+                    } overflow-y-auto`}
                 >
                     {/* Content inside the drawer */}
-                    <div className="p-4">
-                        <h1 className="text-2xl font-semibold mb-2">
-                            Choose a collection
+                    <div className="p-4 relative">
+                        <h1 className="text-2xl font-semibold mb-2 sticky top-0">
+                            {currentPage === "main"
+                                ? "Choose a collection"
+                                : currentPage === "chooseSavedItem"
+                                ? "Add to your itinerary"
+                                : "Add to your itinerary"}
                         </h1>
-                        <p className="text-gray-600">
-                            Select your favorite collection to choose items
-                            from.
-                        </p>
+                        {currentPage === "main" ? (
+                            <ChooseCollection
+                                handleNextButtonClick={
+                                    handleNextButtonClickMain
+                                }
+                            />
+                        ) : currentPage === "chooseSavedItem" ? (
+                            <ChooseSavedItem
+                                handleNextButtonClick={
+                                    handleNextButtonClickSaved
+                                }
+                                handleBackButtonClick={handleBackButtonClick}
+                            />
+                        ) : (
+                            <OtherPageContent
+                                handleBackButtonClick={handleBackButtonClick}
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -133,6 +175,699 @@ export function AddItemButton() {
         </>
     );
 }
+
+function ChooseCollection({ handleNextButtonClick }) {
+    return (
+        <>
+            <React.Fragment>
+                <p className="text-gray-600">
+                    Select your favorite collection to choose items from.
+                </p>
+                <div className="my-4">
+                    {/* Your SavedCollectionCard components */}
+                    <SavedCollectionCard />
+                    <SavedCollectionCard />
+                    <SavedCollectionCard />
+                    <SavedCollectionCard />
+                    <SavedCollectionCard />
+                    <SavedCollectionCard />
+                </div>
+                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2">
+                    <div
+                        className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
+                        onClick={handleNextButtonClick}
+                    >
+                        Next
+                    </div>
+                </div>
+            </React.Fragment>
+        </>
+    );
+}
+
+function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick }) {
+    return (
+        <>
+            <React.Fragment>
+                {/* Other page content */}
+                <p>Choose one from your saves.</p>
+                <button
+                    onClick={handleBackButtonClick}
+                    className="mt-4 fixed top-0 left-0 p-3 ml-4"
+                >
+                    <i className="fa-solid fa-arrow-left text-2xl"></i>
+                </button>
+                <div className="my-4">
+                    <SavedStayCard />
+                    <SavedStayCard />
+                    <SavedFlightCard />
+                    <SavedExperienceCard />
+                </div>
+                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2">
+                    <div
+                        className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
+                        onClick={handleNextButtonClick}
+                    >
+                        Next
+                    </div>
+                </div>
+            </React.Fragment>
+        </>
+    );
+}
+
+function OtherPageContent({ handleBackButtonClick }) {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDetails = () => {
+        setIsOpen(!isOpen);
+    };
+    return (
+        <React.Fragment>
+            {/* Other page content */}
+            <button
+                onClick={handleBackButtonClick}
+                className="mt-4 fixed top-0 left-0 p-3 ml-4"
+            >
+                <i className="fa-solid fa-arrow-left text-2xl"></i>
+            </button>
+            {/* For Stay */}
+            <div className="my-4">
+                <SavedStayCard />
+                {/* Ask Date */}
+                <div className="text-start font-semibold text-lg">Date</div>
+                <div className="flex my-2">
+                    <div class="relative w-1/2">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg
+                                class="w-4 h-4 text-gray-500"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <input
+                                datepicker
+                                datepicker-autohide
+                                name="start"
+                                type="text"
+                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 rounded-r-none border-l-"
+                                placeholder="dd/mm/yyyy"
+                            />
+                            <label
+                                for="floating_filled"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                            >
+                                Check-in
+                            </label>
+                        </div>
+                    </div>
+                    <div class="relative w-1/2">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none focus:ring-none">
+                            <svg
+                                class="w-4 h-4 text-gray-500"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <input
+                                datepicker
+                                datepicker-autohide
+                                name="end"
+                                type="text"
+                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0"
+                                placeholder="dd/mm/yyyy"
+                            />
+                            <label
+                                for="floating_filled"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                            >
+                                Check-out
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {/* Ask Guest and Room */}
+                <div className="text-start font-semibold text-lg">
+                    Room information
+                </div>
+                <div className="relative my-2">
+                    <button
+                        id="dropdownDividerButton"
+                        data-dropdown-toggle="dropdownDivider"
+                        class="text-gray-500 bg-white focus:ring-1 focus:ring-black focus:border-black font-medium rounded-lg border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 mr-5 pt-5 ps-10 w-full justify-between"
+                        type="button"
+                    >
+                        <label
+                            for="floating_filled"
+                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                        >
+                            Guest(s) and Room(s)
+                        </label>
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
+                        </div>
+                        1 adult, 1 child, 1 room{" "}
+                        <svg
+                            class="w-2.5 h-2.5 ms-3"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 10 6"
+                        >
+                            <path
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="m1 1 4 4 4-4"
+                            />
+                        </svg>
+                    </button>
+
+                    {/* <!-- Dropdown menu --> */}
+                    <div
+                        id="dropdownDivider"
+                        className="z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full hidden"
+                    >
+                        {/* Ask user to input room information */}
+                        <div
+                            class="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                            aria-labelledby="dropdownDividerButton"
+                        >
+                            <div class="flex justify-between">
+                                <div class="flex flex-col">
+                                    <div>
+                                        <i class="fa-solid fa-door-open"></i>{" "}
+                                        Room(s)
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex space-x-3 items-center">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-lg">1</span>
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="flex flex-col">
+                                    <div>
+                                        <i
+                                            class="fa-solid fa-person"
+                                            aria-hidden="true"
+                                        ></i>{" "}
+                                        Adult(s)
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex space-x-3 items-center">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-lg">1</span>
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="flex flex-col">
+                                    <div className="text-start">
+                                        <i
+                                            class="fa-solid fa-child-reaching"
+                                            aria-hidden="true"
+                                        ></i>{" "}
+                                        Children
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        maximum 17 years old
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex space-x-3 items-center">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-lg"> 1 </span>
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="py-2">
+                            <div
+                                to="#"
+                                class="block px-4 pb-2 text-[12px] text-gray-500 w-full"
+                            >
+                                Please enter your children's ages by the time of
+                                check-in
+                            </div>
+                            <div class="overflow-y-scroll flex flex-wrap items-start px-5 mx-auto justify-between md:justify-normal w-full md:max-h-[150px]">
+                                <form class="w-24 md:w-16 mb-3 md:mr-4">
+                                    <label
+                                        for="number-input"
+                                        class="block mb-2 text-xs text-start font-medium text-gray-900"
+                                    >
+                                        Child 1
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="number-input"
+                                        aria-describedby="helper-text-explanation"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                        placeholder="Age"
+                                        required
+                                    />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* For Flight */}
+            <div className="my-4">
+                <SavedFlightCard />
+                {/* Ask Date */}
+                <div className="text-start font-semibold text-lg">Date</div>
+                <div className="flex my-2">
+                    <div class="relative w-full">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none focus:ring-none">
+                            <svg
+                                class="w-4 h-4 text-gray-500"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <input
+                                datepicker
+                                datepicker-autohide
+                                name="end"
+                                type="text"
+                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5"
+                                placeholder="dd/mm/yyyy"
+                            />
+                            <label
+                                for="floating_filled"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                            >
+                                Departing
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {/* Ask Flight Details */}
+                <div class="text-start font-semibold text-lg">Flight Information</div>
+                <div className="relative w-full my-2 grow border-gray-300">
+                    {/* Ask for number of passenger */}
+                    <button
+                        id="dropdownDefaultButton"
+                        data-dropdown-toggle="dropdown"
+                        class="text-gray-900 bg-white font-medium rounded-lg  border border-gray-300 focus:ring-1 focus:ring-black focus:border-black text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none"
+                        type="button"
+                    >
+                        <label
+                            for="floating_filled"
+                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                        >
+                            No. of Passengers
+                        </label>
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
+                        </div>
+                        1 Adult, 1 Child, 1 Infant{" "}
+                        <svg
+                            class="w-2.5 h-2.5 ms-3"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 10 6"
+                        >
+                            <path
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="m1 1 4 4 4-4"
+                            />
+                        </svg>
+                    </button>
+
+                    {/* <!-- Dropdown menu --> */}
+                    <div
+                        id="dropdown"
+                        className="z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full hidden"
+                    >
+                        <div
+                            class="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                            aria-labelledby="dropdownDefaultButton"
+                        >
+                            <div class="flex justify-between">
+                                <div class="flex flex-col">
+                                    <div className="text-start">
+                                        <i
+                                            class="fa-solid fa-person"
+                                            aria-hidden="true"
+                                        ></i>{" "}
+                                        Adult(s)
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex space-x-3 items-center">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-lg"> 1 </span>
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="flex flex-col">
+                                    <div className="text-start">
+                                        <i class="fa-solid fa-child-reaching"></i>{" "}
+                                        Child
+                                    </div>
+                                    <div>(age 2 - 11)</div>
+                                </div>
+                                <div>
+                                    <div class="flex space-x-3 items-center">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-lg"> 1 </span>
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="flex flex-col">
+                                    <div className="text-start">
+                                        <i class="fa-solid fa-baby"></i> Infant
+                                    </div>
+                                    <div>(below age 2)</div>
+                                </div>
+                                <div>
+                                    <div class="flex space-x-3 items-center">
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                        <span class="text-lg"> 1 </span>
+
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="w-6 h-6"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                            ></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* For Experience */}
+            <div className="my-4">
+                <SavedExperienceCard />
+            </div>
+            {/* Additional Details */}
+            <div className="my-4">
+                <div className="toggleable-details">
+                    <div
+                        className="text-start text-lg font-semibold hover:underline-offset-4"
+                        onClick={toggleDetails}
+                    >
+                        Additional Details
+                        {isOpen ? (
+                            <i className="fa-solid fa-chevron-up ml-2"></i>
+                        ) : (
+                            <i className="fa-solid fa-chevron-down ml-2"></i>
+                        )}
+                    </div>
+                    {isOpen && (
+                        <div className="details">
+                            <form class="w-full mx-auto grid grid-cols-2 gap-4 my-2">
+                                <div>
+                                    <label
+                                        for="start-time"
+                                        class="block mb-2 text-md font-medium text-gray-900 text-start"
+                                    >
+                                        Start Time
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                            <svg
+                                                class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <input
+                                            type="time"
+                                            id="start-time"
+                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            min="09:00"
+                                            max="18:00"
+                                            value="00:00"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label
+                                        for="end-time"
+                                        class="block mb-2 text-md font-medium text-gray-900 text-start"
+                                    >
+                                        End Time
+                                    </label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                            <svg
+                                                class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                                aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <input
+                                            type="time"
+                                            id="end-time"
+                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            min="09:00"
+                                            max="18:00"
+                                            value="00:00"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="my-2 text-start">
+                                <label
+                                    for="note"
+                                    class="block mb-2 text-base font-medium text-gray-900"
+                                >
+                                    Note
+                                </label>
+                                <textarea
+                                    type="text"
+                                    id="note"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5 focus:ring-black focus:border-black"
+                                    placeholder="Add an extra details."
+                                    required=""
+                                ></textarea>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2">
+                {/* Add any other content or buttons */}
+                <div className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full">
+                    Add to itinerary
+                </div>
+            </div>
+        </React.Fragment>
+    );
+}
+
+
+
+
 
 export function EmptySection() {
     return (
@@ -151,7 +886,7 @@ export function EmptySection() {
 export function StayCard() {
     return (
         <>
-            <div class="card card-side flex-col md:flex-row rounded-lg bg-base-100 shadow-xl my-4">
+            <div class="card card-side flex-col md:flex-row rounded-lg bg-white shadow-xl my-4">
                 <Link>
                     <figure className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
@@ -285,7 +1020,7 @@ export function StayCard() {
 export function FlightCard() {
     return (
         <>
-            <div class="card card-side rounded-lg py-4 md:py-0 bg-base-100 shadow-xl my-4">
+            <div class="card card-side rounded-lg py-4 md:py-0 bg-white shadow-xl my-4">
                 <div class="card-body flex-1 p-0 px-5 md:p-7">
                     <div className="flex justify-between items-center mb-2">
                         <div className="font-thin text-xl">
@@ -385,7 +1120,7 @@ export function FlightCard() {
 export function ActivityCard() {
     return (
         <>
-            <div class="flex-1 card card-side flex-col md:flex-row rounded-lg bg-base-100 shadow-md my-4">
+            <div class="flex-1 card card-side flex-col md:flex-row rounded-lg bg-white shadow-md my-4">
                 <Link>
                     <figure className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
@@ -533,6 +1268,199 @@ export function BudgetCard() {
                 <div className="flex justify-between px-3 md:px-8 my-2 text-xl font-semibold">
                     <div>Subtotal</div>
                     <div>30.000.000</div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export function SavedStayCard() {
+    const [isSelected, setIsSelected] = useState(false);
+
+    const handleCardClick = () => {
+        setIsSelected(true);
+    };
+
+    return (
+        <>
+            <div
+                className={`card card-side bg-white p-3 border-[2px] ${
+                    isSelected
+                        ? "border-black"
+                        : "border-gray-300 hover:border-black duration-300"
+                } rounded-md items-start my-4`}
+                onClick={handleCardClick}
+            >
+                <figure className="w-1/3">
+                    <img
+                        src="https://tourism.danang.vn/wp-content/uploads/2023/02/cau-rong-da-nang.jpeg"
+                        className="w-full h-20 rounded-md"
+                        alt="Hotel Picture"
+                    />
+                </figure>
+                <div className="flex space-y-1 flex-col items-start px-4 w-full">
+                    <h2 className="text-lg md:text-xl font-semibold text-start">
+                        Hotel Name
+                    </h2>
+                    <div class="flex space-x-1">
+                        <svg
+                            class="w-4 h-4 text-[#ffa732]"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 22 20"
+                        >
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg
+                            class="w-4 h-4 text-[#ffa732]"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 22 20"
+                        >
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg
+                            class="w-4 h-4 text-[#ffa732]"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 22 20"
+                        >
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-500 text-sm md:text-base">
+                        <i class="fa-solid fa-location-dot"></i> Ho Chi Minh
+                        City
+                    </p>
+                    <div className="text-base font-semibold">
+                        from 1.200.000
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export function SavedFlightCard() {
+    const [isSelected, setIsSelected] = useState(false);
+
+    const handleCardClick = () => {
+        setIsSelected(true);
+    };
+
+    return (
+        <>
+            <div
+                className={`card flex-col card-side bg-white p-3 border-[2px] ${
+                    isSelected
+                        ? "border-black"
+                        : "border-gray-300 hover:border-black duration-300"
+                } rounded-md items-start my-4`}
+                onClick={handleCardClick}
+            >
+                <figure className="flex w-full">
+                    <img
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQslxFGty6vilA5c2QqOQNNTu3QxMkHIbGO1LTLlwdy9A&s"
+                        className="w-6 h-6 rounded-md"
+                        alt="Airline Picture"
+                    />
+                    <div className="text-gray-500 text-start ml-2">
+                        Vietnam Airlines
+                    </div>
+                </figure>
+                <div className="flex space-y-1 flex-col items-start px-4 w-full">
+                    <div className="flex justify-between w-full">
+                        <div className="flex flex-col">
+                            <div className="font-semibold">21:15</div>
+                            <div className="text-gray-500">SGN</div>
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="text-gray-500 pb-1 font-thin">2h 0m</div>
+                            <hr className="text-gray-500"></hr>
+                            <div className="text-gray-500 mt-1 font-thin">non stop</div>
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="font-semibold">23:15</div>
+                            <div className="text-gray-500">DAD</div>
+                        </div>
+                    </div>
+
+                    <div className="text-base font-semibold mt-2">
+                        from 1.200.000
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export function SavedExperienceCard() {
+    const [isSelected, setIsSelected] = useState(false);
+
+    const handleCardClick = () => {
+        setIsSelected(true);
+    };
+
+    return (
+        <>
+            <div
+                className={`card card-side bg-white p-3 border-[2px] ${
+                    isSelected
+                        ? "border-black"
+                        : "border-gray-300 hover:border-black duration-300"
+                } rounded-md items-start my-4`}
+                onClick={handleCardClick}
+            >
+                <figure className="w-1/3">
+                    <img
+                        src="https://tourism.danang.vn/wp-content/uploads/2023/02/cau-rong-da-nang.jpeg"
+                        className="w-full h-20 rounded-md"
+                        alt="Hotel Picture"
+                    />
+                </figure>
+                <div className="flex space-y-1 flex-col items-start px-4 w-full">
+                    <h2 className="text-lg md:text-xl font-semibold text-start">
+                        Experience Name
+                    </h2>
+                    <div class="flex space-x-1">
+                        <svg
+                            class="w-4 h-4 text-[#ffa732]"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 22 20"
+                        >
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg
+                            class="w-4 h-4 text-[#ffa732]"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 22 20"
+                        >
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <svg
+                            class="w-4 h-4 text-[#ffa732]"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 22 20"
+                        >
+                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-500 text-sm md:text-base">
+                        <i class="fa-solid fa-location-dot"></i> Ho Chi Minh
+                        City
+                    </p>
+                    <div className="text-base font-semibold">
+                        from 1.200.000
+                    </div>
                 </div>
             </div>
         </>
