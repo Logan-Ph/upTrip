@@ -5,11 +5,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../index.css";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function DetailedPageHotelInformation({ nearByHotels, hotelInfo, hotelComments, specificHotel, specificHotelPriceComparison, payload }) {
     return (
         <>
-            <div className="border-[#8DD3BB] border-2 p-4 rounded-lg space-y-2">
+            <div className="border-transparent bg-white border-2 p-4 rounded-lg space-y-2 shadow-md">
                 <div className="flex flex-col space-y-2 lg:flex-row md:items-center lg:space-x-4 mb-2">
                     <p className="font-extrabold text-2xl">{hotelInfo?.hotelInfo?.name}</p>
 
@@ -98,25 +99,19 @@ function HotelPriceComparison({ specificHotel, specificHotelPriceComparison, pay
     return (
         <>
             {website.map((item, index) => (
-                <div className="bg-[#CDEAE1] border-transparent grid grid-cols-4 rounded-lg my-2 shadow-md px-2 lg:px-10">
+                <div className="bg-[#CDEAE1] border-transparent grid grid-cols-3 rounded-lg my-2 shadow-md px-2 lg:px-10">
 
                     <div className="my-auto md:pl-5">
                         <img src={item.imgSrc} alt="website logo" className="w-[90px] h-[45px] md:w-[120px] md:h-[60px] object-cover" />
                     </div>
 
-                    <div className="col-span-3">
-                        <div className="grid grid-cols-3">
+                    <div className="col-span-2">
+                        <div className="grid grid-cols-2">
                             <div className="font-bold text-xs md:text-xl text-[#222160] my-auto">{item.price}</div>
 
                             <button onClick={() => window.open(item.linkTo, '_blank')}
                                 className=" mr-2 md:mr-4  btn btn-accent hover:text-white my-2 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
                                 <span className="mx-auto md:py-2 text-sm ">Book Now</span>
-                            </button>
-
-                            {/* price drop */}
-                            <button href={item.linkTo} target="_blank"
-                                className="ml-2 md:ml-4  my-2 btn glass btn-success hover:text-white bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
-                                <span className="mx-auto md:py-2 text-xs">Alert Price Drop </span>
                             </button>
                         </div>
                     </div>
@@ -144,18 +139,18 @@ function HotelRelatedInformation() {
         <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-6 gap-x-8">
 
-                <div className="border-[#8DD3BB] border-2  rounded-lg">
+                <div className="border-transparent border-2">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3731.862860055853!2d107.0471119759641!3d20.715792798452966!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x314a45841b71f5e1%3A0x52df34f512ccce2f!2sH%C3%B4tel%20Perle%20d&#39;Orient%20Cat%20Ba%20-%20MGallery!5e0!3m2!1sen!2s!4v1714836200569!5m2!1sen!2s"
-                        className="w-full h-[300px]" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Cat Ba Hotel" />
+                        className="w-full h-[300px]  rounded-lg" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Cat Ba Hotel" />
                 </div>
 
-                <div className="border-[#8DD3BB] border-2 rounded-lg py-4 px-6">
+                <div className="border-transparent shadow-sm bg-white border-2 rounded-lg py-4 px-6">
                     <div className="pb-6 font-bold text-xl">Most Popular Amenities</div>
                     <div className="grid grid-cols-2 gap-4">
                         {amenities.map((amenity, index) => (
                             <div key={index} className="flex items-center">
                                 <amenity.IconComponent stroke={2} size={28} color="#9A9A9A" />
-                                <p className="ml-2 font-semibold text-lg text-gray-900">{amenity.text}</p>
+                                <p className="ml-2 font-semibold text-xs line-clamp-1 md:text-md xl:text-lg text-gray-900">{amenity.text}</p>
                             </div>
                         ))}
                     </div>
@@ -167,9 +162,20 @@ function HotelRelatedInformation() {
 }
 
 function Reviews({ hotelComments, hotelInfo }) {
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+    function handleResize() {
+      setWindowWidth(window.innerWidth);
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <>
-            <div className="border-[#8DD3BB] border-2 p-4 rounded-lg">
+            <div className="border-transparent bg-white shadow-md border-2 p-4 rounded-lg">
                 {/* Tittle */}
                 <div className="text-xl font-bold mb-4">Guest Reviews <span className="font-light text-sm ml-1">({hotelInfo?.hotelInfo?.aggregateRating?.reviewCount})</span></div>
 
@@ -200,8 +206,7 @@ function Reviews({ hotelComments, hotelInfo }) {
                                     <div className="relative mt-2 h-4">
                                         <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
                                         <div className="absolute z-1 top-0 w-[316px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]" style={{
-                                        width: `${hotelInfo?.ratingsMap?.[key] * 70}px`,  
-                                        width: `${hotelInfo?.ratingsMap?.[key] * 80}px`}}></div>
+                width: `${hotelInfo?.ratingsMap?.[key] * (windowWidth < 768 ? 70 : 80)}px`}}></div>
                                     </div>
                                 </div>
                             ))}
@@ -230,7 +235,7 @@ function Reviews({ hotelComments, hotelInfo }) {
                             </div>
 
                             {/* comment section */}
-                            <div className="mt-4 text-md font-medium text-[#9A9A9A]">{comment?.content}</div>
+                            <div className="mt-4 text-md font-medium text-[#9A9A9A] line-clamp-4">{comment?.content}</div>
                         </div>
                     ))}
                 </div>
@@ -253,6 +258,7 @@ function NearbyHotel({ nearByHotels, payload }) {
             {
                 breakpoint: 1024,
                 settings: {
+                    dots: false,
                     slidesToShow: 3,
                     slidesToScroll: 3,
                     infinite: true,
@@ -260,16 +266,18 @@ function NearbyHotel({ nearByHotels, payload }) {
                 }
             },
             {
-                breakpoint: 600,
+                breakpoint: 768,
                 settings: {
+                    dots: false,
                     slidesToShow: 2,
                     slidesToScroll: 2,
-                    initialSlide: 2
+                    initialSlide: true
                 }
             },
             {
-                breakpoint: 480,
+                breakpoint: 640,
                 settings: {
+                    dots: false,
                     slidesToShow: 1,
                     slidesToScroll: 1
                 }
@@ -277,7 +285,7 @@ function NearbyHotel({ nearByHotels, payload }) {
         ]
     };
     return (
-        <div className="border-[#8DD3BB] border-2 p-4 rounded-lg">
+        <div className="border-transparent bg-white shadow-md border-2 p-4 rounded-lg">
             {/* Tittle */}
             <div className="text-xl font-bold mb-4">You may also like</div>
 
@@ -290,14 +298,16 @@ function NearbyHotel({ nearByHotels, payload }) {
                                 <div
                                     onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel.base.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel.base.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${hotel.position.lat}&longitude=${hotel.position.lng}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
                                     className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
+
                                     <div>
-                                        <img src={hotel.base.imageUrl} alt="hotel" />
+                                        <img src={hotel.base.imageUrl} alt="hotel" className="w-full h-[165px] object-cover" />
                                     </div>
 
                                     {/* hotel information */}
                                     <div className="px-4 space-y-2">
 
-                                        <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">{hotel.base.hotelName}</div>
+                                        <div className="font-bold text-sm md:text-lg
+                                        line-clamp-1">{hotel.base.hotelName}</div>
 
                                         {/* Rating */}
                                         <div className="flex items-center space-x-1">
@@ -325,6 +335,7 @@ function NearbyHotel({ nearByHotels, payload }) {
                                         </div>
 
                                         <div className="flex items-center">
+
                                             <div className="pr-1">
                                                 <svg
                                                     className="w-[15px] h-[15px]"
@@ -337,11 +348,13 @@ function NearbyHotel({ nearByHotels, payload }) {
                                                     />
                                                 </svg>
                                             </div>
-                                            {/* cái này m để nó theo cái tên mà ngta search á  */}
+                                            
                                             <div className="font-light text-sm md:text-md">
-                                                <span className="font-semibold text-sm md:text-md">{hotel.position.positionDesc.split("|")[0]}</span> {"| "}{hotel.position.positionDesc.split("|")[1]}
+                                                <span className="font-semibold text-sm md:text-md">{hotel.position.positionDesc.split("|")[0]}</span>
                                             </div>
                                         </div>
+                                        <div className="ml-4 text-sm">{hotel.position.positionDesc.split("|")[1]}</div>
+                                        
 
                                         {/* price */}
                                         <div className="flex flex-col justify-end items-end">
