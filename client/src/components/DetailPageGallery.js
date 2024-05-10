@@ -11,12 +11,12 @@ export default function DetailPageGallery({hotelAlbums}){
 
     return(
         <>
-        <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-3 lg:gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-y-6 xl:gap-4">
             {/* right image */}
             <div className="relative">
                 <div>
                     <img src={hotelAlbums?.hotelTopImages?.[0]}
-                    className="lg:w-full lg:h-[410px] 2xl:h-[440px] object-cover rounded-lg" onClick={handleOpen}
+                    className="w-full xl:h-[355px] 2xl:h-[376px]  object-cover rounded-lg" onClick={handleOpen}
                     alt='hotel'
                     />
                 </div>
@@ -67,14 +67,11 @@ export default function DetailPageGallery({hotelAlbums}){
             </div>
 
             {/* left image */}
-            <div className="grid col-span-2 gap-y-2">
-                <div className="grid grid-cols-3 gap-x-4">
+            <div className="col-span-2 ">
+                <div className="grid grid-cols-3 gap-4">
                     <div><img src={hotelAlbums?.hotelTopImages?.[1]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
                     <div><img src={hotelAlbums?.hotelTopImages?.[2]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
                     <div><img src={hotelAlbums?.hotelTopImages?.[3]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-x-4">
                     <div><img src={hotelAlbums?.hotelTopImages?.[4]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
                     <div><img src={hotelAlbums?.hotelTopImages?.[5]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
                     <div><img src={hotelAlbums?.hotelTopImages?.[6]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
