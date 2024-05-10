@@ -59,7 +59,7 @@ export default function Header() {
                                     </li>
                                     <li>
                                         <Link
-                                            href="/favorites"
+                                            to="/favorites"
                                             class="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Favorites
@@ -67,7 +67,7 @@ export default function Header() {
                                     </li>
                                     <li>
                                         <Link
-                                            href=""
+                                            to="/itinerary"
                                             class="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Itinerary
@@ -214,12 +214,12 @@ export default function Header() {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/favorites" class="font-semibold">
+                            <Link to="/favorites" class="font-semibold">
                                 Favorites
                             </Link>
                         </li>
                         <li>
-                            <Link href="" class="font-semibold">
+                            <Link to="/itinerary" class="font-semibold">
                                 Itinerary
                             </Link>
                         </li>

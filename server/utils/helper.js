@@ -2,6 +2,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
+const User = require("../models/user");
 const { baseOrigin } = require("./url");
 
 /**
@@ -754,7 +755,7 @@ exports.getListFiltersTrip = (listFilters) => {
         if (!item) continue
         const listItem = item.split("*")
         const filter = listItem[0].split("~")
-        if (filter[0] === "15"){
+        if (filter[0] === "15") {
             const price = listItem[2].split("~")
             baseFilters.push({
                 filterId: `${filter[0]}|${filter[1]}`,
@@ -764,8 +765,8 @@ exports.getListFiltersTrip = (listFilters) => {
                 priceBarMax: 4200000,
                 value: `${price[0]}|${(price[1] === "4200000" ? "max" : price[1])}`
             })
-        }else{
-            baseFilters.push( {
+        } else {
+            baseFilters.push({
                 filterId: `${filter[0]}|${filter[1]}`,
                 value: listItem[2],
                 type: listItem[1],
@@ -796,3 +797,20 @@ exports.formatMinutesToHoursAndMinutes = (minutes) => {
 
     return formattedString;
 }
+
+exports.authenticateToken = async (refreshToken) => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(refreshToken, process.env.JWT_SECRET, async (err, decoded) => {
+            if (err) {
+                reject(err); // Reject the promise if there's an error
+            } else {
+                try {
+                    const user = await User.findById(decoded.id);
+                    resolve(user); // Resolve with the user if found
+                } catch (error) {
+                    reject(error); // Reject the promise if there's an error in fetching the user
+                }
+            }
+        });
+    });
+};

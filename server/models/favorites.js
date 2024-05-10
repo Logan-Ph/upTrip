@@ -8,7 +8,12 @@ const favortitesSchema = new mongoose.Schema({
     },
     collections: [
         {
-            name: String,
+            name: {
+                type: String,
+            },
+            description: {
+                type: String,
+            },
             flights: [
                 {
                     flightNo: [

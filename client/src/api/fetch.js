@@ -147,3 +147,12 @@ export function getAppConfig() {
             return Promise.reject(new Error(er.response.data.message));
         });
 }
+
+export function getFavorites() {
+    return axios
+        .get("/add-to-favorites", options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data.message));
+        });
+}

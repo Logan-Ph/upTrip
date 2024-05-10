@@ -61,7 +61,7 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
-                        onChange={handleChange}
+                        onChange={(e) => handleChange(e, e.target.value)}
                         valueLabelDisplay="auto"
                         valueLabelFormat={valueLabelFormat}
                         min={0}
@@ -132,9 +132,6 @@ function ArrivalTime({setArrivalTime}) {
     };
     // Function to format the value for display
     const valueLabelFormat = (value) => {
-        // const hour = Math.floor(value);
-        // const amPm = hour >= 12 ? 'PM' : 'AM';
-        // const formattedHour = hour % 12 === 0 ? 12 : hour % 12; // Convert 24h to 12h format
         return `${value}:00`;
     };
 

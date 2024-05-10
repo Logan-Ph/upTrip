@@ -1,9 +1,42 @@
 import CollectionCardSkeleton from "../components/skeletonLoadings/CollectionCardSkeleton";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import AuthContext from "../context/AuthProvider";
+import { addNewCollection } from "../api/post.js";
+import warningNotify from "../utils/warningNotify";
+import successNotify from "../utils/successNotify";
+
+
 
 export default function Favorites() {
     const { auth } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const [name, setName] = useState();
+    const [description, setDescription] = useState();
+    useEffect(() => {
+        if (!auth?.accessToken) {
+            navigate('/login')
+        }
+    }, [auth, navigate])
+
+    const mutation = useMutation({
+        mutationFn: () => addNewCollection(name, description),
+        onSuccess: (data) => {
+            successNotify(data.data)
+        },
+        onError: (error) => {
+            warningNotify(error.response.data);
+        }
+    })
+
+    const fetchFavorites = useQuery({
+        queryKey: ["fetch-favorites", name, description]
+    })
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        mutation.mutate()
+    }
     return (
         <>
             <div className="md:px-10">
@@ -43,6 +76,7 @@ export default function Favorites() {
                                             Name
                                         </label>
                                         <input
+                                            onChange={(e) => setName(e.target.value)}
                                             type="text"
                                             id="name"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl w-full p-2.5"
@@ -57,6 +91,7 @@ export default function Favorites() {
                                             Description
                                         </label>
                                         <textarea
+                                            onChange={(e) => setDescription(e.target.value)}
                                             type="text"
                                             id="description"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5"
@@ -65,7 +100,9 @@ export default function Favorites() {
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
-                                    <button className="flex btn btn-outline btn-success justify-end">
+                                    <button 
+                                        onClick={(e) => handleSubmit(e)}
+                                        className="flex btn btn-outline btn-success justify-end">
                                         Save
                                     </button>
                                 </div>

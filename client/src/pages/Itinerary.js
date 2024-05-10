@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { ItineraryCard } from "../components/ItineraryCard";
+import { Link, useNavigate } from "react-router-dom";
 import ItineraryCardSkeleton from "../components/skeletonLoadings/ItinerarySkeleton";
 
 export default function Itinerary() {
     const [activeTab, setActiveTab] = useState(1); // Default active tab is 1
-
+    const navigate = useNavigate();
     const handleTabClick = (tabNumber) => {
         setActiveTab(tabNumber);
     };
+    
+    
     return (
         <>
             <div className="md:px-10 bg-[#FAFBFC]">

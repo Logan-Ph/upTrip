@@ -73,6 +73,12 @@ router.post('/signup', userController.signup)
 
 router.get('/user/:token/verify-email', userController.verifyEmail) 
 
+// add new favorite collection
+router.post('/add-new-collection', userController.addNewCollection);
+
+// fetch favorites
+router.get('/fetch-favrotites', userController.fetchFavorites);
+
 // add to favorites
 router.post('/add-to-favorites', userController.addToFavorites)
 
