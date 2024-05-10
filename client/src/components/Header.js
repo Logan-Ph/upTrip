@@ -162,7 +162,7 @@ function AdvancedSearchExperience() {
 
     return (
         <div
-            className="p-4 rounded-r-lg rounded-bl-lg bg-white shadow-lg"
+            className="px-5 py-2 rounded-r-lg rounded-bl-lg bg-white shadow-lg"
             id="experience"
             role="tabpanel"
             aria-labelledby="experience-tab"
@@ -174,7 +174,7 @@ function AdvancedSearchExperience() {
                     </div>
                     <div>
                         <input
-                            className="block rounded-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px] truncate"
+                            className="block rounded-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 w-full ps-10 p-2.5 pt-5 h-[52px] truncate"
                             placeholder="Search for activities in the location"
                             value={autocompletePayload?.districtPathNames}
                             onChange={(e) => setKeyword(e.target.value)}
@@ -199,7 +199,7 @@ function AdvancedSearchExperience() {
                     )}
                 </div>
                 <div className="ml-2.5" onClick={handleSubmit}>
-                    <button className="btn rounded-lg bg-[#FFA732] text-white border-none h-[56px] w-full">
+                    <button className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
                         Search
                     </button>
                 </div>
@@ -310,15 +310,15 @@ function AdvancedSearchFlight() {
 
     return (
         <div
-            className="p-6 rounded-r-lg rounded-bl-lg bg-white shadow-lg"
+            className="px-5 py-2 rounded-r-lg rounded-bl-lg bg-white shadow-lg"
             id="flight"
             role="tabpanel"
             aria-labelledby="flight-tab"
         >
             <div className="my-4 md:my-0">
                 <div className="">
-                    <div className="flex flex-col md:flex-row items-center md:space-x-4">
-                        <div className="relative w-full md:w-1/2 mb-2">
+                    <div className="flex flex-col md:flex-row items-center w-full">
+                        <div className="relative w-full md:w-auto mb-2 md:mb-0 md:border-r border-gray-300">
                             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <i className="fa-solid fa-plane-departure text-gray-500"></i>
                             </div>
@@ -326,12 +326,14 @@ function AdvancedSearchFlight() {
                                 <input
                                     name="origin"
                                     type="text"
-                                    className="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px]"
+                                    className="block rounded-t-lg  text-gray-900 appearance-none focus:outline-none focus:ring-0 pt-5  h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
                                     placeholder="City or airport"
-                                    value={fromEdit ? keywordFrom : from.cityName}
+                                    value={
+                                        fromEdit ? keywordFrom : from.cityName
+                                    }
                                     onChange={(e) => {
-                                        setKeywordFrom(e.target.value)
-                                        setFromEdit(true)
+                                        setKeywordFrom(e.target.value);
+                                        setFromEdit(true);
                                     }}
                                 />
                                 <label
@@ -344,26 +346,27 @@ function AdvancedSearchFlight() {
                             {fromAutocomplete.isFetched && fromEdit && (
                                 <div className="relative z-40">
                                     <ul className="absolute menu bg-base-200 w-full rounded-b-lg">
-                                        {fromAutocomplete?.data?.map(
-                                            (item) => {
-                                                return (
-                                                    <li
-                                                        onClick={() => {
-                                                            setFrom(item)
-                                                            setFromEdit(false)
-                                                        }}>
-                                                        <a>
-                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
-                                                        </a>
-                                                    </li>
-                                                )
-                                            }
-                                        )}
+                                        {fromAutocomplete?.data?.map((item) => {
+                                            return (
+                                                <li
+                                                    onClick={() => {
+                                                        setFrom(item);
+                                                        setFromEdit(false);
+                                                    }}
+                                                >
+                                                    <a>
+                                                        <i class="fa-solid fa-plane"></i>{" "}
+                                                        {item.cityName} -{" "}
+                                                        {item.airportCode}
+                                                    </a>
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 </div>
                             )}
                         </div>
-                        <div className="relative w-full md:w-1/2 mb-2">
+                        <div className="relative w-full md:w-auto mb-2 md:mb-0 md:border-r border-gray-300">
                             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <i className="fa-solid fa-plane-arrival text-gray-500"></i>
                             </div>
@@ -371,14 +374,13 @@ function AdvancedSearchFlight() {
                                 <input
                                     name="destination"
                                     type="text"
-                                    className="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px]"
+                                    className="block rounded-t-lg  text-gray-900 appearance-none focus:outline-none focus:ring-0 pt-5  h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
                                     placeholder="City or airport"
                                     value={toEdit ? keywordTo : to.cityName}
                                     onChange={(e) => {
-                                        setKeywordTo(e.target.value)
-                                        setToEdit(true)
-                                    }
-                                    }
+                                        setKeywordTo(e.target.value);
+                                        setToEdit(true);
+                                    }}
                                 />
                                 <label
                                     for="floating_filled"
@@ -391,29 +393,27 @@ function AdvancedSearchFlight() {
                             {toAutocomplete.isFetched && toEdit && (
                                 <div class="relative z-40">
                                     <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
-                                        {toAutocomplete?.data?.map(
-                                            (item) => {
-                                                return (
-                                                    <li
-                                                        onClick={() => {
-                                                            setTo(item);
-                                                            setToEdit(false)
-                                                        }}>
-                                                        <a>
-                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
-                                                        </a>
-                                                    </li>
-                                                )
-                                            }
-                                        )}
+                                        {toAutocomplete?.data?.map((item) => {
+                                            return (
+                                                <li
+                                                    onClick={() => {
+                                                        setTo(item);
+                                                        setToEdit(false);
+                                                    }}
+                                                >
+                                                    <a>
+                                                        <i class="fa-solid fa-plane"></i>{" "}
+                                                        {item.cityName} -{" "}
+                                                        {item.airportCode}
+                                                    </a>
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 </div>
                             )}
                         </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row  items-center justify-between	md:space-x-4">
-                        <div className="relative w-full md:w-1/3 mb-2">
+                        <div className="relative w-full md:w-auto mb-2 md:mb-0 md:border-r border-gray-300">
                             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <svg
                                     className="w-4 h-4 text-gray-500"
@@ -434,7 +434,7 @@ function AdvancedSearchFlight() {
                                     name="start"
                                     type="text"
                                     value={date.current?.value}
-                                    className="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px]"
+                                    className="block rounded-t-lg  text-gray-900 appearance-none focus:outline-none focus:ring-0 pt-5  h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
                                     placeholder="dd/mm/yyyy"
                                     id="datepickerId3"
                                 />
@@ -447,294 +447,284 @@ function AdvancedSearchFlight() {
                             </div>
                         </div>
 
-                        {/* This field appears only when user choose round trip , hidden when one way */}
-                        <div className="relative w-full md:w-1/3 mb-2">
-                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg
-                                    className="w-4 h-4 text-gray-500"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <input
-                                    datepicker
-                                    datepicker-autohide
-                                    name="end"
-                                    type="text"
-                                    className="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 h-[56px]"
-                                    placeholder="dd/mm/yyyy"
-                                    onSelect={(e) =>
-                                        console.log(e.target.value)
-                                    }
-                                    id="datepickerId4"
-                                />
+                        {/* Ask for number of passenger */}
+                        <div className="relative mb-2 md:mb-0 grow md:border-none border-gray-300">
+                            <button
+                                id="dropdownDefaultButton"
+                                data-dropdown-toggle="dropdown"
+                                className="text-gray-900 focus:ring-0 focus:outline-none font-medium rounded-t-lg  text-sm px-5 py-2.5 text-start md:text-center inline-flex items-center  relative pt-5 justify-between appearance-none h-[80px] md:h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
+                                type="button"
+                                onClick={() => setOpenMenu((prev) => !prev)}
+                            >
                                 <label
                                     for="floating_filled"
-                                    className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
                                 >
-                                    Returning
+                                    No. of Passengers and Seat Class
                                 </label>
-                            </div>
-                        </div>
+                                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <i className="fa-regular fa-user w-4 h-4 text-gray-500"></i>
+                                </div>
+                                {numberOfAdult} Adult, {numberOfChild} Child,{" "}
+                                {numberOfInfant} Infant and Premium Economy
+                                <svg
+                                    className="w-2.5 h-2.5 ms-3"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 10 6"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="m1 1 4 4 4-4"
+                                    />
+                                </svg>
+                            </button>
 
-                        {/* Ask for number of passenger */}
-                        <div className="relative w-full md:w-1/3 mb-2 grow border-b-2 border-gray-300">
-                        <button
-                            id="dropdownDefaultButton"
-                            data-dropdown-toggle="dropdown"
-                            className="text-gray-900 bg-gray-100 focus:ring-4 focus:outline-none font-medium rounded-t-lg  md:border-none text-sm px-5 py-2.5 text-center inline-flex items-center h-[56px] relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none"
-                            type="button"
-                            onClick={() => setOpenMenu((prev) => !prev)}
-                        >
-                            <label
-                                for="floating_filled"
-                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
-                            >
-                                No. of Passengers
-                            </label>
-                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <i className="fa-regular fa-user w-4 h-4 text-gray-500"></i>
-                            </div>
-                            {numberOfAdult} Adult, {numberOfChild} Child, {numberOfInfant} Infant{" "}
-                            <svg
-                                className="w-2.5 h-2.5 ms-3"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 10 6"
-                            >
-                                <path
-                                    stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="m1 1 4 4 4-4"
-                                />
-                            </svg>
-                        </button>
-
-                        {/* <!-- Dropdown menu --> */}
-                        <div
-                            id="dropdown"
-                            className={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow absolute ${openMenu ? "" : "hidden"
-                                }`}
-                        >
+                            {/* <!-- Dropdown menu --> */}
                             <div
-                                className="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
-                                aria-labelledby="dropdownDefaultButton"
+                                id="dropdown"
+                                className={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute w-full mt-2 ${
+                                    openMenu ? "" : "hidden"
+                                }`}
                             >
-                                <div className="flex justify-between">
-                                    <div className="flex flex-col">
+                                <div
+                                    className="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                                    aria-labelledby="dropdownDefaultButton"
+                                >
+                                    <div className="flex justify-between">
+                                        <div className="flex flex-col">
+                                            <div>
+                                                <i className="fa-solid fa-child"></i>{" "}
+                                                Adult
+                                            </div>
+                                            <div>(age 12 and over)</div>
+                                        </div>
                                         <div>
-                                            <i className="fa-solid fa-child"></i>{" "}
-                                            Adult
-                                        </div>
-                                        <div>(age 12 and over)</div>
-                                    </div>
-                                    <div>
-                                        <div className="flex space-x-3 items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-6 h-6"
-                                                onClick={() => {
-                                                    setNumberOfAdult(
-                                                        (prev) =>
-                                                            prev +
-                                                                1 +
-                                                                numberOfChild +
-                                                                numberOfInfant <=
-                                                            6
-                                                                ? prev + 1
-                                                                : prev
-                                                    )
-                                                    console.log(numberOfAdult)
-                                                }
-                                                }
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
-
-                                            <span className="text-lg"> {numberOfAdult} </span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-6 h-6"
-                                                onClick={() =>
-                                                    setNumberOfAdult(
-                                                        (prev) =>
-                                                            prev - 1 > 0
-                                                                ? prev - 1
-                                                                : 1
-                                                    )
-                                                }
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex justify-between">
-                                    <div className="flex flex-col">
-                                        <div>
-                                            <i className="fa-solid fa-child-reaching"></i>{" "}
-                                            Child
-                                        </div>
-                                        <div>(age 2 - 11)</div>
-                                    </div>
-                                    <div>
-                                        <div className="flex space-x-3 items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-6 h-6"
-                                                onClick={() =>
-                                                    setNumberOfChild(
-                                                        (prev) =>
-                                                            prev <
-                                                                numberOfAdult *
-                                                                    2 &&
-                                                            prev +
-                                                                1 +
-                                                                numberOfAdult +
-                                                                numberOfInfant <=
+                                            <div className="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                    onClick={() => {
+                                                        setNumberOfAdult(
+                                                            (prev) =>
+                                                                prev +
+                                                                    1 +
+                                                                    numberOfChild +
+                                                                    numberOfInfant <=
                                                                 6
-                                                                ? prev + 1
-                                                                : prev
-                                                    )
-                                                }
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                                                    ? prev + 1
+                                                                    : prev
+                                                        );
+                                                        console.log(
+                                                            numberOfAdult
+                                                        );
+                                                    }}
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
 
-                                            <span className="text-lg"> {numberOfChild} </span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-6 h-6"
-                                                onClick={() =>
-                                                    setNumberOfChild(
-                                                        (prev) =>
-                                                            prev - 1 >= 0
-                                                                ? prev - 1
-                                                                : 0
-                                                    )
-                                                }
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                                <span className="text-lg">
+                                                    {" "}
+                                                    {numberOfAdult}{" "}
+                                                </span>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfAdult(
+                                                            (prev) =>
+                                                                prev - 1 > 0
+                                                                    ? prev - 1
+                                                                    : 1
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="flex justify-between">
-                                    <div className="flex flex-col">
+                                    <div className="flex justify-between">
+                                        <div className="flex flex-col">
+                                            <div>
+                                                <i className="fa-solid fa-child-reaching"></i>{" "}
+                                                Child
+                                            </div>
+                                            <div>(age 2 - 11)</div>
+                                        </div>
                                         <div>
-                                            <i className="fa-solid fa-baby"></i>{" "}
-                                            Infant
-                                        </div>
-                                        <div>(below age 2)</div>
-                                    </div>
-                                    <div>
-                                        <div className="flex space-x-3 items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-6 h-6"
-                                                onClick={() =>
-                                                    setNumberOfInfant(
-                                                        (prev) =>
-                                                            prev + 1 <=
-                                                                numberOfAdult &&
-                                                            prev +
-                                                                1 +
-                                                                numberOfChild +
-                                                                numberOfAdult <=
-                                                                6
-                                                                ? prev + 1
-                                                                : prev
-                                                    )
-                                                }
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                            <div className="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfChild(
+                                                            (prev) =>
+                                                                prev <
+                                                                    numberOfAdult *
+                                                                        2 &&
+                                                                prev +
+                                                                    1 +
+                                                                    numberOfAdult +
+                                                                    numberOfInfant <=
+                                                                    6
+                                                                    ? prev + 1
+                                                                    : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
 
-                                            <span className="text-lg"> {numberOfInfant} </span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-6 h-6"
-                                                onClick={() => 
-                                                    setNumberOfInfant(
-                                                    (prev) =>
-                                                        prev - 1 >= 0
-                                                            ? prev - 1
-                                                            : prev
-                                                )
-                                            }
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                />
-                                            </svg>
+                                                <span className="text-lg">
+                                                    {" "}
+                                                    {numberOfChild}{" "}
+                                                </span>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfChild(
+                                                            (prev) =>
+                                                                prev - 1 >= 0
+                                                                    ? prev - 1
+                                                                    : 0
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <div className="flex flex-col">
+                                            <div>
+                                                <i className="fa-solid fa-baby"></i>{" "}
+                                                Infant
+                                            </div>
+                                            <div>(below age 2)</div>
+                                        </div>
+                                        <div>
+                                            <div className="flex space-x-3 items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfInfant(
+                                                            (prev) =>
+                                                                prev + 1 <=
+                                                                    numberOfAdult &&
+                                                                prev +
+                                                                    1 +
+                                                                    numberOfChild +
+                                                                    numberOfAdult <=
+                                                                    6
+                                                                    ? prev + 1
+                                                                    : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+
+                                                <span className="text-lg">
+                                                    {" "}
+                                                    {numberOfInfant}{" "}
+                                                </span>
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6"
+                                                    onClick={() =>
+                                                        setNumberOfInfant(
+                                                            (prev) =>
+                                                                prev - 1 >= 0
+                                                                    ? prev - 1
+                                                                    : prev
+                                                        )
+                                                    }
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* Choose seat class */}
+                                    <div class="flex justify-between grow flex-wrap">
+                                        <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                            Economy
+                                        </div>
+                                        <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                            Business
+                                        </div>
+                                        <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                            First
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    </div>
 
-                    <div className="w-full mt-4">
-                        <button
-                            onClick={(e) => handleSubmit(e)}
-                            className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
-                            Search
-                        </button>
+                        <div className="md:ml-1.5 w-full md:w-fit">
+                            <button
+                                onClick={(e) => handleSubmit(e)}
+                                className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit"
+                            >
+                                Search
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
