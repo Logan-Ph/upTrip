@@ -77,7 +77,7 @@ router.get('/user/:token/verify-email', userController.verifyEmail)
 router.post('/add-new-collection', userController.addNewCollection);
 
 // fetch favorites
-router.get('/fetch-favrotites', userController.fetchFavorites);
+router.get('/fetch-favorites', userController.fetchFavorites);
 
 // add to favorites
 router.post('/add-to-favorites', userController.addToFavorites)

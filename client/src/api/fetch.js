@@ -148,9 +148,9 @@ export function getAppConfig() {
         });
 }
 
-export function getFavorites() {
+export function fetchFavorites() {
     return axios
-        .get("/add-to-favorites", options)
+        .get("/fetch-favorites", options)
         .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));

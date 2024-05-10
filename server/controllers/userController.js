@@ -860,8 +860,8 @@ exports.advancedSearchFlights = async (req, res) => {
             const airline = []
             let arrival
             for (const flight of item.outboundSlice.segments) {
-                flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
-                airline.push(flight.carrierContent.carrierName)
+                flightNo.push(flight.carrierContent?.carrierCode + flight.flightNumber)
+                airline.push(flight.carrierContent?.carrierName)
                 arrival = flight.arrivalDateTime
             }
             items.flights.push({
@@ -877,6 +877,7 @@ exports.advancedSearchFlights = async (req, res) => {
         items.priceStep = response.data.trips[0].filters.price.step
         return res.status(200).json(items)
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 }
@@ -1087,12 +1088,23 @@ exports.addNewCollection = async (req, res) => {
 
 exports.fetchFavorites = async (req, res) => {
     try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
         const user = await authenticateToken(refreshToken);
         let favorites = await Favorites.findOne({ userID: user._id });
         if (!favorites) {
             return res.status(200).json("No collection found")
         }
-        return res.status(200).json(favorites.collection);
+        return res.status(200).json(favorites);
+    } catch (er) {
+        console.log(er)
+        return res.status(500).json(er);
+    }
+}
+
+exports.editCollection = async (req, res) => {
+    try {
+
     } catch (er) {
         return res.status(500).json(er);
     }

@@ -20,13 +20,9 @@ export function AdvancedFlightFilter({ setPrefer, setPriceFilter, setDepartureTi
     )
 }
 
-function valuetext(value) {
-    return `${value}$`;
-}
-
 function PriceRange({priceMax, priceStep, setPriceFilter}) {
     const [showPriceRange, setPriceRange] = useState(true);
-    const [value, setValue] = useState([0, priceMax]);
+    const [value, setValue] = useState([0, 0]);
 
     useEffect(() => {
         if (value[1] == 0) {
@@ -34,8 +30,8 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
         }
     }, [priceMax]); 
     
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
+    const handleChange = (event) => {
+        setValue(event.target.value);
         setPriceFilter(value);
     };
 
@@ -61,12 +57,12 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
-                        onChange={(e) => handleChange(e, e.target.value)}
+                        onChange={handleChange}
                         valueLabelDisplay="auto"
                         valueLabelFormat={valueLabelFormat}
                         min={0}
                         max={priceMax}
-                        step={priceStep}
+                        step={100000}
                         color="dark"
                     />
                 </div>

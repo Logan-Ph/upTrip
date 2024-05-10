@@ -251,15 +251,17 @@ function AdvancedSearchFlight() {
     const fromAutocomplete = useQuery({
         queryKey: ['advanced-search', "flight", debouncedKeywordFrom],
         queryFn: () => fetchFlightAutocomplete(debouncedKeywordFrom),
+        retry: false,
         refetchOnWindowFocus: false,
-        enabled: !!keywordFrom,
+        enabled: !!debouncedKeywordFrom,
     })
 
     const toAutocomplete = useQuery({
         queryKey: ['advanced-search', "flight", debouncedKeywordTo],
         queryFn: () => fetchFlightAutocomplete(debouncedKeywordTo),
+        retry: false,
         refetchOnWindowFocus: false,
-        enabled: !!keywordTo,
+        enabled: !!debouncedKeywordTo,
     })
 
     useEffect(() => {
@@ -301,6 +303,9 @@ function AdvancedSearchFlight() {
                 return;
             }
         }
+
+        setKeywordFrom()
+        setKeywordTo()
         
         navigate(
             `advanced-flight-search?ori=${payload.fromCity}&des=${payload.toCity}&from=${payload.from}&to=${payload.to}&adult=${payload.adult}&child=${payload.child}&infant=${payload.infant}&seatClass=${payload.seatClass}&year=${payload.year}&month=${payload.month}&day=${payload.day}`
