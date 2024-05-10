@@ -1358,7 +1358,7 @@ exports.hotelComments = async (req, res) => {
         const { hotelId } = req.body
         const headers = {
             "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
         };
         const response = await axios.post(hotelCommentURL, hotelCommentPayload({ hotelId: Number(hotelId) }), { headers: headers });
         return res.status(200).json(response.data.data.commentList)

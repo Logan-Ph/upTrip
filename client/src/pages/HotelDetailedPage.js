@@ -17,7 +17,6 @@ export default function HotelDetailedPage(){
         hotelId: searchParams.get("hotelId"),
         cityName: searchParams.get("cityName"),
         hotelName: searchParams.get("hotelName"),   
-        searchValue: searchParams.get("searchValue"), // initial value
         provinceId: searchParams.get("provinceId"),
         countryId: searchParams.get("countryId"),
         districtId: searchParams.get("districtId"),
@@ -42,7 +41,6 @@ export default function HotelDetailedPage(){
 
     useEffect(() => {
         if(isAutocompleteSuccess){
-            console.log(autocompletePayload)
             setPayload(prevPayload => ({
                 ...prevPayload,
                 searchValue: `${autocompletePayload.keyWordSearchResults[0].item.data.filterID}_${autocompletePayload.keyWordSearchResults[0].item.data.type}_${autocompletePayload.keyWordSearchResults[0].item.data.value}_${autocompletePayload.keyWordSearchResults[0].item.data.subType}`,
@@ -61,7 +59,7 @@ export default function HotelDetailedPage(){
     const {
         data: nearByHotels
     } = useQuery({
-        queryKey: ['nearbyHotels'],
+        queryKey: ['nearbyHotels', payload.hotelId],
         queryFn: () => getNearByHotels(payload),
         retry: 0,
         refetchOnWindowFocus: false,
@@ -71,7 +69,7 @@ export default function HotelDetailedPage(){
     const {
         data: hotelInfo
     } = useQuery({
-        queryKey: ['hotelInfo'],
+        queryKey: ['hotelInfo', payload.hotelId],
         queryFn: () => getHotelInfo(payload),
         retry: 0,
         refetchOnWindowFocus: false,
@@ -81,7 +79,7 @@ export default function HotelDetailedPage(){
     const {
         data: hotelAlbums
     } = useQuery({
-        queryKey: ['hotelAlbums'],
+        queryKey: ['hotelAlbums', payload.hotelId],
         queryFn: () => getHotelAlbums(payload),
         retry: 0,
         refetchOnWindowFocus: false,
@@ -91,7 +89,7 @@ export default function HotelDetailedPage(){
     const {
         data: hotelComments
     } = useQuery({
-        queryKey: ['hotelComments'],
+        queryKey: ['hotelComments', payload.hotelId],
         queryFn: () => getHotelComments(payload),
         retry: 0,
         refetchOnWindowFocus: false,
@@ -101,7 +99,7 @@ export default function HotelDetailedPage(){
     const {
         data: specificHotel,
     } = useQuery({
-        queryKey: ["advanced-search-specific"],
+        queryKey: ["advanced-search-specific", payload.searchValue],
         queryFn: () => fetchSpecificHotel(payload),
         retry: false,
         refetchOnWindowFocus: false,
