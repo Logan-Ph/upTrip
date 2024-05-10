@@ -1,20 +1,12 @@
 import { AdvancedFlightFilter } from "../components/AdvancedFlightFilter";
 import { useQuery } from "@tanstack/react-query";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { fetchFlightAdvancedSearch, fetchTripComFlight, fetchBayDepFlight, fetchMyTripFlight } from "../api/fetch.js";
 import ScrollUpButton from "../components/ScrollUpButton.js";
 import { FlightSortOption } from "../components/FlightSortOption.js";
-
-const AdvancedFlightCard = lazy(() => delayForDemo(import('../components/AdvancedFlightCard.js')));
-
-//testing lazy loading function
-function delayForDemo(promise) {
-    return new Promise(resolve => {
-        setTimeout(resolve, 2000);
-    }).then(() => promise);
-}
+import AdvancedFlightCard from "../components/AdvancedFlightCard.js"
 
 export default function AdvancedSearchFlightPage() {
     const [searchParams] = useSearchParams();
@@ -58,7 +50,7 @@ export default function AdvancedSearchFlightPage() {
     }
     
     const agoda = useQuery({
-        queryKey: ["advanced-search-flight"],
+        queryKey: ["advanced-search-flight", payload],
         queryFn: () => fetchFlightAdvancedSearch(payload),
         retry: false,
         refetchOnWindowFocus: false,

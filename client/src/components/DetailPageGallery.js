@@ -1,24 +1,24 @@
-import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { IconCamera } from '@tabler/icons-react';
+import { useState } from 'react';
 
-export default function DetailPageGallery(){
-    const [open, setOpen] = React.useState(false);
+export default function DetailPageGallery({hotelAlbums}){
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     return(
         <>
         <div className="grid grid-cols-1 gap-y-6 lg:grid-cols-3 lg:gap-6">
-
             {/* right image */}
             <div className="relative">
                 <div>
-                    <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"
-                    className="lg:w-full lg:h-[410px] 2xl:h-[440px] object-cover rounded-lg" onClick={handleOpen}/>
+                    <img src={hotelAlbums?.hotelTopImages?.[0]}
+                    className="lg:w-full lg:h-[410px] 2xl:h-[440px] object-cover rounded-lg" onClick={handleOpen}
+                    alt='hotel'
+                    />
                 </div>
 
                 <div onClick={handleOpen} className="absolute bottom-0 right-0 py-2 px-6 bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg btn btn-outline ">
@@ -43,55 +43,41 @@ export default function DetailPageGallery(){
                         
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                             <div className='grid gap-y-4'>
-                                <div className="grid grid-cols-3 gap-x-4">
-                                    <div>
-                                        <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/>
-                                    </div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                                </div>
+                            {hotelAlbums?.hotelImagePops?.reduce((acc, image, index) => {
+                                const chunkIndex = Math.floor(index / 3);
 
-                                <div className="grid grid-cols-3 gap-x-4">
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg'/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" /></div>
-                                </div>
+                                if (!acc[chunkIndex]) {
+                                    acc[chunkIndex] = []; // start a new chunk
+                                }
 
-                                <div className="grid grid-cols-3 gap-x-4">
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                </div>
+                                acc[chunkIndex].push(image);
 
+                                return acc;
+                            }, []).map(chunk => (
                                 <div className="grid grid-cols-3 gap-x-4">
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
+                                    {chunk.map(image => (
+                                        <div key={image}><img src={image} className='rounded-lg' alt='hotel'/></div>
+                                    ))}
                                 </div>
-                                <div className="grid grid-cols-3 gap-x-4">
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/></div>
-                                </div>
+                            ))}
                             </div>
                         </Typography>
                     </Box>
                 </Modal>
             </div>
 
-
             {/* left image */}
             <div className="grid col-span-2 gap-y-2">
                 <div className="grid grid-cols-3 gap-x-4">
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer' onClick={handleOpen}/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
+                    <div><img src={hotelAlbums?.hotelTopImages?.[1]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
+                    <div><img src={hotelAlbums?.hotelTopImages?.[2]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
+                    <div><img src={hotelAlbums?.hotelTopImages?.[3]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-x-4">
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
-                    <div><img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765" className='rounded-lg cursor-pointer'/></div>
+                    <div><img src={hotelAlbums?.hotelTopImages?.[4]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
+                    <div><img src={hotelAlbums?.hotelTopImages?.[5]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
+                    <div><img src={hotelAlbums?.hotelTopImages?.[6]} className='rounded-lg cursor-pointer' alt='hotel'/></div>
                 </div>
             </div>
         </div>

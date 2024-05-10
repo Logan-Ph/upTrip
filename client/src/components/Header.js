@@ -3,9 +3,8 @@ import NavBar from "./Navbar";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
 import Datepicker from "flowbite-datepicker/Datepicker";
-import { fetchTripAutoComplete, fetchFlightAutocomplete, fetchAttractionsAutocomplete } from "../api/fetch";
+import { fetchAttractionsAutocomplete, fetchTripAutoComplete, fetchFlightAutocomplete } from "../api/fetch";
 import { useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
 import warningNotify from "../utils/warningNotify";
 
 export default function Header() {
@@ -211,26 +210,19 @@ function AdvancedSearchExperience() {
 
 function AdvancedSearchFlight() {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
-    const [from, setFrom] = useState({
-        cityName: searchParams.get("ori"),
-        airportCode: searchParams.get("from")
-    })
-    const [to, setTo] = useState({
-        cityName: searchParams.get("des"),
-        airportCode: searchParams.get("to")
-    })
-    const [seatClass, setSeatClass] = useState(searchParams.get("seatClass"))
-    const [numberOfAdult, setNumberOfAdult] = useState(searchParams.get("adult"));
-    const [numberOfChild, setNumberOfChild] = useState(searchParams.get("child"));
-    const [numberOfInfant, setNumberOfInfant] = useState(searchParams.get("infant"));
+    const [openMenu, setOpenMenu] = useState(false);
+    const [from, setFrom] = useState({})
+    const [to, setTo] = useState({})
+    const [seatClass, setSeatClass] = useState("ECONOMY")
+    const [numberOfAdult, setNumberOfAdult] = useState(1);
+    const [numberOfChild, setNumberOfChild] = useState(0);
+    const [numberOfInfant, setNumberOfInfant] = useState(0);
     const [keywordFrom, setKeywordFrom] = useState();
     const [keywordTo, setKeywordTo] = useState();
     const [fromEdit, setFromEdit] = useState(false);
     const [toEdit, setToEdit] = useState(false);
     const [debouncedKeywordFrom, setDebouncedKeywordFrom] = useState(null)
     const [debouncedKeywordTo, setDebouncedKeywordTo] = useState(null)
-    const [isChanged, setIsChanged] = useState(false)
     const date = useRef();
 
 
@@ -278,7 +270,6 @@ function AdvancedSearchFlight() {
                 autohide: true,
                 minDate: new Date(),
             });
-            setIsChanged(true)
         }
         // Cleanup function to destroy datepickers when component unmounts or rerenders
         return () => {
@@ -288,8 +279,6 @@ function AdvancedSearchFlight() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        console.log("run")
 
         const payload = {
             from: from.airportCode,
@@ -312,7 +301,7 @@ function AdvancedSearchFlight() {
                 return;
             }
         }
-
+        
         navigate(
             `advanced-flight-search?ori=${payload.fromCity}&des=${payload.toCity}&from=${payload.from}&to=${payload.to}&adult=${payload.adult}&child=${payload.child}&infant=${payload.infant}&seatClass=${payload.seatClass}&year=${payload.year}&month=${payload.month}&day=${payload.day}`
         );
@@ -389,7 +378,7 @@ function AdvancedSearchFlight() {
                                         setKeywordTo(e.target.value)
                                         setToEdit(true)
                                     }
-                                }
+                                    }
                                 />
                                 <label
                                     for="floating_filled"
@@ -494,11 +483,13 @@ function AdvancedSearchFlight() {
                         </div>
 
                         {/* Ask for number of passenger */}
+                        <div className="relative w-full md:w-1/3 mb-2 grow border-b-2 border-gray-300">
                         <button
                             id="dropdownDefaultButton"
                             data-dropdown-toggle="dropdown"
-                            className="rounded-t-lg   bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 text-gray-500 text-sm px-5 py-2.5 text-center inline-flex items-center h-[56px] relative p-2.5 pt-5 ps-10 w-full md:w-1/3 justify-between mb-2"
+                            className="text-gray-900 bg-gray-100 focus:ring-4 focus:outline-none font-medium rounded-t-lg  md:border-none text-sm px-5 py-2.5 text-center inline-flex items-center h-[56px] relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none"
                             type="button"
+                            onClick={() => setOpenMenu((prev) => !prev)}
                         >
                             <label
                                 for="floating_filled"
@@ -509,7 +500,7 @@ function AdvancedSearchFlight() {
                             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <i className="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                             </div>
-                            1 Adult, 1 Child, 0 Infant{" "}
+                            {numberOfAdult} Adult, {numberOfChild} Child, {numberOfInfant} Infant{" "}
                             <svg
                                 className="w-2.5 h-2.5 ms-3"
                                 aria-hidden="true"
@@ -530,7 +521,8 @@ function AdvancedSearchFlight() {
                         {/* <!-- Dropdown menu --> */}
                         <div
                             id="dropdown"
-                            className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-full"
+                            className={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow absolute ${openMenu ? "" : "hidden"
+                                }`}
                         >
                             <div
                                 className="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
@@ -553,6 +545,20 @@ function AdvancedSearchFlight() {
                                                 stroke-width="1.5"
                                                 stroke="currentColor"
                                                 className="w-6 h-6"
+                                                onClick={() => {
+                                                    setNumberOfAdult(
+                                                        (prev) =>
+                                                            prev +
+                                                                1 +
+                                                                numberOfChild +
+                                                                numberOfInfant <=
+                                                            6
+                                                                ? prev + 1
+                                                                : prev
+                                                    )
+                                                    console.log(numberOfAdult)
+                                                }
+                                                }
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -561,7 +567,7 @@ function AdvancedSearchFlight() {
                                                 />
                                             </svg>
 
-                                            <span className="text-lg"> 1 </span>
+                                            <span className="text-lg"> {numberOfAdult} </span>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -569,6 +575,14 @@ function AdvancedSearchFlight() {
                                                 stroke-width="1.5"
                                                 stroke="currentColor"
                                                 className="w-6 h-6"
+                                                onClick={() =>
+                                                    setNumberOfAdult(
+                                                        (prev) =>
+                                                            prev - 1 > 0
+                                                                ? prev - 1
+                                                                : 1
+                                                    )
+                                                }
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -596,6 +610,21 @@ function AdvancedSearchFlight() {
                                                 stroke-width="1.5"
                                                 stroke="currentColor"
                                                 className="w-6 h-6"
+                                                onClick={() =>
+                                                    setNumberOfChild(
+                                                        (prev) =>
+                                                            prev <
+                                                                numberOfAdult *
+                                                                    2 &&
+                                                            prev +
+                                                                1 +
+                                                                numberOfAdult +
+                                                                numberOfInfant <=
+                                                                6
+                                                                ? prev + 1
+                                                                : prev
+                                                    )
+                                                }
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -604,7 +633,7 @@ function AdvancedSearchFlight() {
                                                 />
                                             </svg>
 
-                                            <span className="text-lg"> 1 </span>
+                                            <span className="text-lg"> {numberOfChild} </span>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -612,6 +641,14 @@ function AdvancedSearchFlight() {
                                                 stroke-width="1.5"
                                                 stroke="currentColor"
                                                 className="w-6 h-6"
+                                                onClick={() =>
+                                                    setNumberOfChild(
+                                                        (prev) =>
+                                                            prev - 1 >= 0
+                                                                ? prev - 1
+                                                                : 0
+                                                    )
+                                                }
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -639,6 +676,20 @@ function AdvancedSearchFlight() {
                                                 stroke-width="1.5"
                                                 stroke="currentColor"
                                                 className="w-6 h-6"
+                                                onClick={() =>
+                                                    setNumberOfInfant(
+                                                        (prev) =>
+                                                            prev + 1 <=
+                                                                numberOfAdult &&
+                                                            prev +
+                                                                1 +
+                                                                numberOfChild +
+                                                                numberOfAdult <=
+                                                                6
+                                                                ? prev + 1
+                                                                : prev
+                                                    )
+                                                }
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -647,7 +698,7 @@ function AdvancedSearchFlight() {
                                                 />
                                             </svg>
 
-                                            <span className="text-lg"> 1 </span>
+                                            <span className="text-lg"> {numberOfInfant} </span>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -655,6 +706,14 @@ function AdvancedSearchFlight() {
                                                 stroke-width="1.5"
                                                 stroke="currentColor"
                                                 className="w-6 h-6"
+                                                onClick={() => 
+                                                    setNumberOfInfant(
+                                                    (prev) =>
+                                                        prev - 1 >= 0
+                                                            ? prev - 1
+                                                            : prev
+                                                )
+                                            }
                                             >
                                                 <path
                                                     stroke-linecap="round"
@@ -668,9 +727,10 @@ function AdvancedSearchFlight() {
                             </div>
                         </div>
                     </div>
+                    </div>
 
                     <div className="w-full mt-4">
-                        <button 
+                        <button
                             onClick={(e) => handleSubmit(e)}
                             className="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
                             Search
@@ -705,7 +765,7 @@ function AdvancedSearchHotel() {
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedKeyword(keyword);
-        }, 250); 
+        }, 250);
 
         return () => {
             clearTimeout(handler);
@@ -794,7 +854,7 @@ function AdvancedSearchHotel() {
                 preHotelIds: autocompletePayload.code
             }
             navigate(
-                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+                `/advanced-hotel-search/?resultType=${payload.resultType}&hotelId=${autocompletePayload.code}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=VND&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
             );
         } else {
             payload = {
@@ -802,7 +862,7 @@ function AdvancedSearchHotel() {
                 cityName: autocompletePayload.resultWord,
             };
             navigate(
-                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
+                `/advanced-hotel-search/?resultType=${payload.resultType}&city=${payload.city}&cityName=${payload.cityName}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=VND&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`
             );
         }
     };

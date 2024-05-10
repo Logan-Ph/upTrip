@@ -40,6 +40,7 @@ export default function AdvancedSearchHotelPage() {
 
     let payload = {
         resultType: searchParams.get("resultType"),
+        hotelId: searchParams.get("hotelId"),
         city: searchParams.get("city"),
         cityName: searchParams.get("cityName"),
         hotelName: searchParams.get("hotelName"),
@@ -107,7 +108,6 @@ export default function AdvancedSearchHotelPage() {
             }
             return undefined;
         },
-        // enabled: !!(specificHotel?.matchHotel?.name),
     });
 
     const getSpecificHotelPriceComparison = useQuery({
@@ -225,6 +225,7 @@ export default function AdvancedSearchHotelPage() {
                                             fallback={<ASearchSkeleton />}
                                         >
                                             <AdvancedHotelCardLazy
+                                                payload={payload}
                                                 hotel={specificHotel.matchHotel}
                                                 agodaPrice={agodaPrice}
                                                 bookingPrice={bookingPrice}
@@ -257,6 +258,7 @@ export default function AdvancedSearchHotelPage() {
                                                     fallback={<ASearchSkeleton />}
                                                 >
                                                     <AdvancedHotelCardLazy
+                                                        payload={payload}
                                                         hotel={hotel}
                                                         agodaPrice={agodaPrice}
                                                         bookingPrice={bookingPrice}

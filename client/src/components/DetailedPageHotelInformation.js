@@ -5,12 +5,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../index.css";
 
-export default function DetailedPageHotelInformation(){
+export default function DetailedPageHotelInformation({nearByHotels, hotelInfo, hotelComments, specificHotel, specificHotelPriceComparison, payload}){
     return(
         <>
         <div className="border-[#8DD3BB] border-2 p-4 rounded-lg space-y-2">
             <div className="flex flex-col space-y-2 lg:flex-row md:items-center lg:space-x-4 mb-2">
-                <p className="font-extrabold text-2xl">Hotel Perle dOrient Cat Ba-MGallery</p>
+                <p className="font-extrabold text-2xl">{hotelInfo?.hotelInfo?.name}</p>
 
                 <div class="flex flex-row items-center space-x-2">
                     <div className="flex items-center space-x-1">
@@ -19,11 +19,11 @@ export default function DetailedPageHotelInformation(){
                             <path fill="#FFA732" d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"/></svg>
                         </div>
                         <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                            <p className="font-bold text-sm md:text-md">5<span className="text-sm md:text-md font-light">/5</span></p>
+                            <p className="font-bold text-sm md:text-md">{hotelInfo?.hotelInfo?.aggregateRating?.ratingValue}<span className="text-sm md:text-md font-light">/5</span></p>
                         </div>
                     </div>
-                    <p className="font-bold text-sm md:text-md">Very good</p>  
-                    <p>371 reviews</p>    
+                    <p className="font-bold text-sm md:text-md">{hotelInfo?.hotelReviewComment}</p>  
+                    <p>{hotelInfo?.hotelInfo?.aggregateRating?.reviewCount} reviews</p>    
                 </div>
             </div>
 
@@ -38,12 +38,11 @@ export default function DetailedPageHotelInformation(){
                     >
                         <path fill="red"
                             d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                            
                         />
                     </svg>
                 </div>
                 <div className="font-light text-sm md:text-md">
-                    <span className="font-medium text-gray-500 text-sm md:text-lg"> Cat Co 3 Beach, TT. Cat Ba, Haiphong, Vietnam</span>
+                    <span className="font-medium text-gray-500 text-sm md:text-lg">{hotelInfo?.hotelInfo?.address?.streetAddress}</span>
                 </div>
             </div>
 
@@ -56,36 +55,42 @@ export default function DetailedPageHotelInformation(){
                     </div>
                     <p className="font-bold text-black text-sm md:text-lg">About Accommodation</p>
                 </div>
-                <p>Get your trip off to a great start with a stay at this property, which offers free Wi-Fi in all rooms. Conveniently situated in the Cát Bà Town Beach part of Cat Ba Island, this property puts you close to attractions and interesting dining options. Don't leave before paying a visit to the famous Quiri Pub Cocktail & Restaurant. Rated with 5 stars, this high-quality property provides guests with access to massage, restaurant and fitness center on-site.</p>
+                <p>{hotelInfo?.hotelDescription}</p>
             </div>
         </div>
         <div className="my-6">
-            <HotelPriceComparison/>
+            <HotelPriceComparison specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload}/>
         </div>
         <div className="my-6">
             <HotelRelatedInformation/>
         </div>
         <div className="my-6">
-            <Reviews/>
+            <Reviews hotelComments={hotelComments} hotelInfo={hotelInfo}/>
         </div>
         <div className="my-6">
-            <NearbyHotel/>
+            <NearbyHotel nearByHotels={nearByHotels}/>
         </div>
         </>
     )
 }
 
-function HotelPriceComparison(){
+function HotelPriceComparison({specificHotel, specificHotelPriceComparison, payload}){
+    const daysBetween = (checkin, checkout) => (new Date(checkout.slice(0, 4), checkout.slice(4, 6) - 1, checkout.slice(6)) - new Date(checkin.slice(0, 4), checkin.slice(4, 6) - 1, checkin.slice(6))) / (1000 * 60 * 60 * 24);
+    const formatDate = dateStr => dateStr.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+    const priceData = specificHotelPriceComparison?.isSuccess ? specificHotelPriceComparison?.data?.[0] : null;
+    const agodaPrice = priceData?.agodaPrice ? Math.round( priceData.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN") : null;
+    const bookingPrice = priceData?.bookingPrice? Math.round(priceData.bookingPrice?.price?.reduce((acc, curr) => acc + Number( curr.finalPrice.amount ), 0 ) / (Number(payload.adult) * Number( daysBetween( payload.checkin,  payload.checkout )))).toLocaleString("vi-VN") : null;
+    const booking = specificHotelPriceComparison.data[0].booking.matchHotel
+    const bookingURL = ``
+    console.log(booking)
+
     const website = [
-        
-        {imgSrc: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252", price: "3.455.000 VND"},
+        {imgSrc: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252", price: `${bookingPrice} VND`},
         {imgSrc: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655", 
-        price: "3.650.000 VND",
-        linkTo: "https://us.trip.com/hotels/detail/?cityId=6942&hotelId=758788&checkIn=2024-06-23&checkOut=2024-06-24&adult=4&children=0&subStamp=1479&crn=1&ages=&travelpurpose=0&curr=USD&link=button&hoteluniquekey=H4sIAAAAAAAAAONazsjFJMEixMTBKDWHkWNJz71pzEKMRgb3GS22yjvKt74O3NEwwcHT42GVyLptixwCeCYxSnKePQMEa1IcBEGi7iuTHJxYOb7xSDDNYGxZobeCkXEjI1j9-kKHHYxMJxgnMS5g6m-ZLbuLiZXjjaQE0yEgfUROguUUE8MlJoZbTAyPmBheMTF8YmL4xQQxqImZoYuZYRIzK8cifgmWWcwMi5gZpHhTzU0MUy2TTQ2M0kxNFYQ0Viw7sZHNSGkSI1No8ClGKUNzQ0NjU0sTI2MLQyM9S0vjlOwKt7KUMN8UK2YpRjcPxiA2N1dzRyfnKC0u5tBgF0EGMPhgLwXiKcJ4WiCe4fyzq85f_SbjkMSamqcbGpxxgb-AsYuRQ4DRgzGCsYLxFSNI1Q-QfwEpEo_CQgEAAA&subChannel=&masterhotelid_tracelogid=e741e9c502f55&NewTaxDescForAmountshowtype0=T&detailFilters=17%7C1~17~1*80%7C0%7C1~80~0&hotelType=normal&barcurr=USD&locale=en-US"
+        price: `${specificHotel?.matchHotel?.price?.toLocaleString("vi-VN")} VND`,
+        linkTo: `https://us.trip.com/hotels/detail/?cityId=${payload.city}&hotelId=${payload.hotelId}&checkIn=${formatDate(payload.checkin)}&checkOut=${formatDate(payload.checkout)}&adult=${payload.adult}&children=0&subStamp=1479&crn=1&ages=&travelpurpose=0&curr=VND&detailFilters=17%7C1~17~1*80%7C0%7C1~80~0&hotelType=normal&barcurr=VND&locale=en-US`
         },
-        {imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png", price: "3.406.750 VND",
-       
-        },
+        {imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png", price: `${agodaPrice} VND`},
     ]
 
     return(
@@ -111,11 +116,8 @@ function HotelPriceComparison(){
                                     className="ml-2 md:ml-4  my-2 btn glass btn-success hover:text-white bg-white bg-opacity-70 text-black shadow-sm cursor-pointer flex items-center rounded-lg">
                                 <span className="mx-auto md:py-2 text-xs">Alert Price Drop </span>
                             </button>
-                       
                     </div>
-                </div>
-
-                
+                </div> 
             </div>
         ))}
         </>
@@ -162,12 +164,12 @@ function HotelRelatedInformation(){
     )
 }
 
-function Reviews(){
+function Reviews({hotelComments, hotelInfo}){
     return(
         <>
         <div className="border-[#8DD3BB] border-2 p-4 rounded-lg">
             {/* Tittle */}
-            <div className="text-xl font-bold mb-4">Guest Reviews <span className="font-light text-sm ml-1">(45)</span></div>
+            <div className="text-xl font-bold mb-4">Guest Reviews <span className="font-light text-sm ml-1">({hotelInfo?.hotelInfo?.aggregateRating?.reviewCount})</span></div>
 
             {/* Rating points */}
             <div className="grid grid-cols-1 lg:grid-cols-3">
@@ -175,224 +177,66 @@ function Reviews(){
                     {/* Total rating points of a hotel */}
                     <div className="flex items-center my-auto">
                         <div className="border-[#8DD3BB] bg-[#8DD3BB] rounded-full w-1/4 py-1 px-2 flex items-end justify-center">
-                            <span className="text-3xl font-extrabold text-white ">4.7</span>
+                            <span className="text-3xl font-extrabold text-white ">{hotelInfo?.hotelInfo?.aggregateRating?.ratingValue}</span>
                             <span className="text-xl font-semibold text-[#CDEAE1]">/5</span>
                         </div>
                         
-                        <div className="text-2xl ml-2 font-bold">Amazing</div>
+                        <div className="text-2xl ml-2 font-bold">{hotelInfo?.hotelReviewComment}</div>
                     </div>
                 </div>
 
                 {/* Rating bar section */}
                 <div className="col-span-2">
                     <div className="grid grid-cols-1 xl:grid-cols-2 md:gap-x-10">
-                        
-                        <div className="mt-6 lg:mt-0  ">
-                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
-                                <div className="font-semibold text-md">Cleanliness</div>
-                                <div className="font-bold text-md text-[#222160]">4.8</div>
-                            </div>
+                        {hotelInfo && Object.keys(hotelInfo?.ratingsMap).map((key, index) => (
+                            <div className="mt-6 lg:mt-0  ">
+                                <div className="w-[350px] md:w-[400px] flex items-center justify-between">
+                                    <div className="font-semibold text-md">{key}</div>
+                                    <div className="font-bold text-md text-[#222160]">{hotelInfo?.ratingsMap?.[key]}</div>
+                                </div>
 
-                            {/* > md
-                                1 star = 80px (0.1 star = 8px)                      
-                                2 stars = 160px
-                                3 stars = 240px
-                                4 stars = 320px
-                                4.2 stars = 320 + 0.2*8 = 336px
-                                4.4 stars =  352px
-                                4.6 stars =  368px
-                                4.8 stars =  384px 
-                                5 stars = 400px
-                            */}
-                            {/* < md
-                                1 star = 70px (0.1 star = 7px)                      
-                                2 stars = 140px
-                                3 stars = 210px
-                                4 stars = 280px
-                                5 stars = 350px
-                            */}
-
-                            <div className="relative mt-2 h-4">
-                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
-                                <div className="absolute z-1 top-0 w-[336px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
+                                <div className="relative mt-2 h-4">
+                                    <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
+                                    <div className="absolute z-1 top-0 w-[336px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
+                                </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
-                                <div className="font-semibold text-md">Amenities</div>
-                                <div className="font-bold text-md text-[#222160]">4.6</div>
-                            </div>
-                            <div className="relative mt-2 h-4">
-                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
-                                <div className="absolute z-1 top-0 w-[322px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
-                                <div className="font-semibold text-md">Location</div>
-                                <div className="font-bold text-md text-[#222160]">4.6</div>
-                            </div>
-                            <div className="relative mt-2 h-4">
-                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
-                                <div className="absolute z-1 top-0 w-[322px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className="w-[350px] md:w-[400px] flex items-center justify-between">
-                                <div className="font-semibold text-md">Service</div>
-                                <div className="font-bold text-md text-[#222160]">4.7</div>
-                            </div>
-                            <div className="relative mt-2 h-4">
-                                <div className="absolute border-4 border-gray-200 w-[350px] md:w-[400px] rounded-xl"></div>
-                                <div className="absolute z-1 top-0 w-[329px] md:w-[384px] rounded-xl border-4 border-[#8DD3BB]"></div>
-                            </div>
-                        </div>
-
+                        ))}
                     </div>
                 </div>
             </div>
 
             {/* Rating comment */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8">
-                <div>
-                    {/* users information */}
-                    <div className="flex items-center ">
-                        {/* avatar */}
-                        <div class="avatar">
-                            <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
+                {hotelComments?.map((comment, index) => (
+                    <div>
+                        {/* users information */}
+                        <div className="flex items-center ">
+                            {/* avatar */}
+                            <div class="avatar">
+                                <div class="w-12 h-12 rounded-full">
+                                    <img src={comment?.userInfo?.headPictureUrl} alt="ava"/>
+                                </div>
+                            </div>
+
+                            {/* users information */}
+                            <div className="mx-6 flex flex-col">
+                                <div className="font-bold text-lg">{comment?.userInfo?.nickName}</div>
+                                <div className="font-light text-md text-gray-500">{comment?.createDate?.split(" ")[0]}</div>
                             </div>
                         </div>
 
-                        {/* users information */}
-                        <div className="mx-6 flex flex-col">
-                            <div className="font-bold text-lg">John Doberman</div>
-                            <div className="font-light text-md text-gray-500">May 12 2020</div>
-                        </div>
+                        {/* comment section */}
+                        <div className="mt-4 text-md font-medium text-[#9A9A9A]">{comment?.content}</div>
                     </div>
-
-                    {/* comment section */}
-                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-                </div>
-
-                <div>
-                    {/* users information */}
-                    <div className="flex items-center ">
-                        {/* avatar */}
-                        <div class="avatar">
-                            <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
-                            </div>
-                        </div>
-
-                        {/* users information */}
-                        <div className="mx-6 flex flex-col">
-                            <div className="font-bold text-lg">John Doberman</div>
-                            <div className="font-light text-md text-gray-500">May 12 2020</div>
-                        </div>
-                    </div>
-
-                    {/* comment section */}
-                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-                </div>
-
-                <div>
-                    {/* users information */}
-                    <div className="flex items-center ">
-                        {/* avatar */}
-                        <div class="avatar">
-                            <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
-                            </div>
-                        </div>
-
-                        {/* users information */}
-                        <div className="mx-6 flex flex-col">
-                            <div className="font-bold text-lg">John Doberman</div>
-                            <div className="font-light text-md text-gray-500">May 12 2020</div>
-                        </div>
-                    </div>
-
-                    {/* comment section */}
-                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-                </div>
-
-                <div>
-                    {/* users information */}
-                    <div className="flex items-center ">
-                        {/* avatar */}
-                        <div class="avatar">
-                            <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
-                            </div>
-                        </div>
-
-                        {/* users information */}
-                        <div className="mx-6 flex flex-col">
-                            <div className="font-bold text-lg">John Doberman</div>
-                            <div className="font-light text-md text-gray-500">May 12 2020</div>
-                        </div>
-                    </div>
-
-                    {/* comment section */}
-                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-                </div>
-
-                <div>
-                    {/* users information */}
-                    <div className="flex items-center ">
-                        {/* avatar */}
-                        <div class="avatar">
-                            <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
-                            </div>
-                        </div>
-
-                        {/* users information */}
-                        <div className="mx-6 flex flex-col">
-                            <div className="font-bold text-lg">John Doberman</div>
-                            <div className="font-light text-md text-gray-500">May 12 2020</div>
-                        </div>
-                    </div>
-
-                    {/* comment section */}
-                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-                </div>
-
-                <div>
-                    {/* users information */}
-                    <div className="flex items-center ">
-                        {/* avatar */}
-                        <div class="avatar">
-                            <div class="w-12 h-12 rounded-full">
-                                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" alt="ava"/>
-                            </div>
-                        </div>
-
-                        {/* users information */}
-                        <div className="mx-6 flex flex-col">
-                            <div className="font-bold text-lg">John Doberman</div>
-                            <div className="font-light text-md text-gray-500">May 12 2020</div>
-                        </div>
-                    </div>
-
-                    {/* comment section */}
-                    <div className="mt-4 text-md font-medium text-[#9A9A9A]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
-                </div>
-
-
+                ))}
             </div>
-
         </div>
         </>
     )
 }
 
 
-function NearbyHotel() {
+function NearbyHotel({nearByHotels}) {
     const settings = {
         dots: true,
         infinite: false,
@@ -434,754 +278,78 @@ function NearbyHotel() {
 
             <div className="slider-container pb-4">
                 <Slider {...settings}>
-                <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
+                    {nearByHotels?.nearByHotels?.map((hotel) => {
+                        return (
                             <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
+                                {/* nearby hotel card */}
+                                <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
                                     <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
+                                        <img src={hotel.base.imageUrl} alt="hotel"/>
                                     </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
 
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
+                                    {/* hotel information */}
+                                    <div className="px-4 space-y-2">
 
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
+                                        <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">{hotel.base.hotelName}</div>
 
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
+                                        {/* Rating */}
+                                        <div className="flex items-center space-x-1">
+                                            <div>
+                                                <svg
+                                                    className="w-4 h-4 md:w-5 md:h-5"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 576 512"
+                                                >
+                                                    <path
+                                                        fill="#FFA732"
+                                                        d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
+                                                <p className="font-bold text-sm md:text-md">
+                                                    {hotel.comment.score}
+                                                    <span className="text-sm md:text-md font-light">
+                                                        /5
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <p className="ml-2 text-sm font-light">{hotel.comment.totalReviews} reviews</p>
+                                        </div>
 
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
+                                        <div className="flex items-center">
+                                            <div className="pr-1">
+                                                <svg
+                                                    className="w-[15px] h-[15px]"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 384 512"
+                                                >
+                                                    <path
+                                                        fill="gray"
+                                                        d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            {/* cái này m để nó theo cái tên mà ngta search á  */}
+                                            <div className="font-light text-sm md:text-md">
+                                                <span className="font-semibold text-sm md:text-md">{hotel.position.positionDesc.split("|")[0]}</span> { "| "}{hotel.position.positionDesc.split("|")[1]}
+                                            </div>
+                                        </div>
 
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
+                                        {/* price */}
+                                        <div className="flex flex-col justify-end items-end">
+                                            <div className="flex items-end">
+                                                {hotel.money.crossLinePrice && <div className="text-2xs line-through mr-1">{hotel.money.crossLinePrice.toLocaleString("vi-VN")} VND</div>}
+                                                <div className="text-sm font-bold text-red-500">{hotel.money.price.toLocaleString("vi-VN")} VND</div>
+                                            </div>
+                                            
+                                            <div className="text-xs my-1">{hotel.money.priceNote}</div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>  
-                    <div>
-                        {/* nearby hotel card */}
-                        <div className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
-                            <div>
-                                <img src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Hotel.jpg?updatedAt=1714558165765"/>
-                            </div>
-
-                            {/* hotel information */}
-                            <div className="px-4 space-y-2">
-
-                                <div className="font-bold text-sm md:text-lg lg:text-xl line-clamp-2">Flamingo Premium Cat Ba Beach Resort</div>
-
-                                {/* Rating */}
-                                <div className="flex items-center space-x-1">
-                                    <div>
-                                        <svg
-                                            className="w-4 h-4 md:w-5 md:h-5"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 576 512"
-                                        >
-                                            <path
-                                                fill="#FFA732"
-                                                d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-                                        <p className="font-bold text-sm md:text-md">
-                                            4.4
-                                            <span className="text-sm md:text-md font-light">
-                                                /5
-                                            </span>
-                                        </p>
-                                    </div>
-                                    <p className="ml-2 text-sm font-light">73 reviews</p>
-                                </div>
-
-                                <div className="flex items-center">
-                                    <div className="pr-1">
-                                        <svg
-                                            className="w-[15px] h-[15px]"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 384 512"
-                                        >
-                                            <path
-                                                fill="gray"
-                                                d="M172.3 501.7C27 291 0 269.4 0 192 0 86 86 0 192 0s192 86 192 192c0 77.4-27 99-172.3 309.7-9.5 13.8-29.9 13.8-39.5 0zM192 272c44.2 0 80-35.8 80-80s-35.8-80-80-80-80 35.8-80 80 35.8 80 80 80z"
-                                            />
-                                        </svg>
-                                    </div>
-                                    {/* cái này m để nó theo cái tên mà ngta search á  */}
-                                    <div className="font-light text-sm md:text-md">
-                                        <span className="font-semibold text-sm md:text-md">Cat Ba Island</span> {" | "} 1,250ft from this hotel
-                                    </div>
-                                </div>
-
-                                {/* price */}
-                                <div className="flex flex-col justify-end items-end">
-                                    <div className="flex items-end">
-                                        <div className="text-2xs line-through mr-1">3.600.000 VND</div>
-                                        <div className="text-sm font-bold text-red-500">2.600.000 VND</div>
-                                    </div>
-                                    
-                                    <div className="text-xs my-1">After tax<span> 2.682.000 VND</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>   
+                            </div>  
+                        )
+                    })}
                 </Slider>
             </div>
         </div>
