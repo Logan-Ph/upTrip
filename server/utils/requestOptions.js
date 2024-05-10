@@ -1677,7 +1677,47 @@ const hotelAlbumsPayload = ({hotelId}) => {
 	};
 }
 
+const hotelCommentURL = "https://us.trip.com/restapi/soa2/28820/ctgetHotelComment";
+const hotelCommentPayload = ({hotelId}) => {
+	return {
+		hotelId: hotelId,
+		pageIndex: 1,
+		pageSize: 6,
+		repeatComment: 1,
+		needStaticInfo: false,
+		functionOptions: [
+			"IntegratedTARating",
+			"hidePicAndVideoAgg",
+			"TripReviewsToServerOnline",
+			"IntegratedExpediaList",
+			"tripShuffled",
+			"taAdvisorCount",
+			"filterComment"
+		],
+		head: {
+			platform: "PC",
+			cver: "0",
+			cid: "1711297830645.f17ebYxB7ZgE",
+			bu: "IBU",
+			group: "trip",
+			aid: "",
+			sid: "",
+			ouid: "",
+			locale: "en-US",
+			timezone: "7",
+			currency: "VND",
+			pageId: "10320668147",
+			vid: "1711297830645.f17ebYxB7ZgE",
+			guid: "",
+			isSSR: false,
+			frontVersion: "1.1.0"
+		},
+	};
+};
+
 module.exports = {
+	hotelCommentURL,
+	hotelCommentPayload,
 	hotelAlbumsPayload,
 	hotelAlbumsURL,
 	hotelInfoURL,

@@ -66,6 +66,8 @@ const {
     hotelInfoURL,
     hotelAlbumsPayload,
     hotelAlbumsURL,
+    hotelCommentURL,
+    hotelCommentPayload,
 } = require("../utils/requestOptions");
 const { errorMonitor } = require("nodemailer/lib/xoauth2");
 const { resolveContent } = require("nodemailer/lib/shared");
@@ -526,7 +528,7 @@ exports.priceComparisonHotels = async (req, res) => {
                         bookingSecondaryAutocompleteURL,
                         secondaryAutocompletePayloadBooking(hotelName)
                     );
-                    return secondaryResponse.data.data.searchPlaces.results[0];
+                    return secondaryResponse?.data?.data?.searchPlaces?.results?.[0];
                 } catch (error) {
                     console.error(
                         "Error fetching secondary booking data:",
@@ -675,7 +677,7 @@ exports.advancedSearchSpecificHotelTrip = async (req, res) => {
 
         const headers = {
             "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0",
             "Upgrade-Insecure-Requests": 1,
         };
 
@@ -745,10 +747,6 @@ exports.advancedSearchHotelAgoda = async (req, res) => {
             childAges,
             cityId,
         } = req.body;
-
-        if (objectId === "10901788") {
-            console.log(req.body);
-        }
 
         const payload = agodaAdvancedSearchHotelPayload(
             Number(objectId),
@@ -1303,10 +1301,24 @@ exports.hotelInfo = async (req, res) => {
         const response = await axios.get(hotelInfoURL, { params: payload, headers: headers })
         const html = response.data;
         const $ = cheerio.load(html);
-
+        const hotelDescription = $(".hotelOverview_hotelOverview-container__XwS4Z").text();
         const ldJsonScript = $('script[type="application/ld+json"]');
+        const hotelReviewScore = $(
+            ".reviewScores_reviewCategoryScores-itemHead__4HXHu"
+        ).text();
+        const hotelReviewComment = $(
+            ".reviewScores_reviewOverallScores-scoreDesc__fEv8O"
+        ).text();
+        const splitRatings = hotelReviewScore.match(/[A-Za-z]+[\d\.]+/g);
+        const ratingsMap = {};
+        splitRatings.forEach(item => {
+            // Extract the key (letters) and value (numbers) using another regular expression
+            const key = item.match(/[A-Za-z]+/g)[0];
+            const value = parseFloat(item.match(/[\d\.]+/g)[0]);
+            ratingsMap[key] = value;
+        });
         const hotelInfo = JSON.parse(ldJsonScript.html());
-        return res.status(200).json({ hotelInfo })
+        return res.status(200).json({ hotelInfo, hotelDescription, ratingsMap, hotelReviewComment })
     } catch (err) {
         return res.status(500).json(err)
     }
@@ -1336,6 +1348,20 @@ exports.hotelAlbums = async (req, res) => {
         });
         
         return res.status(200).json({ hotelTopImages, hotelImagePops })
+    } catch (err) {
+        return res.status(500).json(err)
+    }
+}
+
+exports.hotelComments = async (req, res) => {
+    try {
+        const { hotelId } = req.body
+        const headers = {
+            "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
+        };
+        const response = await axios.post(hotelCommentURL, hotelCommentPayload({ hotelId: Number(hotelId) }), { headers: headers });
+        return res.status(200).json(response.data.data.commentList)
     } catch (err) {
         return res.status(500).json(err)
     }
