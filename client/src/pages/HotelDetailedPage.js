@@ -2,8 +2,9 @@ import { useSearchParams } from "react-router-dom";
 import DetailedPageHotelInformation from "../components/DetailedPageHotelInformation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchHotelPriceComparison, fetchSpecificHotel, fetchTripAutoComplete, getHotelAlbums, getHotelComments, getHotelInfo, getNearByHotels } from "../api/fetch";
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import DetailedPageGallerySkeleton from "../components/skeletonLoadings/DetailedPageGallerySkeleton";
+const DetailPageGallery = lazy(() => import('../components/DetailPageGallery'));
 
 export default function HotelDetailedPage(){
     const [searchParams] = useSearchParams()
@@ -57,7 +58,8 @@ export default function HotelDetailedPage(){
     },[isAutocompleteSuccess, autocompletePayload])
 
     const {
-        data: nearByHotels
+        data: nearByHotels,
+        isLoading: isFetchingNearByHotels
     } = useQuery({
         queryKey: ['nearbyHotels', payload.hotelId],
         queryFn: () => getNearByHotels(payload),
@@ -67,7 +69,7 @@ export default function HotelDetailedPage(){
     })
 
     const {
-        data: hotelInfo
+        data: hotelInfo,
     } = useQuery({
         queryKey: ['hotelInfo', payload.hotelId],
         queryFn: () => getHotelInfo(payload),
@@ -77,7 +79,7 @@ export default function HotelDetailedPage(){
     })
 
     const {
-        data: hotelAlbums
+        data: hotelAlbums,
     } = useQuery({
         queryKey: ['hotelAlbums', payload.hotelId],
         queryFn: () => getHotelAlbums(payload),
@@ -87,7 +89,8 @@ export default function HotelDetailedPage(){
     })
 
     const {
-        data: hotelComments
+        data: hotelComments,
+        isLoading: isFetchingHotelComments
     } = useQuery({
         queryKey: ['hotelComments', payload.hotelId],
         queryFn: () => getHotelComments(payload),
@@ -114,8 +117,6 @@ export default function HotelDetailedPage(){
         enabled: !!(payload.searchValue && payload.searchCoordinate && payload.latitude && payload.longitude)
     });
 
-    const DetailPageGallery = lazy(() =>
-        import('../components/DetailPageGallery'));
 
     return(
         <>
@@ -125,9 +126,8 @@ export default function HotelDetailedPage(){
                     <Suspense fallback={<DetailedPageGallerySkeleton />}>
                         <DetailPageGallery hotelAlbums={hotelAlbums}/>
                     </Suspense>
-
                     <div className="my-6"></div>
-                    <DetailedPageHotelInformation nearByHotels={nearByHotels} hotelInfo={hotelInfo} hotelComments={hotelComments} specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload}/>
+                    <DetailedPageHotelInformation isFetchingHotelComments={isFetchingHotelComments} isFetchingNearByHotels={isFetchingNearByHotels} nearByHotels={nearByHotels} hotelInfo={hotelInfo} hotelComments={hotelComments} specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload}/>
                 </section>
         </div>
         </>

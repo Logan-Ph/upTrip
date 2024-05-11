@@ -1,4 +1,3 @@
-import React from "react";
 import { IconSwimming, IconGlassChampagne, IconHomeBolt, IconHorseToy, IconToolsKitchen2, IconMassage, IconBarbell, IconDoor, IconPool, IconDesk } from '@tabler/icons-react';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -7,7 +6,7 @@ import "../index.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-export default function DetailedPageHotelInformation({ nearByHotels, hotelInfo, hotelComments, specificHotel, specificHotelPriceComparison, payload }) {
+export default function DetailedPageHotelInformation({ nearByHotels, hotelInfo, hotelComments, specificHotel, specificHotelPriceComparison, payload, isFetchingHotelComments, isFetchingNearByHotels }) {
     return (
         <>
             <div className="border-transparent bg-white border-2 p-4 rounded-lg space-y-2 shadow-md">
@@ -61,16 +60,25 @@ export default function DetailedPageHotelInformation({ nearByHotels, hotelInfo, 
                 </div>
             </div>
             <div className="my-6">
-                <HotelPriceComparison specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload} />
+                {(specificHotelPriceComparison.isLoading || !specificHotelPriceComparison.data)
+                ? <PriceComparisonSkeleton/>
+                : <HotelPriceComparison specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload} />
+                }
             </div>
             <div className="my-6">
                 <HotelRelatedInformation />
             </div>
             <div className="my-6">
-                <Reviews hotelComments={hotelComments} hotelInfo={hotelInfo} />
+                {(isFetchingHotelComments || !hotelComments)  
+                ? <ReviewsSkeleton/>
+                : <Reviews hotelComments={hotelComments} hotelInfo={hotelInfo} />
+                }
             </div>
             <div className="my-6">
-                <NearbyHotel nearByHotels={nearByHotels} payload={payload} />
+                {(isFetchingNearByHotels || !nearByHotels)
+                 ? <NearbyHotelSkeleton/>
+                 : <NearbyHotel nearByHotels={nearByHotels} payload={payload} />
+                }
             </div>
         </>
     )
@@ -80,20 +88,19 @@ function HotelPriceComparison({ specificHotel, specificHotelPriceComparison, pay
     const daysBetween = (checkin, checkout) => (new Date(checkout.slice(0, 4), checkout.slice(4, 6) - 1, checkout.slice(6)) - new Date(checkin.slice(0, 4), checkin.slice(4, 6) - 1, checkin.slice(6))) / (1000 * 60 * 60 * 24);
     const formatDate = dateStr => dateStr.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
     const priceData = specificHotelPriceComparison?.isSuccess ? specificHotelPriceComparison?.data?.[0] : null;
-    const agodaPrice = priceData?.agodaPrice ? Math.round(priceData.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN") : null;
+    const agodaPrice = priceData?.agodaPrice?.price ? Math.round(priceData.agodaPrice?.price?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN") : null;
     const bookingPrice = priceData?.bookingPrice ? Math.round(priceData.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0) / (Number(payload.adult) * Number(daysBetween(payload.checkin, payload.checkout)))).toLocaleString("vi-VN") : null;
-    const booking = specificHotelPriceComparison?.data?.[0]?.booking?.matchHotel
-    const bookingURL = ``
-    console.log(booking)
+    const bookingURL = `https://www.booking.com/hotel/vn/${priceData?.bookingPrice?.pageName}.vi.html?checkin=${formatDate(payload.checkin)};checkout=${formatDate(payload.checkout)};dest_id=${specificHotelPriceComparison.data?.[0]?.booking?.matchHotel?.dest_id};dest_type=${specificHotelPriceComparison.data?.[0]?.booking?.matchHotel?.dest_type};group_adults=${payload.adult};group_children=${payload.children};no_rooms=${payload.crn}`
+    const agodaURL = `https://www.agoda.com/vi-vn${priceData?.agodaPrice?.pageName}?finalPriceView=1&isShowMobileAppPrice=false&numberOfBedrooms=&familyMode=false&adults=${payload.adult}&children=${payload.children}&rooms=${payload.crn}&maxRooms=0&checkIn=${formatDate(payload.checkin)}&childAges=&numberOfGuest=0&missingChildAges=false&travellerType=1&showReviewSubmissionEntry=false&currencyCode=VND&los=${daysBetween(payload.checkin, payload.checkout)}`
 
     const website = [
-        { imgSrc: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252", price: `${bookingPrice} VND` },
+        { imgSrc: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252", price: `${bookingPrice} VND`, linkTo: bookingURL },
         {
             imgSrc: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655",
             price: `${specificHotel?.matchHotel?.price?.toLocaleString("vi-VN")} VND`,
             linkTo: `https://us.trip.com/hotels/detail/?cityId=${payload.city}&hotelId=${payload.hotelId}&checkIn=${formatDate(payload.checkin)}&checkOut=${formatDate(payload.checkout)}&adult=${payload.adult}&children=0&subStamp=1479&crn=1&ages=&travelpurpose=0&curr=VND&detailFilters=17%7C1~17~1*80%7C0%7C1~80~0&hotelType=normal&barcurr=VND&locale=en-US`
         },
-        { imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png", price: `${agodaPrice} VND` },
+        { imgSrc: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png", price: `${agodaPrice} VND`, linkTo: agodaURL },
     ]
 
     return (
@@ -165,12 +172,12 @@ function Reviews({ hotelComments, hotelInfo }) {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
-    function handleResize() {
-      setWindowWidth(window.innerWidth);
-    }
+        function handleResize() {
+            setWindowWidth(window.innerWidth);
+        }
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
@@ -215,30 +222,30 @@ function Reviews({ hotelComments, hotelInfo }) {
                 </div>
 
                 {/* Rating comment */}
-                {/*<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-8">
                     {hotelComments?.map((comment, index) => (
                         <div>
                             {/* users information */}
-                            {/* <div className="flex items-center "> */}
+                            <div className="flex items-center ">
                                 {/* avatar */}
-                                {/* <div class="avatar">
+                                <div class="avatar">
                                     <div class="w-12 h-12 rounded-full">
                                         <img src={comment?.userInfo?.headPictureUrl} alt="ava" />
                                     </div>
-                                </div> */}
+                                </div>
 
                                 {/* users information */}
-                                {/* <div className="mx-6 flex flex-col">
+                                <div className="mx-6 flex flex-col">
                                     <div className="font-bold text-lg">{comment?.userInfo?.nickName}</div>
                                     <div className="font-light text-md text-gray-500">{comment?.createDate?.split(" ")[0]}</div>
                                 </div>
-                            </div> */}
+                            </div>
 
                             {/* comment section */}
-                            {/* <div className="mt-4 text-md font-medium text-[#9A9A9A] line-clamp-4">{comment?.content}</div>
-                        </div> */}
-                    {/* ))}
-                </div>*/}
+                            <div className="mt-4 text-md font-medium text-[#9A9A9A] line-clamp-4">{comment?.content}</div>
+                        </div> 
+                     ))}
+                </div>
             </div>
         </>
     )
@@ -296,7 +303,7 @@ function NearbyHotel({ nearByHotels, payload }) {
                             <div>
                                 {/* nearby hotel card */}
                                 <div
-                                    onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel.base.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel.base.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${hotel.position.lat}&longitude=${hotel.position.lng}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
+                                    onClick={() => window.open(`/hotel-detailed-page?resultType=H&hotelId=${hotel.base.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel.base.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${hotel.position.lat}&longitude=${hotel.position.lng}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
                                     className="bg-white border-2 border-gray-100 space-y-4 shadow-md scale-95">
 
                                     <div>
@@ -373,6 +380,30 @@ function NearbyHotel({ nearByHotels, payload }) {
                 </Slider>
             </div>
         </div>
-
     );
 }
+
+function ReviewsSkeleton() {
+    return <>
+        <div className="card card-compact w-94 md:w-auto bg-white shadow-xl rounded-md">
+                <figure className="skeleton w-94 h-72 rounded-t-md rounded-b-none"></figure>
+        </div>
+    </>;
+}
+
+function NearbyHotelSkeleton() {
+    return <>
+        <div className="card card-compact w-94 md:w-auto bg-white shadow-xl rounded-md">
+                <figure className="skeleton w-94 h-72 rounded-t-md rounded-b-none"></figure>
+        </div>
+    </>;
+}
+
+function PriceComparisonSkeleton() {
+    return <>
+        <div className="card card-compact w-94 md:w-auto bg-white shadow-xl rounded-md">
+                <figure className="skeleton w-94 h-72 rounded-t-md rounded-b-none"></figure>
+        </div>
+    </>;
+}
+

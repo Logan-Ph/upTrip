@@ -573,11 +573,7 @@ exports.priceComparisonHotels = async (req, res) => {
                     "http://localhost:4000/advanced-search/hotels/agoda",
                     payload
                 )
-                .then(
-                    (response) =>
-                        response.data.pricing.offers[0].roomOffers[0].room
-                            .pricing
-                ) // Extract only the data needed
+                .then((response) => response.data) // Extract only the data needed
                 .catch((err) => {
                     return null; // Return null or appropriate fallback if the request fails
                 });
@@ -773,7 +769,7 @@ exports.advancedSearchHotelAgoda = async (req, res) => {
 
         return res
             .status(200)
-            .json(response.data?.data?.citySearch?.properties[0]);
+            .json({ price: response.data?.data?.citySearch?.properties?.[0]?.pricing?.offers?.[0]?.roomOffers?.[0]?.room?.pricing, pageName: response.data?.data?.citySearch?.properties?.[0]?.content?.informationSummary?.propertyLinks?.propertyPage });
     } catch (error) {
         return res.status(500).json(error);
     }
@@ -822,7 +818,7 @@ exports.advancedSearchHotelBooking = async (req, res) => {
             scriptContent["ROOT_QUERY"]["searchQueries"]
         );
         const hotel = searchQueriesArray[1]["results"][0]; // select the name by ".displayName.text"
-        return res.status(200).json({ price: hotel.blocks });
+        return res.status(200).json({ price: hotel.blocks, pageName: hotel.basicPropertyData.pageName });
     } catch (error) {
         return res.status(500).json(error);
     }
@@ -1295,7 +1291,14 @@ exports.hotelInfo = async (req, res) => {
         const { city: cityId, hotelId, checkin, checkout, adult, children : child, crn } = req.body
         const headers = {
             "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Sec-Ch-Ua-Platform": "\"Windows\"",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-User": "?1",
+            "Upgrade-Insecure-Requests": "1",
         };
         const payload = hotelInfoParams({ cityId: Number(cityId), hotelId: Number(hotelId), checkin, checkout, adult: Number(adult), child: Number(child), crn: Number(crn) })
         const response = await axios.get(hotelInfoURL, { params: payload, headers: headers })

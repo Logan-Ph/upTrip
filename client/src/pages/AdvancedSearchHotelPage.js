@@ -194,9 +194,9 @@ export default function AdvancedSearchHotelPage() {
                                         getSpecificHotelPriceComparison.isSuccess
                                             ? getSpecificHotelPriceComparison.data[0]
                                             : null;
-                                    const agodaPrice = priceData?.agodaPrice
+                                    const agodaPrice = priceData?.agodaPrice?.price
                                         ? Math.round(
-                                              priceData.agodaPrice?.[0]?.price
+                                              priceData.agodaPrice?.price?.[0]?.price
                                                   ?.perRoomPerNight?.exclusive
                                                   ?.display
                                           ).toLocaleString("vi-VN")
@@ -244,8 +244,8 @@ export default function AdvancedSearchHotelPage() {
                                         (hotel, hotelIndex) => {
                                             const hotelName = hotel.hotelBasicInfo.hotelName;
                                             const hotelPriceInfo = priceData[hotelName];
-                                            const agodaPrice = hotelPriceInfo?.agodaPrice
-                                                    ? Math.round(hotelPriceInfo.agodaPrice?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN")
+                                            const agodaPrice = hotelPriceInfo?.agodaPrice?.price
+                                                    ? Math.round(hotelPriceInfo.agodaPrice?.price?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN")
                                                     : null;
                                             const bookingPrice = hotelPriceInfo?.bookingPrice
                                                     ? Math.round(hotelPriceInfo.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0) /

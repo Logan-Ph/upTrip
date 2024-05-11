@@ -8,19 +8,13 @@ export default function DetailPageGallery({hotelAlbums}){
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-
-    const [loadedImages, setLoadedImages] = useState({});
-    const handleImageLoad = (image) => {
-        setLoadedImages(prev => ({ ...prev, [image]: false }));
-    };
-
     return(
         <>
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-y-6 xl:gap-4">
             {/* right image */}
             <div className="relative">
                 <div>
-                    <img src={hotelAlbums?.hotelTopImages?.[0]}
+                    <img loading='lazy' src={hotelAlbums?.hotelTopImages[0]}
                     className="w-full xl:h-[355px] 2xl:h-[376px]  object-cover rounded-lg" onClick={handleOpen}
                     alt='hotel'
                     />
@@ -48,7 +42,7 @@ export default function DetailPageGallery({hotelAlbums}){
                         
                         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                             <div className='grid gap-y-4'>
-                            {hotelAlbums?.hotelImagePops?.reduce((acc, image, index) => {
+                            {hotelAlbums?.hotelImagePops.reduce((acc, image, index) => {
                                 const chunkIndex = Math.floor(index / 3);
 
                                 if (!acc[chunkIndex]) {
@@ -62,11 +56,7 @@ export default function DetailPageGallery({hotelAlbums}){
                                 <div key={chunkIndex} className="grid grid-cols-3 gap-x-4">
                                     {chunk.map((image, index) => (
                                         <div key={index}>
-                                            {!loadedImages[image] ? (
-                                                <img src={image} onLoad={() => handleImageLoad(image)} className='rounded-lg' alt='hotel' />
-                                            ) : (
-                                               <ImageSkeleton/>
-                                            )}
+                                                <img loading='lazy' src={image} className='rounded-lg' alt='hotel' />
                                         </div>
                                     ))}
                                 </div>
@@ -80,12 +70,12 @@ export default function DetailPageGallery({hotelAlbums}){
             {/* left image */}
             <div className="col-span-2 ">
                 <div className="grid grid-cols-3 gap-4">
-                    <div><img src={hotelAlbums?.hotelTopImages?.[1]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
-                    <div><img src={hotelAlbums?.hotelTopImages?.[2]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
-                    <div><img src={hotelAlbums?.hotelTopImages?.[3]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
-                    <div><img src={hotelAlbums?.hotelTopImages?.[4]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
-                    <div><img src={hotelAlbums?.hotelTopImages?.[5]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
-                    <div><img src={hotelAlbums?.hotelTopImages?.[6]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
+                    <div><img loading='lazy' src={hotelAlbums?.hotelTopImages[1]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
+                    <div><img loading='lazy' src={hotelAlbums?.hotelTopImages[2]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
+                    <div><img loading='lazy' src={hotelAlbums?.hotelTopImages[3]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
+                    <div><img loading='lazy' src={hotelAlbums?.hotelTopImages[4]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
+                    <div><img loading='lazy' src={hotelAlbums?.hotelTopImages[5]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
+                    <div><img loading='lazy' src={hotelAlbums?.hotelTopImages[6]} className='rounded-lg cursor-pointer' onClick={handleOpen} alt='hotel'/></div>
                 </div>
             </div> 
 
@@ -93,10 +83,6 @@ export default function DetailPageGallery({hotelAlbums}){
         </>
     )
 }
-
-function ImageSkeleton() {
-    return <div style={{ height: '100px', width: '100%', backgroundColor: '#ccc', borderRadius: '8px' }} />;
-  }
 
 
   
