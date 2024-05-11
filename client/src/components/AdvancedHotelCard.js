@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import AddToFavorite from "./AddToFavorite";
 
 export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingPrice, isSuccess, isSpecific }) {
     const navigate = useNavigate()
     return (
         <>
             <div onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}>
+
                 <HotelCard
                     key={hotel?.hotelBasicInfo?.hotelId || hotel?.name}
                     imgSrc={hotel?.hotelBasicInfo?.hotelImg || hotel?.img}
@@ -22,7 +24,9 @@ export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingP
                 {isSpecific && (
                 <div className="visible text-black">Popular hotels nearby</div>
             )}
+            
             </div>
+            <AddToFavorite/>
             
         </>
     );
@@ -242,3 +246,5 @@ export function HotelCard({
         </>
     );
 }
+
+
