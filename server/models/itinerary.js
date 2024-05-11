@@ -25,19 +25,19 @@ const tripSchema = new mongoose.Schema({
     imgSrc: { type: String },
     hotels: [
         {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: 'Hotel'
         }
     ],
     flights: [
         {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Types.ObjectId,
             ref: 'Flight'
         }
     ], 
     schedules: [
         { 
-            type: Schema.Types.ObjectId, 
+            type: mongoose.Types.ObjectId,
             ref: 'Schedule'
         }
     ] 
