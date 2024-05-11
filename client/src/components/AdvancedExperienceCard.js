@@ -112,7 +112,7 @@ function ExperienceCard({data}){
                                     </span>
                                 </p>
                             </div>
-                            <p className="text-sm font-light">{data?.content?.reviewSummary?.totalCount} reviews</p>
+                            <p className="text-xs font-light text-nowrap">{data?.content?.reviewSummary?.totalCount} reviews</p>
                         </div>
 
                         {data?.content?.badges?.activityHighlights?.length > 0 && (
