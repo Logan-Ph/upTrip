@@ -1027,13 +1027,19 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                                         </li>
                                                                     </>
                                                                 );
-                                                            default:
+                                                            case "MT":
                                                                 return (
                                                                     <>
-                                                                        {
-                                                                            element?.resultWord
-                                                                        }
+                                                                        <li>
+                                                                            <div onClick={() => setAutocompletePayload(element)}>
+                                                                            <i class="fa-solid fa-train"></i>{" "} {element?.resultWord}
+                                                                            </div>
+                                                                        </li>
                                                                     </>
+                                                                )
+                                                            default:
+                                                                return (
+                                                                    null
                                                                 );
                                                         }
                                                     }

@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import AddToFavorite from "./AddToFavorite";
 
 export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingPrice, isSuccess, isSpecific }) {
-    const navigate = useNavigate()
     return (
         <>
             <div onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}>
-
                 <HotelCard
+                    hotel={hotel}
+                    payload={payload}
                     key={hotel?.hotelBasicInfo?.hotelId || hotel?.name}
                     imgSrc={hotel?.hotelBasicInfo?.hotelImg || hotel?.img}
                     hotelName={hotel?.hotelBasicInfo?.hotelName || hotel?.name}
@@ -42,8 +42,13 @@ export function HotelCard({
     agodaPrice,
     bookingPrice,
     isSuccess,
-    isSpecific
+    isSpecific, 
+    hotel,
+    payload
 }) {
+
+    const navigate = useNavigate()
+
     const websiteLogo = useMemo(() => [
         {
             imgLogo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
@@ -110,7 +115,8 @@ export function HotelCard({
                 ref={ref}
                 className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md  ${isSpecific ? "border-8 p-2 border-[#8DD3BB]" : ""} ${visibilityClass}`}
             >
-                <div className="">
+                <div 
+                onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}>
                     <img
                         src={imgSrc}
                         alt="hotel cover"
@@ -119,7 +125,10 @@ export function HotelCard({
                 </div>
 
                 <div className="flex-col space-y-4 py-4 col-span-2">
-                    <p className="text-lg md:text-xl font-bold">
+                    <p 
+                        className="text-lg md:text-xl font-bold"
+                        onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
+                    >
                         {hotelName}
                     </p>
 
