@@ -15,21 +15,22 @@ export default function Header() {
 
     return (
         <div>
-            <div class="drawer z-50">
-                <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
-                <div class="drawer-content flex flex-col">
+            <div className="drawer z-50">
+                <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
+                <div className="drawer-content flex flex-col">
                     {/* <!-- Navbar --> */}
-                    <div class="mx-auto max-w-8xl px-6 py-6 navbar mt-4 mb-12">
-                        <div class="navbar-start items-baseline">
-                            <div class="flex-none lg:hidden">
+                    <div className="mx-auto max-w-8xl px-6 py-6 navbar mt-4 mb-12">
+
+                        <div className="navbar-start">
+                            <div className="flex-none lg:hidden">
                                 <label
                                     for="my-drawer-3"
                                     aria-label="open sidebar"
-                                    class="btn btn-square btn-ghost text-white"
+                                    className="btn btn-square btn-ghost text-white"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        class="h-7 w-7"
+                                        className="h-8 w-8"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -43,24 +44,24 @@ export default function Header() {
                                     </svg>
                                 </label>
                             </div>
-                            <div class="flex-1 px-2 mx-2">
+                            <div className="flex-1 px-2 mx-2">
                                 <a href="/">
                                     <img
                                         src={Logo}
-                                        className="w-28 h-auto"
+                                        classNameName="w-28 h-auto"
                                         alt="logo"
                                     />
                                 </a>
                             </div>
                         </div>
-                        <div class="navbar-end">
-                            <div class="flex-none hidden lg:block">
-                                <ul class="menu menu-horizontal">
+                        <div className="navbar-end">
+                            <div className="flex-none hidden lg:block">
+                                <ul className="menu menu-horizontal">
                                     {/* <!-- Navbar menu content here --> */}
                                     <li>
                                         <Link
                                             href=""
-                                            class="font-semibold text-white text-lg drop-shadow-xl"
+                                            className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Explore
                                         </Link>
@@ -68,7 +69,7 @@ export default function Header() {
                                     <li>
                                         <Link
                                             to="/favorites"
-                                            class="font-semibold text-white text-lg drop-shadow-xl"
+                                            className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Favorites
                                         </Link>
@@ -76,51 +77,51 @@ export default function Header() {
                                     <li>
                                         <Link
                                             to="/itinerary"
-                                            class="font-semibold text-white text-lg drop-shadow-xl"
+                                            className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Itinerary
                                         </Link>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="flex-none md:pl-3 drop-shadow-xl lg:block">
+                            <div className="flex-none md:pl-3 drop-shadow-xl lg:block">
                                 <Link
                                     to="/login"
-                                    class={`bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg ${auth?.accessToken ? 'hidden' : ''}`}
+                                    className={`bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg ${auth?.accessToken ? 'hidden' : ''}`}
                                 >
                                     Login
                                 </Link>
 
                                 {auth?.accessToken && (
-                                    <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+                                    <div className="lg:flex items-center relative hidden">
                                         <button
                                             type="button"
-                                            class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
+                                            className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
                                             id="user-menu-button"
                                             aria-expanded="false"
                                             data-dropdown-toggle="user-dropdown"
                                             data-dropdown-placement="bottom"
                                         >
-                                            <span class="sr-only">
+                                            <span className="sr-only">
                                                 Open user menu
                                             </span>
-                                            <div class="avatar placeholder">
+                                            <div className="avatar placeholder">
                                                 {" "}
                                                 {/* hidden */}
-                                                <div class="bg-neutral text-neutral-content rounded-full w-12"
+                                                <div className="bg-neutral text-neutral-content rounded-full w-12"
                                                     onClick={() => setIsOpen((prev) => !prev)}
                                                 >
-                                                    <span class="text-xl">
+                                                    <span className="text-xl">
                                                         {auth.email[0].toUpperCase()}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             {/* if user already upload their profile image */}
-                                            <div class="avatar hidden">
+                                            <div className="avatar hidden">
                                                 {" "}
                                                 {/* hidden */}
-                                                <div class="w-12 rounded-full">
+                                                <div className="w-12 rounded-full">
                                                     <img
                                                         src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
                                                         alt=""
@@ -131,22 +132,22 @@ export default function Header() {
                                         {/* <!-- Dropdown menu --> */}
                                         {isOpen && (
                                             <div
-                                                class="z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-36 ml-4"
+                                                className="my-4 text-base list-none bg-white divide-gray-100 rounded-lg shadow w-36 ml-4 absolute -left-2 top-8"
                                                 id="user-dropdown"
                                             >
                                                 <ul
-                                                    class="py-2"
+                                                    className=""
                                                     aria-labelledby="user-menu-button"
                                                 >
                                                     <li>
-                                                        <Link class="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
+                                                        <Link className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
                                                                 fill="none"
                                                                 viewBox="0 0 24 24"
                                                                 stroke-width="1.5"
                                                                 stroke="currentColor"
-                                                                class="w-6 h-6"
+                                                                className="w-6 h-6"
                                                             >
                                                                 <path
                                                                     stroke-linecap="round"
@@ -166,26 +167,26 @@ export default function Header() {
                         </div>
                     </div>
                 </div>
-                <div class="drawer-side">
+                <div className="drawer-side">
                     <label
                         for="my-drawer-3"
                         aria-label="close sidebar"
-                        class="drawer-overlay"
+                        className="drawer-overlay"
                     ></label>
 
-                    <ul class="menu p-4 w-80 min-h-full bg-base-200">
+                    <ul className="menu p-4 w-80 min-h-full bg-base-200">
                         {/* If user havent login */}
-                        <div class="flex justify-end drop-shadow-xl">
+                        <div className="flex justify-end drop-shadow-xl">
                             <Link
                                 to="/login"
-                                class={`bg-transparent btn btn-sm rounded-xl text-black font-semibold shadow-lg text-lg border-black ${auth?.accessToken ? 'hidden' : ''}`}
+                                className={`bg-transparent btn btn-sm rounded-xl text-black font-semibold shadow-lg text-lg border-black ${auth?.accessToken ? 'hidden' : ''}`}
                             >
                                 Login
                             </Link>
 
                             {/* if the user is logged in */}
-                            <div class="avatar hidden">
-                                <div class="w-12 rounded-full">
+                            <div className="avatar hidden">
+                                <div className="w-12 rounded-full">
                                     <img
                                         src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
                                         alt=""
@@ -193,34 +194,34 @@ export default function Header() {
                                 </div>
                             </div>
                             {auth?.accessToken && (
-                                <div class="avatar placeholder">
-                                    <div class="bg-neutral text-neutral-content rounded-full w-12">
-                                        <span class="text-xl">{auth.email[0].toUpperCase()}</span>
+                                <div className="avatar placeholder">
+                                    <div className="bg-neutral text-neutral-content rounded-full w-12">
+                                        <span className="text-xl">{auth.email[0].toUpperCase()}</span>
                                     </div>
                                 </div>
                             )}
                         </div>
                         {/* <!-- Sidebar content here --> */}
                         <li>
-                            <Link href="" class="font-semibold">
+                            <Link href="" className="font-semibold">
                                 Explore
                             </Link>
                         </li>
                         <li>
-                            <Link to="/favorites" class="font-semibold">
+                            <Link to="/favorites" className="font-semibold">
                                 Favorites
                             </Link>
                         </li>
                         <li>
-                            <Link to="/itinerary" class="font-semibold">
+                            <Link to="/itinerary" className="font-semibold">
                                 Itinerary
                             </Link>
                         </li>
                         {auth?.accessToken && (
-                            <li class="pt-4">
+                            <li className="pt-4">
                                 <Link
                                     href=""
-                                    class="font-semibold border-black border-2 hover:bg-black hover:text-white"
+                                    className="font-semibold border-black border-2 hover:bg-black hover:text-white"
                                     onClick={handleLogout}
                                     >
                                     <svg
@@ -229,7 +230,7 @@ export default function Header() {
                                         viewBox="0 0 24 24"
                                         stroke-width="1.5"
                                         stroke="currentColor"
-                                        class="w-6 h-6"
+                                        className="w-6 h-6"
                                         >
                                         <path
                                             stroke-linecap="round"
