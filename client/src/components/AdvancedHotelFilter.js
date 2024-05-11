@@ -9,9 +9,9 @@ export function AdvancedHotelFilter({filterOptions, listFilter, payload, listSor
         <>
         <div className='flex-col space-y-6'>
             <PriceRange listFilter={listFilter} payload={payload} listSort={listSort}/>
-            <hr className='md:w-3/4'/>
+            <hr className='lg:w-3/4'/>
             <AmenitiesFilter amenities={filterOptions?.data?.propertyFacilitiesAndServices} listFilter={listFilter} payload={payload} listSort={listSort}/>
-            <hr className='md:w-3/4'/>
+            <hr className='lg:w-3/4'/>
             <ProperStyleFilter properties={filterOptions?.data?.roomFacilitiesAndServices} listFilter={listFilter} payload={payload} listSort={listSort}/>
         </div>
         </>
@@ -54,7 +54,7 @@ function PriceRange({listFilter, payload, listSort}) {
     return (
         <>
      
-        <div className='md:w-3/4 flex items-center justify-between'>
+        <div className='lg:w-3/4 flex items-center justify-between'>
             <div className="font-bold text-md">Price (VND {value[0].toLocaleString("vi-VN")} - VND {value[1].toLocaleString("vi-VN")}+)</div>
              {showPriceRang ? (
                 <ChevronUpIcon onClick={() => setPriceRange(!showPriceRang)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true"/>
@@ -64,7 +64,7 @@ function PriceRange({listFilter, payload, listSort}) {
         </div>
         
         {showPriceRang && (
-            <div className='md:w-3/4'>
+            <div className='lg:w-3/4'>
                 <Slider
                     getAriaLabel={() => 'Price range'}
                     value={value}
@@ -108,7 +108,7 @@ function AmenitiesFilter({amenities, listFilter, payload, listSort}){
     }
     return(   
     <>
-        <div className="md:w-3/4 flex items-center justify-between">
+        <div className="lg:w-3/4 flex items-center justify-between">
             <div className="font-bold text-md">{amenities?.title}</div>
             {showAmenities ?(
                 <ChevronUpIcon onClick={() => setShowAmenities(!showAmenities)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true" />
@@ -158,7 +158,7 @@ function ProperStyleFilter({properties, listFilter, payload, listSort}){
 
     return(   
     <>
-        <div className="md:w-3/4 flex items-center justify-between">
+        <div className="lg:w-3/4 flex items-center justify-between">
             <div className="font-bold text-md">{properties?.title}</div>
             {showAmenities ?(
                 <ChevronUpIcon onClick={() => setShowAmenities(!showAmenities)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true" />

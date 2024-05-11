@@ -155,7 +155,7 @@ export default function AdvancedSearchHotelPage() {
         <>
             <div className="bg-[#FAFBFC] md:p-10">
                 <section className="mx-auto max-w-8xl px-6 py-6">
-                    <div className="grid grid-cols-1  md:grid-cols-3">
+                    <div className="grid grid-cols-1 lg:grid-cols-3">
                         <div className="relative">
                             <div className="font-bold text-xl mb-4">
                                 Filters
@@ -166,7 +166,7 @@ export default function AdvancedSearchHotelPage() {
                                 payload={payload}
                                 listSort={listSort}
                             />
-                            <div className="absolute inset-y-0 right-0 w-px bg-gray-500 hidden md:block mr-10"></div>
+                            <div className="lg:absolute inset-y-0 right-0 w-px bg-gray-500 hidden lg:block mr-10"></div>
                         </div>
 
                         <div className="col-span-2">

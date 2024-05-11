@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import AddToFavorite from "./AddToFavorite";
+import ASearchSkeleton from "./skeletonLoadings/ASearchSkeleton";
 
 export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingPrice, isSuccess, isSpecific }) {
     return (
         <>
-            <div onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}>
+            <div className="relative">
                 <HotelCard
                     hotel={hotel}
                     payload={payload}
@@ -24,10 +25,10 @@ export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingP
                 {isSpecific && (
                 <div className="visible text-black">Popular hotels nearby</div>
             )}
-            
-            </div>
-            <AddToFavorite/>
-            
+                <div className="absolute top-0 right-0">
+                    <AddToFavorite/>   
+                </div>
+            </div> 
         </>
     );
 }
@@ -126,7 +127,7 @@ export function HotelCard({
 
                 <div className="flex-col space-y-4 py-4 col-span-2">
                     <p 
-                        className="text-lg md:text-xl font-bold"
+                        className="text-lg md:text-xl font-bold hover:underline cursor-pointer mt-2"
                         onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
                     >
                         {hotelName}
@@ -169,11 +170,19 @@ export function HotelCard({
                         
                         { !(isSuccess) ? (
                             <div>
-                                <div className="flex items-center my-2 pr-4 md:pr-0">
-                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] w-[30px] h-[30px] flex items-center justify-between rounded-md cursor-pointer py-2"></div>
+                                <div className="flex items-center pr-6 my-2">
+                        {/* Placeholder for the rest of the div content */}
+                        <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
+                            <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+                            <div className="mx-auto">
+                                <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+                            </div>
+                        </div>
+                                </div>
 
+                                <div className="flex items-center pr-6 my-2">
                                     {/* Placeholder for the rest of the div content */}
-                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0 ">
+                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
                                         <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
                                         <div className="mx-auto">
                                             <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
@@ -181,23 +190,9 @@ export function HotelCard({
                                     </div>
                                 </div>
 
-                                <div className="flex items-center my-2 pr-4 md:pr-0">
-                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] w-[30px] h-[30px] flex items-center justify-between rounded-md cursor-pointer py-2 "></div>
-
+                                <div className="flex items-center pr-6 my-2">
                                     {/* Placeholder for the rest of the div content */}
-                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0 ">
-                                        <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
-                                        <div className="mx-auto">
-                                            <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center my-2 pr-4 md:pr-0">
-                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] w-[30px] h-[30px] flex items-center justify-between rounded-md cursor-pointer py-2 "></div>
-
-                                    {/* Placeholder for the rest of the div content */}
-                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1 ml-4 w-full md:w-3/4 gap-2 md:gap-8 pr-2 lg:pr-0">
+                                    <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
                                         <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
                                         <div className="mx-auto">
                                             <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
@@ -210,7 +205,7 @@ export function HotelCard({
                                 {hearts.map((heart, index) => (
                                     <div
                                         key={index}
-                                        className="flex items-center pr-6 my-2">
+                                        className="flex items-center pr-4 md:pr-6 my-2">
                                 
                                         <div className="border border-transparent bg-[#CDEAE1] hover:bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full">
                                             <div className="mx-auto">
