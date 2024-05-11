@@ -3,8 +3,8 @@ import DetailedPageHotelInformation from "../components/DetailedPageHotelInforma
 import { useQuery } from "@tanstack/react-query";
 import { fetchHotelPriceComparison, fetchSpecificHotel, fetchTripAutoComplete, getHotelAlbums, getHotelComments, getHotelInfo, getNearByHotels } from "../api/fetch";
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import DetailPageGallery from "../components/DetailPageGallery";
 import DetailedPageGallerySkeleton from "../components/skeletonLoadings/DetailedPageGallerySkeleton";
-const DetailPageGallery = lazy(() => import('../components/DetailPageGallery'));
 
 export default function HotelDetailedPage(){
     const [searchParams] = useSearchParams()
@@ -80,6 +80,7 @@ export default function HotelDetailedPage(){
 
     const {
         data: hotelAlbums,
+        isLoading: isFetchingHotelAlbums
     } = useQuery({
         queryKey: ['hotelAlbums', payload.hotelId],
         queryFn: () => getHotelAlbums(payload),
@@ -122,10 +123,7 @@ export default function HotelDetailedPage(){
         <>
         <div className="bg-[#FAFBFC] md:p-10">
                 <section className="mx-auto max-w-8xl px-6 py-6">
-
-                    <Suspense fallback={<DetailedPageGallerySkeleton />}>
-                        <DetailPageGallery hotelAlbums={hotelAlbums}/>
-                    </Suspense>
+                    {(!hotelAlbums || isFetchingHotelAlbums ) ? <DetailedPageGallerySkeleton /> : <DetailPageGallery hotelAlbums={hotelAlbums}/> }
                     <div className="my-6"></div>
                     <DetailedPageHotelInformation isFetchingHotelComments={isFetchingHotelComments} isFetchingNearByHotels={isFetchingNearByHotels} nearByHotels={nearByHotels} hotelInfo={hotelInfo} hotelComments={hotelComments} specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload}/>
                 </section>
