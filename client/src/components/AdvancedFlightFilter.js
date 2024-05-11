@@ -23,7 +23,6 @@ export function AdvancedFlightFilter({ setPrefer, setPriceFilter, setDepartureTi
 function PriceRange({priceMax, priceStep, setPriceFilter}) {
     const [showPriceRange, setPriceRange] = useState(true);
     const [value, setValue] = useState([0, 0]);
-
     useEffect(() => {
         if (value[1] == 0) {
             setValue([0, priceMax]);
@@ -62,7 +61,7 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
                         valueLabelFormat={valueLabelFormat}
                         min={0}
                         max={priceMax}
-                        step={100000}
+                        step={Math.round(priceMax/10)}
                         color="dark"
                     />
                 </div>

@@ -8,30 +8,8 @@ const favortitesSchema = new mongoose.Schema({
     },
     collections: [
         {
-            name: {
-                type: String,
-            },
-            description: {
-                type: String,
-            },
-            flights: [
-                {
-                    flightNo: [
-                        String
-                    ],
-                    from: String,
-                    to: String,
-                    departure: Date,
-                    arrival: Date,
-                    agency: String,
-                },
-            ],
-            hotels: [{
-                type: String
-            }],
-            attractions: [{
-                type: String
-            }]
+            type: mongoose.Types.ObjectId,
+            ref: "Collection"
         }
     ]
 })

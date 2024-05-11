@@ -58,7 +58,7 @@ export default function AdvancedSearchFlightPage() {
     }
     
     const agoda = useQuery({
-        queryKey: ["advanced-search-flight", payload],
+        queryKey: ["advanced-search-flight", payload, sortField, sortDir, prefer, priceFilter, departureTime, arrivalTime],
         queryFn: () => fetchFlightAdvancedSearch(payload),
         retry: false,
         refetchOnWindowFocus: false,
@@ -66,9 +66,9 @@ export default function AdvancedSearchFlightPage() {
 
     const priceMax = agoda.isSuccess ? agoda.data.priceMax : 0;
 
-    useEffect(()=>{
-        agoda.refetch();
-    }, [sortField, sortDir, prefer, priceFilter, departureTime, arrivalTime])
+    // useEffect(()=>{
+    //     agoda.refetch();
+    // }, [sortField, sortDir, prefer, priceFilter, departureTime, arrivalTime])
 
 
     const tripCom = useQuery({
