@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
+import {IconX} from '@tabler/icons-react'
 
 // Itinerary card for the itinerary page. list the itinerary info card
 export function ItineraryCard() {
@@ -93,6 +94,8 @@ export function ItineraryCard() {
 export function AddItemButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState("main");
+    const [open, setOpen] = useState(false);
+    const handleClose = () => setIsOpen(false);
 
     const toggleDrawer = () => {
         setIsOpen(!isOpen);
@@ -134,7 +137,15 @@ export function AddItemButton() {
                     } overflow-y-auto`}
                 >
                     {/* Content inside the drawer */}
+                    <div 
+                        onClick={handleClose} className="material-icons cursor-pointer transition ease-in-out delay-150:-translate-y-1 hover:scale-110 duration-300 mt-6" style={{ float: 'right' }}>
+                        <IconX stroke={2} size={40} color="black"/>
+                    </div>
                     <div className="p-4 relative">
+
+                        {/* close button */}
+
+
                         {/* <h1 className="text-2xl font-semibold mb-2 sticky top-0">
                             {currentPage === "main"
                                 ? "Choose a collection"
@@ -180,7 +191,8 @@ function ChooseCollection({ handleNextButtonClick }) {
     return (
         <>
             <React.Fragment>
-                <div className="bg-white py-6 sticky top-0 z-50 border-b">
+                <div className="bg-white py-8 mt-10 sticky top-0 z-50 border-b">
+                    
                     <h1 className="text-2xl text-center font-semibold mb-2">
                         Choose a collection
                     </h1>
