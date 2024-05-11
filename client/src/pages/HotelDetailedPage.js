@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import DetailedPageHotelInformation from "../components/DetailedPageHotelInformation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchHotelPriceComparison, fetchSpecificHotel, fetchTripAutoComplete, getHotelAlbums, getHotelComments, getHotelInfo, getNearByHotels } from "../api/fetch";
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DetailPageGallery from "../components/DetailPageGallery";
 import DetailedPageGallerySkeleton from "../components/skeletonLoadings/DetailedPageGallerySkeleton";
 
