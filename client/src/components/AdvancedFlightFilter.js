@@ -6,13 +6,13 @@ import Slider from '@mui/material/Slider';
 export function AdvancedFlightFilter({ setPrefer, setPriceFilter, setDepartureTime, setArrivalTime, priceMax, priceStep }) {
     return (
         <>
-            <div className='flex-col space-y-6'>
+            <div className='flex-col space-y-6 mb-20 lg:mb-0'>
                 <PriceRange priceMax={priceMax} priceStep={priceStep} setPriceFilter={setPriceFilter} />
-                <hr className='w-full md:w-3/4' />
+                <hr className='w-full lg:w-3/4' />
                 <DepartureTime setDepartureTime={setDepartureTime}/>
-                <hr className='w-full md:w-3/4' />
+                <hr className='w-full lg:w-3/4' />
                 <ArrivalTime setArrivalTime={setArrivalTime}/>
-                <hr className='w-full md:w-3/4' />
+                <hr className='w-full lg:w-3/4' />
                 <Airlines setPrefer={setPrefer} />
             </div>
 
@@ -49,7 +49,7 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
     return (
         <>
 
-            <div className='md:w-3/4 flex items-center justify-between'>
+            <div className='lg:w-3/4 flex items-center justify-between'>
                 <div className="font-bold text-md">Price</div>
 
                 {showPriceRange ? (
@@ -60,7 +60,7 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
             </div>
 
             {showPriceRange && (
-                <div className='md:w-3/4'>
+                <div className='lg:w-3/4'>
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
@@ -102,7 +102,7 @@ function DepartureTime({setDepartureTime}) {
 
     return (
         <>
-            <div className='md:w-3/4 flex items-center justify-between'>
+            <div className='lg:w-3/4 flex items-center justify-between'>
                 <div className="font-bold text-md">Departure Time</div>
 
                 {showPriceRang ? (
@@ -113,7 +113,7 @@ function DepartureTime({setDepartureTime}) {
             </div>
 
             {showPriceRang && (
-                <div className='md:w-3/4'>
+                <div className='lg:w-3/4'>
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
@@ -154,7 +154,7 @@ function ArrivalTime({setArrivalTime}) {
 
     return (
         <>
-            <div className='md:w-3/4 flex items-center justify-between'>
+            <div className='lg:w-3/4 flex items-center justify-between'>
                 <div className="font-bold text-md">Arrival Time</div>
 
                 {showPriceRang ? (
@@ -165,7 +165,7 @@ function ArrivalTime({setArrivalTime}) {
             </div>
 
             {showPriceRang && (
-                <div className='md:w-3/4'>
+                <div className='lg:w-3/4'>
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
@@ -219,8 +219,8 @@ function Airlines({ setPrefer }) {
 
     return (
         <>
-            <div className="md:w-3/4 flex items-center justify-between">
-                <div className="font-bold text-md">Property Sytle</div>
+            <div className="lg:w-3/4 flex items-center justify-between">
+                <div className="font-bold text-md">Airlines</div>
                 {showAmenities ? (
                     <ChevronUpIcon onClick={() => setShowAmenities(!showAmenities)} className="h-5 w-5 flex-shrink-0 text-gray-900 group-hover:text-gray-500 cursor-pointer ml-20" aria-hidden="true" />
                 ) : (

@@ -42,7 +42,7 @@ function AddItemButton() {
     return (
         <>
             {/* Button */}
-            <div className="flex items-center my-2 md:pr-0 shadow-md">
+            <div className="flex items-center my-2 md:pr-0 shadow-sm">
                 <div className="border-2 border-[#8DD3BB] w-[30px] h-[30px] md:w-[40px] md:h-[40px] flex items-center justify-between rounded-md cursor-pointer py-2" onClick={toggleDrawer}>
                     <svg className="w-[20px] h-[20px] mx-auto hover:transition ease-in-out delay-150:-translate-y-1 hover:scale-110 duration-300 " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
                         fill="">
