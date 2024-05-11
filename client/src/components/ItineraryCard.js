@@ -95,7 +95,8 @@ export function AddItemButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState("main");
     const [open, setOpen] = useState(false);
-    const handleClose = () => setIsOpen(false);
+
+    const handleClose = () => setIsOpen(true);
 
     const toggleDrawer = () => {
         setIsOpen(!isOpen);
@@ -136,7 +137,7 @@ export function AddItemButton() {
                         isOpen ? "translate-x-0" : "translate-x-full"
                     } overflow-y-auto`}
                 >
-                    {/* Content inside the drawer */}
+                    {/* Content inside the drawer - not work yet*/}
                     <div 
                         onClick={handleClose} className="material-icons cursor-pointer transition ease-in-out delay-150:-translate-y-1 hover:scale-110 duration-300 mt-6" style={{ float: 'right' }}>
                         <IconX stroke={2} size={40} color="black"/>
@@ -235,7 +236,7 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick }) {
         <>
             <React.Fragment>
                 {/* Chose item page */}
-                <div className="bg-white py-6 sticky top-0 z-50 border-b">
+                <div className="bg-white py-6 sticky mt-10 top-0 z-50 border-b">
                     <h1 className="text-2xl text-center font-semibold mb-2">
                         Add to your itinerary
                     </h1>
@@ -270,7 +271,7 @@ function OtherPageContent({ handleBackButtonClick }) {
     return (
         <React.Fragment>
             {/* Other page content */}
-            <div className="bg-white py-6 sticky top-0 z-50 border-b">
+            <div className="bg-white py-6 mt-10 sticky top-0 z-50 border-b">
                 <h1 className="text-2xl text-center font-semibold mb-2">
                     Add to your itinerary
                 </h1>

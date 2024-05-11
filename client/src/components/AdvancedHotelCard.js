@@ -170,7 +170,7 @@ export function HotelCard({
                         
                         { !(isSuccess) ? (
                             <div>
-                                <div className="flex items-center pr-6 my-2">
+                                <div className=" flex items-center pr-6 my-2">
                         {/* Placeholder for the rest of the div content */}
                         <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
                             <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
@@ -180,7 +180,7 @@ export function HotelCard({
                         </div>
                                 </div>
 
-                                <div className="flex items-center pr-6 my-2">
+                                <div className=" flex items-center pr-6 my-2">
                                     {/* Placeholder for the rest of the div content */}
                                     <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
                                         <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
@@ -190,7 +190,7 @@ export function HotelCard({
                                     </div>
                                 </div>
 
-                                <div className="flex items-center pr-6 my-2">
+                                <div className=" flex items-center pr-6 my-2">
                                     {/* Placeholder for the rest of the div content */}
                                     <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
                                         <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
