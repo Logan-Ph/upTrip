@@ -181,430 +181,446 @@ function AdvancedSearchFlight({ setTab }) {
         <>
             <div
                 id="flight-section"
-                class="flex flex-col p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
+                class="grid grid-cols-2 p-4 mx-auto md:my-8 bg-white rounded-xl bg-opacity-40"
             >
-                <div class="w-full mx-auto my-4 bg-white p-4 rounded-lg space-y-2">
-                    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 justify-between w-full mb-4">
-                        <div class="">
-                            <select
-                                id="form-selector-2"
-                                class="h-[52px] px-2 select select-bordered w-full md:w-[90px] pr-2 pl-3"
-                                onChange={(e) => setTab(e.target.value)}
-                            >
-                                <option value="All">All</option>
-                                <option value="Stay">Stay</option>
-                                <option value="Flight" selected="selected">
-                                    Flight
-                                </option>
-                                <option value="Experience">Experience</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="flex flex-col md:flex-row space-y-2 md:space-x-4 md:space-y-0 items-center">
-                        <div class="relative w-full md:w-1/2">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <i class="fa-solid fa-plane-departure text-gray-500"></i>
-                            </div>
-                            <div>
-                                <input
-                                    name="origin"
-                                    type="text"
-                                    class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5 "
-                                    placeholder="City or airport"
-                                    value={fromEdit ? keywordFrom : from.cityName}
-                                    onChange={(e) => {
-                                        setKeywordFrom(e.target.value)
-                                    }}
-                                />
-                                <label
-                                    for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                <div class="col-span-full flex flex-col md:flex-row w-full space-y-2 md:space-y-0">
+                    <div class="join join-vertical md:join-horizontal space-y-2 md:space-y-0 w-full">
+                        <div class="join-item h-[52px]">
+                            <div className="join join-horizontal w-full md:rounded-r-none">
+                                <select
+                                    id="form-selector-2"
+                                    class="h-[52px] px-2 select select-bordered w-full md:w-[90px] pr-2 pl-3 md:rounded-r-none"
+                                    onChange={(e) => setTab(e.target.value)}
                                 >
-                                    Origin
-                                </label>
-                            </div>
-                            {fromAutocomplete.isFetched && fromEdit && (
-                                <div class="relative z-40">
-                                    <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
-                                        {fromAutocomplete?.data?.map(
-                                            (item) => {
-                                                return (
-                                                    <li
-                                                        onClick={() => {
-                                                            setFrom(item)
-                                                            setFromEdit(false)
-                                                        }}>
-                                                        <a>
-                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
-                                                        </a>
-                                                    </li>
-                                                )
-                                            }
-                                        )}
-                                    </ul>
-                                </div>
-                            )}
-                        </div>
-                        <div class="relative w-full md:w-1/2">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <i class="fa-solid fa-plane-arrival text-gray-500"></i>
-                            </div>
-                            <div>
-                                <input
-                                    name="destination"
-                                    type="text"
-                                    class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5"
-                                    placeholder="City or airport"
-                                    value={toEdit ? keywordTo : to.cityName}
-                                    onChange={(e) =>
-                                        setKeywordTo(e.target.value)
-                                    }
-                                />
-                                <label
-                                    for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                >
-                                    Destination
-                                </label>
-                            </div>
-                            {toAutocomplete.isFetched && toEdit && (
-                                <div class="relative z-40">
-                                    <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
-                                        {toAutocomplete?.data?.map(
-                                            (item) => {
-                                                return (
-                                                    <li
-                                                        onClick={() => {
-                                                            setTo(item);
-                                                            setToEdit(false)
-                                                        }}>
-                                                        <a>
-                                                            <i class="fa-solid fa-plane"></i> {item.cityName} - {item.airportCode}
-                                                        </a>
-                                                    </li>
-                                                )
-                                            }
-                                        )}
-                                    </ul>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    <div class="flex flex-col md:flex-row space-y-2 md:space-x-4 md:space-y-0 items-center justify-between	">
-                        <div class="relative w-full md:w-1/3">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg
-                                    class="w-4 h-4 text-gray-500"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <input
-                                    ref={date}
-                                    datepicker
-                                    datepicker-autohide
-                                    datepicker-format="dd/mm/yyyy"
-                                    name="start"
-                                    type="text"
-                                    class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5"
-                                    placeholder="dd/mm/yyyy"
-                                    value={date.current?.value}
-                                    id="datepickerId4"
-                                />
-                                <label
-                                    for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                >
-                                    Departing
-                                </label>
+                                    <option value="All">All</option>
+                                    <option value="Stay">Stay</option>
+                                    <option value="Flight" selected="selected">
+                                        Flight
+                                    </option>
+                                    <option value="Experience">
+                                        Experience
+                                    </option>
+                                </select>
                             </div>
                         </div>
-
-                        {/* This field appears only when user choose round trip , hidden when one way */}
-                        <div class="relative w-full md:w-1/3">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg
-                                    class="w-4 h-4 text-gray-500"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <input
-                                    name="end"
-                                    type="text"
-                                    class="block rounded-t-lg  text-gray-900 bg-gray-100 border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 w-full ps-10 p-2.5 pt-5"
-                                    placeholder="dd/mm/yyyy"
-                                    id="datepickerId4"
-                                />
-                                <label
-                                    for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                >
-                                    Returning
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className="relative w-full md:w-1/3 mb-2 grow border-b-2 border-gray-300">
-                            {/* Ask for number of passenger */}
-                            <button
-                                id="dropdownDefaultButton"
-                                data-dropdown-toggle="dropdown"
-                                class="text-gray-900 bg-gray-100 focus:ring-4 focus:outline-none font-medium rounded-t-lg  md:border-none text-sm px-5 py-2.5 text-center inline-flex items-center h-[56px] relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none"
-                                type="button"
-                                onClick={() => setOpenMenu((prev) => !prev)}
-                            >
-                                <label
-                                    for="floating_filled"
-                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
-                                >
-                                    No. of Passengers
-                                </label>
+                        <div class="join-item h-[52px]">
+                            <div class="relative">
                                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
+                                    <i class="fa-solid fa-plane-departure text-gray-500"></i>
                                 </div>
-                                {numberOfAdult} Adult, {numberOfChild} Child,{" "}
-                                {numberOfInfant} Infant{" "}
-                                <svg
-                                    class="w-2.5 h-2.5 ms-3"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 10 6"
-                                >
-                                    <path
-                                        stroke="currentColor"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="m1 1 4 4 4-4"
+                                <div>
+                                    <input
+                                        name="origin"
+                                        type="text"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px]"
+                                        placeholder="City or airport"
+                                        value={
+                                            fromEdit
+                                                ? keywordFrom
+                                                : from.cityName
+                                        }
+                                        onChange={(e) => {
+                                            setKeywordFrom(e.target.value);
+                                        }}
                                     />
-                                </svg>
-                            </button>
-
-                            {/* <!-- Dropdown menu --> */}
-                            <div
-                                id="dropdown"
-                                class={`z-10 bg-gray-100 divide-y divide-gray-100 rounded-b-lg shadow w-full absolute mt-[1.5px] ${
-                                    openMenu ? "" : "hidden"
-                                }`}
-                            >
-                                <div
-                                    class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
-                                    aria-labelledby="dropdownDefaultButton"
+                                    <label
+                                        for="floating_filled"
+                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    >
+                                        Origin
+                                    </label>
+                                </div>
+                                {fromAutocomplete.isFetched && fromEdit && (
+                                    <div class="relative z-40">
+                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-hidden scor">
+                                            {fromAutocomplete?.data?.map(
+                                                (item) => {
+                                                    return (
+                                                        <li
+                                                            onClick={() => {
+                                                                setFrom(item);
+                                                                setFromEdit(
+                                                                    false
+                                                                );
+                                                            }}
+                                                        >
+                                                            <a>
+                                                                <i class="fa-solid fa-plane"></i>{" "}
+                                                                {item.cityName}{" "}
+                                                                -{" "}
+                                                                {
+                                                                    item.airportCode
+                                                                }
+                                                            </a>
+                                                        </li>
+                                                    );
+                                                }
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div class="join-item h-[52px]">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <i class="fa-solid fa-plane-arrival text-gray-500"></i>
+                                </div>
+                                <div>
+                                    <input
+                                        name="destination"
+                                        type="text"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px]"
+                                        placeholder="City or airport"
+                                        value={toEdit ? keywordTo : to.cityName}
+                                        onChange={(e) =>
+                                            setKeywordTo(e.target.value)
+                                        }
+                                    />
+                                    <label
+                                        for="floating_filled"
+                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    >
+                                        Destination
+                                    </label>
+                                </div>
+                                {toAutocomplete.isFetched && toEdit && (
+                                    <div class="relative z-40">
+                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-hidden scor">
+                                            {toAutocomplete?.data?.map(
+                                                (item) => {
+                                                    return (
+                                                        <li
+                                                            onClick={() => {
+                                                                setTo(item);
+                                                                setToEdit(
+                                                                    false
+                                                                );
+                                                            }}
+                                                        >
+                                                            <a>
+                                                                <i class="fa-solid fa-plane"></i>{" "}
+                                                                {item.cityName}{" "}
+                                                                -{" "}
+                                                                {
+                                                                    item.airportCode
+                                                                }
+                                                            </a>
+                                                        </li>
+                                                    );
+                                                }
+                                            )}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div class="join-item h-[52px]">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg
+                                        class="w-4 h-4 text-gray-500"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <input
+                                        ref={date}
+                                        datepicker
+                                        datepicker-autohide
+                                        datepicker-format="dd/mm/yyyy"
+                                        name="start"
+                                        type="text"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px]"
+                                        placeholder="dd/mm/yyyy"
+                                        value={date.current?.value}
+                                        id="datepickerId4"
+                                    />
+                                    <label
+                                        for="floating_filled"
+                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    >
+                                        Departing
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="join-item h-[80px] md:h-[52px] grow">
+                            <div className="relative mb-2 grow">
+                                {/* Ask for number of passenger */}
+                                <button
+                                    id="dropdownDefaultButton"
+                                    data-dropdown-toggle="dropdown"
+                                    class="text-gray-900 bg-white border border-gray-300  outline-none font-medium rounded-lg md:rounded-l-none  md:border-l text-sm px-5 py-2.5 inline-flex items-center relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none h-[80px] text-start md:text-center md:h-[52px]"
+                                    type="button"
+                                    onClick={() => setOpenMenu((prev) => !prev)}
                                 >
-                                    <div class="flex justify-between">
-                                        <div class="flex flex-col">
-                                            <div>
-                                                <i
-                                                    class="fa-solid fa-person"
-                                                    aria-hidden="true"
-                                                ></i>{" "}
-                                                Adult(s)
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="flex space-x-3 items-center">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    class="w-6 h-6"
-                                                    onClick={() =>
-                                                        setNumberOfAdult(
-                                                            (prev) =>
-                                                                prev - 1 > 0
-                                                                    ? prev - 1
-                                                                    : 1
-                                                        )
-                                                    }
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    ></path>
-                                                </svg>
-                                                <span class="text-lg">
-                                                    {" "}
-                                                    {numberOfAdult}{" "}
-                                                </span>
-
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    class="w-6 h-6"
-                                                    onClick={() =>
-                                                        setNumberOfAdult(
-                                                            (prev) =>
-                                                                prev +
-                                                                    1 +
-                                                                    numberOfChild +
-                                                                    numberOfInfant <=
-                                                                6
-                                                                    ? prev + 1
-                                                                    : prev
-                                                        )
-                                                    }
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    ></path>
-                                                </svg>
-                                            </div>
-                                        </div>
+                                    <label
+                                        for="floating_filled"
+                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto font-medium"
+                                    >
+                                        No. of Passengers and Seat Class
+                                    </label>
+                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                        <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <div class="flex flex-col">
-                                            <div>
-                                                <i class="fa-solid fa-child-reaching"></i>{" "}
-                                                Child
-                                            </div>
-                                            <div>(age 2 - 11)</div>
-                                        </div>
-                                        <div>
-                                            <div class="flex space-x-3 items-center">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    class="w-6 h-6"
-                                                    onClick={() =>
-                                                        setNumberOfChild(
-                                                            (prev) =>
-                                                                prev - 1 >= 0
-                                                                    ? prev - 1
-                                                                    : 0
-                                                        )
-                                                    }
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    ></path>
-                                                </svg>
-                                                <span class="text-lg">
-                                                    {" "}
-                                                    {numberOfChild}{" "}
-                                                </span>
+                                    {numberOfAdult} Adult, {numberOfChild}{" "}
+                                    Child, {numberOfInfant} Infant and Economy
+                                    <svg
+                                        class="w-2.5 h-2.5 ms-3"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 10 6"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="m1 1 4 4 4-4"
+                                        />
+                                    </svg>
+                                </button>
 
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    class="w-6 h-6"
-                                                    onClick={() =>
-                                                        setNumberOfChild(
-                                                            (prev) =>
-                                                                prev <
-                                                                    numberOfAdult *
-                                                                        2 &&
-                                                                prev +
-                                                                    1 +
-                                                                    numberOfAdult +
-                                                                    numberOfInfant <=
-                                                                    6
-                                                                    ? prev + 1
-                                                                    : prev
-                                                        )
-                                                    }
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    ></path>
-                                                </svg>
+                                {/* <!-- Dropdown menu --> */}
+                                <div
+                                    id="dropdown"
+                                    class={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-full absolute mt-[1.5px] ${
+                                        openMenu ? "" : "hidden"
+                                    }`}
+                                >
+                                    <div
+                                        class="py-2 text-sm text-gray-700 my-3 mx-5 space-y-4"
+                                        aria-labelledby="dropdownDefaultButton"
+                                    >
+                                        <div class="flex justify-between">
+                                            <div class="flex flex-col">
+                                                <div>
+                                                    <i
+                                                        class="fa-solid fa-person text-gray-500"
+                                                        aria-hidden="true"
+                                                    ></i>{" "}
+                                                    Adult(s)
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <div class="flex flex-col">
                                             <div>
-                                                <i class="fa-solid fa-baby"></i>{" "}
-                                                Infant
-                                            </div>
-                                            <div>(below age 2)</div>
-                                        </div>
-                                        <div>
-                                            <div class="flex space-x-3 items-center">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    class="w-6 h-6"
-                                                    onClick={() =>
-                                                        setNumberOfInfant(
-                                                            (prev) =>
-                                                                prev - 1 >= 0
-                                                                    ? prev - 1
-                                                                    : prev
-                                                        )
-                                                    }
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    ></path>
-                                                </svg>
-                                                <span class="text-lg">
-                                                    {" "}
-                                                    {numberOfInfant}{" "}
-                                                </span>
+                                                <div class="flex space-x-3 items-center">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke-width="1.5"
+                                                        stroke="currentColor"
+                                                        class="w-6 h-6"
+                                                        onClick={() =>
+                                                            setNumberOfAdult(
+                                                                (prev) =>
+                                                                    prev - 1 > 0
+                                                                        ? prev -
+                                                                          1
+                                                                        : 1
+                                                            )
+                                                        }
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                        ></path>
+                                                    </svg>
+                                                    <span class="text-lg">
+                                                        {" "}
+                                                        {numberOfAdult}{" "}
+                                                    </span>
 
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    class="w-6 h-6"
-                                                    onClick={() =>
-                                                        setNumberOfInfant(
-                                                            (prev) =>
-                                                                prev + 1 <=
-                                                                    numberOfAdult &&
-                                                                prev +
-                                                                    1 +
-                                                                    numberOfChild +
-                                                                    numberOfAdult <=
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke-width="1.5"
+                                                        stroke="currentColor"
+                                                        class="w-6 h-6"
+                                                        onClick={() =>
+                                                            setNumberOfAdult(
+                                                                (prev) =>
+                                                                    prev +
+                                                                        1 +
+                                                                        numberOfChild +
+                                                                        numberOfInfant <=
                                                                     6
-                                                                    ? prev + 1
-                                                                    : prev
-                                                        )
-                                                    }
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                    ></path>
-                                                </svg>
+                                                                        ? prev +
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                        ></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <div class="flex flex-col">
+                                                <div>
+                                                    <i class="fa-solid fa-child-reaching"></i>{" "}
+                                                    Child
+                                                </div>
+                                                <div>(age 2 - 11)</div>
+                                            </div>
+                                            <div>
+                                                <div class="flex space-x-3 items-center">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke-width="1.5"
+                                                        stroke="currentColor"
+                                                        class="w-6 h-6"
+                                                        onClick={() =>
+                                                            setNumberOfChild(
+                                                                (prev) =>
+                                                                    prev - 1 >=
+                                                                    0
+                                                                        ? prev -
+                                                                          1
+                                                                        : 0
+                                                            )
+                                                        }
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                        ></path>
+                                                    </svg>
+                                                    <span class="text-lg">
+                                                        {" "}
+                                                        {numberOfChild}{" "}
+                                                    </span>
+
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke-width="1.5"
+                                                        stroke="currentColor"
+                                                        class="w-6 h-6"
+                                                        onClick={() =>
+                                                            setNumberOfChild(
+                                                                (prev) =>
+                                                                    prev <
+                                                                        numberOfAdult *
+                                                                            2 &&
+                                                                    prev +
+                                                                        1 +
+                                                                        numberOfAdult +
+                                                                        numberOfInfant <=
+                                                                        6
+                                                                        ? prev +
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                        ></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <div class="flex flex-col">
+                                                <div>
+                                                    <i class="fa-solid fa-baby"></i>{" "}
+                                                    Infant
+                                                </div>
+                                                <div>(below age 2)</div>
+                                            </div>
+                                            <div>
+                                                <div class="flex space-x-3 items-center">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke-width="1.5"
+                                                        stroke="currentColor"
+                                                        class="w-6 h-6"
+                                                        onClick={() =>
+                                                            setNumberOfInfant(
+                                                                (prev) =>
+                                                                    prev - 1 >=
+                                                                    0
+                                                                        ? prev -
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                        ></path>
+                                                    </svg>
+                                                    <span class="text-lg">
+                                                        {" "}
+                                                        {numberOfInfant}{" "}
+                                                    </span>
+
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke-width="1.5"
+                                                        stroke="currentColor"
+                                                        class="w-6 h-6"
+                                                        onClick={() =>
+                                                            setNumberOfInfant(
+                                                                (prev) =>
+                                                                    prev + 1 <=
+                                                                        numberOfAdult &&
+                                                                    prev +
+                                                                        1 +
+                                                                        numberOfChild +
+                                                                        numberOfAdult <=
+                                                                        6
+                                                                        ? prev +
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                        ></path>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between grow flex-wrap">
+                                            <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                                Economy
+                                            </div>
+                                            <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                                Business
+                                            </div>
+                                            <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                                First
                                             </div>
                                         </div>
                                     </div>
@@ -612,13 +628,14 @@ function AdvancedSearchFlight({ setTab }) {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="md:ml-1.5">
-                    <button
-                        onClick={(e) => handleSubmit(e)}
-                        class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full">
-                        Search
-                    </button>
+                    <div class="md:ml-1.5">
+                        <button
+                            onClick={(e) => handleSubmit(e)}
+                            class="btn rounded-lg bg-[#FFA732] text-white border-none h-[52px] w-full md:w-fit"
+                        >
+                            Search
+                        </button>
+                    </div>
                 </div>
             </div>
         </>

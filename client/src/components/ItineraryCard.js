@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 
+// Itinerary card for the itinerary page. list the itinerary info card
 export function ItineraryCard() {
     return (
         <>
@@ -88,6 +89,7 @@ export function ItineraryCard() {
     );
 }
 
+// add item button in detailed itinerary page
 export function AddItemButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState("main");
@@ -127,19 +129,19 @@ export function AddItemButton() {
             <div className="relative">
                 {/* Drawer */}
                 <div
-                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 pt-2 md:px-8 md:pt-8  ${
+                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${
                         isOpen ? "translate-x-0" : "translate-x-full"
                     } overflow-y-auto`}
                 >
                     {/* Content inside the drawer */}
                     <div className="p-4 relative">
-                        <h1 className="text-2xl font-semibold mb-2 sticky top-0">
+                        {/* <h1 className="text-2xl font-semibold mb-2 sticky top-0">
                             {currentPage === "main"
                                 ? "Choose a collection"
                                 : currentPage === "chooseSavedItem"
                                 ? "Add to your itinerary"
                                 : "Add to your itinerary"}
-                        </h1>
+                        </h1> */}
                         {currentPage === "main" ? (
                             <ChooseCollection
                                 handleNextButtonClick={
@@ -173,14 +175,26 @@ export function AddItemButton() {
     );
 }
 
+// page 1 in the drawer, choose collection
 function ChooseCollection({ handleNextButtonClick }) {
     return (
         <>
             <React.Fragment>
-                <p className="text-gray-600">
-                    Select your favorite collection to choose items from.
-                </p>
+                <div className="bg-white py-6 sticky top-0 z-50 border-b">
+                    <h1 className="text-2xl text-center font-semibold mb-2">
+                        Choose a collection
+                    </h1>
+                    <p className="text-gray-500 text-center">
+                        Select the collection to pick the items from.
+                    </p>
+                </div>
                 <div className="my-4">
+                    {/* If no collection */}
+                    <div className="text-lg my-10">
+                        <p className="font-thin text-xl">Your collection is empty.</p>
+                        {/* Direct to the favorite collection page */}
+                        <a href="" className="font-semibold underline">Let's create one!</a>
+                    </div>
                     {/* Your SavedCollectionCard components */}
                     <SavedCollectionCard />
                     <SavedCollectionCard />
@@ -189,7 +203,8 @@ function ChooseCollection({ handleNextButtonClick }) {
                     <SavedCollectionCard />
                     <SavedCollectionCard />
                 </div>
-                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2">
+                {/* If no collection, hidden */}
+                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
                     <div
                         className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
                         onClick={handleNextButtonClick}
@@ -202,25 +217,30 @@ function ChooseCollection({ handleNextButtonClick }) {
     );
 }
 
+// page 2 in the drawer, choose item
 function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick }) {
     return (
         <>
             <React.Fragment>
-                {/* Other page content */}
-                <p>Choose one from your saves.</p>
-                <button
-                    onClick={handleBackButtonClick}
-                    className="mt-4 fixed top-0 left-0 p-3 ml-4"
-                >
-                    <i className="fa-solid fa-arrow-left text-2xl"></i>
-                </button>
+                {/* Chose item page */}
+                <div className="bg-white py-6 sticky top-0 z-50 border-b">
+                    <h1 className="text-2xl text-center font-semibold mb-2">
+                        Add to your itinerary
+                    </h1>
+                    <button
+                        onClick={handleBackButtonClick}
+                        className="mt-4 absolute top-0 left-[-30px] p-3 ml-4"
+                    >
+                        <i className="fa-solid fa-arrow-left text-2xl"></i>
+                    </button>
+                </div>
                 <div className="my-4">
                     <SavedStayCard />
                     <SavedStayCard />
                     <SavedFlightCard />
                     <SavedExperienceCard />
                 </div>
-                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2">
+                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
                     <div
                         className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
                         onClick={handleNextButtonClick}
@@ -233,22 +253,45 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick }) {
     );
 }
 
+// page 3 in the drawer, input details of the item
 function OtherPageContent({ handleBackButtonClick }) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleDetails = () => {
-        setIsOpen(!isOpen);
-    };
     return (
         <React.Fragment>
             {/* Other page content */}
-            <button
-                onClick={handleBackButtonClick}
-                className="mt-4 fixed top-0 left-0 p-3 ml-4"
-            >
-                <i className="fa-solid fa-arrow-left text-2xl"></i>
-            </button>
+            <div className="bg-white py-6 sticky top-0 z-50 border-b">
+                <h1 className="text-2xl text-center font-semibold mb-2">
+                    Add to your itinerary
+                </h1>
+                <button
+                    onClick={handleBackButtonClick}
+                    className="mt-4 absolute top-0 left-[-30px] p-3 ml-4"
+                >
+                    <i className="fa-solid fa-arrow-left text-2xl"></i>
+                </button>
+            </div>
             {/* For Stay */}
+            <ForDetailStay/>
+
+            {/* For Flight */}
+            <ForDetailFlight/>
+
+            {/* For Experience */}
+            <ForDetailExperience/>
+
+            {/* Add to itinerary button */}
+            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50">
+                {/* Add any other content or buttons */}
+                <div className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full">
+                    Add to itinerary
+                </div>
+            </div>
+        </React.Fragment>
+    );
+}
+
+function ForDetailStay() {
+    return (
+        <>
             <div className="my-4">
                 <SavedStayCard />
                 {/* Ask Date */}
@@ -538,7 +581,8 @@ function OtherPageContent({ handleBackButtonClick }) {
                     <div className="flex justify-center my-10">
                         <span className="loading loading-dots loading-md"></span>
                     </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                    {/* If user choose this price, change to bg-[#8DD3BB] , otherwise bg-[#CDEAE1] */}
+                    <div class="border border-transparent bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]">
                         <div class="mx-auto">
                             <img
                                 src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
@@ -552,7 +596,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                             </p>
                         </div>
                     </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
                         <div class="mx-auto">
                             <img
                                 src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
@@ -566,7 +610,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                             </p>
                         </div>
                     </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
                         <div class="mx-auto">
                             <img
                                 src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
@@ -582,7 +626,13 @@ function OtherPageContent({ handleBackButtonClick }) {
                     </div>
                 </div>
             </div>
-            {/* For Flight */}
+        </>
+    );
+}
+
+function ForDetailFlight() {
+    return (
+        <>
             <div className="my-4">
                 <SavedFlightCard />
                 {/* Ask Date */}
@@ -811,7 +861,8 @@ function OtherPageContent({ handleBackButtonClick }) {
                     <div className="flex justify-center my-10">
                         <span className="loading loading-dots loading-md"></span>
                     </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                    {/* If user choose this price, change to bg-[#8DD3BB] , otherwise bg-[#CDEAE1] */}
+                    <div class="border border-transparent bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]">
                         <div class="mx-auto">
                             <img
                                 src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
@@ -825,7 +876,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                             </p>
                         </div>
                     </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
                         <div class="mx-auto">
                             <img
                                 src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
@@ -839,7 +890,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                             </p>
                         </div>
                     </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2">
+                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
                         <div class="mx-auto">
                             <img
                                 src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
@@ -855,7 +906,18 @@ function OtherPageContent({ handleBackButtonClick }) {
                     </div>
                 </div>
             </div>
-            {/* For Experience */}
+        </>
+    );
+}
+
+function ForDetailExperience() {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleDetails = () => {
+        setIsOpen(!isOpen);
+    };
+    return (
+        <>
             <div className="my-4">
                 <SavedExperienceCard />
             </div>
@@ -863,7 +925,7 @@ function OtherPageContent({ handleBackButtonClick }) {
             <div className="my-4">
                 <div className="toggleable-details">
                     <div
-                        className="text-start text-lg font-semibold hover:underline-offset-4"
+                        className="text-start text-lg font-semibold hover:underline cursor-pointer"
                         onClick={toggleDetails}
                     >
                         Additional Details
@@ -886,7 +948,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                                     <div class="relative">
                                         <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
                                             <svg
-                                                class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                                class="w-4 h-4 text-gray-500"
                                                 aria-hidden="true"
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="currentColor"
@@ -902,7 +964,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                                         <input
                                             type="time"
                                             id="start-time"
-                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
                                             min="09:00"
                                             max="18:00"
                                             value="00:00"
@@ -936,7 +998,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                                         <input
                                             type="time"
                                             id="end-time"
-                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
                                             min="09:00"
                                             max="18:00"
                                             value="00:00"
@@ -964,13 +1026,7 @@ function OtherPageContent({ handleBackButtonClick }) {
                     )}
                 </div>
             </div>
-            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t-2 z-50">
-                {/* Add any other content or buttons */}
-                <div className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full">
-                    Add to itinerary
-                </div>
-            </div>
-        </React.Fragment>
+        </>
     );
 }
 
