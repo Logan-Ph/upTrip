@@ -230,6 +230,7 @@ export default function AdvancedSearchHotelPage() {
                                                 agodaPrice={agodaPrice}
                                                 bookingPrice={bookingPrice}
                                                 isSpecific={true}
+                                                priceData={priceData}
                                                 isSuccess={
                                                     getSpecificHotelPriceComparison.isSuccess
                                                 }
