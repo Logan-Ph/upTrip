@@ -348,7 +348,7 @@ function AdvancedSearchFlight() {
                                     Origin
                                 </label>
                             </div>
-                            {fromAutocomplete.isFetched && fromEdit && (
+                            {fromAutocomplete.isFetched && fromEdit && keywordFrom && fromAutocomplete?.data?.length > 0 && (
                                 <div className="relative z-40">
                                     <ul className="absolute menu bg-base-200 w-full rounded-b-lg">
                                         {fromAutocomplete?.data?.map((item) => {
@@ -395,7 +395,7 @@ function AdvancedSearchFlight() {
                                 </label>
                             </div>
 
-                            {toAutocomplete.isFetched && toEdit && (
+                            {toAutocomplete.isFetched && toEdit && keywordTo && toAutocomplete?.data?.length > 0 && (
                                 <div class="relative z-40">
                                     <ul class="absolute menu bg-base-200 w-full rounded-b-lg overflow-y-hidden scor">
                                         {toAutocomplete?.data?.map((item) => {
@@ -471,7 +471,7 @@ function AdvancedSearchFlight() {
                                     <i className="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                                 </div>
                                 {numberOfAdult} Adult, {numberOfChild} Child,{" "}
-                                {numberOfInfant} Infant and Premium Economy
+                                {numberOfInfant} Infant and Premium {seatClass}
                                 <svg
                                     className="w-2.5 h-2.5 ms-3"
                                     aria-hidden="true"
@@ -708,13 +708,22 @@ function AdvancedSearchFlight() {
                                     </div>
                                     {/* Choose seat class */}
                                     <div class="flex justify-between grow flex-wrap">
-                                        <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                        <div 
+                                            className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
+                                            onClick={() => setSeatClass("ECONOMY")}
+                                        >
                                             Economy
                                         </div>
-                                        <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                        <div 
+                                            className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
+                                            onClick={() => setSeatClass("BUSINESS")}
+                                        >
                                             Business
                                         </div>
-                                        <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                        <div 
+                                            className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
+                                            onClick={() => setSeatClass("FIRST")}
+                                        >
                                             First
                                         </div>
                                     </div>

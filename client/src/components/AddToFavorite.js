@@ -4,10 +4,9 @@ import {IconX} from '@tabler/icons-react'
 export default function AddToFavorite(){
     return(
         <>
-        <div className="mt-10">
-        <AddItemButton/>
-        </div>
-        
+            <div className="mt-10">
+                <AddItemButton/>
+            </div>
         </>
     )
 }
@@ -57,8 +56,8 @@ function AddItemButton() {
                 </div>
             </div>
 
-
-            <div className="relative">
+            {isOpen && (
+                <div className="">
                 {/* Drawer */}
                 
                 <div
@@ -81,10 +80,10 @@ function AddItemButton() {
                             className="btn w-full border p-4 rounded-md font-semibold border-black bg-white"
                             onClick={() =>
                                 document
-                                    .getElementById("create_collection_modal")
-                                    .showModal()
+                                .getElementById("create_collection_modal")
+                                .showModal()
                             }
-                        >
+                            >
                             <i class="fa-solid fa-plus mr-2"></i> Create new
                             collection
                         </button>
@@ -104,7 +103,7 @@ function AddItemButton() {
                                         <label
                                             for="name"
                                             className="block mb-2 text-sm font-medium text-gray-900"
-                                        >
+                                            >
                                             Name
                                         </label>
                                         <input
@@ -112,13 +111,13 @@ function AddItemButton() {
                                             id="name"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl w-full p-2.5 focus:ring-black focus:border-black"
                                             required
-                                        />
+                                            />
                                     </div>
                                     <div className="mb-5 text-start">
                                         <label
                                             for="description"
                                             className="block mb-2 text-sm font-medium text-gray-900"
-                                        >
+                                            >
                                             Description
                                         </label>
                                         <textarea
@@ -126,7 +125,7 @@ function AddItemButton() {
                                             id="description"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 focus:ring-black focus:border-black"
                                             required
-                                        />
+                                            />
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
@@ -168,11 +167,12 @@ function AddItemButton() {
                 {/* Overlay to close the drawer */}
                 {isOpen && (
                     <div
-                        onClick={toggleDrawer}
-                        className="fixed top-0 left-0 h-full w-full bg-gray-800 opacity-50 transition-opacity duration-300 ease-in-out z-10"
+                    onClick={toggleDrawer}
+                    className="fixed top-0 left-0 h-full w-full bg-gray-800 opacity-50 transition-opacity duration-300 ease-in-out z-10"
                     ></div>
                 )}
             </div>
+            )}
         </>
     );
 }
