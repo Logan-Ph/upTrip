@@ -82,18 +82,30 @@ router.get('/user/:token/verify-email', userController.verifyEmail)
 // add new favorite collection
 router.post('/add-new-collection', userController.addNewCollection);
 
-// fetch favorites
-router.get('/fetch-favorites', userController.fetchFavorites);
+// fetch collection
+router.get('/fetch-collection', userController.fetchCollections);
 
-// add to favorites
-router.post('/add-to-favorites', userController.addToFavorites)
+// remove colletion
+// edit collection
 
-// remove from favorites
-router.delete('/delete-from-favorites/hotel/:id/:hotelName', userController.deleteHotel)
-router.delete('/delete-from-favorites/flight/:id/:flightNo', userController.deleteFlight)
-router.delete('/delete-from-favorites/attraction/:id/:attractionName', userController.deleteAttraction)
+// add-to-favorites/hotel
+// add-to-favorites/flight
+// add-to-favorites/experience
 
+// remove-from-favorites/hotel
+// remove-from-favorites/flight
+// remove-from-favorites/experience
 
+// add-new-itinerary
+// edit-itinerary
+// get-itinerary
 
+// add-to-itinerary/hotel
+// add-to-itinerary/flight
+// add-to-itinerary/experience
+
+// remove-from-itinerary/hotel
+// remove-from-itinerary/flight
+// remove-from-itinerary/experience
 
 module.exports = router;

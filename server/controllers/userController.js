@@ -1086,7 +1086,7 @@ exports.addNewCollection = async (req, res) => {
     }
 }
 
-exports.fetchFavorites = async (req, res) => {
+exports.fetchCollections = async (req, res) => {
     try {
         const { refreshToken } = req.cookies;
         if (!refreshToken) return res.status(401).json("You are not logged in");
@@ -1109,82 +1109,6 @@ exports.editCollection = async (req, res) => {
         return res.status(500).json(er);
     }
 }
-
-exports.addToFavorites = async (req, res) => {
-    try {
-        let favorites = await Favorites.findOne({ userID: req.body.userID });
-
-        if (!favorites) {
-            favorites = new Favorites({
-                userID: req.body.userID,
-                flights: [],
-                hotels: [],
-                attractions: [],
-            });
-        }
-
-        switch (req.body.itemType) {
-            case "hotel":
-                favorites.hotels.push(req.body.hotelName);
-                break;
-            case "flight":
-                favorites.flights.push({
-                    flightNo: req.body.flightNo,
-                    departure: req.body.departure,
-                    arrival: req.body.arrival,
-                    from: req.body.from,
-                    to: req.body.to,
-                    agency: req.body.agency,
-                });
-                break;
-            case "attraction":
-                favorites.attractions.push(req.body.attractionName);
-                break;
-        }
-        await favorites.save();
-        return res.status(200).json("Added to Favorites")
-    } catch (err) {
-        return res.status(500).json("Error. Try again later")
-    }
-}
-
-exports.deleteHotel = async (req, res) => {
-    try {
-        const favorites = await Favorites.findOne({ userID: req.params.id });
-        if (!favorites || favorites.hotels.length == 0) throw new Error("Favorites is empty");
-        favorites.hotels = favorites.hotels.filter(hotel => hotel !== req.params.hotelName);
-        await favorites.save()
-        return res.status(200).json("Deleted successfully")
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json(err.message || "Error. Try again later")
-    }
-}
-
-exports.deleteFlight = async (req, res) => {
-    try {
-        const favorites = await Favorites.findOne({ userID: req.params.id });
-        if (!favorites || favorites.flights.length == 0) throw new Error("Favorites is empty");
-        favorites.flights = favorites.flights.filter(flight => flight.flightNo !== req.params.flightNo);
-        await favorites.save()
-        return res.status(200).json("Deleted successfully")
-    } catch (err) {
-        return res.status(500).json(err.message || "Error. Try again later")
-    }
-}
-
-exports.deleteAttraction = async (req, res) => {
-    try {
-        const favorites = await Favorites.findOne({ userID: req.params.id });
-        if (!favorites || favorites.attractions.length == 0) throw new Error("Favorites is empty");
-        favorites.attractions = favorites.attractions.filter(attraction => attraction !== req.params.attractionName);
-        await favorites.save()
-        return res.status(200).json("Deleted successfully")
-    } catch (err) {
-        return res.status(500).json(err.message || "Error. Try again later")
-    }
-}
-
 
 exports.addNewItinerary = async (req, res) => {
     try {
