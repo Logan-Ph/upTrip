@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import AddToFavorite from "./AddToFavorite";
-import ASearchSkeleton from "./skeletonLoadings/ASearchSkeleton";
 
-export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingPrice, isSuccess, isSpecific }) {
+export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingPrice, isSuccess, isSpecific, priceData }) {
     return (
         <>
             <div className="relative">
                 <HotelCard
                     hotel={hotel}
                     payload={payload}
+                    priceData={priceData}
                     key={hotel?.hotelBasicInfo?.hotelId || hotel?.name}
                     imgSrc={hotel?.hotelBasicInfo?.hotelImg || hotel?.img}
                     hotelName={hotel?.hotelBasicInfo?.hotelName || hotel?.name}
@@ -45,31 +45,40 @@ export function HotelCard({
     isSuccess,
     isSpecific, 
     hotel,
-    payload
+    payload,
+    priceData
 }) {
-
     const navigate = useNavigate()
-
+    const daysBetween = (checkin, checkout) => (new Date(checkout.slice(0, 4), checkout.slice(4, 6) - 1, checkout.slice(6)) - new Date(checkin.slice(0, 4), checkin.slice(4, 6) - 1, checkin.slice(6))) / (1000 * 60 * 60 * 24);
+    const formatDate = dateStr => dateStr.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+    const bookingURL = `https://www.booking.com/hotel/vn/${priceData?.bookingPrice?.pageName}.vi.html?checkin=${formatDate(payload.checkin)};checkout=${formatDate(payload.checkout)};dest_id=${priceData?.booking?.matchHotel?.dest_id};dest_type=${priceData?.booking?.matchHotel?.dest_type};group_adults=${payload.adult};group_children=${payload.children};no_rooms=${payload.crn}`
+    const agodaURL = `https://www.agoda.com/vi-vn${priceData?.agodaPrice?.pageName}?finalPriceView=1&isShowMobileAppPrice=false&numberOfBedrooms=&familyMode=false&adults=${payload.adult}&children=${payload.children}&rooms=${payload.crn}&maxRooms=0&checkIn=${formatDate(payload.checkin)}&childAges=&numberOfGuest=0&missingChildAges=false&travellerType=1&showReviewSubmissionEntry=false&currencyCode=VND&los=${daysBetween(payload.checkin, payload.checkout)}`
+    const tripURL = `https://us.trip.com/hotels/detail/?cityId=${payload.city}&hotelId=${hotel.hotelBasicInfo.hotelId}&checkIn=${formatDate(payload.checkin)}&checkOut=${formatDate(payload.checkout)}&adult=${payload.adult}&children=0&subStamp=1479&crn=${payload.crn}&ages=&travelpurpose=0&curr=VND&detailFilters=17%7C1~17~1*80%7C0%7C1~80~0&hotelType=normal&barcurr=VND&locale=en-US`
     const websiteLogo = useMemo(() => [
         {
             imgLogo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
             price: agodaPrice,
+            link: agodaURL
         },
         {
+
             imgLogo: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252",
             price: bookingPrice,
+            link: bookingURL
         },
         {
             imgLogo: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655",
             price: price,
+            link: tripURL
         },
-    ], [agodaPrice, bookingPrice, price]);
+    ], [agodaPrice, bookingPrice, price, agodaURL, bookingURL, tripURL]);
 
     const [hearts, setHearts] = useState(
          websiteLogo.map((logo) => ({
             isFilled: false,
             imgLogo: logo.imgLogo,
             price: logo.price,
+            link: logo.link
         }))
     );
 
@@ -78,6 +87,7 @@ export function HotelCard({
             isFilled: false,
             imgLogo: logo.imgLogo,
             price: logo.price,
+            link: logo.link
         })))
     },[agodaPrice, bookingPrice, price, websiteLogo])
 
@@ -202,33 +212,35 @@ export function HotelCard({
                             </div>
                         ) : (
                             <>
-                                {hearts.map((heart, index) => (
-                                    <div
+                                {hearts.map((heart, index) => {
+                                    return(
+                                        <div
                                         key={index}
-                                        className="flex items-center pr-4 md:pr-6 my-2">
-                                
-                                        <div className="border border-transparent bg-[#CDEAE1] hover:bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full">
-                                            <div className="mx-auto">
-                                                <img
-                                                    src={heart.imgLogo}
-                                                    alt="website logo"
-                                                    className="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                                                />
-                                            </div>
-                                            <div className="mx-auto">
-                                                <p className="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                                    {heart.price !== null ?  heart.price : "-"} VND
-                                                </p>
+                                        className="flex items-center pr-4 md:pr-6 my-2"
+                                        onClick={() => window.open(heart.link, '_blank')}
+                                        >
+                                            <div className="border border-transparent bg-[#CDEAE1] hover:bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full">
+                                                <div className="mx-auto">
+                                                    <img
+                                                        src={heart.imgLogo}
+                                                        alt="website logo"
+                                                        className="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                                    />
+                                                </div>
+                                                <div className="mx-auto">
+                                                    <p className="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                                        {(heart.price !== null) ?  heart.price : "-"} VND
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </>
                         )}
                     </div>
                 </div>
             </div>
-
         </>
     );
 }

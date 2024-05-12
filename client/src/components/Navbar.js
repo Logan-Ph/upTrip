@@ -132,7 +132,7 @@ export default function Header() {
                                         {/* <!-- Dropdown menu --> */}
                                         {isOpen && (
                                             <div
-                                                className="my-4 text-base list-none bg-white divide-gray-100 rounded-lg shadow w-36 ml-4 absolute -left-2 top-8"
+                                                className="my-4 text-base list-none bg-white divide-gray-100 rounded-lg shadow w-36 ml-4 absolute -left-2 top-8 hover:bg-gray-100"
                                                 id="user-dropdown"
                                             >
                                                 <ul
@@ -140,7 +140,7 @@ export default function Header() {
                                                     aria-labelledby="user-menu-button"
                                                 >
                                                     <li>
-                                                        <Link className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={handleLogout}>
+                                                        <Link className="flex px-4 py-2 text-sm text-gray-700" onClick={handleLogout}>
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
                                                                 fill="none"
@@ -218,7 +218,7 @@ export default function Header() {
                             </Link>
                         </li>
                         {auth?.accessToken && (
-                            <li className="pt-4">
+                            <li className="pt-4  hover:bg-gray-100">
                                 <Link
                                     href=""
                                     className="font-semibold border-black border-2 hover:bg-black hover:text-white"

@@ -259,6 +259,7 @@ export default function AdvancedSearchHotelPage() {
                                                 >
                                                     <AdvancedHotelCardLazy
                                                         payload={payload}
+                                                        priceData={hotelPriceInfo}
                                                         hotel={hotel}
                                                         agodaPrice={agodaPrice}
                                                         bookingPrice={bookingPrice}
