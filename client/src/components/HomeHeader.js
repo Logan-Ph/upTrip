@@ -165,7 +165,6 @@ function AdvancedSearchFlight({ setTab }) {
 
         for (let key in payload) {
             if (payload.hasOwnProperty(key) && payload[key] === null) {
-                console.log(key)
                 warningNotify("Please provide all information.")
                 return;
             }
@@ -230,9 +229,9 @@ function AdvancedSearchFlight({ setTab }) {
                                         Origin
                                     </label>
                                 </div>
-                                {fromAutocomplete.isFetched && fromEdit && (
+                                {fromAutocomplete.isFetched && fromEdit && keywordFrom && fromAutocomplete?.data?.length > 0 && (
                                     <div class="relative z-40">
-                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-hidden scor">
+                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto">
                                             {fromAutocomplete?.data?.map(
                                                 (item) => {
                                                     return (
@@ -244,14 +243,14 @@ function AdvancedSearchFlight({ setTab }) {
                                                                 );
                                                             }}
                                                         >
-                                                            <a>
+                                                            <div>
                                                                 <i class="fa-solid fa-plane"></i>{" "}
                                                                 {item.cityName}{" "}
                                                                 -{" "}
                                                                 {
                                                                     item.airportCode
                                                                 }
-                                                            </a>
+                                                            </div>
                                                         </li>
                                                     );
                                                 }
@@ -284,9 +283,9 @@ function AdvancedSearchFlight({ setTab }) {
                                         Destination
                                     </label>
                                 </div>
-                                {toAutocomplete.isFetched && toEdit && (
+                                {toAutocomplete.isFetched && toEdit && keywordTo && toAutocomplete?.data?.length > 0 && (
                                     <div class="relative z-40">
-                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-hidden scor">
+                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto">
                                             {toAutocomplete?.data?.map(
                                                 (item) => {
                                                     return (
@@ -370,7 +369,7 @@ function AdvancedSearchFlight({ setTab }) {
                                         <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                                     </div>
                                     {numberOfAdult} Adult, {numberOfChild}{" "}
-                                    Child, {numberOfInfant} Infant and Economy
+                                    Child, {numberOfInfant} Infant and {seatClass}
                                     <svg
                                         class="w-2.5 h-2.5 ms-3"
                                         aria-hidden="true"
@@ -402,10 +401,7 @@ function AdvancedSearchFlight({ setTab }) {
                                         <div class="flex justify-between">
                                             <div class="flex flex-col">
                                                 <div>
-                                                    <i
-                                                        class="fa-solid fa-person text-gray-500"
-                                                        aria-hidden="true"
-                                                    ></i>{" "}
+                                                    <i class="fa-solid fa-person text-gray-500" aria-hidden="true" ></i>{" "}
                                                     Adult(s)
                                                 </div>
                                             </div>
@@ -418,15 +414,7 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() =>
-                                                            setNumberOfAdult(
-                                                                (prev) =>
-                                                                    prev - 1 > 0
-                                                                        ? prev -
-                                                                          1
-                                                                        : 1
-                                                            )
-                                                        }
+                                                        onClick={() => setNumberOfAdult( (prev) => prev - 1 > 0 ? prev - 1 : 1 ) }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -446,19 +434,7 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() =>
-                                                            setNumberOfAdult(
-                                                                (prev) =>
-                                                                    prev +
-                                                                        1 +
-                                                                        numberOfChild +
-                                                                        numberOfInfant <=
-                                                                    6
-                                                                        ? prev +
-                                                                          1
-                                                                        : prev
-                                                            )
-                                                        }
+                                                        onClick={() => setNumberOfAdult( (prev) =>  prev + 1 + numberOfChild + numberOfInfant <= 6 ? prev + 1  : prev ) }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -486,15 +462,7 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() =>
-                                                            setNumberOfChild(
-                                                                (prev) =>
-                                                                    prev - 1 >=
-                                                                    0
-                                                                        ? prev -
-                                                                          1
-                                                                        : 0
-                                                            )
+                                                        onClick={() => setNumberOfChild( (prev) => prev - 1 >= 0 ? prev - 1 : 0 )
                                                         }
                                                     >
                                                         <path
@@ -515,22 +483,7 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() =>
-                                                            setNumberOfChild(
-                                                                (prev) =>
-                                                                    prev <
-                                                                        numberOfAdult *
-                                                                            2 &&
-                                                                    prev +
-                                                                        1 +
-                                                                        numberOfAdult +
-                                                                        numberOfInfant <=
-                                                                        6
-                                                                        ? prev +
-                                                                          1
-                                                                        : prev
-                                                            )
-                                                        }
+                                                        onClick={() => setNumberOfChild( (prev) => prev < numberOfAdult * 2 && prev + 1 + numberOfAdult + numberOfInfant <=  6 ? prev + 1 : prev ) }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -558,16 +511,7 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() =>
-                                                            setNumberOfInfant(
-                                                                (prev) =>
-                                                                    prev - 1 >=
-                                                                    0
-                                                                        ? prev -
-                                                                          1
-                                                                        : prev
-                                                            )
-                                                        }
+                                                        onClick={() => setNumberOfInfant( (prev) => prev - 1 >=  0 ? prev - 1 : prev ) }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -587,21 +531,7 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() =>
-                                                            setNumberOfInfant(
-                                                                (prev) =>
-                                                                    prev + 1 <=
-                                                                        numberOfAdult &&
-                                                                    prev +
-                                                                        1 +
-                                                                        numberOfChild +
-                                                                        numberOfAdult <=
-                                                                        6
-                                                                        ? prev +
-                                                                          1
-                                                                        : prev
-                                                            )
-                                                        }
+                                                        onClick={() => setNumberOfInfant((prev) => prev + 1 <= numberOfAdult && prev + 1 + numberOfChild + numberOfAdult <= 6 ? prev + 1 : prev ) }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -613,13 +543,22 @@ function AdvancedSearchFlight({ setTab }) {
                                             </div>
                                         </div>
                                         <div class="flex justify-between grow flex-wrap">
-                                            <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                            <div 
+                                                className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
+                                                onClick={() => setSeatClass("ECONOMY")}
+                                            >
                                                 Economy
                                             </div>
-                                            <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                            <div 
+                                                className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
+                                                onClick={() => setSeatClass("BUSINESS")}
+                                            >
                                                 Business
                                             </div>
-                                            <div className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center">
+                                            <div 
+                                                className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
+                                                onClick={() => setSeatClass("FIRST")}
+                                            >
                                                 First
                                             </div>
                                         </div>
@@ -1422,16 +1361,8 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                                 setChildrenAges(
                                                                     (prev) => {
                                                                         const temp =
-                                                                            [
-                                                                                ...prev,
-                                                                            ];
-                                                                        console.log(
-                                                                            temp
-                                                                        );
-                                                                        temp[
-                                                                            index
-                                                                        ] =
-                                                                            e.target.value;
+                                                                            [...prev];
+                                                                        temp[ index ] = e.target.value;
                                                                         return temp;
                                                                     }
                                                                 );

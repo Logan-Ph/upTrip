@@ -850,11 +850,13 @@ exports.advancedSearchFlights = async (req, res) => {
             priceStep: 0
         };
         const payload = agodaGetFlightPayload(req.body)
+
         const response = await axios.post(url, payload, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
             }
         });
+
         for (const item of response.data.trips[0].bundles) {
             const flightNo = []
             const airline = []
@@ -873,8 +875,8 @@ exports.advancedSearchFlights = async (req, res) => {
                 agodaPrice: item.bundlePrice[0].price.vnd.display.averagePerPax.allInclusive,
             })
         }
-        items.priceMax = response.data.trips[0].filters.price.to;
-        items.priceStep = response.data.trips[0].filters.price.step
+        items.priceMax = response.data.trips[0]?.filters?.price?.to;
+        items.priceStep = response.data.trips[0]?.filters?.price?.step
         return res.status(200).json(items)
     } catch (err) {
         console.log(err)
@@ -921,7 +923,7 @@ exports.getTripComFlight = async (req, res) => {
         let payload = tripComGetFlightPayload(req.body)
         const response = await axios.post(url, payload, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
             }
         })
         for (const item of response.data.data.flightListSearch.flightProductList) {
@@ -949,7 +951,7 @@ exports.getMyTripFlight = async (req, res) => {
         let totalFlight;
         let response = await axios.post(myTripGetFlightURL, myTripGetFlightPayload(req.body), {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
             }
         })
         totalFlight = response.data.data.search.flightsCount
@@ -972,7 +974,7 @@ exports.getMyTripFlight = async (req, res) => {
         while (items.length < totalFlight) {
             response = await axios.post(myTripGetMoreFlightURL, myTripGetMoreFlightPayload(req.body, items.length), {
                 headers: {
-                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
                 }
             })
             for (const item of response.data.data.search.flights) {
@@ -1005,7 +1007,7 @@ exports.getBayDepFlight = async (req, res) => {
             try {
                 const response = await axios.post(url, payload, {
                     headers: {
-                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
                     }
                 });
                 return response;
