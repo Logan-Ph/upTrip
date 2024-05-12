@@ -13,7 +13,8 @@ const {
     propertyFacilitiesAndServices,
     roomFacilitiesAndServices,
     bedOptions,
-    formatMinutesToHoursAndMinutes
+    formatMinutesToHoursAndMinutes,
+    authenticateToken
 } = require("../utils/helper");
 const jwt = require("jsonwebtoken");
 const { default: axios } = require("axios");
@@ -859,8 +860,8 @@ exports.advancedSearchFlights = async (req, res) => {
             const airline = []
             let arrival
             for (const flight of item.outboundSlice.segments) {
-                flightNo.push(flight.carrierContent.carrierCode + flight.flightNumber)
-                airline.push(flight.carrierContent.carrierName)
+                flightNo.push(flight.carrierContent?.carrierCode + flight.flightNumber)
+                airline.push(flight.carrierContent?.carrierName)
                 arrival = flight.arrivalDateTime
             }
             items.flights.push({
@@ -876,6 +877,7 @@ exports.advancedSearchFlights = async (req, res) => {
         items.priceStep = response.data.trips[0].filters.price.step
         return res.status(200).json(items)
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 }
@@ -992,7 +994,6 @@ exports.getMyTripFlight = async (req, res) => {
         }
         return res.status(200).json(items)
     } catch (er) {
-        console.log(er)
         return res.status(500).json(er)
     }
 }
@@ -1057,7 +1058,56 @@ exports.flightSearchAutocomplete = async (req, res) => {
 }
 
 exports.addNewCollection = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const user = await authenticateToken(refreshToken);
+        let favorites = await Favorites.findOne({ userID: user._id });
 
+        if (!favorites) {
+            favorites = new Favorites({
+                userID: user._id,
+                collection: [],
+            });
+        }
+
+        if (favorites.collections.find(item => item.name == req.body.name)) {
+            return res.status(500).json("Collection name already exists")
+        } else {
+            favorites.collections.push({
+                name: req.body.name,
+                description: req.body.description
+            })
+        }
+        await favorites.save();
+        return res.status(200).json("New collection added")
+    } catch (er) {
+        return res.status(500).json(er);
+    }
+}
+
+exports.fetchFavorites = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const user = await authenticateToken(refreshToken);
+        let favorites = await Favorites.findOne({ userID: user._id });
+        if (!favorites) {
+            return res.status(200).json("No collection found")
+        }
+        return res.status(200).json(favorites);
+    } catch (er) {
+        console.log(er)
+        return res.status(500).json(er);
+    }
+}
+
+exports.editCollection = async (req, res) => {
+    try {
+
+    } catch (er) {
+        return res.status(500).json(er);
+    }
 }
 
 exports.addToFavorites = async (req, res) => {

@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Checkbox from '@mui/joy/Checkbox';
 import Slider from '@mui/material/Slider';
 
@@ -20,19 +20,15 @@ export function AdvancedFlightFilter({ setPrefer, setPriceFilter, setDepartureTi
     )
 }
 
-function valuetext(value) {
-    return `${value}$`;
-}
-
 function PriceRange({priceMax, priceStep, setPriceFilter}) {
     const [showPriceRange, setPriceRange] = useState(true);
-    const [value, setValue] = useState([0, priceMax]);
-
-    // useEffect(() => {
-    //     if (value[1] === 0) {
-    //         setValue([0, priceMax]);
-    //     }
-    // }, [priceMax]); 
+    const [value, setValue] = useState([0, 0]);
+    
+    useEffect(() => {
+        if (value[1] === 0) {
+            setValue([0, priceMax]);
+        }
+    }, [priceMax]); 
     
     const handleFilter = (event, newValue) => {
         setPriceFilter(value);
@@ -64,13 +60,12 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
-                        onChange={handleChange}
-                        onChangeCommitted={handleFilter}
+                        onChangeCommitted={handleChange}
                         valueLabelDisplay="auto"
                         valueLabelFormat={valueLabelFormat}
                         min={0}
                         max={priceMax}
-                        step={100000}
+                        step={Math.round(priceMax/10)}
                         color="dark"
                     />
                 </div>
@@ -117,8 +112,7 @@ function DepartureTime({setDepartureTime}) {
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
-                        onChange={handleChange}
-                        onChangeCommitted={handleFilter}
+                        onChangeCommitted={handleChange}
                         valueLabelDisplay="auto" // Display the label on the slider thumb
                         valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
                         min={0}
@@ -145,9 +139,6 @@ function ArrivalTime({setArrivalTime}) {
 
     // Function to format the value for display
     const valueLabelFormat = (value) => {
-        // const hour = Math.floor(value);
-        // const amPm = hour >= 12 ? 'PM' : 'AM';
-        // const formattedHour = hour % 12 === 0 ? 12 : hour % 12; // Convert 24h to 12h format
         return `${value}:00`;
     };
 
@@ -169,8 +160,7 @@ function ArrivalTime({setArrivalTime}) {
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
-                        onChange={handleChange}
-                        onChangeCommitted={handleFilter}
+                        onChangeCommitted={handleChange}
                         valueLabelDisplay="auto" // Display the label on the slider thumb
                         valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
                         min={0}

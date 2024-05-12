@@ -77,7 +77,7 @@ export default function Header() {
                                     <li>
                                         <Link
                                             to="/itinerary"
-                                            className="font-semibold text-white text-lg drop-shadow-xl"
+                                            class="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Itinerary
                                         </Link>
