@@ -1346,36 +1346,69 @@ const tripComGetFlightPayload = data => {
 		cabinClass = "First";
 	}
 	return {
-		operationName: "flightListSearch",
-		variables: {
-			request: {
-				criteriaToken:
-					"tripType:OW|criteriaToken:NEWTOKEN|KLUv_QBYnQsAFpdYQTBr4wbACotIGOjgYMCSsLgNBq15M_7kQhL_JeKiJb5fvEk3qYEWREK06Myvs_t_PPRbTDE0juKuSMAsdxwej00CTQBEAEcAu9rA3MsdU8qY961tzIBJ60bHx5HQM4iU8cez0dNscsbqpHSBxnXYFVCRGDQgAFAhJyQgChmR0aQa4BAVkIAmoEhEh2hCCfHBA4iPiAbas2PGRL47na5JJq0UKYnht7MPF8N7YNJqpbQJMwhunHkn8t3pPpHTwe4z4Qs7xaT1pbTZzx4580rEfbN5BoHApBXkAT_-Z1CVvTBae309Bncfw77mrctSnrGzsKhM6-tHi8PzVIZdq0cHb2WmCDbTWeAwGfKCxwZVQBI0NckD2oBBrblzMYCUtacDF8vlYrpUIHLDhUWBpTJRIDKDlB8J8KYx_abxwTpPmAOzsKjLgzW2eHO0fe711djrx7_f_36Fv0_h7-v_6i37mddUBAARhIRudV3iHIhXYQI=|cabinClass:YSGROUP|adult:1|child:0|infant:0|subChannel:17|channel:EnglishSite|currency:VND|extensionFlag:16|ExtensionOptions:|list:true|idc:SHARB|detailSearch:false|issuer:CT|SeparateJourneyType:null|searchScene:flight-list|airlineCodes:|nearbyCities:|listTime:202404140304|agencyModelAgg:false|SessionId:a35779ad-fd6a-434e-9014-7ba4af7c2925|dCity_1:SGN|date_1:2024-05-31|aCity_1:HAN",
-				searchCriteria: {
-					cabinClass: cabinClass,
-					searchSegmentList: [
+		"operationName": "flightListSearch",
+		"variables": {
+			"request": {
+				"Head": {
+					"ExtendFields": {
+						"BatchedId": "deb24e51-6d69-4975-90ce-9bd0ffbfe851",
+						"SpecialSupply": "false",
+						"TraceId": "",
+						"LowPriceSource": "searchForm"
+					}
+				},
+				"fullData": false,
+				"criteriaToken": "",
+				"shoppingId": null,
+				"priceKey": null,
+				"segmentNo": 1,
+				"searchCriteria": {
+					"cabinClass": cabinClass,
+					"searchSegmentList": [
 						{
-							departDate: date,
-							departCity: data.from,
-							arriveCity: data.to,
-							departAirport: "",
-							arriveAirport: ""
+							"departDate": date,
+							"departCity": data.from,
+							"arriveCity": data.to,
+							"departAirport": "",
+							"arriveAirport": ""
 						}
 					],
-					passengerCount: {
-						adult: parseInt(data.adult),
-						child: parseInt(data.child),
-						infant: parseInt(data.infant)
+					"passengerCount": {
+						"adult": parseInt(data.adult),
+						"child": parseInt(data.child),
+						"infant": parseInt(data.infant)
 					},
-					tripType: 1
-				}
+					"tripType": 1
+				},
+				"mode": 0,
+				"sort": {
+					"topAirline": false,
+					"asc": true,
+					"topList": [
+						"LastSelected"
+					],
+					"type": "Direct"
+				},
+				"filter": {},
+				"filterQueryItemSettings": [],
+				"tagList": [
+					{
+						"key": "recommendSortPrejudgment",
+						"value": "true"
+					}
+				],
+				"abtList": [
+					{
+						"abCode": "231207_IBU_olpx",
+						"abVersion": "A"
+					}
+				]
 			}
 		},
-		extensions: {
-			persistedQuery: {
-				version: 1,
-				sha256Hash:
-					"f780a5131343144e62058f856dedea297f40123bcf6220d59cc6127667d87055"
+		"extensions": {
+			"persistedQuery": {
+				"version": 1,
+				"sha256Hash": "fa64264639f3e525c5b906136cfb7fd0a8a60172e5476b170292d5968f6e0b4d"
 			}
 		}
 	};
@@ -1653,7 +1686,7 @@ const hotelInfoParams = ({ cityId, hotelId, checkin, checkout, adult, child, crn
 }
 
 const hotelAlbumsURL = "https://us.trip.com/restapi/soa2/28820/ctgethotelalbum"
-const hotelAlbumsPayload = ({hotelId}) => {
+const hotelAlbumsPayload = ({ hotelId }) => {
 	return {
 		hotelId: hotelId,
 		head: {
@@ -1678,7 +1711,7 @@ const hotelAlbumsPayload = ({hotelId}) => {
 }
 
 const hotelCommentURL = "https://us.trip.com/restapi/soa2/28820/ctgetHotelComment";
-const hotelCommentPayload = ({hotelId}) => {
+const hotelCommentPayload = ({ hotelId }) => {
 	return {
 		hotelId: hotelId,
 		pageIndex: 1,

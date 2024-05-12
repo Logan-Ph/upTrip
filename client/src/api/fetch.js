@@ -190,7 +190,7 @@ export function getHotelComments(payload) {
 
 export function fetchFavorites() {
     return axios
-        .get("/fetch-favorites", options)
+        .get("/fetch-collection", options)
         .then((res) => res.data)
         .catch((er) => {
             return Promise.reject(new Error(er.response.data.message));

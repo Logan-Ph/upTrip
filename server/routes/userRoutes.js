@@ -87,6 +87,7 @@ router.get('/fetch-collection', userController.fetchCollections);
 
 // remove colletion
 // edit collection
+router.post('/edit-collection', userController.editCollection)
 
 // add-to-favorites/hotel
 // add-to-favorites/flight
