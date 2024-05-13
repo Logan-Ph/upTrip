@@ -1053,7 +1053,6 @@ exports.flightSearchAutocomplete = async (req, res) => {
         result.sort((a, b) => b.similarity - a.similarity);
         return res.status(200).json(result)
     } catch (err) {
-        console.log(err)
         return res.status(500).json(err)
     }
 }
@@ -1128,8 +1127,8 @@ exports.editCollection = async (req, res) => {
         }
         const collection = await Collection.findById(req.body.id);
         for (const id of favorites.collections) {
-            const collection = await Collection.findById(id)
-            if (collection.name == req.body.name) {
+            const col = await Collection.findById(id)
+            if (col.name == req.body.name) {
                 return res.status(500).json("A collection with this name already exists");
             }
         }

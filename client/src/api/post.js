@@ -9,6 +9,6 @@ export async function addNewCollection(name, description) {
 }
 
 export async function editCollection(id, name, description) {
-    return axios.post('/edit-collection', {id, name, description}, options);
+    return axios.post('/edit-collection', {id, name, description}, options)
 }
 

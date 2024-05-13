@@ -24,7 +24,7 @@ export function CollectionCard({collection, fetch}) {
             warningNotify('Name is required')
             return;
         }
-        mutation.mutateAsync()
+        mutation.mutate();
     }
     return (
         <>
