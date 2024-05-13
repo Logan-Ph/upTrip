@@ -1118,7 +1118,7 @@ exports.fetchCollections = async (req, res) => {
                 ]
             });
         if (!favorites) {
-            return res.status(200).json("No collection found")
+            return res.status(200).json([])
         }
         return res.status(200).json(favorites.collections);
     } catch (er) {

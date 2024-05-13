@@ -173,8 +173,17 @@ function AddItemButton() {
                     {/* Selection a collection to save your items */}
                     <div className=" ">
                         <div className="py-6 bg-white mb-6 text-center sticky top-0 z-50 border-b-2">
-                            <h1 className="text-2xl font-semibold mb-2">Choose a collection</h1>
-                            <p className="text-gray-500 text-center">Select the collection to save your favorite items</p>
+                            {isSuccessCollections && collections.length > 0 ?
+                            <>
+                                <h1 className="text-2xl font-semibold mb-2">Choose a collection</h1>
+                                <p className="text-gray-500 text-center">Select the collection to save your favorite items</p>
+                            </>
+                            :
+                            <div className="text-center">
+                                <h1 className="text-2xl font-semibold mb-2">No collection found</h1>
+                                <p className="text-gray-500 text-center">Create a new collection to save your favorite items</p>
+                            </div>
+                        }
                         </div>
 
                         {isLoadingCollections && (
@@ -185,10 +194,12 @@ function AddItemButton() {
                             </>
                         )}
 
-                        {   isSuccessCollections && 
+                        {   
+                            isSuccessCollections && collections.length > 0  &&      
                             collections.map((collection) => {
                                 return <SavedCollectionCard key={collection._id} collection={collection} />
                             })
+
                         }
                     </div>
                     
