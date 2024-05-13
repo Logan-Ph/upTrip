@@ -641,24 +641,33 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
                                 <input
                                     class="w-full input input-bordered rounded-l-none h-[52px] bg-white"
                                     placeholder="Search for activities in the location"
-                                    value={autocompletePayload?.districtPathNames}
+                                    value={
+                                        autocompletePayload?.districtPathNames
+                                    }
                                     onChange={(e) => setKeyword(e.target.value)}
                                 />
                             </div>
                             {isFetched && !autocompletePayload && (
                                 <div class="relative z-40">
-                                    <ul class="absolute menu bg-white w-full rounded-b-lg">
+                                    <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto max-h-40 flex-nowrap ">
                                         {data.length === 0 ? (
-                                            <li>No results found</li>
+                                            <li className="p-2 font-semibold">No results found</li>
                                         ) : (
                                             data.map((item) => (
-                                                <li onClick={() =>setAutocompletePayload(item)}>
-                                                <div>
-                                                    <i class="fa-solid fa-location-dot"></i>{" "}
-                                                    {item.districtPathNames}
-                                                </div>
-                                            </li>
-                                        )))}
+                                                <li
+                                                    onClick={() =>
+                                                        setAutocompletePayload(
+                                                            item
+                                                        )
+                                                    }
+                                                >
+                                                    <div>
+                                                        <i class="fa-solid fa-location-dot"></i>{" "}
+                                                        {item.districtPathNames}
+                                                    </div>
+                                                </li>
+                                            ))
+                                        )}
                                     </ul>
                                 </div>
                             )}
