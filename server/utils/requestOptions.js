@@ -1304,26 +1304,6 @@ const agodaTourAttractionsAdvancedSearchPayload = ({
 		},
 		query:
 			"query search ($SearchRequest: SearchRequest!) { search (SearchRequest: $SearchRequest) { isSuccess, result { isCompleted, resultInfo { totalActivities, totalFilteredActivities, pagination { number, size } }, activities { masterActivityId, masterSupplierId, rankScore { value }, activityRepresentativeInfo { activityId, activityToken, pricingSummary { pricing { currency, display { perBook { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } }, perPax { displayType, quantity, total { exclusive { chargeTotal, crossedOut }, allInclusive { chargeTotal, crossedOut } }, loyaltyOffers { loyaltyOfferType, loyaltyToken, noOfPoints { value }, payableAmount { amount } } } } } }, supplierActivityCode, cancellationPolicy { cancellationType, policies { hoursFrom, hoursUntil, penaltyCode } } }, content { activity { title, categories, description, duration { minutes, minutesUntil, durationType }, location { city { id, name }, addressLine, geo { lat, long }, country { id, name }, postalCode } }, images { url, description, imageType, imageSize { height, width } }, reviewSummary { averageScore, totalCount }, detail { offerDetails { supplierInfo { providerName } } }, contentLocale, badges { activityHighlights { badgeType, badgeData }, deals { badgeType, badgeData } } } }, matrix { sort { availableCode, availableOrder }, filter { rangeFilterMatrix { code, min, max, bucket { count, min, max } }, valueFilterMatrix { availableValue { count, id }, code } } } }, errors { errorCode, subErrorCode, message } } } ",
-		logTags: {
-			id: "15932",
-			name: "Đà Lạt",
-			activityId: "0",
-			cityId: "15932",
-			cityName: "Đà Lạt",
-			countryId: "38",
-			countryName: "Việt Nam",
-			countryISO2: "VN",
-			areaId: "0",
-			areaName: "undefined",
-			stateName: "Tỉnh Lâm Ðồng",
-			operation: "search",
-			selectedActivity: "",
-			searchType: "CITY",
-			pageSize: "12",
-			pageNumber: "1",
-			sortCode: "Recommended",
-			sortOrder: "Descending"
-		},
 		pageTypeId: 9109
 	};
 };
@@ -1332,7 +1312,6 @@ const agodaTourAttractionsAdvancedSearchPayload = ({
 const agodaGetFlightURL = "https://www.agoda.com/api/gw/flight/searchunbundled";
 
 // payload to get flight from trip.com
-
 const tripComGetFlightPayload = data => {
 	const date = `${data.year}-${data.month}-${data.day}`;
 	let cabinClass;
@@ -1371,11 +1350,12 @@ const tripComGetFlightPayload = data => {
 				}
 			}
 		},
+		// shiet this one will change bruhhhhhhhhhhhhhh
 		extensions: {
 			persistedQuery: {
 				version: 1,
 				sha256Hash:
-					"f780a5131343144e62058f856dedea297f40123bcf6220d59cc6127667d87055"
+					"fa64264639f3e525c5b906136cfb7fd0a8a60172e5476b170292d5968f6e0b4d"
 			}
 		}
 	};

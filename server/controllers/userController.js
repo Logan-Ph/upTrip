@@ -923,7 +923,18 @@ exports.getTripComFlight = async (req, res) => {
         let payload = tripComGetFlightPayload(req.body)
         const response = await axios.post(url, payload, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
+                "User-Agent":
+			    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0",
+                "X-Ibu-Flt-Currency": "VND",
+                "X-Ibu-Flt-Language": "en",
+                "X-Ibu-Flt-Locale": "en-US",
+                "Accept-Language": "en-US,en;q=0.9,vi;q=0.8",
+                DNT: 1,
+                "Sec-Ch-Ua":
+                    '"Microsoft Edge";v="125", "Chromium";v="125", "Not(A:Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": '"?0"',
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                Origin: "https://us.trip.com"
             }
         })
         for (const item of response.data.data.flightListSearch.flightProductList) {
@@ -941,6 +952,7 @@ exports.getTripComFlight = async (req, res) => {
         }
         return res.status(200).json(items)
     } catch (er) {
+        console.log(er)
         return res.status(500).json(er)
     }
 }
