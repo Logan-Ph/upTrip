@@ -22,3 +22,6 @@ const collectionSchema = new mongoose.Schema({
         ref: "Experience"
     }]
 })
+
+module.exports = mongoose.model("Collection", collectionSchema)
+

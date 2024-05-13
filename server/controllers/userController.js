@@ -1,9 +1,10 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
 const User = require("../models/user");
 const Favorites = require("../models/favorites");
+const Collection = require("../models/collection");
+const Hotel = require("../models/hotel")
 const Itinerary = require("../models/itinerary");
 const { stringSimilarity } = require("string-similarity-js");
 const {
@@ -1075,6 +1076,7 @@ exports.addNewCollection = async (req, res) => {
     try {
         const { refreshToken } = req.cookies;
         if (!refreshToken) return res.status(401).json("You are not logged in");
+        const { name, description } = req.body
         const user = await authenticateToken(refreshToken);
         let favorites = await Favorites.findOne({ userID: user._id });
 
@@ -1085,17 +1087,17 @@ exports.addNewCollection = async (req, res) => {
             });
         }
 
-        if (favorites.collections.find(item => item.name == req.body.name)) {
-            return res.status(500).json("Collection name already exists")
-        } else {
-            favorites.collections.push({
-                name: req.body.name,
-                description: req.body.description
-            })
-        }
+        const newCollection = await new Collection({
+            name: name,
+            description: description
+        }).save()
+        
+        favorites.collections.push(newCollection)
+
         await favorites.save();
         return res.status(200).json("New collection added")
     } catch (er) {
+        console.log(er)
         return res.status(500).json(er);
     }
 }
@@ -1105,157 +1107,100 @@ exports.fetchCollections = async (req, res) => {
         const { refreshToken } = req.cookies;
         if (!refreshToken) return res.status(401).json("You are not logged in");
         const user = await authenticateToken(refreshToken);
-        let favorites = await Favorites.findOne({ userID: user._id });
+        let favorites = await Favorites.findOne({ userID: user._id })
+            .populate({
+                path: 'collections',
+                model: 'Collection',
+                populate: [
+                    // { path: 'flights', model: 'Flight' },
+                    { path: 'hotels', model: 'Hotel' },
+                    // { path: 'experience', model: 'Experience' }
+                ]
+            });
         if (!favorites) {
             return res.status(200).json("No collection found")
         }
-        return res.status(200).json(favorites);
+        return res.status(200).json(favorites.collections);
     } catch (er) {
         console.log(er)
         return res.status(500).json(er);
     }
 }
 
-exports.editCollection = async (req, res) => {
+exports.addToCollectionHotel = async (req,res) => {
     try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const user = await authenticateToken(refreshToken);
+        const {
+            city,
+            cityName,
+            provinceId,
+            countryId,
+            districtId,
+            checkin,
+            checkout,
+            hotelName,
+            lat,
+            lon,
+            searchValue,
+            searchCoordinate,
+            adult,
+            ages,
+            domestic,
+            children,
+            crn,
+            address,
+            rating,
+            imgSrc, 
+            collectionId
+        } = req.body
 
+        let collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+
+        const newHotel = new Hotel({
+            city,
+            cityName,
+            provinceId,
+            countryId,
+            districtId,
+            checkin,
+            checkout,
+            hotelName,
+            lat,
+            lon,
+            searchValue,
+            searchCoordinate,
+            adult,
+            ages,
+            domestic,
+            children,
+            crn,
+            address,
+            rating,
+            imgSrc
+        })
+        await newHotel.save()
+
+        collection.hotels.push(newHotel)
+        await collection.save()
+
+        const favorites = await Favorites.findOne({ userID: user._id })
+        if (!favorites) return res.status(404).json("Favorites not found")
+
+        favorites.collections.push(collection)
+        await favorites.save()
+
+        return res.status(200).json("Hotel added to collection")
     } catch (er) {
+        console.log(er)
         return res.status(500).json(er);
     }
 }
 
-exports.addNewItinerary = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
+exports.addToCollectionExperience = async (req,res) => {
 
-        if (!list) {
-            list = new Favorites({
-                userID: req.body.userID,
-                itinerary: []
-            });
-        }
-
-        if (list.itinerary.find(item => item[title] === req.body.title)) {
-            return res.status(500).json("Title already exists")
-        }
-
-        list.itinerary.push({
-            name: req.body.itineraryName,
-            flights: [],
-        })
-        await list.save()
-        return res.status(200).json("New itinerary created.")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
-
-exports.editItinerary = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (iti) {
-            iti.title = req.body.newTitle;
-        }
-        await list.save()
-        return res.status(200).json("Title changed.")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
-
-exports.deleteItinerary = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-        if (!list || list.itinerary.length == 0) throw new Error("Favorites is empty");
-        list.itinerary = list.itinerary.filter(item => item.title !== req.params.title);
-        await list.save()
-        return res.status(200).json("Deleted successfully")
-    } catch (er) {
-        return res.status(500).json(er)
-    }
-}
-
-exports.addToItinerary = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        let itinerary = list.itinerary.find(item => item[title] === req.body.title)
-
-        switch (req.body.itemType) {
-            case "hotel":
-                itinerary.push(req.body.hotelName);
-                break;
-            case "flight":
-                itinerary.flights.push({
-                    flightNo: req.body.flightNo,
-                    departure: req.body.departure,
-                    arrival: req.body.arrival,
-                    from: req.body.from,
-                    to: req.body.to,
-                    agency: req.body.agency,
-                });
-                break;
-            case "attraction":
-                itinerary.attractions.push(req.body.attractionName);
-                break;
-        }
-        await list.save();
-        return res.status(200).json("Added to Itinerary")
-    } catch (err) {
-        return res.status(500).json("Error. Try again later")
-    }
-}
-
-exports.deleteHotelPlan = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (!iti || iti.hotels.length == 0) {
-            throw new Error("Hotel is not in the itinerary")
-        }
-        // remove hotel from array of hotels
-        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
-        await list.save()
-        return res.status(200).json("Hotel removed")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
-
-exports.deleteFlightPlan = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (!iti || iti.flights.length == 0) {
-            throw new Error("Hotel is not in the itinerary")
-        }
-        // remove hotel from array of hotels
-        iti.flights = iti.hotels.filter(item => item.flightNo !== req.params.flightNo);
-        await list.save()
-        return res.status(200).json("Flight removed")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
-exports.deleteAttractionPlan = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (!iti || iti.attractions.length == 0) {
-            throw new Error("Attraction is not in the itinerary")
-        }
-        // remove hotel from array of hotels
-        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
-        await list.save()
-        return res.status(200).json("Attraction removed")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
 }
 
 exports.nearByHotels = async (req, res) => {

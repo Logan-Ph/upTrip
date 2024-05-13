@@ -3,7 +3,6 @@ import { StayCard } from "../components/InfoCard";
 import { FlightCard } from "../components/InfoCard";
 import { InfoCardSkeleton } from "../components/skeletonLoadings/InfoCardSkeleton";
 
-
 export default function FavoriteItems() {
     return (
         <>

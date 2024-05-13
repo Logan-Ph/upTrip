@@ -1,6 +1,13 @@
-import { useState, React, Fragment } from "react";
+import { useState, React } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import {IconX} from '@tabler/icons-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { fetchCollections } from '../api/fetch';
+import CollectionCardSkeleton from "./skeletonLoadings/CollectionCardSkeleton";
+import { addNewCollection } from "../api/post";
+import successNotify from "../utils/successNotify";
+import warningNotify from "../utils/warningNotify";
+
 export default function AddToFavorite(){
     return(
         <>
@@ -11,14 +18,51 @@ export default function AddToFavorite(){
     )
 }
 
-// add item button in detailed itinerary page
 function AddItemButton() {
     const [isOpen, setIsOpen] = useState(false);
     const handleClose = () => setIsOpen(false);
+    const [name, setName] = useState();
+    const [description, setDescription] = useState();
+
+    const {
+        data: collections,
+        isLoading: isLoadingCollections,
+        isSuccess: isSuccessCollections,
+        refetch: refetchCollections,
+        isError: isErrorCollections,
+    } = useQuery({
+        queryKey: ["fetch-collections"],
+        queryFn: () => fetchCollections(),
+        retry: false,
+        refetchOnWindowFocus: false,
+    })
 
     const toggleDrawer = () => {
-        setIsOpen((prev) => !prev);
+        if (isErrorCollections) {
+            warningNotify("You are not logged in")
+        }else{
+            setIsOpen((prev) => !prev);
+        }
     };
+
+    const createCollection = useMutation({
+        mutationFn: () => addNewCollection(name, description),
+        onSuccess: (data) => {
+            successNotify(data.data)
+            refetchCollections()
+            setDescription("")
+            setName("")
+            document.getElementById("create_collection_modal").close()
+        },
+        onError: (error) => {
+            warningNotify(error.response.data);
+        }
+    })
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        createCollection.mutate()
+    }
 
     return (
         <>
@@ -32,12 +76,11 @@ function AddItemButton() {
                 </div>
             </div>
 
-            {isOpen && (
+            {(isOpen || !isErrorCollections) && (
                 <div className="">
                 {/* Drawer */}
                 
-                <div
-                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${
+                <div className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${
                         isOpen ? "translate-x-0" : "translate-x-full"
                     } overflow-y-auto`}>
 
@@ -65,12 +108,19 @@ function AddItemButton() {
                         </button>
                         <dialog id="create_collection_modal" className="modal">
                             <div className="modal-box">
-                                <form method="dialog">
+                                <div method="dialog">
                                     {/* if there is a button in form, it will close the modal */}
-                                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                                    <button 
+                                        className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                        onClick={() => {
+                                            document
+                                                .getElementById("create_collection_modal")
+                                                .close()
+                                        }}
+                                    >
                                         ✕
                                     </button>
-                                </form>
+                                </div>
                                 <h3 className="font-bold text-lg my-4">
                                     Create new collection
                                 </h3>
@@ -87,6 +137,8 @@ function AddItemButton() {
                                             id="name"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl w-full p-2.5 focus:ring-black focus:border-black"
                                             required
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
                                             />
                                     </div>
                                     <div className="mb-5 text-start">
@@ -101,18 +153,22 @@ function AddItemButton() {
                                             id="description"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 focus:ring-black focus:border-black"
                                             required
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
                                             />
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
-                                    <button className="flex btn btn-outline  justify-end">
+                                    <button 
+                                        className="flex btn btn-outline  justify-end"
+                                        onClick={(e) => handleSubmit(e)}
+                                    >
                                         Save
                                     </button>
                                 </div>
                             </div>
                         </dialog>
                     </div>
-                   
                     
                     {/* Selection a collection to save your items */}
                     <div className=" ">
@@ -120,14 +176,20 @@ function AddItemButton() {
                             <h1 className="text-2xl font-semibold mb-2">Choose a collection</h1>
                             <p className="text-gray-500 text-center">Select the collection to save your favorite items</p>
                         </div>
-                        <SavedCollectionCard />
-                        <SavedCollectionCard />
-                        <SavedCollectionCard />
-                        <SavedCollectionCard />
-                        <SavedCollectionCard />
-                        <SavedCollectionCard />
-                        <SavedCollectionCard />
-                        <SavedCollectionCard />
+
+                        {isLoadingCollections && (
+                            <>
+                                <CollectionCardSkeleton />
+                                <CollectionCardSkeleton />
+                                <CollectionCardSkeleton />
+                            </>
+                        )}
+
+                        {   isSuccessCollections && 
+                            collections.map((collection) => {
+                                return <SavedCollectionCard key={collection._id} collection={collection} />
+                            })
+                        }
                     </div>
                     
                     {/* If no collection, hidden */}
@@ -137,7 +199,6 @@ function AddItemButton() {
                             Save
                         </div>
                     </div>
-                    
                 </div>
 
                 {/* Overlay to close the drawer */}

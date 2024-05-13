@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export function CollectionCard() {
+export function CollectionCard({collection}) {
     return (
         <>
             <div className="card card-compact w-94 md:w-auto bg-white shadow-xl rounded-md">
@@ -14,15 +14,16 @@ export function CollectionCard() {
                 <div className="card-body my-2">
                     <div className="flex flex-row justify-between ">
                         <h2 className="card-title text-3xl ml-2 pr-3">
-                            Da Nang
+                            {collection.name}
                         </h2>
                         <div className="card-actions justify-end">
                             <button
                                 className="btn"
                                 onClick={() =>
-                                    document
-                                        .getElementById("my_modal_1")
-                                        .showModal()
+                                    {   document
+                                            .getElementById("my_modal_1")
+                                            .showModal()
+                                    }
                                 }
                             >
                                 <svg
@@ -76,17 +77,23 @@ export function CollectionCard() {
                                         </div>
                                     </div>
                                     <div className="modal-action">
-                                        <form method="dialog flex flex-row">
+                                        <div method="dialog flex flex-row">
                                             {/* if there is a button in form, it will close the modal */}
                                             <div className="flex flex-row space-x-2">
-                                                <button className="btn">
+                                                <button 
+                                                    className="btn"
+                                                    onClick={() => document.getElementById("my_modal_1").close()}
+                                                >
                                                     Close
                                                 </button>
-                                                <button className="flex btn btn-outline btn-success justify-end">
+                                                <button 
+                                                    className="flex btn btn-outline btn-success justify-end"
+                                                    onClick={() => document.getElementById("my_modal_1").close()}
+                                                >
                                                     Save
                                                 </button>
                                             </div>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
                             </dialog>
@@ -94,27 +101,40 @@ export function CollectionCard() {
                     </div>
 
                     <p className="ml-2 text-gray-500 text-lg overflow-hidden line-clamp-3">
-                        Description Description Description Description
-                        Description Description Description Description
-                        Description Description Description Description
+                        {collection.description}
                     </p>
-                    <p className="ml-2 text-gray-500 text-lg">30 items</p>
+                    <p className="ml-2 text-gray-500 text-lg">{collection.hotels.length + collection.experience.length + collection.flights.length} items</p>
                 </div>
             </div>
         </>
     );
 }
 
-export function SavedCollectionCard() {
+export function SavedCollectionCard({collection}) {
     const [isSelected, setIsSelected] = useState(false);
+    const cardRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (cardRef.current && !cardRef.current.contains(event.target)) {
+                setIsSelected(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [cardRef]);
 
     const handleCardClick = () => {
-        setIsSelected(true);
+        setIsSelected((prev) => !prev);
     };
 
     return (
         <>
             <div
+                ref={cardRef}
                 className={`card card-side bg-white p-3 border-[2px] ${
                     isSelected
                         ? "border-black"
@@ -126,18 +146,18 @@ export function SavedCollectionCard() {
                     <img
                         src="https://tourism.danang.vn/wp-content/uploads/2023/02/cau-rong-da-nang.jpeg"
                         className="w-full h-20 rounded-md"
-                        alt="Collection Picture Cover"
+                        alt="Collection Cover"
                     />
                 </figure>
                 <div className="flex flex-col items-start px-2 md:px-4 w-full">
                     <h2 className="text-lg md:text-xl font-semibold text-start">
-                        Summer Trip In Da Nang
+                        {collection.name}
                     </h2>
                     <p className="text-gray-500 overflow-hidden line-clamp-3 text-sm md:text-base text-start">
-                        Description Description Description Description
+                        {collection.description}
                     </p>
                     <p className="text-gray-500 text-sm md:text-base text-start">
-                        30 items
+                        {collection.hotels.length + collection.experience.length + collection.flights.length} items
                     </p>
                 </div>
             </div>
