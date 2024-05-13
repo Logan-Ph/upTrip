@@ -8,21 +8,22 @@ import { addNewCollection } from "../api/post";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
-export default function AddToFavorite(){
+export default function AddToFavorite({payload, hotel}){
     return(
         <>
             <div className="mt-10">
-                <AddItemButton/>
+                <AddItemButton payload={payload} hotel={hotel}/>
             </div>
         </>
     )
 }
 
-function AddItemButton() {
+function AddItemButton({payload, hotel}) {
     const [isOpen, setIsOpen] = useState(false);
     const handleClose = () => setIsOpen(false);
     const [name, setName] = useState();
     const [description, setDescription] = useState();
+    const [selectedCollection, setSelectedCollection] = useState();
 
     const {
         data: collections,
@@ -76,7 +77,7 @@ function AddItemButton() {
                 </div>
             </div>
 
-            {(isOpen || !isErrorCollections) && (
+            {(isOpen && !isErrorCollections) && (
                 <div className="">
                 {/* Drawer */}
                 
@@ -179,10 +180,10 @@ function AddItemButton() {
                                 <p className="text-gray-500 text-center">Select the collection to save your favorite items</p>
                             </>
                             :
-                            <div className="text-center">
+                            <>
                                 <h1 className="text-2xl font-semibold mb-2">No collection found</h1>
                                 <p className="text-gray-500 text-center">Create a new collection to save your favorite items</p>
-                            </div>
+                            </>
                         }
                         </div>
 
@@ -204,12 +205,21 @@ function AddItemButton() {
                     </div>
                     
                     {/* If no collection, hidden */}
-                    <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
-                        <div
-                            className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full">
-                            Save
-                        </div>
-                    </div>
+                    {isSuccessCollections && collections.length > 0
+                        ? 
+                            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
+                                <div
+                                    className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
+                                    onClick={() => {
+                                        console.log({payload, hotel, selectedCollection})
+                                    }}    
+                                >
+                                    Save
+                                </div>
+                            </div>
+                        :
+                            null
+                    }
                 </div>
 
                 {/* Overlay to close the drawer */}
