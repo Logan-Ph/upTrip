@@ -5,8 +5,8 @@ const options = {
 };
 
 export async function addNewCollection(name, description) {
-    if (!name || !description) {
-        return Promise.reject("Name and Description are required");
+    if (!name) {
+        return Promise.reject("Name is required");
     }
     return axios.post('/add-new-collection', {name, description}, options);
 }

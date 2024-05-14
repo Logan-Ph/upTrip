@@ -158,13 +158,13 @@ export function SavedCollectionCard({collection}) {
                 </figure>
                 <div className="flex flex-col items-start px-2 md:px-4 w-full">
                     <h2 className="text-lg md:text-xl font-semibold text-start">
-                        {collection.name}
+                        {collection?.name}
                     </h2>
                     <p className="text-gray-500 overflow-hidden line-clamp-3 text-sm md:text-base text-start">
-                        {collection.description}
+                        {collection?.description}
                     </p>
                     <p className="text-gray-500 text-sm md:text-base text-start">
-                        {collection.hotels.length + collection.experience.length + collection.flights.length} items
+                        {collection?.hotels.length + collection?.experience.length + collection?.flights.length} items
                     </p>
                 </div>
             </div>

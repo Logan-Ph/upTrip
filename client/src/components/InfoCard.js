@@ -221,11 +221,12 @@ export function StayCard({item}) {
 export function FlightCard({item}) {
     return (
         <>
+        {console.log(item)}
             <Link>
                 <div class="card flex-col md:flex-row card-side rounded-lg bg-white shadow-xl">
                     <figure class="rounded-t-lg rounded-b-none md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
-                            src="https://static.wixstatic.com/media/9d8ed5_70663b41e71e4453a550be85fbd85b1d~mv2.png/v1/fill/w_980,h_613,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/9d8ed5_70663b41e71e4453a550be85fbd85b1d~mv2.png"
+                            src={item.imgSrc}
                             alt="Airline"
                             className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
@@ -234,27 +235,27 @@ export function FlightCard({item}) {
                         <div className="flex justify-between flex-col md:flex-row">
                             <div className="flex flex-col">
                                 <div className="font-semibold">
-                                    6:00 am - 7:30 pm
+                                {item.departureTime.substring(11, 16)} - {item.arrivalTime.substring(11, 16)}
                                 </div>
                                 <div className="text-gray-500">
-                                    Vietnam Airlines
+                                    {item.carrier}
                                 </div>
                             </div>
                             <div className="text-gray-500 font-semibold">
-                                non stop
+                                {item.flightNo.length == 1 ? "non-stop" : item.flightNo.length + 1 + "stop(s)"}
                             </div>
                             <div className="flex flex-col">
-                                <div className="font-semibold">1h30m</div>
-                                <div className="text-gray-500">SGN - DAD</div>
+                                <div className="font-semibold">{item.duration}</div>
+                                <div className="text-gray-500">{item.from} - {item.to}</div>
                             </div>
                         </div>
                         <div class="card-actions md:justify-between flex-col md:flex-row md:items-end mt-3 md:mt-0">
                             <button class="btn bg-transparent border-black border-[1.5px]">
                                 <i class="fa-solid fa-plane"></i> Flight
                             </button>
-                            <div className="hidden md:block text-xl font-semibold">
+                            {/* <div className="hidden md:block text-xl font-semibold">
                                 from 1.200.000
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

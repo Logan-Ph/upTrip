@@ -224,3 +224,14 @@ export function fetchFavoriteItems(payload) {
         });
 }
 
+export function addFlightToCollection(payload, collectionId) {
+    return axios
+        .post("/add-to-collection-flight", {payload, collectionId}, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+
+
+

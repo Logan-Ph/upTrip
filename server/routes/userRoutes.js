@@ -93,6 +93,7 @@ router.get('/favorite-items', userController.favoriteItems)
 router.post("/add-to-collection/hotel", userController.addToCollectionHotel)
 router.post("/add-to-collection/experience", userController.addToCollectionExperience)
 
+router.post("/add-to-collection-flight", userController.addToCollectionFlight)
 // add-to-favorites/hotel
 // add-to-favorites/flight
 // add-to-favorites/experience

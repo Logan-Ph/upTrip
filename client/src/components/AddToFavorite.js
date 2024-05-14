@@ -2,23 +2,23 @@ import { useState, React } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import {IconX} from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { addExperienceToCollection, addHotelToCollection, fetchCollections } from '../api/fetch';
+import { addExperienceToCollection, addHotelToCollection, fetchCollections, addFlightToCollection } from '../api/fetch';
 import CollectionCardSkeleton from "./skeletonLoadings/CollectionCardSkeleton";
 import { addNewCollection } from "../api/post";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
-export default function AddToFavorite({payload, hotel, experience}){
+export default function AddToFavorite({payload, hotel, experience, flight}){
     return(
         <>
             <div className="mt-10">
-                <AddItemButton payload={payload} hotel={hotel} experience={experience}/>
+                <AddItemButton payload={payload} hotel={hotel} experience={experience} flight={flight}/>
             </div>
         </>
     )
 }
 
-function AddItemButton({payload, hotel, experience}) {
+function AddItemButton({payload, hotel, experience, flight}) {
     const [isOpen, setIsOpen] = useState(false);
     const handleClose = () => setIsOpen(false);
     const [name, setName] = useState();
@@ -111,6 +111,21 @@ function AddItemButton({payload, hotel, experience}) {
         }
     })
 
+    const addToCollectionFlight = useMutation({
+        mutationFn: () => addFlightToCollection(payload, selectedCollection._id),
+        onMutate: () => {
+            console.log("send")
+        },
+        onSuccess: () => {
+            successNotify("Added to collection")
+            refetchCollections()
+        },
+        onError: (e) => {
+            console.log(e)
+            warningNotify(e.response.data);
+        }
+    })
+
     const handleCreateCollection = (e) => {
         e.preventDefault()
         createCollection.mutate()
@@ -123,6 +138,7 @@ function AddItemButton({payload, hotel, experience}) {
         }else{
             if (hotel) addToCollectionHotel.mutate()
             if (experience) addToCollectionExperience.mutate()
+            if (flight) addToCollectionFlight.mutate()
         }
     }
 
