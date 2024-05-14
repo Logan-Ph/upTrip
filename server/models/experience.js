@@ -3,15 +3,12 @@ const mongoose = require('mongoose');
 const experienceSchema = new mongoose.Schema({
     name: { 
         type: String, 
-        required: true 
     },
-    city: { 
-        type: String, 
-        required: true 
+    rating: { 
+        type: Number 
     },
     description: { 
         type: String, 
-        required: true 
     },
     startTime: { 
         type: String, 
@@ -21,7 +18,10 @@ const experienceSchema = new mongoose.Schema({
     },
     price: { 
         type: Number, 
-    }
+    },
+    imgSrc: { 
+        type: String, 
+    },
 });
 
 

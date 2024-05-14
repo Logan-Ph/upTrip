@@ -5,6 +5,7 @@ const User = require("../models/user");
 const Favorites = require("../models/favorites");
 const Collection = require("../models/collection");
 const Hotel = require("../models/hotel")
+const Experience = require("../models/experience")
 const Itinerary = require("../models/itinerary");
 const { stringSimilarity } = require("string-similarity-js");
 const {
@@ -1131,7 +1132,6 @@ exports.addToCollectionHotel = async (req,res) => {
     try {
         const { refreshToken } = req.cookies;
         if (!refreshToken) return res.status(401).json("You are not logged in");
-        const user = await authenticateToken(refreshToken);
         const {
             city,
             cityName,
@@ -1186,12 +1186,6 @@ exports.addToCollectionHotel = async (req,res) => {
         collection.hotels.push(newHotel)
         await collection.save()
 
-        const favorites = await Favorites.findOne({ userID: user._id })
-        if (!favorites) return res.status(404).json("Favorites not found")
-
-        favorites.collections.push(collection)
-        await favorites.save()
-
         return res.status(200).json("Hotel added to collection")
     } catch (er) {
         console.log(er)
@@ -1200,7 +1194,63 @@ exports.addToCollectionHotel = async (req,res) => {
 }
 
 exports.addToCollectionExperience = async (req,res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
 
+        const {
+            name,
+            description,
+            imgSrc,
+            price,
+            collectionId,
+            rating
+        } = req.body
+
+        let collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+
+        const newExperience = new Experience({
+            name,
+            description,
+            imgSrc,
+            price,
+            rating
+        })
+        await newExperience.save()
+
+        collection.experience.push(newExperience)
+        await collection.save()
+
+        return res.status(200).json("Experience added to collection")
+    } catch (er) {
+        console.log(er)
+        return res.status(500).json(er);
+    }
+}
+
+exports.favoriteItems = async (req, res) => {
+    try {
+        const { collectionId } = req.query
+        const collection = await Collection.findById(collectionId)
+        .populate({
+            path: 'hotels',
+            model: 'Hotel'
+        })
+        .populate({
+            path: 'experience',
+            model: 'Experience'
+        })
+        // .populate({
+        //     path: 'flight',
+        //     model: 'Flight'
+        // })
+        if (!collection) return res.status(404).json("Collection not found")
+        return res.status(200).json(collection)
+    } catch (er) {
+        console.log(er)
+        return res.status(500).json(er);
+    }
 }
 
 exports.nearByHotels = async (req, res) => {

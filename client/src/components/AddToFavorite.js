@@ -2,23 +2,23 @@ import { useState, React } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import {IconX} from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { fetchCollections } from '../api/fetch';
+import { addExperienceToCollection, addHotelToCollection, fetchCollections } from '../api/fetch';
 import CollectionCardSkeleton from "./skeletonLoadings/CollectionCardSkeleton";
 import { addNewCollection } from "../api/post";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
-export default function AddToFavorite({payload, hotel}){
+export default function AddToFavorite({payload, hotel, experience}){
     return(
         <>
             <div className="mt-10">
-                <AddItemButton payload={payload} hotel={hotel}/>
+                <AddItemButton payload={payload} hotel={hotel} experience={experience}/>
             </div>
         </>
     )
 }
 
-function AddItemButton({payload, hotel}) {
+function AddItemButton({payload, hotel, experience}) {
     const [isOpen, setIsOpen] = useState(false);
     const handleClose = () => setIsOpen(false);
     const [name, setName] = useState();
@@ -60,9 +60,70 @@ function AddItemButton({payload, hotel}) {
         }
     })
 
-    const handleSubmit = (e) => {
+    const addToCollectionHotel = useMutation({
+        mutationFn: () => addHotelToCollection({
+            city: payload.city,
+            cityName: payload.cityName,
+            provinceId: payload.provinceId,
+            countryId: payload.countryId,
+            districtId: payload.districtId,
+            checkin: payload.checkin,
+            checkout: payload.checkout,
+            hotelName: hotel.hotelBasicInfo.hotelName,
+            lat: hotel.positionInfo.coordinate.lat,
+            lon: hotel.positionInfo.coordinate.lng,
+            searchValue: payload.searchValue,
+            searchCoordinate: payload.searchCoordinate,
+            adult: payload.adult,
+            ages: payload.ages,
+            domestic: payload.domestic,
+            children: payload.children,
+            crn: payload.crn,
+            address: `${hotel.hotelBasicInfo.hotelAddress}, ${hotel.positionInfo.cityName}`,
+            rating: hotel.commentInfo.commentScore,
+            imgSrc: hotel.hotelBasicInfo.hotelImg, 
+            collectionId: selectedCollection._id
+        }),
+        onSuccess: (data) => {
+            successNotify("Added to collection")
+            refetchCollections()
+        },
+        onError: (error) => {
+            warningNotify(error.response.data);
+        }
+    })
+
+    const addToCollectionExperience = useMutation({
+        mutationFn: () => addExperienceToCollection({
+            name: experience?.content?.activity?.title || experience?.card?.poiName,
+            description: experience?.content?.activity?.description || experience?.card?.description,
+            imgSrc: experience?.content?.images[0]?.url || experience?.card?.coverImageUrl,
+            price: experience?.activityRepresentativeInfo?.pricingSummary?.pricing?.[0]?.display?.perBook?.total?.allInclusive?.chargeTotal || experience?.card?.priceInfo?.price,
+            rating: experience?.card?.commentInfo?.commentScore || experience?.content?.reviewSummary?.averageScore,
+            collectionId: selectedCollection._id
+        }),
+        onSuccess: (data) => {
+            successNotify("Added to collection")
+            refetchCollections()
+        },
+        onError: (error) => {
+            warningNotify(error.response.data);
+        }
+    })
+
+    const handleCreateCollection = (e) => {
         e.preventDefault()
         createCollection.mutate()
+    }
+
+    const handleAddToCollection = (e) => {
+        e.preventDefault()
+        if (!selectedCollection) {
+            warningNotify("Please select a collection")
+        }else{
+            if (hotel) addToCollectionHotel.mutate()
+            if (experience) addToCollectionExperience.mutate()
+        }
     }
 
     return (
@@ -162,7 +223,7 @@ function AddItemButton({payload, hotel}) {
                                 <div className="flex justify-end">
                                     <button 
                                         className="flex btn btn-outline  justify-end"
-                                        onClick={(e) => handleSubmit(e)}
+                                        onClick={(e) => handleCreateCollection(e)}
                                     >
                                         Save
                                     </button>
@@ -198,7 +259,11 @@ function AddItemButton({payload, hotel}) {
                         {   
                             isSuccessCollections && collections.length > 0  &&      
                             collections.map((collection) => {
-                                return <SavedCollectionCard key={collection._id} collection={collection} />
+                                return (
+                                            <div key={collection._id} onClick={() => setSelectedCollection(collection)}>
+                                                <SavedCollectionCard key={collection._id} collection={collection} />
+                                            </div>
+                                        )
                             })
 
                         }
@@ -210,9 +275,7 @@ function AddItemButton({payload, hotel}) {
                             <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
                                 <div
                                     className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
-                                    onClick={() => {
-                                        console.log({payload, hotel, selectedCollection})
-                                    }}    
+                                    onClick={(e) => handleAddToCollection(e) }    
                                 >
                                     Save
                                 </div>

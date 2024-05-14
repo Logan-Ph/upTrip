@@ -196,3 +196,31 @@ export function fetchCollections() {
             return Promise.reject(new Error(er.response.data));
         });
 }
+
+export function addHotelToCollection(payload) {
+    return axios
+        .post("/add-to-collection/hotel", payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+
+export function addExperienceToCollection(payload) {
+    return axios
+        .post("/add-to-collection/experience", payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+
+export function fetchFavoriteItems(payload) {
+    return axios
+        .get(`/favorite-items`, { params: payload }, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+

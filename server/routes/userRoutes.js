@@ -85,6 +85,8 @@ router.post('/add-new-collection', userController.addNewCollection);
 // fetch collection
 router.get('/fetch-collection', userController.fetchCollections);
 
+router.get('/favorite-items', userController.favoriteItems)
+
 // remove colletion
 // edit collection
 

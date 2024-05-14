@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function CollectionCard({collection}) {
+    const navigate = useNavigate();
     return (
         <>
             <div className="card card-compact w-94 md:w-auto bg-white shadow-xl rounded-md">
@@ -12,8 +14,13 @@ export function CollectionCard({collection}) {
                     />
                 </figure>
                 <div className="card-body my-2">
-                    <div className="flex flex-row justify-between ">
-                        <h2 className="card-title text-3xl ml-2 pr-3">
+                    <div className="flex flex-row justify-between">
+                        <h2 
+                            className="card-title text-3xl ml-2 pr-3"
+                            onClick={() => {
+                                navigate(`/favorite-items/?collectionId=${collection._id}`)
+                            }}
+                        >
                             {collection.name}
                         </h2>
                         <div className="card-actions justify-end">
