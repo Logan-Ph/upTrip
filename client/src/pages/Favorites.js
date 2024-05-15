@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import AuthContext from "../context/AuthProvider";
 import { CollectionCard } from "../components/CollectionCard";
-import { addNewCollection } from "../api/post.js";
-import { fetchCollections } from "../api/fetch.js";
+import { fetchCollections, addNewCollection } from "../api/fetch.js";
 import warningNotify from "../utils/warningNotify";
 import successNotify from "../utils/successNotify";
 

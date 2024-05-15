@@ -62,13 +62,14 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
             id: 1,
             imgLogo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
             price: agodaPrice,
-            success: true
+            success: true,
+            link: `https://www.agoda.com/flights/results?departureFrom=${from}&departureFromType=1&arrivalTo=${to}&arrivalToType=1&departDate=2024-05-27&returnDate=2024-05-28&searchType=1&cabinType=Economy&adults=1&sort=8`
         },
         {
             id: 2,
             imgLogo: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952",
             price: bayDepPrice,
-            success: bayDepSuccess
+            success: bayDepSuccess,
         },
         {
             id: 3,

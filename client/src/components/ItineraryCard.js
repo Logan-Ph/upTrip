@@ -4,7 +4,7 @@ import { SavedCollectionCard } from "./CollectionCard";
 import {IconX} from '@tabler/icons-react'
 
 // Itinerary card for the itinerary page. list the itinerary info card
-export function ItineraryCard() {
+export function ItineraryCard({ itinerary }) {
     return (
         <>
             <div class="card flex-col md:flex-row card-side rounded-md bg-white shadow-xl my-4">
@@ -21,7 +21,7 @@ export function ItineraryCard() {
                 <div class="card-body flex-1 px-5 p-7">
                     <Link>
                         <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4">
-                            Summer Trip
+                            {itinerary.name}
                         </h2>
                     </Link>
                     <div>
@@ -31,7 +31,7 @@ export function ItineraryCard() {
                         </p>
                         <p class="text-gray-500 text-sm md:text-lg">
                             <i class="fa-solid fa-location-dot"></i>
-                            &ensp; Ho Chi Minh City
+                            &ensp; {itinerary.destination}
                         </p>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1 mt-4 md:mt-0">

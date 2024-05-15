@@ -6,6 +6,10 @@ const tripSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    name: {
+        type: String,
+        required: true,
+    },
     destination: {
         type: String,
         required: true
@@ -43,4 +47,4 @@ const tripSchema = new mongoose.Schema({
     ] 
 });
 
-module.exports = mongoose.model('Trip', tripSchema);
+module.exports = mongoose.model('Itinerary', tripSchema);
