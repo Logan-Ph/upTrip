@@ -165,7 +165,7 @@ function AdvancedSearchFlight({ setTab }) {
 
         for (let key in payload) {
             if (payload.hasOwnProperty(key) && payload[key] === null) {
-                warningNotify("Please provide all information.")
+                warningNotify("Please provide all information.");
                 return;
             }
         }

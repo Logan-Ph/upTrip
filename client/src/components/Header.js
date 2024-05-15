@@ -287,6 +287,20 @@ function AdvancedSearchFlight() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if (!from) {
+            warningNotify("PLease select your origin")
+            return
+        }
+
+        if (!to){
+            warningNotify("PLease select your destination")
+            return
+        }
+
+        if (!toAutocomplete || !fromAutocomplete){
+            return
+        }
+
         const payload = {
             from: from.airportCode,
             fromCity: from.cityName,
@@ -821,6 +835,10 @@ function AdvancedSearchHotel() {
         if (!autocompletePayload) {
             warningNotify("Please select a location");
             return;
+        }
+
+        if (!checkinDate){
+            warningNotify("Please s")
         }
 
         let payload = {
