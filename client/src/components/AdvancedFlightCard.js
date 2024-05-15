@@ -108,14 +108,6 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
         }))
     );
 
-    const toggleHeart = (index) => {
-        const updatedHearts = hearts.map((heart, i) => ({
-            ...heart,
-            isFilled: i === index ? !heart.isFilled : false,
-        }));
-        setHearts(updatedHearts);
-    };
-
     const [isIntersecting, setIsIntersecting] = useState(false);
     const ref = useRef(null);
 

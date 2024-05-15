@@ -90,13 +90,12 @@ router.get('/favorite-items', userController.favoriteItems)
 // remove colletion
 // edit collection
 
-router.post("/add-to-collection/hotel", userController.addToCollectionHotel)
-router.post("/add-to-collection/experience", userController.addToCollectionExperience)
-
-router.post("/add-to-collection-flight", userController.addToCollectionFlight)
 // add-to-favorites/hotel
 // add-to-favorites/flight
 // add-to-favorites/experience
+router.post("/add-to-collection/hotel", userController.addToCollectionHotel)
+router.post("/add-to-collection/experience", userController.addToCollectionExperience)
+router.post("/add-to-collection/flight", userController.addToCollectionFlight)
 
 // remove-from-favorites/hotel
 // remove-from-favorites/flight

@@ -242,7 +242,7 @@ export function FlightCard({item}) {
                                 </div>
                             </div>
                             <div className="text-gray-500 font-semibold">
-                                {item.flightNo.length == 1 ? "non-stop" : item.flightNo.length + 1 + "stop(s)"}
+                                {item.flightNo.length === 1 ? "non-stop" : item.flightNo.length + 1 + "stop(s)"}
                             </div>
                             <div className="flex flex-col">
                                 <div className="font-semibold">{item.duration}</div>
