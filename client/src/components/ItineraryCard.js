@@ -96,7 +96,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
                                     Delete itinerary?
                                 </h3>
                                 <p className="pt-4 text-lg">
-                                    Are you sure you want to delete Summer Trip?
+                                    Are you sure you want to delete {itinerary.name}?
                                 </p>
                                 <div className="modal-action mt-3">
                                     <form method="dialog">

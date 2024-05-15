@@ -259,3 +259,7 @@ export function fetchDetailItinerary(payload) {
 		return Promise.reject(new Error(er.response.data.message));
 	});
 }
+
+export function editItinerary(payload) {
+	return axios.post("/edit-itinerary", payload, options)
+}

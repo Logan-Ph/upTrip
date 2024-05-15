@@ -6,6 +6,11 @@ import AddToFavorite from "./AddToFavorite";
 export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess }) {
     const [searchParams] = useSearchParams();
     const [imgSrc, setImgSrc] = useState();
+    const info = {
+        day: searchParams.get( "day" ),
+        month: searchParams.get( "month" ),
+        year: searchParams.get( "year" ),
+    }
     const payload = {
         flightNo: flight.flightNo,
         from: from,
@@ -29,6 +34,7 @@ export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myT
                 <div>
                     <FlightCard
                         key={flight.flightNo}
+                        info={info}
                         from={from}
                         to={to}
                         departure={flight.departureTime}
@@ -56,14 +62,13 @@ export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myT
     )
 }
 
-function FlightCard({ from, to, departure, arrival, duration, stop, carrier, agodaPrice, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess, setImgSrc }) {
+function FlightCard({info, from, to, departure, arrival, duration, stop, carrier, agodaPrice, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess, setImgSrc }) {
     const websiteLogo = useMemo(() => [
         {
             id: 1,
             imgLogo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
             price: agodaPrice,
             success: true,
-            link: `https://www.agoda.com/flights/results?departureFrom=${from}&departureFromType=1&arrivalTo=${to}&arrivalToType=1&departDate=2024-05-27&returnDate=2024-05-28&searchType=1&cabinType=Economy&adults=1&sort=8`
         },
         {
             id: 2,
@@ -244,7 +249,7 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
                                 <div className="border border-transparent
                                 bg-[#CDEAE1] rounded-lg grid grid-cols-2 h-[42px] hover:bg-[#8DD3BB] ">
                                     <div className="mx-auto my-auto">
-                                        <Link to="">
+                                        <Link to={heart.link}>
                                             <img src={heart.imgLogo} alt="website logo"
                                                 className={getClassName(heart.id)} />
                                         </Link>

@@ -1487,3 +1487,22 @@ exports.fetchDetailItinerary = async (req, res) => {
         return res.status(500).json(err)
     }
 }
+
+exports.editItinerary = async (req, res) => {
+    try {
+        const {refreshToken} = req.cookies
+        if(!refreshToken) return res.status(401).json("You are not logged in")
+
+        const { itineraryId, name, destination, description } = req.body
+        const itinerary = await Itinerary.findById(itineraryId)
+        if (!itinerary) return res.status(404).json("Itinerary not found")
+
+        itinerary.name = name;
+        itinerary.destination = destination;
+        itinerary.description = description;
+        await itinerary.save();
+        return res.status(200).json("Itinerary updated")
+    } catch (e) {
+        return res.status(500).json(e)
+    }
+}

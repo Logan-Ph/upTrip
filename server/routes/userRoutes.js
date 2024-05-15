@@ -102,6 +102,8 @@ router.post("/fetch-detail-itinerary", userController.fetchDetailItinerary)
 
 router.post("/delete-itinerary", userController.deleteItinerary)
 
+router.post("/edit-itinerary", userController.editItinerary)
+
 // remove-from-favorites/hotel
 // remove-from-favorites/flight
 // remove-from-favorites/experience
