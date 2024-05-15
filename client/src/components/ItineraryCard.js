@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
-import {IconX} from '@tabler/icons-react'
+import { IconX } from '@tabler/icons-react'
 
 // Itinerary card for the itinerary page. list the itinerary info card
-export function ItineraryCard() {
+export function ItineraryCard({ itinerary }) {
     return (
         <>
             <div class="card flex-col md:flex-row card-side rounded-md bg-white shadow-xl my-4">
@@ -21,17 +21,25 @@ export function ItineraryCard() {
                 <div class="card-body flex-1 px-5 p-7">
                     <Link>
                         <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4">
-                            Summer Trip
+                            {itinerary.name}
                         </h2>
                     </Link>
                     <div>
                         <p class="text-gray-500 text-sm md:text-lg mt-1 md:mt-4 mb-2">
-                            <i class="fa-regular fa-calendar"></i>&ensp; Mar 6{" "}
-                            <i class="fa-solid fa-arrow-right"></i> Mar 20, 2024
+                            {itinerary.startDate ?
+                                (<span>
+                                    <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.startDate}{" "}
+                                    <i class="fa-solid fa-arrow-right"></i> {itinerary.endDate}
+                                </span>)
+                                : (
+                                    <span>
+                                        <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.tripLength}
+                                    </span>)
+                            }
                         </p>
                         <p class="text-gray-500 text-sm md:text-lg">
                             <i class="fa-solid fa-location-dot"></i>
-                            &ensp; Ho Chi Minh City
+                            &ensp; {itinerary.destination}
                         </p>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1 mt-4 md:mt-0">
@@ -133,14 +141,13 @@ export function AddItemButton() {
             <div className="relative">
                 {/* Drawer */}
                 <div
-                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${
-                        isOpen ? "translate-x-0" : "translate-x-full"
-                    } overflow-y-auto`}
+                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
+                        } overflow-y-auto`}
                 >
                     {/* Content inside the drawer - not work yet*/}
-                    <div 
+                    <div
                         onClick={handleClose} className="material-icons cursor-pointer transition ease-in-out delay-150:-translate-y-1 hover:scale-110 duration-300 mt-6" style={{ float: 'right' }}>
-                        <IconX stroke={2} size={40} color="black"/>
+                        <IconX stroke={2} size={40} color="black" />
                     </div>
                     <div className="p-4 relative">
 
@@ -193,7 +200,7 @@ function ChooseCollection({ handleNextButtonClick }) {
         <>
             <React.Fragment>
                 <div className="bg-white py-8 mt-10 sticky top-0 z-50 border-b">
-                    
+
                     <h1 className="text-2xl text-center font-semibold mb-2">
                         Choose a collection
                     </h1>
@@ -283,13 +290,13 @@ function OtherPageContent({ handleBackButtonClick }) {
                 </button>
             </div>
             {/* For Stay */}
-            <ForDetailStay/>
+            <ForDetailStay />
 
             {/* For Flight */}
-            <ForDetailFlight/>
+            <ForDetailFlight />
 
             {/* For Experience */}
-            <ForDetailExperience/>
+            <ForDetailExperience />
 
             {/* Add to itinerary button */}
             <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50">
@@ -1458,11 +1465,10 @@ export function SavedStayCard() {
     return (
         <>
             <div
-                className={`card card-side bg-white p-3 border-[2px] ${
-                    isSelected
+                className={`card card-side bg-white p-3 border-[2px] ${isSelected
                         ? "border-black"
                         : "border-gray-300 hover:border-black duration-300"
-                } rounded-md items-start my-4`}
+                    } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
                 <figure className="w-1/3">
@@ -1528,11 +1534,10 @@ export function SavedFlightCard() {
     return (
         <>
             <div
-                className={`card flex-col card-side bg-white p-3 border-[2px] ${
-                    isSelected
+                className={`card flex-col card-side bg-white p-3 border-[2px] ${isSelected
                         ? "border-black"
                         : "border-gray-300 hover:border-black duration-300"
-                } rounded-md items-start my-4`}
+                    } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
                 <figure className="flex w-full">
@@ -1585,11 +1590,10 @@ export function SavedExperienceCard() {
     return (
         <>
             <div
-                className={`card card-side bg-white p-3 border-[2px] ${
-                    isSelected
+                className={`card card-side bg-white p-3 border-[2px] ${isSelected
                         ? "border-black"
                         : "border-gray-300 hover:border-black duration-300"
-                } rounded-md items-start my-4`}
+                    } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
                 <figure className="w-1/3">

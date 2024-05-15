@@ -73,8 +73,6 @@ const {
     hotelCommentURL,
     hotelCommentPayload,
 } = require("../utils/requestOptions");
-const { errorMonitor } = require("nodemailer/lib/xoauth2");
-const { resolveContent } = require("nodemailer/lib/shared");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
@@ -99,9 +97,9 @@ exports.postLogin = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: "None",
-        maxAge: 30 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
         secure: true,
-    }); // 30 minutes
+    }); // a week
 
     return res.status(200).json({
         success: true,
@@ -1088,7 +1086,7 @@ exports.addNewCollection = async (req, res) => {
                 collection: [],
             });
         }
-        
+
         const newCollection = await new Collection({
             name: name,
             description: description
@@ -1406,5 +1404,48 @@ exports.addToCollectionFlight = async (req, res) => {
     } catch (er) {
         console.log(er)
         return res.status(500).json(er);
+    }
+}
+
+exports.addNewItinerary = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const user = await authenticateToken(refreshToken);
+        const { name, destination, description, startDate, endDate, tripLength } = req.body
+
+        if (!name || !destination)  return res.status(400).json("Please fill all the fields")
+        
+        const newItinerary = await new Itinerary({
+            userID: user._id,
+            name: name,
+            destination: destination,
+            description: description,
+            startDate: startDate,
+            endDate: endDate,
+            tripLength: tripLength,
+        }).save()
+
+        return res.status(200).json("New itinerary added")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.fetchItinerary = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const user = await authenticateToken(refreshToken);
+
+        let itinerary = await Itinerary.find({ userID: user._id })
+            
+        if (!itinerary) {
+            return res.status(200).json([])
+        }
+        return res.status(200).json(itinerary);
+
+    } catch (e) {
+        return res.status(500).json(e)
     }
 }

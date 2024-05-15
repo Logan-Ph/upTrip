@@ -315,14 +315,6 @@ function AdvancedSearchFlight() {
             day: date.current?.value.substring(3, 5),
         }
 
-        for (let key in payload) {
-            if (payload.hasOwnProperty(key) && payload[key] === null) {
-                console.log(key)
-                warningNotify("Please provide all information.")
-                return;
-            }
-        }
-
         setKeywordFrom()
         setKeywordTo()
         

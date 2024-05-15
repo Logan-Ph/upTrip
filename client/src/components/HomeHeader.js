@@ -178,13 +178,6 @@ function AdvancedSearchFlight({ setTab }) {
             day: date.current?.value.substring(3, 5),
         }
 
-        for (let key in payload) {
-            if (payload.hasOwnProperty(key) && payload[key] === null) {
-                warningNotify("Please provide all information.");
-                return;
-            }
-        }
-
         navigate(
             `advanced-flight-search?ori=${payload.fromCity}&des=${payload.toCity}&from=${payload.from}&to=${payload.to}&adult=${payload.adult}&child=${payload.child}&infant=${payload.infant}&seatClass=${payload.seatClass}&year=${payload.year}&month=${payload.month}&day=${payload.day}`
         );

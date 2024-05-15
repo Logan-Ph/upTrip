@@ -4,7 +4,7 @@ import {IconX} from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { addExperienceToCollection, addHotelToCollection, fetchCollections, addFlightToCollection } from '../api/fetch';
 import CollectionCardSkeleton from "./skeletonLoadings/CollectionCardSkeleton";
-import { addNewCollection } from "../api/post";
+import { addNewCollection } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
