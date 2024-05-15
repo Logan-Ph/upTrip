@@ -69,9 +69,9 @@ function AddItemButton({payload, hotel, experience}) {
             districtId: payload.districtId,
             checkin: payload.checkin,
             checkout: payload.checkout,
-            hotelName: hotel.hotelBasicInfo.hotelName,
-            lat: hotel.positionInfo.coordinate.lat,
-            lon: hotel.positionInfo.coordinate.lng,
+            hotelName: hotel.hotelBasicInfo.hotelName || payload.hotelName,
+            lat: hotel.positionInfo.coordinate.lat || payload.latitude,
+            lon: hotel.positionInfo.coordinate.lng || payload.longitude,
             searchValue: payload.searchValue,
             searchCoordinate: payload.searchCoordinate,
             adult: payload.adult,
@@ -82,6 +82,7 @@ function AddItemButton({payload, hotel, experience}) {
             address: `${hotel.hotelBasicInfo.hotelAddress}, ${hotel.positionInfo.cityName}`,
             rating: hotel.commentInfo.commentScore,
             imgSrc: hotel.hotelBasicInfo.hotelImg, 
+            hotelId: hotel.hotelBasicInfo.hotelId,
             collectionId: selectedCollection._id
         }),
         onSuccess: (data) => {
@@ -121,7 +122,10 @@ function AddItemButton({payload, hotel, experience}) {
         if (!selectedCollection) {
             warningNotify("Please select a collection")
         }else{
-            if (hotel) addToCollectionHotel.mutate()
+            if (hotel) {
+                console.log(hotel)    
+                // addToCollectionHotel.mutate()
+            }
             if (experience) addToCollectionExperience.mutate()
         }
     }

@@ -52,6 +52,9 @@ const hotelSchema = new mongoose.Schema({
     crn: { 
         type: Number, 
     },
+    hotelId: { 
+        type: Number, 
+    },
     tripPrice: { 
         type: Number, 
     },

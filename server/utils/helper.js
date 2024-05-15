@@ -39,7 +39,7 @@ exports.generateRefreshToken = (user) => {
             verified: user.verified,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: "7d" }
     );
 };
 

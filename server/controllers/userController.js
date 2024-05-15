@@ -72,8 +72,6 @@ const {
     hotelCommentURL,
     hotelCommentPayload,
 } = require("../utils/requestOptions");
-const { errorMonitor } = require("nodemailer/lib/xoauth2");
-const { resolveContent } = require("nodemailer/lib/shared");
 
 exports.homePage = (req, res) => {
     res.send("This is homepage");
@@ -98,9 +96,9 @@ exports.postLogin = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         sameSite: "None",
-        maxAge: 30 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
         secure: true,
-    }); // 30 minutes
+    }); // 7 days
 
     return res.status(200).json({
         success: true,
@@ -1153,6 +1151,7 @@ exports.addToCollectionHotel = async (req,res) => {
             address,
             rating,
             imgSrc, 
+            hotelId,
             collectionId
         } = req.body
 
@@ -1179,6 +1178,7 @@ exports.addToCollectionHotel = async (req,res) => {
             crn,
             address,
             rating,
+            hotelId,
             imgSrc
         })
         await newHotel.save()

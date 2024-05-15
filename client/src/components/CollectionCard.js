@@ -16,7 +16,7 @@ export function CollectionCard({collection}) {
                 <div className="card-body my-2">
                     <div className="flex flex-row justify-between">
                         <h2 
-                            className="card-title text-3xl ml-2 pr-3"
+                            className="card-title text-3xl ml-2 pr-3 hover:underline cursor-pointer"
                             onClick={() => {
                                 navigate(`/favorite-items/?collectionId=${collection._id}`)
                             }}

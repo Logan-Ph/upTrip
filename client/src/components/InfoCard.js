@@ -61,7 +61,7 @@ export function QuickStayCard({ hotel }) {
 export function QuickExperienceCard({ attraction }) {
     return (
         <>
-            <Link>
+            <div>
                 <div class="card card-side rounded-sm md:bg-base-100 md:shadow-xl">
                     <figure class="w-1/3 items-start">
                         <img
@@ -115,7 +115,7 @@ export function QuickExperienceCard({ attraction }) {
                         </div>
                     </div>
                 </div>
-            </Link>
+            </div>
         </>
     );
 }
@@ -123,7 +123,7 @@ export function QuickExperienceCard({ attraction }) {
 export function ExperienceCard({item}) {
     return (
         <>
-            <Link>
+            <div>
                 <div class="card flex-col md:flex-row card-side rounded-lg bg-white shadow-xl">
                     <figure class="rounded-t-lg rounded-b-none md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
@@ -169,7 +169,7 @@ export function ExperienceCard({item}) {
                         </div>
                     </div>
                 </div>
-            </Link>
+            </div>
         </>
     );
 }
@@ -177,7 +177,7 @@ export function ExperienceCard({item}) {
 export function StayCard({item}) {
     return (
         <>
-            <Link>
+            <div>
                 <div class="card flex-col md:flex-row card-side rounded-lg bg-white shadow-xl">
                     <figure class="rounded-t-lg rounded-b-none md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
@@ -213,7 +213,7 @@ export function StayCard({item}) {
                         </div>
                     </div>
                 </div>
-            </Link>
+            </div>
         </>
     );
 }
@@ -221,7 +221,7 @@ export function StayCard({item}) {
 export function FlightCard({item}) {
     return (
         <>
-            <Link>
+            <div>
                 <div class="card flex-col md:flex-row card-side rounded-lg bg-white shadow-xl">
                     <figure class="rounded-t-lg rounded-b-none md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
@@ -258,7 +258,7 @@ export function FlightCard({item}) {
                         </div>
                     </div>
                 </div>
-            </Link>
+            </div>
         </>
     );
 }
