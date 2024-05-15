@@ -1,171 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import AddToFavorite from "./AddToFavorite";
 
-
-export default function AdvancedAttractionCard({data}){
+export default function AdvancedAttractionCard({data, payload}){
     return(
         <>
-
-        <div className="relative group">
-            <AttractionCards data = {data} />
-            
-            <div className="absolute top-0 right-0">
-                <AddToFavorite/>
+            <div className="relative group">
+                <AttractionCards data={data} />
+                
+                <div className="absolute top-0 right-0">
+                <AddToFavorite payload={payload} hotel={false} experience={data}/>
+                </div> 
             </div> 
-        </div> 
         </>
     )
 }
 
-// function AttractionCard({data}){
-//     const textRef = useRef(null);
-//     const [isTruncated, setIsTruncated] = useState(false);
-
-//     useEffect(() => {
-//         const calculateRows = () => {
-//             if (textRef.current) {
-//                 const divElement = textRef.current;
-//                 const computedStyle = window.getComputedStyle(divElement);
-//                 const lineHeight = parseInt(computedStyle.lineHeight, 10);
-//                 const divHeight = divElement.clientHeight;
-//                 const lines = divHeight / lineHeight;
-//                 setIsTruncated(lines > 3);
-//             }
-//         };
-
-//         // Calculate rows initially and on every window resize
-//         calculateRows();
-//         window.addEventListener("resize", calculateRows);
-
-//         // Cleanup listener on component unmount
-//         return () => window.removeEventListener("resize", calculateRows);
-//     }, []);
-
-//     const websiteLogo = [
-//         {
-//             imgLogo:
-//                 "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
-//         },
-//         {
-//             imgLogo:
-//                 "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655",
-//         },
-//     ];
-
-//     const [hearts, setHearts] = useState(
-//         websiteLogo.map((logo) => ({ isFilled: false, imgLogo: logo.imgLogo }))
-//     );
-
-//     const toggleHeart = (index) => {
-//         const updatedHearts = hearts.map((heart, i) => ({
-//             ...heart,
-//             isFilled: i === index ? !heart.isFilled : false,
-//         }));
-//         setHearts(updatedHearts);
-//     };
-
-//     const [isIntersecting, setIsIntersecting] = useState(false);
-//     const ref = useRef(null);
-
-//     useEffect(() => {
-//         const observer = new IntersectionObserver(
-//             ([entry]) => {
-//                 setIsIntersecting(entry.isIntersecting);
-//             },
-//             { rootMargin: "0px" }
-//         );
-//         observer.observe(ref.current);
-//         return () => observer.disconnect();
-//     }, [isIntersecting]);
-
-//     const visibilityClass = isIntersecting
-//         ? "opacity-100 translate-y-10 transition ease-in-out"
-//         : "opacity-0 translate-y-10";
-
-//     return (
-//         <>
-//             <div
-//                 ref={ref}
-//                 className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-lg ${visibilityClass}`}
-//             >
-//                 <div className="">
-//                     <img
-//                         src={data.card.coverImageUrl}
-//                         alt="tourist cover"
-//                         className="w-full h-full object-cover"
-//                     />
-//                 </div>
-
-//                 <div className="col-span-2 space-y-2 py-4 px-1 flex flex-col">
-//                     <div
-//                         ref={textRef}
-//                         className={`text-sm md:text-lg font-bold ${
-//                             isTruncated ? "truncate" : ""
-//                         }`}
-//                     >
-//                         {data.card.poiName}
-//                     </div>
-//                     <div className="flex items-center space-x-2">
-//                         <div>
-//                             <svg
-//                                 className="w-4 h-4 md:w-5 md:h-5"
-//                                 xmlns="http://www.w3.org/2000/svg"
-//                                 viewBox="0 0 576 512"
-//                             >
-//                                 <path
-//                                     fill="#FFA732"
-//                                     d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"
-//                                 />
-//                             </svg>
-//                         </div>
-//                         <div className="border border-[#CDEAE1] px-1 md:px-2 bg-[#CDEAE1]">
-//                             <p className="font-bold text-sm md:text-md">
-//                                 {data.card.commentInfo.commentScore}
-//                                 <span className="text-sm md:text-md font-light">
-//                                     /5
-//                                 </span>
-//                             </p>
-//                         </div>
-//                     </div>
-
-//                     {/* cai nay luc rap backend,de no display cai keyword ngta search duoc hong */}
-//                     <div className="text-sm md:text-md font-light">
-//                         <span className="font-bold text-[#FF8682] text-sm md:text-md">
-//                         {data.card.location}
-//                         </span>
-//                         {" | "} {data.card.distanceStr}
-//                     </div>
-//                 </div>
-//             </div>
-//         </>
-//     );
-// }
-
 function AttractionCards({data}){
-    const textRef = useRef(null);
-    const [isTruncated, setIsTruncated] = useState(false);
-
-    useEffect(() => {
-        const calculateRows = () => {
-            if (textRef.current) {
-                const divElement = textRef.current;
-                const computedStyle = window.getComputedStyle(divElement);
-                const lineHeight = parseInt(computedStyle.lineHeight, 10);
-                const divHeight = divElement.clientHeight;
-                const lines = divHeight / lineHeight;
-                setIsTruncated(lines > 3);
-            }
-        };
-
-        // Calculate rows initially and on every window resize
-        calculateRows();
-        window.addEventListener("resize", calculateRows);
-
-        // Cleanup listener on component unmount
-        return () => window.removeEventListener("resize", calculateRows);
-    }, []);
-
     const [isIntersecting, setIsIntersecting] = useState(false);
     const ref = useRef(null);
 
@@ -184,19 +34,16 @@ function AttractionCards({data}){
         ? "opacity-100 translate-y-10 transition ease-in-out"
         : "opacity-0 translate-y-10";
     
-    const [isFilled, setIsFilled] = useState(false);
-
-    const toggleHeart = () => {
-        setIsFilled(!isFilled);
-    };
-
     return (
         <>
-        <div ref={ref}
-         className={`border border-[#CDEAE1] rounded-lg hover:transition hover:ease-in-out hover:translate-x-0.5 duration-300 shadow-md   ${visibilityClass}`}>
+            <div ref={ref}
+            className={`border border-[#CDEAE1] rounded-lg hover:transition hover:ease-in-out hover:translate-x-0.5 duration-300 shadow-md   ${visibilityClass}`}>
                 <div>
-                    <img src={data.card.coverImageUrl}
-                        className="w-full h-[245px] object-cover rounded-lg"/>
+                    <img
+                        src={data.card.coverImageUrl}
+                        className="w-full h-[245px] object-cover rounded-lg"
+                        alt="attraction"
+                    />
                 </div>
 
                 <div className="px-4 py-6 space-y-2">

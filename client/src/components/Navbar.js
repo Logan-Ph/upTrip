@@ -45,13 +45,13 @@ export default function Header() {
                                 </label>
                             </div>
                             <div className="flex-1 px-2 mx-2">
-                                <a href="/">
+                                <Link to="/">
                                     <img
                                         src={Logo}
                                         classNameName="w-28 h-auto"
                                         alt="logo"
                                     />
-                                </a>
+                                </Link>
                             </div>
                         </div>
                         <div className="navbar-end">
@@ -60,7 +60,7 @@ export default function Header() {
                                     {/* <!-- Navbar menu content here --> */}
                                     <li>
                                         <Link
-                                            href=""
+                                            to="/"
                                             className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Explore
@@ -203,7 +203,7 @@ export default function Header() {
                         </div>
                         {/* <!-- Sidebar content here --> */}
                         <li>
-                            <Link href="" className="font-semibold">
+                            <Link to="/" className="font-semibold">
                                 Explore
                             </Link>
                         </li>
@@ -220,7 +220,6 @@ export default function Header() {
                         {auth?.accessToken && (
                             <li className="pt-4  hover:bg-gray-100">
                                 <Link
-                                    href=""
                                     className="font-semibold border-black border-2 hover:bg-black hover:text-white"
                                     onClick={handleLogout}
                                     >

@@ -146,12 +146,13 @@ export default function AdvancedSearchHotelPage() {
 
 
     useEffect(() => {
-        if (inView && !hotelListLoading && !getHotelPriceComparison.isLoading) {
+        if (inView && !hotelListLoading && !getHotelPriceComparison.isLoading && !getHotelPriceComparison.isFetching) {
             fetchNextPage()
         }
-    }, [inView, hotelListLoading, fetchNextPage, getHotelPriceComparison.isLoading])
+    }, [inView, hotelListLoading, fetchNextPage, getHotelPriceComparison.isLoading, getHotelPriceComparison.isFetching])
 
     return (
+
         <>
             <div className="bg-[#FAFBFC] md:p-10">
                 <section className="mx-auto max-w-8xl px-6 py-6">

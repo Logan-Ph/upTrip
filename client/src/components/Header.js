@@ -182,18 +182,23 @@ function AdvancedSearchExperience() {
                     </div>
                     {isFetched && !autocompletePayload && (
                         <div class="relative z-40">
-                            <ul class="absolute menu bg-white w-full rounded-b-lg h-[400px] overflow-x-auto ">
+                            <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto max-h-40 flex-nowrap h-[400px] overflow-x-auto ">
                                 {data.length === 0 ? (
-                                    <li>No results found</li>
+                                    <li className="p-2 font-semibold">No results found</li>
                                 ) : (
                                     data.map((item) => (
-                                        <li onClick={() => setAutocompletePayload(item)}>
+                                        <li
+                                            onClick={() =>
+                                                setAutocompletePayload(item)
+                                            }
+                                        >
                                             <div>
                                                 <i class="fa-solid fa-location-dot"></i>{" "}
                                                 {item.districtPathNames}
                                             </div>
                                         </li>
-                                    )))}
+                                    ))
+                                )}
                             </ul>
                         </div>
                     )}

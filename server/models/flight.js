@@ -23,6 +23,14 @@ const flightSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    carrier: {
+        type: String,
+        required: true
+    },
+    duration: {
+        type: String,
+        required: true,
+    },
     day:  {
         type: Number,
         required: true

@@ -5,7 +5,6 @@ export default function TourAttractionSkeleton(){
          <div className="mt-10  w-full">
             <TourAndAttractionCard/>
          </div>
-        
         </>
     )
 }

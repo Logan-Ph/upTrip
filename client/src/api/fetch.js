@@ -188,11 +188,50 @@ export function getHotelComments(payload) {
 		});
 }
 
-export function fetchFavorites() {
+export function fetchCollections() {
     return axios
-        .get("/fetch-favorites", options)
+        .get("/fetch-collection", options)
         .then((res) => res.data)
         .catch((er) => {
-            return Promise.reject(new Error(er.response.data.message));
+            return Promise.reject(new Error(er.response.data));
         });
 }
+
+export function addHotelToCollection(payload) {
+    return axios
+        .post("/add-to-collection/hotel", payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+
+export function addExperienceToCollection(payload) {
+    return axios
+        .post("/add-to-collection/experience", payload, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+
+export function fetchFavoriteItems(payload) {
+    return axios
+        .get(`/favorite-items`, { params: payload }, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+
+export function addFlightToCollection(payload, collectionId) {
+    return axios
+        .post("/add-to-collection/flight", {payload, collectionId}, options)
+        .then((res) => res.data)
+        .catch((er) => {
+            return Promise.reject(new Error(er.response.data));
+        });
+}
+
+
+

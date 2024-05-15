@@ -51,7 +51,6 @@ export default function AdvancedSearchExperiencePage() {
         fetchNextPage: fetchToursNextPage,
         isFetchingNextPage: isToursFetchingNextPage,
     } = useInfiniteQuery({
-
         queryKey: ["tours", toursAutocompleteData],
         queryFn: ({ pageParam = 1 }) =>
             fetchTours({ ...toursAutocompleteData, pageIndex: pageParam }),
@@ -154,6 +153,7 @@ export default function AdvancedSearchExperiencePage() {
                                                         }
                                                     >
                                                         <AdvancedAttractionCard
+                                                            payload={payload}
                                                             key={index}
                                                             data={item}
                                                         />
@@ -182,6 +182,10 @@ export default function AdvancedSearchExperiencePage() {
                                                     }
                                                 >
                                                     <AdvancedExperienceCard
+                                                        payload={
+                                                            {...payload,
+                                                            cityId: toursAutocompleteData.cityId}
+                                                        }
                                                         key={index}
                                                         data={item}
                                                     />

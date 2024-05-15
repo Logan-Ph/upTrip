@@ -1,9 +1,12 @@
 require("dotenv").config();
-const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const cheerio = require("cheerio");
 const User = require("../models/user");
 const Favorites = require("../models/favorites");
+const Collection = require("../models/collection");
+const Hotel = require("../models/hotel")
+const Experience = require("../models/experience")
+const Flight = require("../models/flight")
 const Itinerary = require("../models/itinerary");
 const { stringSimilarity } = require("string-similarity-js");
 const {
@@ -923,7 +926,18 @@ exports.getTripComFlight = async (req, res) => {
         let payload = tripComGetFlightPayload(req.body)
         const response = await axios.post(url, payload, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
+                "User-Agent":
+			    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0",
+                "X-Ibu-Flt-Currency": "VND",
+                "X-Ibu-Flt-Language": "en",
+                "X-Ibu-Flt-Locale": "en-US",
+                "Accept-Language": "en-US,en;q=0.9,vi;q=0.8",
+                DNT: 1,
+                "Sec-Ch-Ua":
+                    '"Microsoft Edge";v="125", "Chromium";v="125", "Not(A:Brand";v="24"',
+                "Sec-Ch-Ua-Mobile": '"?0"',
+                "Sec-Ch-Ua-Platform": '"Windows"',
+                Origin: "https://us.trip.com"
             }
         })
         for (const item of response.data.data.flightListSearch.flightProductList) {
@@ -941,6 +955,7 @@ exports.getTripComFlight = async (req, res) => {
         }
         return res.status(200).json(items)
     } catch (er) {
+        console.log(er)
         return res.status(500).json(er)
     }
 }
@@ -1063,6 +1078,7 @@ exports.addNewCollection = async (req, res) => {
     try {
         const { refreshToken } = req.cookies;
         if (!refreshToken) return res.status(401).json("You are not logged in");
+        const { name, description } = req.body
         const user = await authenticateToken(refreshToken);
         let favorites = await Favorites.findOne({ userID: user._id });
 
@@ -1072,18 +1088,18 @@ exports.addNewCollection = async (req, res) => {
                 collection: [],
             });
         }
+        
+        const newCollection = await new Collection({
+            name: name,
+            description: description
+        }).save()
+        
+        favorites.collections.push(newCollection)
 
-        if (favorites.collections.find(item => item.name == req.body.name)) {
-            return res.status(500).json("Collection name already exists")
-        } else {
-            favorites.collections.push({
-                name: req.body.name,
-                description: req.body.description
-            })
-        }
         await favorites.save();
         return res.status(200).json("New collection added")
     } catch (er) {
+        console.log(er)
         return res.status(500).json(er);
     }
 }
@@ -1093,156 +1109,148 @@ exports.fetchCollections = async (req, res) => {
         const { refreshToken } = req.cookies;
         if (!refreshToken) return res.status(401).json("You are not logged in");
         const user = await authenticateToken(refreshToken);
-        let favorites = await Favorites.findOne({ userID: user._id });
+        let favorites = await Favorites.findOne({ userID: user._id })
+            .populate({
+                path: 'collections',
+                model: 'Collection',
+                populate: [
+                    { path: 'flights', model: 'Flight' },
+                    { path: 'hotels', model: 'Hotel' },
+                    { path: 'experience', model: 'Experience' }
+                ]
+            });
         if (!favorites) {
-            return res.status(200).json("No collection found")
+            return res.status(200).json([])
         }
-        return res.status(200).json(favorites);
+        return res.status(200).json(favorites.collections);
     } catch (er) {
         console.log(er)
         return res.status(500).json(er);
     }
 }
 
-exports.editCollection = async (req, res) => {
+exports.addToCollectionHotel = async (req,res) => {
     try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const {
+            city,
+            cityName,
+            provinceId,
+            countryId,
+            districtId,
+            checkin,
+            checkout,
+            hotelName,
+            lat,
+            lon,
+            searchValue,
+            searchCoordinate,
+            adult,
+            ages,
+            domestic,
+            children,
+            crn,
+            address,
+            rating,
+            imgSrc, 
+            collectionId
+        } = req.body
 
+        let collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+
+        const newHotel = new Hotel({
+            city,
+            cityName,
+            provinceId,
+            countryId,
+            districtId,
+            checkin,
+            checkout,
+            hotelName,
+            lat,
+            lon,
+            searchValue,
+            searchCoordinate,
+            adult,
+            ages,
+            domestic,
+            children,
+            crn,
+            address,
+            rating,
+            imgSrc
+        })
+        await newHotel.save()
+
+        collection.hotels.push(newHotel)
+        await collection.save()
+
+        return res.status(200).json("Hotel added to collection")
     } catch (er) {
+        console.log(er)
         return res.status(500).json(er);
     }
 }
 
-exports.addNewItinerary = async (req, res) => {
+exports.addToCollectionExperience = async (req,res) => {
     try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
 
-        if (!list) {
-            list = new Favorites({
-                userID: req.body.userID,
-                itinerary: []
-            });
-        }
+        const {
+            name,
+            description,
+            imgSrc,
+            price,
+            collectionId,
+            rating
+        } = req.body
 
-        if (list.itinerary.find(item => item[title] === req.body.title)) {
-            return res.status(500).json("Title already exists")
-        }
+        let collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
 
-        list.itinerary.push({
-            name: req.body.itineraryName,
-            flights: [],
+        const newExperience = new Experience({
+            name,
+            description,
+            imgSrc,
+            price,
+            rating
         })
-        await list.save()
-        return res.status(200).json("New itinerary created.")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
+        await newExperience.save()
 
-exports.editItinerary = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
+        collection.experience.push(newExperience)
+        await collection.save()
 
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (iti) {
-            iti.title = req.body.newTitle;
-        }
-        await list.save()
-        return res.status(200).json("Title changed.")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
-
-exports.deleteItinerary = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-        if (!list || list.itinerary.length == 0) throw new Error("Favorites is empty");
-        list.itinerary = list.itinerary.filter(item => item.title !== req.params.title);
-        await list.save()
-        return res.status(200).json("Deleted successfully")
+        return res.status(200).json("Experience added to collection")
     } catch (er) {
-        return res.status(500).json(er)
+        console.log(er)
+        return res.status(500).json(er);
     }
 }
 
-exports.addToItinerary = async (req, res) => {
+exports.favoriteItems = async (req, res) => {
     try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        let itinerary = list.itinerary.find(item => item[title] === req.body.title)
-
-        switch (req.body.itemType) {
-            case "hotel":
-                itinerary.push(req.body.hotelName);
-                break;
-            case "flight":
-                itinerary.flights.push({
-                    flightNo: req.body.flightNo,
-                    departure: req.body.departure,
-                    arrival: req.body.arrival,
-                    from: req.body.from,
-                    to: req.body.to,
-                    agency: req.body.agency,
-                });
-                break;
-            case "attraction":
-                itinerary.attractions.push(req.body.attractionName);
-                break;
-        }
-        await list.save();
-        return res.status(200).json("Added to Itinerary")
-    } catch (err) {
-        return res.status(500).json("Error. Try again later")
-    }
-}
-
-exports.deleteHotelPlan = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (!iti || iti.hotels.length == 0) {
-            throw new Error("Hotel is not in the itinerary")
-        }
-        // remove hotel from array of hotels
-        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
-        await list.save()
-        return res.status(200).json("Hotel removed")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
-
-exports.deleteFlightPlan = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (!iti || iti.flights.length == 0) {
-            throw new Error("Hotel is not in the itinerary")
-        }
-        // remove hotel from array of hotels
-        iti.flights = iti.hotels.filter(item => item.flightNo !== req.params.flightNo);
-        await list.save()
-        return res.status(200).json("Flight removed")
-    } catch (err) {
-        return res.status(500).json(er)
-    }
-}
-exports.deleteAttractionPlan = async (req, res) => {
-    try {
-        let list = await Itinerary.findOne({ userID: req.body.userID });
-
-        const iti = list.itinerary.find(item => item[title] === req.body.title)
-        if (!iti || iti.attractions.length == 0) {
-            throw new Error("Attraction is not in the itinerary")
-        }
-        // remove hotel from array of hotels
-        iti.hotels = iti.hotels.filter(attraction => attraction !== req.params.attractionName);
-        await list.save()
-        return res.status(200).json("Attraction removed")
-    } catch (err) {
-        return res.status(500).json(er)
+        const { collectionId } = req.query
+        const collection = await Collection.findById(collectionId)
+        .populate({
+            path: 'hotels',
+            model: 'Hotel'
+        })
+        .populate({
+            path: 'experience',
+            model: 'Experience'
+        })
+        .populate({
+            path: 'flights',
+            model: 'Flight'
+        })
+        if (!collection) return res.status(404).json("Collection not found")
+        return res.status(200).json(collection)
+    } catch (er) {
+        console.log(er)
+        return res.status(500).json(er);
     }
 }
 
@@ -1346,3 +1354,57 @@ exports.hotelComments = async (req, res) => {
     }
 }
 
+exports.addToCollectionFlight = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+
+        const {
+            flightNo,
+            from,
+            to,
+            departureTime,
+            arrivalTime,
+            carrier,
+            duration,
+            day,
+            month,
+            year,
+            seatClass,
+            imgSrc,
+            adult,
+            child,
+            infant,
+
+        } = req.body.payload
+
+        let collection = await Collection.findById(req.body.collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+
+        const newFlight = new Flight({
+            flightNo,
+            from,
+            to,
+            departureTime,
+            arrivalTime,
+            carrier,
+            duration,
+            day,
+            month,
+            year,
+            seatClass,
+            imgSrc,
+            adult,
+            child,
+            infant
+        })
+        await newFlight.save()
+
+        collection.flights.push(newFlight)
+        await collection.save()
+        return res.status(200).json("Flight added to collection")
+    } catch (er) {
+        console.log(er)
+        return res.status(500).json(er);
+    }
+}

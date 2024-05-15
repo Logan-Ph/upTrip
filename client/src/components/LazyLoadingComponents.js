@@ -98,8 +98,8 @@ export function QuickSearchSkeletonCard() {
                 <div class="card card-side rounded-sm bg-base-100 shadow-xl">
                     <figure className="w-1/3 h-[252px]object-cover skeleton rounded-none"></figure>
                     <div class="card-body">
-                        <h2 class="card-title skeleton h-4 w-30"></h2>
-                        <p class="text-gray-500 skeleton h-4 w-30 mb-4"></p>
+                        <div className="card-title skeleton h-4 w-30"/>
+                        <p class="text-gray-500 skeleton h-4 w-30 mb-4"/>
                         <div class="card-actions gap-0">
                             <button class="btn skeleton rounded-lg w-28"></button>
                         </div>

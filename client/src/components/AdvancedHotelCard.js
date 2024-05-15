@@ -26,7 +26,7 @@ export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingP
                 <div className="visible text-black">Popular hotels nearby</div>
             )}
                 <div className="absolute top-0 right-0">
-                    <AddToFavorite/>   
+                    <AddToFavorite payload={payload} hotel={hotel}/>   
                 </div>
             </div> 
         </>
