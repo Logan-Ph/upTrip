@@ -121,7 +121,6 @@ function AddItemButton({payload, hotel, experience, flight}) {
             refetchCollections()
         },
         onError: (e) => {
-            console.log(e)
             warningNotify(e.response.data);
         }
     })
@@ -157,12 +156,9 @@ function AddItemButton({payload, hotel, experience, flight}) {
             {(isOpen && !isErrorCollections) && (
                 <div className="">
                 {/* Drawer */}
-                
                 <div className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 
                     
                     ${isOpen ? "translate-x-0" : "translate-x-full"} overflow-auto`}>
-
-                    
                     {/* close button */}
                     <div 
                         onClick={handleClose} className="material-icons cursor-pointer my-6 transition ease-in-out delay-150:-translate-y-1 hover:scale-110 duration-300" style={{ float: 'right' }}>

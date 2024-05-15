@@ -98,6 +98,9 @@ router.post("/add-to-collection/flight", userController.addToCollectionFlight)
 router.post("/add-new-itinerary", userController.addNewItinerary)
 
 router.get("/fetch-itinerary", userController.fetchItinerary)
+router.post("/fetch-detail-itinerary", userController.fetchDetailItinerary)
+
+router.post("/delete-itinerary", userController.deleteItinerary)
 
 // remove-from-favorites/hotel
 // remove-from-favorites/flight

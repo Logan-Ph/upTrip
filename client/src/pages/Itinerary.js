@@ -8,7 +8,7 @@ import ItineraryCardSkeleton from "../components/skeletonLoadings/ItinerarySkele
 import { useMutation, useQuery } from "@tanstack/react-query";
 import warningNotify from "../utils/warningNotify";
 import successNotify from "../utils/successNotify";
-import { addNewItinerary, fetchItinerary } from "../api/fetch";
+import { addNewItinerary, fetchItinerary, deleteItinerary } from "../api/fetch";
 
 export default function Itinerary() {
     const { auth } = useContext(AuthContext);
@@ -85,6 +85,7 @@ export default function Itinerary() {
         e.preventDefault();
         createItinerary.mutate();
     }
+
     return (
         <>
             <div className="md:px-10 bg-[#FAFBFC]">
@@ -274,7 +275,7 @@ export default function Itinerary() {
                     {getItinerary.isSuccess ? 
                         getItinerary.data.data.map((item) => {
                             return (
-                            <Suspense fallback={<ItineraryCardSkeleton />}> <ItineraryCard itinerary={item} />
+                            <Suspense fallback={<ItineraryCardSkeleton />}> <ItineraryCard itinerary={item} getItinerary={getItinerary} />
                             </Suspense>)
                         }) : <CollectionCardSkeleton />}
                 </div>

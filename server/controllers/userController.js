@@ -1416,7 +1416,7 @@ exports.addNewItinerary = async (req, res) => {
 
         if (!name || !destination)  return res.status(400).json("Please fill all the fields")
         
-        const newItinerary = await new Itinerary({
+        await new Itinerary({
             userID: user._id,
             name: name,
             destination: destination,
@@ -1447,5 +1447,43 @@ exports.fetchItinerary = async (req, res) => {
 
     } catch (e) {
         return res.status(500).json(e)
+    }
+}
+
+exports.deleteItinerary = async (req,res) => {
+    try{
+        const {refreshToken} = req.cookies
+        if(!refreshToken) return res.status(401).json("You are not logged in")
+
+        const {itineraryId} = req.body
+        await Itinerary.findByIdAndDelete(itineraryId)
+        return res.status(200).json("Itinerary deleted")
+    }catch(err){
+        return res.status(500).json(err)
+    }
+}
+
+exports.fetchDetailItinerary = async (req, res) => {
+    try {
+        const {refreshToken} = req.cookies
+        if(!refreshToken) return res.status(401).json("You are not logged in")
+        
+        const { itineraryId } = req.body
+        const itinerary = await Itinerary.findById(itineraryId)
+        .populate({
+            path: 'hotels',
+            model: 'Hotel'
+        })
+        .populate({
+            path: 'experiences',
+            model: 'Experience'
+        })
+        .populate({
+            path: 'flights',
+            model: 'Flight'
+        })
+        return res.status(200).json(itinerary)
+    } catch (err) {
+        return res.status(500).json(err)
     }
 }

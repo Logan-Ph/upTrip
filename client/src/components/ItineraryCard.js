@@ -1,10 +1,30 @@
 import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
-import { IconX } from '@tabler/icons-react'
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteItinerary, fetchCollections } from "../api/fetch";
+import successNotify from "../utils/successNotify";
+import warningNotify from "../utils/warningNotify";
 
 // Itinerary card for the itinerary page. list the itinerary info card
-export function ItineraryCard({ itinerary }) {
+export function ItineraryCard({ itinerary, getItinerary }) {   
+
+    const handleDeleteItinerary = useMutation({
+        mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
+        onSuccess: (data) => {
+            successNotify(data.data)
+            getItinerary.refetch()
+        },
+        onError: (error) => {
+            warningNotify(error.response.data);
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        handleDeleteItinerary.mutate()
+    }
+
     return (
         <>
             <div class="card flex-col md:flex-row card-side rounded-md bg-white shadow-xl my-4">
@@ -19,7 +39,7 @@ export function ItineraryCard({ itinerary }) {
                 </Link>
 
                 <div class="card-body flex-1 px-5 p-7">
-                    <Link>
+                    <Link to={`/detailed-itinerary?itineraryId=${itinerary._id}`}>
                         <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4">
                             {itinerary.name}
                         </h2>
@@ -33,7 +53,7 @@ export function ItineraryCard({ itinerary }) {
                                 </span>)
                                 : (
                                     <span>
-                                        <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.tripLength}
+                                        <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.tripLength} day(s)
                                     </span>)
                             }
                         </p>
@@ -84,7 +104,10 @@ export function ItineraryCard({ itinerary }) {
                                         <button className="btn rounded-3xl mx-2">
                                             Cancel
                                         </button>
-                                        <button className="btn bg-black text-white rounded-3xl">
+                                        <button
+                                            className="btn bg-black text-white rounded-3xl"
+                                            onClick={(e) => handleDelete(e)}    
+                                        >
                                             Delete
                                         </button>
                                     </form>
@@ -102,15 +125,15 @@ export function ItineraryCard({ itinerary }) {
 export function AddItemButton() {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState("main");
-    const [open, setOpen] = useState(false);
-
-    const handleClose = () => setIsOpen(true);
-
-    const toggleDrawer = () => {
-        setIsOpen(!isOpen);
-    };
+    const [selectedCollection, setSelectedCollection] = useState()
+    const [items, setItems] = useState()
+    const [selectedItems, setSelectedItems] = useState()
 
     const handleNextButtonClickMain = () => {
+        if (!selectedCollection) {
+            warningNotify("Please select a collection")
+            return
+        }
         setCurrentPage("chooseSavedItem");
     };
 
@@ -132,7 +155,7 @@ export function AddItemButton() {
             <div className="flex justify-center my-4">
                 <div
                     className="btn bg-[#9A9A9A] rounded-3xl text-white"
-                    onClick={toggleDrawer}
+                    onClick={() => setIsOpen(true)}
                 >
                     Add Items
                 </div>
@@ -144,39 +167,24 @@ export function AddItemButton() {
                     className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
                         } overflow-y-auto`}
                 >
-                    {/* Content inside the drawer - not work yet*/}
-                    <div
-                        onClick={handleClose} className="material-icons cursor-pointer transition ease-in-out delay-150:-translate-y-1 hover:scale-110 duration-300 mt-6" style={{ float: 'right' }}>
-                        <IconX stroke={2} size={40} color="black" />
-                    </div>
                     <div className="p-4 relative">
-
-                        {/* close button */}
-
-
-                        {/* <h1 className="text-2xl font-semibold mb-2 sticky top-0">
-                            {currentPage === "main"
-                                ? "Choose a collection"
-                                : currentPage === "chooseSavedItem"
-                                ? "Add to your itinerary"
-                                : "Add to your itinerary"}
-                        </h1> */}
                         {currentPage === "main" ? (
                             <ChooseCollection
-                                handleNextButtonClick={
-                                    handleNextButtonClickMain
-                                }
+                                handleNextButtonClick={handleNextButtonClickMain}
+                                setSelectedCollection={setSelectedCollection}
+                                setItems={setItems}
                             />
                         ) : currentPage === "chooseSavedItem" ? (
                             <ChooseSavedItem
-                                handleNextButtonClick={
-                                    handleNextButtonClickSaved
-                                }
+                                handleNextButtonClick={handleNextButtonClickSaved}
                                 handleBackButtonClick={handleBackButtonClick}
+                                items={items}
+                                setSelectedItems={setSelectedItems}
                             />
                         ) : (
                             <OtherPageContent
                                 handleBackButtonClick={handleBackButtonClick}
+                                selectedItems={selectedItems}
                             />
                         )}
                     </div>
@@ -185,7 +193,7 @@ export function AddItemButton() {
                 {/* Overlay to close the drawer */}
                 {isOpen && (
                     <div
-                        onClick={toggleDrawer}
+                        onClick={() => setIsOpen(false)}
                         className="fixed top-0 left-0 h-full w-full bg-gray-800 opacity-50 transition-opacity duration-300 ease-in-out z-10"
                     ></div>
                 )}
@@ -195,90 +203,71 @@ export function AddItemButton() {
 }
 
 // page 1 in the drawer, choose collection
-function ChooseCollection({ handleNextButtonClick }) {
+function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setItems }) {
+    const {
+        data: collections,
+    } = useQuery({
+        queryKey: ["fetch-collections"],
+        queryFn: () => fetchCollections(),
+        retry: false,
+        refetchOnWindowFocus: false,
+    })
+
     return (
         <>
-            <React.Fragment>
-                <div className="bg-white py-8 mt-10 sticky top-0 z-50 border-b">
+            <div className="bg-white py-8 mt-10 sticky top-0 z-50 border-b">
 
-                    <h1 className="text-2xl text-center font-semibold mb-2">
-                        Choose a collection
-                    </h1>
-                    <p className="text-gray-500 text-center">
-                        Select the collection to pick the items from.
-                    </p>
-                </div>
-                <div className="my-4">
-                    {/* If no collection */}
+                <h1 className="text-2xl text-center font-semibold mb-2">
+                    Choose a collection
+                </h1>
+                <p className="text-gray-500 text-center">
+                    Select the collection to pick the items from.
+                </p>
+            </div>
+            <div className="my-4">
+                {/* If no collection */}
+                {collections?.length > 0
+                ?
+                    collections.map((collection) => (
+                        <div onClick={() => {
+                            setSelectedCollection(collection)
+                            setItems(() => {
+                                return{
+                                    experience: collection.experience,
+                                    hotel: collection.hotels,
+                                    flight: collection.flights
+                                }
+                            })
+                        }}>                            
+                            <SavedCollectionCard key={collection.id} collection={collection} />
+                        </div>
+                    ))
+                :
                     <div className="text-lg my-10">
                         <p className="font-thin text-xl">Your collection is empty.</p>
                         {/* Direct to the favorite collection page */}
-                        <a href="" className="font-semibold underline">Let's create one!</a>
+                        <div href="" className="font-semibold underline">Let's create one!</div>
                     </div>
-                    {/* Your SavedCollectionCard components */}
-                    <SavedCollectionCard />
-                    <SavedCollectionCard />
-                    <SavedCollectionCard />
-                    <SavedCollectionCard />
-                    <SavedCollectionCard />
-                    <SavedCollectionCard />
+                }
+            </div>
+            {/* If no collection, hidden */}
+            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
+                <div
+                    className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
+                    onClick={handleNextButtonClick}
+                >
+                    Next
                 </div>
-                {/* If no collection, hidden */}
-                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
-                    <div
-                        className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
-                        onClick={handleNextButtonClick}
-                    >
-                        Next
-                    </div>
-                </div>
-            </React.Fragment>
+            </div>
         </>
     );
 }
 
 // page 2 in the drawer, choose item
-function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick }) {
+function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, setSelectedItems }) {
     return (
         <>
-            <React.Fragment>
-                {/* Chose item page */}
-                <div className="bg-white py-6 sticky mt-10 top-0 z-50 border-b">
-                    <h1 className="text-2xl text-center font-semibold mb-2">
-                        Add to your itinerary
-                    </h1>
-                    <button
-                        onClick={handleBackButtonClick}
-                        className="mt-4 absolute top-0 left-[-30px] p-3 ml-4"
-                    >
-                        <i className="fa-solid fa-arrow-left text-2xl"></i>
-                    </button>
-                </div>
-                <div className="my-4">
-                    <SavedStayCard />
-                    <SavedStayCard />
-                    <SavedFlightCard />
-                    <SavedExperienceCard />
-                </div>
-                <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
-                    <div
-                        className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
-                        onClick={handleNextButtonClick}
-                    >
-                        Next
-                    </div>
-                </div>
-            </React.Fragment>
-        </>
-    );
-}
-
-// page 3 in the drawer, input details of the item
-function OtherPageContent({ handleBackButtonClick }) {
-    return (
-        <React.Fragment>
-            {/* Other page content */}
-            <div className="bg-white py-6 mt-10 sticky top-0 z-50 border-b">
+            <div className="bg-white py-6 sticky mt-10 top-0 z-50 border-b">
                 <h1 className="text-2xl text-center font-semibold mb-2">
                     Add to your itinerary
                 </h1>
@@ -289,14 +278,61 @@ function OtherPageContent({ handleBackButtonClick }) {
                     <i className="fa-solid fa-arrow-left text-2xl"></i>
                 </button>
             </div>
+            <div className="my-4">
+                {Object.keys(items).map(item => {
+                    switch(item){
+                        case "experience":
+                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                        case "hotel":
+                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                        case "flight":
+                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                        default:
+                            return null
+                    }
+                })}
+            </div>
+            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
+                <div
+                    className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
+                    onClick={handleNextButtonClick}
+                >
+                    Next
+                </div>
+            </div>
+        </>
+    );
+}
+
+// page 3 in the drawer, input details of the item
+function OtherPageContent({ handleBackButtonClick, selectedItems }) {
+    return (
+        <>
+            <div className="bg-white py-6 mt-10 sticky top-0 z-50 border-b">
+                <h1 className="text-2xl text-center font-semibold mb-2">
+                    Add to your itinerary
+                </h1>
+                <button
+                    onClick={handleBackButtonClick}
+                    className="mt-4 absolute top-0 left-[-30px] p-3 ml-4"
+                    >
+                    <i className="fa-solid fa-arrow-left text-2xl"></i>
+                </button>
+            </div>
             {/* For Stay */}
-            <ForDetailStay />
-
-            {/* For Flight */}
-            <ForDetailFlight />
-
-            {/* For Experience */}
-            <ForDetailExperience />
+            {Object.keys(selectedItems).map(item => {
+                switch(selectedItems[item].type){
+                    case 'stay':
+                        return <ForDetailStay key={item.id} item={selectedItems[item].item}/>
+                    case "experience":
+                        return <ForDetailExperience key={item.id} item={selectedItems[item].item}/>
+                    case "flight":
+                        return <ForDetailFlight key={item.id} item={selectedItems[item].item}/>
+                    default:
+                        return null
+                }
+            })}
+            
 
             {/* Add to itinerary button */}
             <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50">
@@ -305,15 +341,15 @@ function OtherPageContent({ handleBackButtonClick }) {
                     Add to itinerary
                 </div>
             </div>
-        </React.Fragment>
+        </>
     );
 }
 
-function ForDetailStay() {
+function ForDetailStay({item}) {
     return (
         <>
             <div className="my-4">
-                <SavedStayCard />
+                <SavedStayCard item={item} setSelectedItems={false}/>
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
                 <div className="flex my-2">
@@ -650,11 +686,11 @@ function ForDetailStay() {
     );
 }
 
-function ForDetailFlight() {
+function ForDetailFlight({item}) {
     return (
         <>
             <div className="my-4">
-                <SavedFlightCard />
+                <SavedFlightCard item={item} setSelectedItems={false}/>
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
                 <div className="flex my-2">
@@ -930,7 +966,7 @@ function ForDetailFlight() {
     );
 }
 
-function ForDetailExperience() {
+function ForDetailExperience({item}) {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDetails = () => {
@@ -939,7 +975,7 @@ function ForDetailExperience() {
     return (
         <>
             <div className="my-4">
-                <SavedExperienceCard />
+                <SavedExperienceCard item={item} setSelectedItems={false}/>
             </div>
             {/* Additional Details */}
             <div className="my-4">
@@ -1093,7 +1129,6 @@ export function StayCard() {
                                     <button
                                         className="bg-transparent text-lg border-n"
                                         tabIndex={0}
-                                        role="button"
                                     >
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
@@ -1103,13 +1138,13 @@ export function StayCard() {
                                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                 >
                                     <li>
-                                        <a>
+                                        <div>
                                             <i class="fa-solid fa-gear"></i>{" "}
                                             Edit
-                                        </a>
+                                        </div>
                                     </li>
                                     <li>
-                                        <a
+                                        <div
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
@@ -1121,7 +1156,7 @@ export function StayCard() {
                                         >
                                             <i class="fa-solid fa-trash"></i>
                                             Delete
-                                        </a>
+                                        </div>
                                     </li>
                                 </ul>
                             </div>
@@ -1213,7 +1248,6 @@ export function FlightCard() {
                                     <button
                                         className="bg-transparent text-lg border-n"
                                         tabIndex={0}
-                                        role="button"
                                     >
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
@@ -1229,7 +1263,7 @@ export function FlightCard() {
                                         </a>
                                     </li>
                                     <li>
-                                        <a
+                                        <div
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
@@ -1241,7 +1275,7 @@ export function FlightCard() {
                                         >
                                             <i class="fa-solid fa-trash"></i>
                                             Delete
-                                        </a>
+                                        </div>
                                     </li>
                                 </ul>
                             </div>
@@ -1327,7 +1361,6 @@ export function ActivityCard() {
                                     <button
                                         className="bg-transparent text-lg border-n"
                                         tabIndex={0}
-                                        role="button"
                                     >
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
@@ -1337,13 +1370,13 @@ export function ActivityCard() {
                                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                 >
                                     <li>
-                                        <a>
+                                        <div>
                                             <i class="fa-solid fa-gear"></i>{" "}
                                             Edit
-                                        </a>
+                                        </div>
                                     </li>
                                     <li>
-                                        <a
+                                        <div
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
@@ -1355,7 +1388,7 @@ export function ActivityCard() {
                                         >
                                             <i class="fa-solid fa-trash"></i>
                                             Delete
-                                        </a>
+                                        </div>
                                     </li>
                                 </ul>
                             </div>
@@ -1455,11 +1488,24 @@ export function BudgetCard() {
     );
 }
 
-export function SavedStayCard() {
+export function SavedStayCard({item, setSelectedItems}) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
-        setIsSelected(true);
+        if (!setSelectedItems) return
+        setIsSelected((prev) => {
+            const newState = !prev;
+            setSelectedItems((prevSelectedItems) => {
+                const updatedItems = { ...prevSelectedItems };
+                if (newState) {
+                    updatedItems[item._id] = {item, type: "stay"};
+                } else {
+                    delete updatedItems[item._id];
+                }
+                return updatedItems;
+            });
+            return newState;
+        });
     };
 
     return (
@@ -1473,62 +1519,43 @@ export function SavedStayCard() {
             >
                 <figure className="w-1/3">
                     <img
-                        src="https://tourism.danang.vn/wp-content/uploads/2023/02/cau-rong-da-nang.jpeg"
+                        src={item.imgSrc}
                         className="w-full h-20 rounded-md"
-                        alt="Hotel Picture"
+                        alt="Hotel"
                     />
                 </figure>
                 <div className="flex space-y-1 flex-col items-start px-4 w-full">
                     <h2 className="text-lg md:text-xl font-semibold text-start">
-                        Hotel Name
+                        {item.hotelName}
                     </h2>
                     <div class="flex space-x-1">
-                        <svg
-                            class="w-4 h-4 text-[#ffa732]"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 22 20"
-                        >
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                        </svg>
-                        <svg
-                            class="w-4 h-4 text-[#ffa732]"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 22 20"
-                        >
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                        </svg>
-                        <svg
-                            class="w-4 h-4 text-[#ffa732]"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 22 20"
-                        >
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                        </svg>
+                        {Array.from({ length: Math.round(item.rating) }, (e, i) => (
+                                <svg
+                                    class="w-4 h-4 text-[#ffa732]"
+                                    key={i}
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 22 20"
+                            >
+                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                        ))}
                     </div>
                     <p class="text-gray-500 text-sm md:text-base">
-                        <i class="fa-solid fa-location-dot"></i> Ho Chi Minh
-                        City
+                        <i class="fa-solid fa-location-dot"></i> {item.cityName}
                     </p>
-                    <div className="text-base font-semibold">
-                        from 1.200.000
-                    </div>
                 </div>
             </div>
         </>
     );
 }
 
-export function SavedFlightCard() {
+export function SavedFlightCard({item, setSelectedItems}) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
-        setIsSelected(true);
+        setIsSelected((prev) => !prev);
     };
 
     return (
@@ -1544,7 +1571,7 @@ export function SavedFlightCard() {
                     <img
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQslxFGty6vilA5c2QqOQNNTu3QxMkHIbGO1LTLlwdy9A&s"
                         className="w-6 h-6 rounded-md"
-                        alt="Airline Picture"
+                        alt="Airline"
                     />
                     <div className="text-gray-500 text-start ml-2">
                         Vietnam Airlines
@@ -1580,11 +1607,24 @@ export function SavedFlightCard() {
     );
 }
 
-export function SavedExperienceCard() {
+export function SavedExperienceCard({item, setSelectedItems}) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
-        setIsSelected(true);
+        if (!setSelectedItems) return
+        setIsSelected((prev) => {
+            const newState = !prev;
+            setSelectedItems((prevSelectedItems) => {
+                const updatedItems = { ...prevSelectedItems };
+                if (newState) {
+                    updatedItems[item._id] = {item, type: "experience"};
+                } else {
+                    delete updatedItems[item._id];
+                }
+                return updatedItems;
+            });
+            return newState;
+        });
     };
 
     return (
@@ -1598,50 +1638,31 @@ export function SavedExperienceCard() {
             >
                 <figure className="w-1/3">
                     <img
-                        src="https://tourism.danang.vn/wp-content/uploads/2023/02/cau-rong-da-nang.jpeg"
+                        src={item.imgSrc}
                         className="w-full h-20 rounded-md"
-                        alt="Hotel Picture"
+                        alt="Hotel"
                     />
                 </figure>
                 <div className="flex space-y-1 flex-col items-start px-4 w-full">
                     <h2 className="text-lg md:text-xl font-semibold text-start">
-                        Experience Name
+                        {item.name}
                     </h2>
                     <div class="flex space-x-1">
-                        <svg
-                            class="w-4 h-4 text-[#ffa732]"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 22 20"
-                        >
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                        </svg>
-                        <svg
-                            class="w-4 h-4 text-[#ffa732]"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 22 20"
-                        >
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                        </svg>
-                        <svg
-                            class="w-4 h-4 text-[#ffa732]"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 22 20"
-                        >
-                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                        </svg>
+                        {Array.from({ length: Math.round(item.rating) }, (e, i) => (
+                                <svg
+                                    class="w-4 h-4 text-[#ffa732]"
+                                    key={i}
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                                viewBox="0 0 22 20"
+                            >
+                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                            </svg>
+                        ))}
                     </div>
-                    <p class="text-gray-500 text-sm md:text-base">
-                        <i class="fa-solid fa-location-dot"></i> Ho Chi Minh
-                        City
-                    </p>
                     <div className="text-base font-semibold">
-                        from 1.200.000
+                        from {item?.price?.toLocaleString('vi-VN')} VND
                     </div>
                 </div>
             </div>

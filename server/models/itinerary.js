@@ -6,6 +6,10 @@ const tripSchema = new mongoose.Schema({
 		ref: "User",
 		required: true
 	},
+	name:{
+		type: String,
+		required: true,
+	},
 	destination: {
 		type: String,
 		required: true
@@ -35,10 +39,10 @@ const tripSchema = new mongoose.Schema({
 			ref: "Flight"
 		}
 	],
-	schedules: [
+	experiences: [
 		{
 			type: mongoose.Types.ObjectId,
-			ref: "Schedule"
+			ref: "Experience"
 		}
 	]
 });
