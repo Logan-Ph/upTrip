@@ -182,7 +182,7 @@ function AdvancedSearchExperience() {
                     </div>
                     {isFetched && !autocompletePayload && (
                         <div class="relative z-40">
-                            <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto max-h-40 flex-nowrap">
+                            <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto max-h-40 flex-nowrap h-[400px] overflow-x-auto ">
                                 {data.length === 0 ? (
                                     <li className="p-2 font-semibold">No results found</li>
                                 ) : (

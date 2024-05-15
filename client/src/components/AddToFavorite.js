@@ -158,9 +158,9 @@ function AddItemButton({payload, hotel, experience, flight}) {
                 <div className="">
                 {/* Drawer */}
                 
-                <div className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${
-                        isOpen ? "translate-x-0" : "translate-x-full"
-                    } overflow-y-auto`}>
+                <div className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 
+                    
+                    ${isOpen ? "translate-x-0" : "translate-x-full"} overflow-auto`}>
 
                     
                     {/* close button */}

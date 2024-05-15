@@ -89,7 +89,8 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
         { name: "Bamboo Airways", imgSrc: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Bamboo_Airways_Logo_QH-BAV.png" },
         { name: "Vietravel Airlines", imgSrc: "https://apea.asia/wp-content/uploads/2022/11/vn-vietravel-logo-ib-2.png" },
         { name: "Vietnam Airlines", imgSrc: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/Logo-VNA-Sky-Te-V-removebg-preview.png?updatedAt=1714388660575" },
-        { name: "VietJet Air", imgSrc: "https://media.loveitopcdn.com/3807/logo-vietjet-20.png" }
+        { name: "VietJet Air", imgSrc: "https://media.loveitopcdn.com/3807/logo-vietjet-20.png" },
+        { name: "Hahn Air Systems", imgSrc: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/HahnAir.png?updatedAt=1715785511442"}
     ]
 
     // Find the logo based on the carrier
@@ -161,6 +162,7 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
             case 2: return "w-[90px] h-[22px] md:w-[100px] md:h-[25px] cursor-pointer md:scale-90";
             case 3: return "w-[80px] h-[30px] md:w-[100px] md:h-[40px] object-cover cursor-pointer";
             case 4: return "w-[70px] h-[22px] md:w-[90px] md:h-[22px]  cursor-pointer md:scale-90";
+            case 5: return "w-[80px] h-[30px] md:w-[100px] md:h-[40px] object-cover cursor-pointer";
             default: return "bg-gray-500";
         }
     };
