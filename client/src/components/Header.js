@@ -837,8 +837,14 @@ function AdvancedSearchHotel() {
             return;
         }
 
-        if (!checkinDate){
-            warningNotify("Please s")
+        if (!checkinDate.current.value){
+            warningNotify("Please select checkin date")
+            return
+        }
+
+        if (!checkoutDate.current.value){
+            warningNotify("Please select checkout date")
+            return
         }
 
         let payload = {

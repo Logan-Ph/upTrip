@@ -273,9 +273,11 @@ export default function AdvancedSearchHotelPage() {
                                         });
                                 })}
                             {(hotelListLoading ) && (
-                                
-                                <ASearchSkeleton />
-                                
+                                <>
+                                    <ASearchSkeleton />
+                                    <ASearchSkeleton />
+                                    <ASearchSkeleton />
+                                </>
                             )}
                         </div>
                     </div>

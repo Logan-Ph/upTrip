@@ -80,7 +80,7 @@ function PriceRange({listFilter, payload, listSort}) {
                     step={100000}
                     color = "dark"
                 />
-          </div>
+            </div>
         )}
     </>
     );

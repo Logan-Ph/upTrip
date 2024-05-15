@@ -1,6 +1,6 @@
 import { AdvancedFlightFilter } from "../components/AdvancedFlightFilter";
 import { useQuery } from "@tanstack/react-query";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { fetchFlightAdvancedSearch, fetchTripComFlight, fetchBayDepFlight, fetchMyTripFlight } from "../api/fetch.js";
@@ -58,11 +58,6 @@ export default function AdvancedSearchFlightPage() {
 
     const priceMax = agoda.isSuccess ? agoda.data.priceMax : 0;
 
-    // useEffect(()=>{
-    //     agoda.refetch();
-    // }, [sortField, sortDir, prefer, priceFilter, departureTime, arrivalTime])
-
-
     const tripCom = useQuery({
         queryKey: ["tripcom-flight"],
         queryFn: () => fetchTripComFlight(payload),
@@ -108,6 +103,13 @@ export default function AdvancedSearchFlightPage() {
                                     <FlightSortOption defaultSort={defaultSort} priceAscSort={priceAscSort} priceDescSort={priceDescSort}/>
                                 </div>
                             </div>
+                            {!agoda.isSuccess && 
+                                <>
+                                    <ASearchSkeleton />
+                                    <ASearchSkeleton />
+                                    <ASearchSkeleton />
+                                </>
+                            }
 
                             {agoda.isSuccess &&
                                 agoda.data.flights.map((flight) => {
@@ -115,7 +117,8 @@ export default function AdvancedSearchFlightPage() {
                                     const myTripPrice = myTrip.isSuccess && myTrip.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)) ? Math.round(myTrip.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)).price) : null
                                     const bayDepPrice = bayDep.isSuccess && bayDep.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)) ? Math.round(bayDep.data.find(item => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo)).price) : null
                                     return (
-                                    <Suspense fallback={<ASearchSkeleton />}> <AdvancedFlightCard from={searchParams.get("from")} to={searchParams.get("to")} flight={flight} tripComPrice={tripComPrice} myTripPrice={myTripPrice} bayDepPrice={bayDepPrice} tripComSuccess={tripCom.isSuccess} myTripSuccess={myTrip.isSuccess} bayDepSuccess={bayDep.isSuccess}/>
+                                    <Suspense fallback={<ASearchSkeleton />}> 
+                                        <AdvancedFlightCard from={searchParams.get("from")} to={searchParams.get("to")} flight={flight} tripComPrice={tripComPrice} myTripPrice={myTripPrice} bayDepPrice={bayDepPrice} tripComSuccess={tripCom.isSuccess} myTripSuccess={myTrip.isSuccess} bayDepSuccess={bayDep.isSuccess}/>
                                     </Suspense>)
                                 })}
                         </div>
