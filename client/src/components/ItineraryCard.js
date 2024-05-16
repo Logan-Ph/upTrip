@@ -246,10 +246,10 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
                                         flight: collection.flights
                                     });
                                 }
-                                return {id: collection._id, collection: collection};
+                                return { id: collection._id, collection: collection };
                             });
                         }}>
-                            <SavedCollectionCard key={collection.id} collection={collection} isCollectionSelected={selectedCollection?.id === collection._id}/>
+                            <SavedCollectionCard key={collection.id} collection={collection} isCollectionSelected={selectedCollection?.id === collection._id} />
                         </div>
                     ))
                     :
@@ -292,11 +292,11 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                 {Object.keys(items).map(item => {
                     switch (item) {
                         case "experience":
-                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
+                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         case "hotel":
                             return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         case "flight":
-                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
+                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         default:
                             return null
                     }
@@ -356,6 +356,12 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
 }
 
 function ForDetailStay({ item }) {
+    const [isOpen, setIsOpen] = useState(false)
+    const [numberOfAdults, setNumberOfAdults] = useState(1);
+    const [numberOfChildren, setNumberOfChildren] = useState(0);
+    const [numberOfRooms, setNumberOfRooms] = useState(1);
+    const [childrenAges, setChildrenAges] = useState([]);
+
     return (
         <>
             <div className="my-4">
@@ -432,6 +438,7 @@ function ForDetailStay({ item }) {
                         data-dropdown-toggle="dropdownDivider"
                         class="text-gray-500 bg-white focus:ring-1 focus:ring-black focus:border-black font-medium rounded-lg border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 mr-5 pt-5 ps-10 w-full justify-between"
                         type="button"
+                        onClick={() => setIsOpen((prev) => !prev)}
                     >
                         <label
                             for="floating_filled"
@@ -442,7 +449,7 @@ function ForDetailStay({ item }) {
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                         </div>
-                        1 adult, 1 child, 1 room{" "}
+                        {numberOfAdults} adult, {numberOfChildren} child, {numberOfRooms} room{" "}
                         <svg
                             class="w-2.5 h-2.5 ms-3"
                             aria-hidden="true"
@@ -463,7 +470,7 @@ function ForDetailStay({ item }) {
                     {/* <!-- Dropdown menu --> */}
                     <div
                         id="dropdownDivider"
-                        className="z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full hidden"
+                        className={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full ${isOpen ? "block" : "hidden"}`}
                     >
                         {/* Ask user to input room information */}
                         <div
@@ -486,6 +493,14 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfRooms(
+                                                    (prev) =>
+                                                        prev > 1
+                                                            ? prev - 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -493,7 +508,7 @@ function ForDetailStay({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg">1</span>
+                                        <span class="text-lg">{numberOfRooms}</span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -502,6 +517,24 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() => {
+                                                setNumberOfRooms(
+                                                    (prev) => {
+                                                        if (prev >= 10)
+                                                            return prev;
+
+                                                        if (
+                                                            prev ===
+                                                            numberOfAdults
+                                                        ) {
+                                                            setNumberOfAdults(
+                                                                prev + 1
+                                                            );
+                                                        }
+                                                        return prev + 1;
+                                                    }
+                                                );
+                                            }}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -531,6 +564,16 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfAdults(
+                                                    (prev) =>
+                                                        prev - 1 > 0 &&
+                                                            prev >
+                                                            numberOfRooms
+                                                            ? prev - 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -538,7 +581,7 @@ function ForDetailStay({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg">1</span>
+                                        <span class="text-lg">{numberOfAdults}</span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -547,6 +590,11 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfAdults(
+                                                    (prev) => prev + 1
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -579,6 +627,29 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfChildren(
+                                                    (prev) => {
+                                                        if (prev > 0) {
+                                                            setChildrenAges(
+                                                                (
+                                                                    prev
+                                                                ) =>
+                                                                    prev.slice(
+                                                                        0,
+                                                                        prev.length -
+                                                                        1
+                                                                    )
+                                                            );
+                                                            return (
+                                                                prev - 1
+                                                            );
+                                                        } else {
+                                                            return prev;
+                                                        }
+                                                    }
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -586,7 +657,7 @@ function ForDetailStay({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {numberOfChildren} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -595,6 +666,16 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfChildren(
+                                                    (prev) =>
+                                                        prev <
+                                                            numberOfRooms *
+                                                            6
+                                                            ? prev + 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -615,22 +696,39 @@ function ForDetailStay({ item }) {
                                 check-in
                             </div>
                             <div class="overflow-y-scroll flex flex-wrap items-start px-5 mx-auto justify-between md:justify-normal w-full md:max-h-[150px]">
-                                <form class="w-24 md:w-16 mb-3 md:mr-4">
-                                    <label
-                                        for="number-input"
-                                        class="block mb-2 text-xs text-start font-medium text-gray-900"
-                                    >
-                                        Child 1
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="number-input"
-                                        aria-describedby="helper-text-explanation"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        placeholder="Age"
-                                        required
-                                    />
-                                </form>
+                                {Array.from(
+                                    { length: numberOfChildren },
+                                    (_, index) => {
+                                        return (
+                                            <form class="w-24 md:w-16 mb-3 md:mr-4">
+                                                <label
+                                                    for="number-input"
+                                                    class="block mb-2 text-xs text-start font-medium text-gray-900"
+                                                >
+                                                    Child {index + 1}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id="number-input"
+                                                    aria-describedby="helper-text-explanation"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                    placeholder="Age"
+                                                    required
+                                                    onChange={(e) => {
+                                                        setChildrenAges(
+                                                            (prev) => {
+                                                                const temp =
+                                                                    [...prev];
+                                                                temp[index] = e.target.value;
+                                                                return temp;
+                                                            }
+                                                        );
+                                                    }}
+                                                />
+                                            </form>
+                                        )
+                                    }
+                                )}
                             </div>
                         </div>
                     </div>
@@ -1617,7 +1715,7 @@ export function SavedFlightCard({ item, setSelectedItems, selectedItems }) {
     );
 }
 
-export function SavedExperienceCard({ item, setSelectedItems}) {
+export function SavedExperienceCard({ item, setSelectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
