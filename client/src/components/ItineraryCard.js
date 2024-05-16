@@ -213,6 +213,7 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
         refetchOnWindowFocus: false,
     })
 
+
     return (
         <>
             <div className="bg-white py-8 mt-10 sticky top-0 z-50 border-b">

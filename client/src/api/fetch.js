@@ -263,3 +263,7 @@ export function fetchDetailItinerary(payload) {
 export function editItinerary(payload) {
 	return axios.post("/edit-itinerary", payload, options)
 }
+
+export function addFlightItinerary(payload) {
+	return axios.post("/add-to-itinerary/flight", payload, options)
+}
