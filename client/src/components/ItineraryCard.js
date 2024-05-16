@@ -362,66 +362,54 @@ function ForDetailStay({ item }) {
                 <SavedStayCard item={item} setSelectedItems={false} />
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
-                <div className="flex my-2">
-                    <div class="relative w-1/2">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg
-                                class="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
+
+                {/* Datepicker */}
+                <div className="flex flex-col md:flex-row my-2">
+                    <div class="relative w-full md:w-1/2 h-[60px]">
+                        <div class="flex items-center">
+                            <span class="custom-datepicker-toggle">
+                                <span class="custom-datepicker-toggle-button">
+                                    <i class="fa-regular fa-calendar"></i>
+                                </span>
+                                <input
+                                    id="check-in"
+                                    type="date"
+                                    class="custom-datepicker-input p-2.5 pt-5 rounded-lg border-gray-300 w-fit focus:ring-black focus:border-black block"
+                                />
+                            </span>
                         </div>
                         <div>
-                            <input
-                                datepicker
-                                datepicker-autohide
-                                name="start"
-                                type="text"
-                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 rounded-r-none border-l-"
-                                placeholder="dd/mm/yyyy"
-                            />
                             <label
-                                for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                for="check-in"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                             >
                                 Check-in
                             </label>
                         </div>
                     </div>
-                    <div class="relative w-1/2">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none focus:ring-none">
-                            <svg
-                                class="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
+                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                        <div class="flex items-center">
+                            <span class="datepicker-toggle">
+                                <span class="datepicker-toggle-button"></span>
+                                <input
+                                    id="check-out"
+                                    type="date"
+                                    class="datepicker-input p-2.5 pt-5 rounded-lg w-fit border-gray-300 focus:ring-black focus:border-black"
+                                />
+                            </span>
                         </div>
                         <div>
-                            <input
-                                datepicker
-                                datepicker-autohide
-                                name="end"
-                                type="text"
-                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0"
-                                placeholder="dd/mm/yyyy"
-                            />
                             <label
-                                for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                for="check-out"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                             >
                                 Check-out
                             </label>
                         </div>
                     </div>
                 </div>
+                {/*  */}
+
                 {/* Ask Guest and Room */}
                 <div className="text-start font-semibold text-lg">
                     Room information
@@ -703,37 +691,54 @@ function ForDetailFlight({ item }) {
                 <SavedFlightCard item={item} setSelectedItems={false} />
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
-                <div className="flex my-2">
-                    <div class="relative w-full">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none focus:ring-none">
-                            <svg
-                                class="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
+
+                {/*  */}
+                <div className="flex flex-col md:flex-row my-2">
+                    <div class="relative w-full md:w-1/2 h-[60px]">
+                        <div class="flex items-center">
+                            <span class="custom-datepicker-toggle">
+                                <span class="custom-datepicker-toggle-button">
+                                    <i class="fa-regular fa-calendar"></i>
+                                </span>
+                                <input
+                                    id="check-in"
+                                    type="date"
+                                    class="custom-datepicker-input p-2.5 pt-5 rounded-lg border-gray-300 w-fit focus:ring-black focus:border-black block"
+                                />
+                            </span>
                         </div>
                         <div>
-                            <input
-                                datepicker
-                                datepicker-autohide
-                                name="end"
-                                type="text"
-                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5"
-                                placeholder="dd/mm/yyyy"
-                            />
                             <label
-                                for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                for="check-in"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                             >
-                                Departing
+                                Check-in
+                            </label>
+                        </div>
+                    </div>
+                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                        <div class="flex items-center">
+                            <span class="datepicker-toggle">
+                                <span class="datepicker-toggle-button"></span>
+                                <input
+                                    id="check-out"
+                                    type="date"
+                                    class="datepicker-input p-2.5 pt-5 rounded-lg w-fit border-gray-300 focus:ring-black focus:border-black"
+                                />
+                            </span>
+                        </div>
+                        <div>
+                            <label
+                                for="check-out"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                            >
+                                Check-out
                             </label>
                         </div>
                     </div>
                 </div>
+                {/*  */}
+
                 {/* Ask Flight Details */}
                 <div class="text-start font-semibold text-lg">
                     Flight Information
