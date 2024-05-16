@@ -114,15 +114,13 @@ function AddItemButton({payload, hotel, experience, flight}) {
 
     const addToCollectionFlight = useMutation({
         mutationFn: () => addFlightToCollection(payload, selectedCollection._id),
-        onMutate: () => {
-            console.log("send")
-        },
         onSuccess: () => {
             successNotify("Added to collection")
             refetchCollections()
         },
         onError: (e) => {
-            warningNotify(e.response.data);
+            console.log(e)
+            warningNotify(e.message);
         }
     })
 

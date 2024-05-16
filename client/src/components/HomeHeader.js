@@ -96,6 +96,15 @@ function AdvancedSearchFlight({ setTab }) {
     const date = useRef();
 
     useEffect(() => {
+        if (numberOfAdult * 2 < numberOfChild) {
+            setNumberOfChild(numberOfAdult * 2)
+        } 
+        if (numberOfAdult < numberOfInfant) {
+            setNumberOfInfant(numberOfAdult)
+        }
+    }, [numberOfAdult])
+
+    useEffect(() => {
         setFromEdit(true)
         const handler = setTimeout(() => {
             setDebouncedKeywordFrom(keywordFrom);

@@ -993,12 +993,10 @@ exports.getMyTripFlight = async (req, res) => {
             for (const item of response.data.data.search.flights) {
                 const flightNo = []
                 const airline = []
-                let arrival;
                 for (const flight of item.bounds[0].segments) {
                     if (flight.__typename == 'TripSegment') {
                         flightNo.push(flight.flightNumber)
                         airline.push(flight.marketingCarrier.code)
-                        arrival = flight.arrivedAt
                     }
                 }
                 items.push({
@@ -1032,11 +1030,11 @@ exports.getBayDepFlight = async (req, res) => {
             return sendRequest(bayDepGetFlightURL, payload);
         });
         const response = await Promise.all(requests)
-        for (const res of response) {
-            if (!res.data.ListFareOption) {
-                throw new Error('Invalid response: ListFareOption not found');
+        for (const result of response) {
+            if (!result.data.ListFareOption) {
+                return res.status(500).json(new Error("Server error"))
             }
-            for (const item of res.data.ListFareOption) {
+            for (const item of result.data.ListFareOption) {
                 const flightNo = []
                 const airline = []
                 airline.push(item.Carrier)
@@ -1051,6 +1049,7 @@ exports.getBayDepFlight = async (req, res) => {
         }
         return res.status(200).json(items)
     } catch (error) {
+        console.log(error)
         return res.status(500).json(error);
     }
 }
@@ -1375,8 +1374,13 @@ exports.addToCollectionFlight = async (req, res) => {
 
         } = req.body.payload
 
+
         let collection = await Collection.findById(req.body.collectionId)
         if (!collection) return res.status(404).json("Collection not found")
+
+        if (await Flight.findOne({flightNo: flightNo})) {
+            return res.status(400).json("Flight already exists in collection")
+        }
 
         const newFlight = new Flight({
             flightNo,
@@ -1398,7 +1402,6 @@ exports.addToCollectionFlight = async (req, res) => {
         await collection.save()
         return res.status(200).json("Flight added to collection")
     } catch (er) {
-        console.log(er)
         return res.status(500).json(er);
     }
 }
@@ -1510,10 +1513,11 @@ exports.addFlightItinerary = async (req, res) => {
         const { itineraryId, flightId } = req.body
         const itinerary = await Itinerary.findById(itineraryId)
         
+        
         if (itinerary.flights.includes(flightId)) {
             return res.status(500).json("Flight already added to itinerary")
         }
-        itinerary.hotels.push(hotelId)
+        itinerary.hotels.push(flightId)
         await itinerary.save()
         return res.status(200).json("Hotel added to itinerary")
     } catch (e) {

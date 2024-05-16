@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { deleteItinerary, fetchCollections } from "../api/fetch";
+import { deleteItinerary, fetchCollections, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
@@ -23,7 +23,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
     const handleDelete = (e) => {
         e.preventDefault()
         handleDeleteItinerary.mutate()
-        
+
 
     }
 
@@ -248,10 +248,10 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
                                         flight: collection.flights
                                     });
                                 }
-                                return {id: collection._id, collection: collection};
+                                return { id: collection._id, collection: collection };
                             });
                         }}>
-                            <SavedCollectionCard key={collection.id} collection={collection} isCollectionSelected={selectedCollection?.id === collection._id}/>
+                            <SavedCollectionCard key={collection.id} collection={collection} isCollectionSelected={selectedCollection?.id === collection._id} />
                         </div>
                     ))
                     :
@@ -294,11 +294,11 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                 {Object.keys(items).map(item => {
                     switch (item) {
                         case "experience":
-                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
+                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         case "hotel":
                             return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         case "flight":
-                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
+                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         default:
                             return null
                     }
@@ -703,6 +703,75 @@ function ForDetailFlight({ item }) {
     const [child, setChild] = useState(0)
     const [infant, setInfant] = useState(0)
     const [dropdown, setDropdown] = useState(false)
+
+
+    const [agodaPrice, setAgodaPrice] = useState()
+    const [tripComPrice, setTripComPrice] = useState()
+    const [myTripPrice, setMyTripPrice] = useState()
+    const [bayDepPrice, setBayDepPrice] = useState()
+
+    const payload = {
+        year: item.year,
+        month: item.month,
+        day: item.day,
+        from: item.from,
+        to: item.to,
+        adult: adult,
+        child: child,
+        infant: infant,
+        seatClass: item.seatClass,
+        sortField: "best",
+        sortDir: "asc",
+        prefer: [],
+        priceFilter: [],
+        departureTime: [0, 1440],
+        arrivalTime: [0, 1440]
+    }
+
+    useEffect(() => {
+        if (adult * 2 < child) {
+            setChild(adult * 2)
+        }
+        if (adult < infant) {
+            setInfant(adult)
+        }
+    }, [adult])
+
+    const fetchAgoda = useMutation({
+        mutationFn: () => fetchFlightAdvancedSearch(payload),
+        onSuccess: (data) => {
+            setAgodaPrice(data.flights.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.agodaPrice)
+        }
+    })
+
+    const fetchTripCom = useMutation({
+        mutationFn: () => fetchTripComFlight(payload),
+        onSuccess: (data) => {
+            setTripComPrice(data.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.price)
+        }
+    })
+
+    const fetchMyTrip = useMutation({
+        mutationFn: () => fetchMyTripFlight(payload),
+        onSuccess: (data) => {
+            setMyTripPrice(data.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.price)
+        }
+    })
+
+    const fetchBayDep = useMutation({
+        mutationFn: () => fetchBayDepFlight(payload),
+        onSuccess: (data) => {
+            setBayDepPrice(data.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.price)
+        }
+    })
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        fetchAgoda.mutateAsync()
+        fetchTripCom.mutateAsync()
+        fetchMyTrip.mutateAsync()
+        fetchBayDep.mutateAsync()
+    }
     return (
         <>
             <div className="my-4">
@@ -775,6 +844,14 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setAdult(
+                                                    (prev) =>
+                                                        prev - 1 > 0
+                                                            ? prev - 1
+                                                            : 1
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -782,7 +859,7 @@ function ForDetailFlight({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {adult} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -791,6 +868,17 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setAdult(
+                                                    (prev) =>
+                                                        prev +
+                                                            1 +
+                                                            child +
+                                                            infant <=
+                                                            6
+                                                            ? prev + 1
+                                                            : prev
+                                                )}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -818,6 +906,14 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setChild(
+                                                    (prev) =>
+                                                        prev == 0
+                                                            ? prev
+                                                            : prev - 1
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -825,7 +921,7 @@ function ForDetailFlight({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {child} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -834,6 +930,19 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() => setChild(
+                                                (prev) =>
+                                                    prev <
+                                                        adult *
+                                                        2 &&
+                                                        prev +
+                                                        1 +
+                                                        adult +
+                                                        infant <=
+                                                        6
+                                                        ? prev + 1
+                                                        : prev
+                                            )}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -860,6 +969,14 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setInfant(
+                                                    (prev) =>
+                                                        prev - 1 >= 0
+                                                            ? prev - 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -867,7 +984,7 @@ function ForDetailFlight({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {infant} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -876,6 +993,18 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() => setInfant(
+                                                (prev) =>
+                                                    prev + 1 <=
+                                                        adult &&
+                                                        prev +
+                                                        1 +
+                                                        adult +
+                                                        child <=
+                                                        6
+                                                        ? prev + 1
+                                                        : prev
+                                            )}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -891,18 +1020,21 @@ function ForDetailFlight({ item }) {
                 </div>
                 {/* Search for price*/}
                 <div className="flex justify-center">
-                    <div className="btn btn-sm text-center rounded-full text-sm text-gray-800">
+                    <div
+                        onClick={handleSubmit}
+                        className="btn btn-sm text-center rounded-full text-sm text-gray-800">
                         Search
                     </div>
                 </div>
                 {/* Price */}
                 <div className="my-4">
                     {/* Loading price */}
-                    <div className="flex justify-center my-10">
-                        <span className="loading loading-dots loading-md"></span>
-                    </div>
                     {/* If user choose this price, change to bg-[#8DD3BB] , otherwise bg-[#CDEAE1] */}
-                    <div class="border border-transparent bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]">
+                    {fetchAgoda.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)}
+                    {fetchAgoda.isSuccess && (<div class="border border-transparent bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]">
                         <div class="mx-auto">
                             <img
                                 src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
@@ -912,38 +1044,74 @@ function ForDetailFlight({ item }) {
                         </div>
                         <div class="mx-auto">
                             <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                346.405 VND
+                                {agodaPrice?.toLocaleString("vi-VN")} VND
                             </p>
                         </div>
-                    </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                    </div>)
+                    }
+                    {fetchMyTrip.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)
+                    }
+                    {fetchMyTrip.isSuccess &&
+                        (<div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                            <div class="mx-auto">
+                                <img
+                                    src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Mytrip_Logo_Colar_Pink.png?updatedAt=1714385168260"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {myTripPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
+                        </div>)
+                    }
+                    {fetchTripCom.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)
+                    }
+                    {fetchTripCom.isSuccess && (
+                        <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                            <div class="mx-auto">
+                                <img
+                                    src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {tripComPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                    {fetchBayDep.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)
+                    }
+                    {fetchBayDep.isSuccess &&
+                        (<div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
                         <div class="mx-auto">
                             <img
-                                src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
+                                src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952"
                                 alt="website logo"
                                 class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
                             />
                         </div>
                         <div class="mx-auto">
                             <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                412.397 VND
+                                {bayDepPrice?.toLocaleString("vi-VN")} VND
                             </p>
                         </div>
-                    </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
-                        <div class="mx-auto">
-                            <img
-                                src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
-                        </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                330.614 VND
-                            </p>
-                        </div>
-                    </div>
+                    </div>)
+                    }
                 </div>
             </div>
         </>
@@ -1604,7 +1772,7 @@ export function SavedFlightCard({ item, setSelectedItems, selectedItems }) {
     );
 }
 
-export function SavedExperienceCard({ item, setSelectedItems}) {
+export function SavedExperienceCard({ item, setSelectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {

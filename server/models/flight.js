@@ -32,11 +32,11 @@ const flightSchema = new mongoose.Schema({
         required: true,
     },
     day:  {
-        type: Number,
+        type: String,
         required: true
     },
     month: {
-        type: Number,
+        type: String,
         required: true
     },
     year: {

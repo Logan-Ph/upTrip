@@ -230,6 +230,14 @@ function AdvancedSearchFlight() {
     const [debouncedKeywordTo, setDebouncedKeywordTo] = useState(null)
     const date = useRef();
 
+    useEffect(() => {
+        if (numberOfAdult * 2 < numberOfChild) {
+            setNumberOfChild(numberOfAdult * 2)
+        } 
+        if (numberOfAdult < numberOfInfant) {
+            setNumberOfInfant(numberOfAdult)
+        }
+    }, [numberOfAdult])
 
     useEffect(() => {
         setFromEdit(true)
@@ -538,9 +546,6 @@ function AdvancedSearchFlight() {
                                                                 6
                                                                     ? prev + 1
                                                                     : prev
-                                                        );
-                                                        console.log(
-                                                            numberOfAdult
                                                         );
                                                     }}
                                                 >
