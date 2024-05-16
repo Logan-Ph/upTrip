@@ -110,7 +110,7 @@ export default function Itinerary() {
                             itinerary
                         </button>
                         <dialog id="create_itinerary_modal" className="modal">
-                            <div className="modal-box px-10">
+                            <div className="modal-box px-10" style={{zIndex:100}}>
                                 <form method="dialog">
                                     {/* if there is a button in form, it will close the modal */}
                                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -226,6 +226,7 @@ export default function Itinerary() {
                                                                     </svg>
                                                                 </div>
                                                                 <input
+                                                                style={{zIndex:1000}}
                                                                     ref={checkinDate}
                                                                     datepicker
                                                                     datepicker-format="dd/mm/yyyy"
