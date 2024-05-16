@@ -55,8 +55,14 @@ const hotelSchema = new mongoose.Schema({
     hotelId: { 
         type: Number, 
     },
-    price:{
-        type: String,
+    tripPrice: { 
+        type: String, 
+    },
+    agodaPrice: { 
+        type: String, 
+    },
+    bookingPrice: { 
+        type: String, 
     },
     address: { 
         type: String

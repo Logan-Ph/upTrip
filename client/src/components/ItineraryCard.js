@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addHotelItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight } from "../api/fetch";
+import { addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
@@ -122,7 +122,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
 }
 
 // add item button in detailed itinerary page
-export function AddItemButton() {
+export function AddItemButton({refetchItinerary}) {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState("main");
     const [selectedCollection, setSelectedCollection] = useState()
@@ -193,6 +193,7 @@ export function AddItemButton() {
                                 handleBackButtonClick={handleBackButtonClick}
                                 selectedItems={selectedItems}
                                 setSelectedItems={setSelectedItems}
+                                refetchItinerary={refetchItinerary}
                             />
                         )}
                     </div>
@@ -335,18 +336,26 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
 }
 
 // page 3 in the drawer, input details of the item
-function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedItems }) {
+function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedItems, refetchItinerary }) {
     const [searchParams] = useSearchParams()
 
     const addHotel = useMutation({
         mutationFn: (item) => addHotelItinerary({item: item, itineraryId: searchParams.get('itineraryId')}),
         retry: 0,
+        onSuccess: () => {
+            successNotify("Add to itinerary successfully")
+            refetchItinerary()
+        }
     })
 
     const handleAddToItinerary = (e) => {
         e.preventDefault()
         Object.keys(selectedItems).forEach(item => {
             if (selectedItems[item].type === "stay") {
+                if (!selectedItems[item].tripPrice && !selectedItems[item].agodaPrice && !selectedItems[item].bookingPrice) {
+                    warningNotify("Please select price")
+                    return
+                }
                 addHotel.mutate(selectedItems[item])
             }
         })
@@ -406,7 +415,6 @@ function ForDetailStay({ item, setSelectedItems }) {
     const [endDate, setEndDate] = useState();
     const [agodaPrice, setAgodaPrice] = useState(false)
     const [bookingPrice, setBookingPrice] = useState(false)
-    const [selectedPrice, setSelectedPrice] = useState()
     const [priceType, setPriceType] = useState("")
 
     const daysBetween = (checkin, checkout) =>
@@ -930,7 +938,6 @@ function ForDetailStay({ item, setSelectedItems }) {
                                 <div 
                                     class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "trip" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} `}
                                     onClick={() => {
-                                        setSelectedPrice(Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-");
                                         setPriceType("trip");
                                         setSelectedItems((prev) => ({
                                             ...prev,
@@ -938,7 +945,9 @@ function ForDetailStay({ item, setSelectedItems }) {
                                                 ...prev[item._id],
                                                 checkin: formattedDate(startDate),
                                                 checkout: formattedDate(endDate),
-                                                price: Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-"
+                                                tripPrice: Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-",
+                                                agodaPrice: null,
+                                                bookingPrice: null
                                             }
                                         }));
                                     }}
@@ -961,7 +970,6 @@ function ForDetailStay({ item, setSelectedItems }) {
                             <div 
                                 class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "booking" ? "bg-[#8DD3BB]" : " bg-[#CDEAE1]"} duration-300`}
                                 onClick={() => {
-                                    setSelectedPrice(bookingPrice)
                                     setPriceType("booking")
                                     setSelectedItems((prev) => ({
                                         ...prev,
@@ -969,7 +977,9 @@ function ForDetailStay({ item, setSelectedItems }) {
                                             ...prev[item._id],
                                             checkin: formattedDate(startDate),
                                             checkout: formattedDate(endDate),
-                                            price: bookingPrice === '0' ? "-" : bookingPrice
+                                            bookingPrice: bookingPrice === '0' ? "-" : bookingPrice,
+                                            agodaPrice: null,
+                                            tripPrice: null
                                         }
                                     }))
                                 }}
@@ -992,7 +1002,6 @@ function ForDetailStay({ item, setSelectedItems }) {
                             <div 
                                 class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "agoda" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} duration-300`}
                                 onClick={() => {
-                                    setSelectedPrice(agodaPrice);
                                     setPriceType("agoda");
                                     setSelectedItems((prev) => ({
                                         ...prev,
@@ -1000,7 +1009,9 @@ function ForDetailStay({ item, setSelectedItems }) {
                                             ...prev[item._id],
                                             checkin: formattedDate(startDate),
                                             checkout: formattedDate(endDate),
-                                            price: agodaPrice === '0' ? "-" : agodaPrice
+                                            agodaPrice: agodaPrice === '0' ? "-" : agodaPrice,
+                                            tripPrice: null,
+                                            bookingPrice: null
                                         }
                                     }))
                                 }}
@@ -1671,25 +1682,49 @@ export function EmptySection() {
     );
 }
 
-export function StayCard() {
+export function StayCard({item, refetchItinerary}) {
+    const convertDate = (date) => `${date.substring(6, 8)}.${date.substring(4, 6)}.${date.substring(0, 4)}`
+    const [searchParams] = useSearchParams()
+
+    const getURLImage = (item) => {
+        if (item.tripPrice) return "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+        if (item.agodaPrice) return "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+        if (item.bookingPrice) return "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
+    }
+
+    const deleteHotel = useMutation({
+        mutationFn: () => deleteHotelFromItinerary({itineraryId: searchParams.get("itineraryId"), hotelId: item._id}),
+        onSuccess: () => {
+            successNotify("Hotel deleted from itinerary")
+            refetchItinerary()
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        console.log({itineraryId: searchParams.get("itineraryId"), hotelId: item._id})
+        deleteHotel.mutate()
+    }
+
     return (
         <>
             <div class="card card-side flex-col md:flex-row rounded-lg bg-white shadow-xl my-4">
                 <Link>
                     <figure className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
-                            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/228033379.jpg?k=5559966043302855e467dfa2c28ad78034f95b8ffaec437ca19004ba936c7b49&o=&hp=1"
+                            src={item.imgSrc}
                             alt="Itinerary Cover Pic"
                             className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
                     </figure>
                 </Link>
 
+
                 <div class="card-body flex-1 px-5 p-7">
                     <div className="flex justify-between items-center mb-2">
                         <div>
                             <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/1280px-Booking.com_logo.svg.png"
+                                src={getURLImage(item)}
                                 alt="Logo of platform"
                                 className="w-[120px]"
                             />
@@ -1708,12 +1743,6 @@ export function StayCard() {
                                     tabIndex={0}
                                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                 >
-                                    <li>
-                                        <div>
-                                            <i class="fa-solid fa-gear"></i>{" "}
-                                            Edit
-                                        </div>
-                                    </li>
                                     <li>
                                         <div
                                             className="text-red-600"
@@ -1745,7 +1774,9 @@ export function StayCard() {
                                             <button className="btn rounded-lg mx-2">
                                                 Cancel
                                             </button>
-                                            <button className="btn bg-black text-white rounded-lg">
+                                            <button 
+                                            onClick={(e) => handleDelete(e)}
+                                            className="btn bg-black text-white rounded-lg">
                                                 Delete
                                             </button>
                                         </form>
@@ -1756,7 +1787,7 @@ export function StayCard() {
                     </div>
                     <Link>
                         <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4 mb-4">
-                            InterContinental Da Nang Sun Peninsula Resort
+                            {item.hotelName}
                         </h2>
                     </Link>
                     <div className="md:flex md:space-x-20 mb-4">
@@ -1766,7 +1797,7 @@ export function StayCard() {
                             </div>
                             <div>
                                 <p className="text-gray-600">Check-out</p>
-                                <p className="font-semibold">24.03.20024</p>
+                                <p className="font-semibold">{convertDate(item.checkout)}</p>
                             </div>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -1775,7 +1806,7 @@ export function StayCard() {
                             </div>
                             <div>
                                 <p className="text-gray-600">Check-in</p>
-                                <p className="font-semibold">18.03.20024</p>
+                                <p className="font-semibold">{convertDate(item.checkin)}</p>
                             </div>
                         </div>
                     </div>
@@ -1789,12 +1820,12 @@ export function StayCard() {
                                     Guest(s) and Room(s)
                                 </p>
                                 <p className="font-semibold">
-                                    2 adult(s), 1 child, 1 room
+                                    {item.adult} adult(s), {item.child || 0} child(ren), {item.crn || 1} room(s)
                                 </p>
                             </div>
                         </div>
                         <div className="font-bold text-2xl text-end">
-                            1.200.000
+                            {item.tripPrice || item.agodaPrice || item.bookingPrice} VND
                         </div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>

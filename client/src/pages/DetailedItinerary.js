@@ -507,8 +507,8 @@ export default function DetailedItinerary() {
                                         <EmptySection />
                                         :
                                         <>
-                                            {itinerary?.hotels?.map(stay => <StayCard key={stay.id} />)}
-                                            <AddItemButton />
+                                            {itinerary?.hotels?.map(stay => <StayCard key={stay.id} item={stay} refetchItinerary={refetchItinerary}/>)}
+                                            <AddItemButton refetchItinerary={refetchItinerary}/>
                                         </>
                                 }
 
@@ -528,7 +528,7 @@ export default function DetailedItinerary() {
                                         <EmptySection />
                                         :
                                         <>
-                                            {itinerary?.flights?.map(flight => <FlightCard key={flight.id} />)}
+                                            {itinerary?.flights?.map(flight => <FlightCard key={flight.id} item={flight} refetchItinerary={refetchItinerary}/>)}
                                             <AddItemButton />
                                         </>
                                 }
