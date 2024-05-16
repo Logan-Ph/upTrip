@@ -62,6 +62,8 @@ export default function Itinerary() {
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     const [tripLength, setTripLength] = useState(1);
+    const formattedDate  = (date) => date.replace(/-/g, '');
+
 
     const getItinerary = useQuery({
         queryKey: ["fetch-itinerary"],
@@ -76,8 +78,8 @@ export default function Itinerary() {
                 name,
                 destination,
                 description,
-                startDate,
-                endDate,
+                startDate: formattedDate(startDate),
+                endDate: formattedDate(endDate),
                 tripLength,
             }),
         onSuccess: (data) => {
@@ -91,7 +93,8 @@ export default function Itinerary() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!destination || !description) {
+
+        if (!destination || !description || (!startDate && !endDate)) {
             warningNotify("Please fill in all the fields");
             return;
         }
@@ -225,42 +228,7 @@ export default function Itinerary() {
                                             <div className="mt-4">
                                                 {activeTab === 1 && (
                                                 <div className="my-6 mb-10">
-                                                    <div
-                                                        date-rangepicker
-                                                        class="flex items-center"
-                                                    >
-                                                        <div class="relative">
-                                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                                <svg
-                                                                    class="w-4 h-4 text-gray-500"
-                                                                    aria-hidden="true"
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    fill="currentColor"
-                                                                    viewBox="0 0 20 20"
-                                                                >
-                                                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                                                </svg>
-                                                            </div>
-                                                            <input
-                                                            style={{zIndex:1000}}
-                                                                ref={checkinDate}
-                                                                datepicker
-                                                                datepicker-format="dd/mm/yyyy"
-                                                                name="start"
-                                                                type="text"
-                                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 "
-                                                                placeholder="Select date start"
-                                                                value={checkinDate.current?.value}
-                                                            />
-                                                        </div>
-                                                        <span class="mx-4 text-gray-500">
-                                                            to
-                                                        </span>
-                                                        <input
-                                                            type="date"
-                                                            class="datepicker-input"
-                                                        />
-                                                    </div>
+                                                    
                                                     <div className="flex flex-col md:flex-row my-2 justify-center">
                                                         <div class="relative w-full md:w-1/2 h-[60px]">
                                                             <div class="flex items-center">
@@ -271,7 +239,13 @@ export default function Itinerary() {
                                                                     <input
                                                                         id="from-date"
                                                                         type="date"
-                                                                        class="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                        className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                        min={new Date().toISOString().split('T')[0]} // Set min date to today
+                                                                        max={endDate || ''} // Set max date to endDate if it exists
+                                                                        onChange={(e) => {
+                                                                            const newStartDate = e.target.value;
+                                                                            setStartDate(newStartDate);
+                                                                        }}
                                                                     />
                                                                 </span>
                                                             </div>
@@ -292,7 +266,15 @@ export default function Itinerary() {
                                                                     <input
                                                                         id="to-date"
                                                                         type="date"
-                                                                        class="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                        className="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                        min={startDate || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
+                                                                        onChange={(e) => {
+                                                                            const newEndDate = e.target.value;
+                                                                            if (newEndDate < startDate) {
+                                                                                setStartDate(newEndDate);
+                                                                            }
+                                                                            setEndDate(newEndDate);
+                                                                        }}
                                                                     />
                                                                 </span>
                                                             </div>

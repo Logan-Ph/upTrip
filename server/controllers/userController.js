@@ -1372,9 +1372,6 @@ exports.addToCollectionFlight = async (req, res) => {
             year,
             seatClass,
             imgSrc,
-            adult,
-            child,
-            infant,
 
         } = req.body.payload
 
@@ -1394,9 +1391,6 @@ exports.addToCollectionFlight = async (req, res) => {
             year,
             seatClass,
             imgSrc,
-            adult,
-            child,
-            infant
         })
         await newFlight.save()
 
@@ -1495,16 +1489,75 @@ exports.editItinerary = async (req, res) => {
         const {refreshToken} = req.cookies
         if(!refreshToken) return res.status(401).json("You are not logged in")
 
-        const { itineraryId, name, destination, description } = req.body
+        const { itineraryId, name, destination, description, tripLength, startDate, endDate } = req.body
         const itinerary = await Itinerary.findById(itineraryId)
         if (!itinerary) return res.status(404).json("Itinerary not found")
 
         itinerary.name = name;
         itinerary.destination = destination;
         itinerary.description = description;
+        if (tripLength){
+            itinerary.tripLength = tripLength;
+            itinerary.startDate = null;
+            itinerary.endDate = null;
+        }
+        if (startDate && endDate) {
+            itinerary.startDate = startDate;
+            itinerary.endDate = endDate;
+            itinerary.tripLength = null;
+        }
         await itinerary.save();
         return res.status(200).json("Itinerary updated")
     } catch (e) {
         return res.status(500).json(e)
     }
 }
+
+exports.addFlightItinerary = async (req, res) => {
+    try {
+        const {refreshToken} = req.cookies
+        if(!refreshToken) return res.status(401).json("You are not logged in")
+        const { itineraryId, flightId } = req.body
+        const itinerary = await Itinerary.findById(itineraryId)
+        
+        if (itinerary.flights.includes(flightId)) {
+            return res.status(500).json("Flight already added to itinerary")
+        }
+        itinerary.hotels.push(hotelId)
+        await itinerary.save()
+        return res.status(200).json("Hotel added to itinerary")
+    } catch (e) {
+        return res.status(500).json(e)
+    }
+}
+
+exports.addHotelItinerary = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+
+        const { item, itineraryId } = req.body;
+        const itinerary = await Itinerary.findById(itineraryId);
+        if (!itinerary) return res.status(404).json("Itinerary not found");
+
+        const hotel = await Hotel.findById(item.item._id);
+        if (!hotel) return res.status(404).json("Hotel not found");
+
+        // Check if the hotel is already in the itinerary
+        const hotelExists = itinerary.hotels.some(h => h.equals(hotel._id));
+
+        hotel.checkin = item.checkin;
+        hotel.checkout = item.checkout;
+        hotel.price = item.price;
+
+        await hotel.save();
+        if (!hotelExists) {
+            itinerary.hotels.push(hotel);
+            await itinerary.save();
+        }
+        return res.status(200).json("Hotel added to itinerary");
+    } catch (er) {
+        return res.status(500).json(er);
+    }
+}
+

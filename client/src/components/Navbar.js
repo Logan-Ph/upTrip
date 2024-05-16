@@ -48,7 +48,7 @@ export default function Header() {
                                 <Link to="/">
                                     <img
                                         src={Logo}
-                                        classNameName="w-28 h-auto"
+                                        className="w-28 h-auto"
                                         alt="logo"
                                     />
                                 </Link>

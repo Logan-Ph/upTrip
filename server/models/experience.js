@@ -16,6 +16,9 @@ const experienceSchema = new mongoose.Schema({
     endTime: { 
         type: String, 
     },
+    startDate: {
+        type: String,
+    },
     price: { 
         type: Number, 
     },

@@ -824,6 +824,16 @@ function AdvancedSearchHotel() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        console.log({checkin:checkinDate.current.value, checkout:checkoutDate.current.value})
+        console.log({checkin: checkinDate.current.value.replace(
+            /(\d{2})\/(\d{2})\/(\d{4})/,
+            "$3$1$2"
+        ),
+        checkout: checkoutDate.current.value.replace(
+            /(\d{2})\/(\d{2})\/(\d{4})/,
+            "$3$1$2"
+        ),})
+
         if (!autocompletePayload) {
             warningNotify("Please select a location");
             return;
@@ -869,6 +879,9 @@ function AdvancedSearchHotel() {
             domestic: false,
             listFilters: "17~1*17*1*2",
         };
+
+       
+
 
         if (payload.resultType === "H") {
             payload = {
