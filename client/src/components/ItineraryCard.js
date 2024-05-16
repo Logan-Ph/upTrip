@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { deleteItinerary, fetchCollections } from "../api/fetch";
@@ -7,7 +7,7 @@ import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
 // Itinerary card for the itinerary page. list the itinerary info card
-export function ItineraryCard({ itinerary, getItinerary }) {   
+export function ItineraryCard({ itinerary, getItinerary }) {
 
     const handleDeleteItinerary = useMutation({
         mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
@@ -25,100 +25,380 @@ export function ItineraryCard({ itinerary, getItinerary }) {
         handleDeleteItinerary.mutate()
     }
 
+    const [activeTab, setActiveTab] = useState(1); // Default active tab is 1
+    // const navigate = useNavigate();
+    const handleTabClick = (tabNumber) => {
+        setActiveTab(tabNumber);
+    };
+
     return (
-        <>
-            <div class="card flex-col md:flex-row card-side rounded-md bg-white shadow-xl my-4">
-                <Link>
-                    <figure class="rounded-t-md md:rounded-tr-none md:rounded-l-md h-full">
-                        <img
-                            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/228033379.jpg?k=5559966043302855e467dfa2c28ad78034f95b8ffaec437ca19004ba936c7b49&o=&hp=1"
-                            alt="Itinerary Cover Pic"
-                            className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
-                        />
-                    </figure>
+        <div class="card flex-col md:flex-row card-side rounded-md bg-white shadow-xl my-4">
+            <Link>
+                <figure class="rounded-t-md md:rounded-tr-none md:rounded-l-md h-full">
+                    <img
+                        src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/228033379.jpg?k=5559966043302855e467dfa2c28ad78034f95b8ffaec437ca19004ba936c7b49&o=&hp=1"
+                        alt="Itinerary Cover Pic"
+                        className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
+                    />
+                </figure>
+            </Link>
+
+            <div class="card-body flex-1 px-5 p-7">
+                <Link to={`/detailed-itinerary?itineraryId=${itinerary._id}`}>
+                    <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4">
+                        {itinerary.name}
+                    </h2>
                 </Link>
-
-                <div class="card-body flex-1 px-5 p-7">
-                    <Link to={`/detailed-itinerary?itineraryId=${itinerary._id}`}>
-                        <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4">
-                            {itinerary.name}
-                        </h2>
-                    </Link>
-                    <div>
-                        <p class="text-gray-500 text-sm md:text-lg mt-1 md:mt-4 mb-2">
-                            {itinerary.startDate ?
-                                (<span>
-                                    <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.startDate}{" "}
-                                    <i class="fa-solid fa-arrow-right"></i> {itinerary.endDate}
+                <div>
+                    <p class="text-gray-500 text-sm md:text-lg mt-1 md:mt-4 mb-2">
+                        {itinerary.startDate ?
+                            (<span>
+                                <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.startDate}{" "}
+                                <i class="fa-solid fa-arrow-right"></i> {itinerary.endDate}
+                            </span>)
+                            : (
+                                <span>
+                                    <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.tripLength} day(s)
                                 </span>)
-                                : (
-                                    <span>
-                                        <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.tripLength} day(s)
-                                    </span>)
-                            }
-                        </p>
-                        <p class="text-gray-500 text-sm md:text-lg">
-                            <i class="fa-solid fa-location-dot"></i>
-                            &ensp; {itinerary.destination}
-                        </p>
-                    </div>
-                    <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1 mt-4 md:mt-0">
-                        <button
-                            className="btn bg-transparent border-[1.5px] text-red-400 hover:text-red-500"
-                            onClick={() =>
-                                document
-                                    .getElementById("delete_modal")
-                                    .showModal()
-                            }
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="w-6 h-6"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                />
-                            </svg>
-                        </button>
+                        }
+                    </p>
+                    <p class="text-gray-500 text-sm md:text-lg">
+                        <i class="fa-solid fa-location-dot"></i>
+                        &ensp; {itinerary.destination}
+                    </p>
+                </div>
+                <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1 mt-4 md:mt-0">
+                    <button
+                        className="btn bg-transparent border-[1.5px] text-gray-800 hover:text-black text-lg text-end"
+                        onClick={() =>
+                            document
+                                .getElementById("edit_modal")
+                                .showModal()
+                        }
+                    >
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </button>
 
-                        <dialog
-                            id="delete_modal"
-                            className="modal modal-bottom sm:modal-middle"
-                        >
-                            <div className="modal-box w-11/12 max-w-5xl px-10">
-                                <h3 className="font-bold text-2xl mt-4">
-                                    Delete itinerary?
-                                </h3>
-                                <p className="pt-4 text-lg">
-                                    Are you sure you want to delete {itinerary.name}?
-                                </p>
-                                <div className="modal-action mt-3">
-                                    <form method="dialog">
-                                        {/* if there is a button in form, it will close the modal */}
-                                        <button className="btn rounded-3xl mx-2">
-                                            Cancel
-                                        </button>
-                                        <button
-                                            className="btn bg-black text-white rounded-3xl"
-                                            onClick={(e) => handleDelete(e)}    
+                    <dialog id="edit_modal" className="modal">
+                        <div className="modal-box px-10">
+                            <form method="dialog">
+                                {/* if there is a button in form, it will close the modal */}
+                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                                    ✕
+                                </button>
+                            </form>
+                            <h3 className="font-bold text-2xl my-5">
+                                Edit itinerary details
+                            </h3>
+                            <p className="pt-4 text-lg">
+                                Are you sure you want to delete {itinerary.name}?
+                            </p>
+                            <div className="modal-action mt-3">
+                                <form method="dialog">
+                                    {/* if there is a button in form, it will close the modal */}
+                                    <button className="btn rounded-3xl mx-2">
+                                        Cancel
+                                    </button>
+                                    <button
+                                        className="btn bg-black text-white rounded-3xl"
+                                        onClick={(e) => handleDelete(e)}
+                                    >
+                                        Delete
+                                    </button>
+                                </form>
+                                <div>
+                                    <div className="mb-5 text-start">
+                                        <label
+                                            for="name"
+                                            className="block mb-2 text-base font-medium text-gray-900"
                                         >
-                                            Delete
+                                            Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="name"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-3 focus:ring-black focus:border-black"
+                                            placeholder="e.g., Summer vacation in Da Nang"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-5 text-start">
+                                        <label
+                                            for="destination"
+                                            className="block mb-2 text-base font-medium text-gray-900"
+                                        >
+                                            Destination
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                <svg
+                                                    className="w-4 h-4 text-gray-500"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 20 20"
+                                                >
+                                                    <path
+                                                        stroke="currentColor"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                            <input
+                                                type="search"
+                                                id="destination"
+                                                className="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-black focus:border-black"
+                                                placeholder="Where to?"
+                                                required
+                                            />
+                                            <div className="relative drop-shadow-md">
+                                                <ul className="absolute menu bg-white w-full rounded-lg mt-1">
+                                                    <li>
+                                                        <div>
+                                                            <i
+                                                                class="fa-solid fa-location-dot"
+                                                                aria-hidden="true"
+                                                            ></i>{" "}
+                                                            Ho Chi Minh City
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div>
+                                                            <i
+                                                                class="fa-solid fa-location-dot"
+                                                                aria-hidden="true"
+                                                            ></i>{" "}
+                                                            Ho Chi Minh City
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mb-5 text-start">
+                                        <label
+                                            for="description"
+                                            className="block mb-2 text-base font-medium text-gray-900"
+                                        >
+                                            Description
+                                        </label>
+                                        <textarea
+                                            type="text"
+                                            id="description"
+                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5 focus:ring-black focus:border-black"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-5 text-start">
+                                        <label
+                                            for="date"
+                                            className="block mb-2 text-base font-medium text-gray-900"
+                                        >
+                                            Dates or Length of stay (optional)
+                                        </label>
+
+                                        {/*  */}
+
+                                        <div className="max-w-md mx-auto">
+                                            <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
+                                                <button
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 1
+                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                        : "text-black font-thin"
+                                                        }`}
+                                                    onClick={() =>
+                                                        handleTabClick(1)
+                                                    }
+                                                >
+                                                    Dates
+                                                </button>
+                                                <button
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 2
+                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                        : "text-black font-thin"
+                                                        }`}
+                                                    onClick={() =>
+                                                        handleTabClick(2)
+                                                    }
+                                                >
+                                                    Trip length
+                                                </button>
+                                            </div>
+                                            <div className="mt-4">
+                                                {activeTab === 1 && (
+                                                    <div className="my-6 mb-10">
+                                                        {/* Datepicker */}
+                                                        <div
+                                                            date-rangepicker
+                                                            class="flex items-center"
+                                                        >
+                                                            <div class="relative">
+                                                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                                    <svg
+                                                                        class="w-4 h-4 text-gray-500"
+                                                                        aria-hidden="true"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="currentColor"
+                                                                        viewBox="0 0 20 20"
+                                                                    >
+                                                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                                                    </svg>
+                                                                </div>
+                                                                <input
+                                                                    name="start"
+                                                                    type="text"
+                                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 "
+                                                                    placeholder="Select date start"
+                                                                />
+                                                            </div>
+                                                            <span class="mx-4 text-gray-500">
+                                                                to
+                                                            </span>
+                                                            <div class="relative">
+                                                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                                    <svg
+                                                                        class="w-4 h-4 text-gray-500"
+                                                                        aria-hidden="true"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="currentColor"
+                                                                        viewBox="0 0 20 20"
+                                                                    >
+                                                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                                                    </svg>
+                                                                </div>
+                                                                <input
+                                                                    name="end"
+                                                                    type="text"
+                                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5"
+                                                                    placeholder="Select date end"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                {activeTab === 2 && (
+                                                    <div className="flex justify-between my-6 mb-10">
+                                                        <p className="text-base">
+                                                            Number of days
+                                                        </p>
+                                                        <div className="flex space-x-3 items-center">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke-width="1.5"
+                                                                stroke="currentColor"
+                                                                className="w-6 h-6"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                ></path>
+                                                            </svg>
+                                                            <span className="text-lg">
+                                                                1
+                                                            </span>
+
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke-width="1.5"
+                                                                stroke="currentColor"
+                                                                className="w-6 h-6"
+                                                            >
+                                                                <path
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                ></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/*  */}
+                                    </div>
+                                    <div className="divider"></div>
+                                    <div className="mb-5">
+                                        <button
+                                            className="btn bg-transparent border-none shadow-none text-red-400 hover:text-red-500"
+                                            onClick={() =>
+                                                document
+                                                    .getElementById(
+                                                        "delete_modal"
+                                                    )
+                                                    .showModal()
+                                            }
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.5"
+                                                stroke="currentColor"
+                                                class="w-6 h-6"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                                />
+                                            </svg>{" "}
+                                            Delete Trip
                                         </button>
-                                    </form>
+
+                                        <dialog
+                                            id="delete_modal"
+                                            className="modal modal-bottom sm:modal-middle"
+                                        >
+                                            <div className="bg-white py-10 rounded-xl max-w-4xl px-10">
+                                                <h3 className="font-bold text-2xl mt-4">
+                                                    Delete Itinerary?
+                                                </h3>
+                                                <p className="pt-4 text-lg">
+                                                    Are you sure you want to
+                                                    delete this Itinerary?
+                                                    Deleting a Itinerary will
+                                                    delete all the items and
+                                                    notes you have added to it.
+                                                    The Itinerary cannot be
+                                                    retrieved once it is
+                                                    deleted.
+                                                </p>
+                                                <div className="modal-action mt-3">
+                                                    <form method="dialog">
+                                                        {/* if there is a button in form, it will close the modal */}
+                                                        <button className="btn rounded-3xl mx-2">
+                                                            Cancel
+                                                        </button>
+                                                        <button className="btn bg-black text-white rounded-3xl">
+                                                            Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </dialog>
+                                    </div>
+                                </div>
+                                <div className="flex justify-end">
+                                    <button className="flex btn btn-outline w-full justify-center">
+                                        Save Changes
+                                    </button>
                                 </div>
                             </div>
-                        </dialog>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+                        </div>
+                    </dialog >
+                </div >
+            </div >
+        </div >
+    )
 }
 
 // add item button in detailed itinerary page
@@ -138,6 +418,10 @@ export function AddItemButton() {
     };
 
     const handleNextButtonClickSaved = () => {
+        if (!selectedItems) {
+            warningNotify("Please select an item")
+            return
+        }
         setCurrentPage("otherPage");
     };
 
@@ -145,6 +429,7 @@ export function AddItemButton() {
         if (currentPage === "chooseSavedItem") {
             setCurrentPage("main");
         } else {
+            setSelectedItems(null)
             setCurrentPage("chooseSavedItem");
         }
     };
@@ -172,6 +457,7 @@ export function AddItemButton() {
                             <ChooseCollection
                                 handleNextButtonClick={handleNextButtonClickMain}
                                 setSelectedCollection={setSelectedCollection}
+                                selectedCollection={selectedCollection}
                                 setItems={setItems}
                             />
                         ) : currentPage === "chooseSavedItem" ? (
@@ -180,6 +466,7 @@ export function AddItemButton() {
                                 handleBackButtonClick={handleBackButtonClick}
                                 items={items}
                                 setSelectedItems={setSelectedItems}
+                                selectedItems={selectedItems}
                             />
                         ) : (
                             <OtherPageContent
@@ -203,7 +490,7 @@ export function AddItemButton() {
 }
 
 // page 1 in the drawer, choose collection
-function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setItems }) {
+function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setItems, selectedCollection }) {
     const {
         data: collections,
     } = useQuery({
@@ -227,22 +514,25 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
             <div className="my-4">
                 {/* If no collection */}
                 {collections?.length > 0
-                ?
+                    ?
                     collections.map((collection) => (
                         <div onClick={() => {
-                            setSelectedCollection(collection)
-                            setItems(() => {
-                                return{
-                                    experience: collection.experience,
-                                    hotel: collection.hotels,
-                                    flight: collection.flights
+                            setSelectedCollection(prevSelected => {
+                                // Update the items only if the collection changes
+                                if (prevSelected?._id !== collection._id) {
+                                    setItems({
+                                        experience: collection.experience,
+                                        hotel: collection.hotels,
+                                        flight: collection.flights
+                                    });
                                 }
-                            })
-                        }}>                            
-                            <SavedCollectionCard key={collection.id} collection={collection} />
+                                return {id: collection._id, collection: collection};
+                            });
+                        }}>
+                            <SavedCollectionCard key={collection.id} collection={collection} isCollectionSelected={selectedCollection?.id === collection._id}/>
                         </div>
                     ))
-                :
+                    :
                     <div className="text-lg my-10">
                         <p className="font-thin text-xl">Your collection is empty.</p>
                         {/* Direct to the favorite collection page */}
@@ -264,7 +554,7 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
 }
 
 // page 2 in the drawer, choose item
-function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, setSelectedItems }) {
+function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, setSelectedItems, selectedItems }) {
     return (
         <>
             <div className="bg-white py-6 sticky mt-10 top-0 z-50 border-b">
@@ -280,13 +570,13 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
             </div>
             <div className="my-4">
                 {Object.keys(items).map(item => {
-                    switch(item){
+                    switch (item) {
                         case "experience":
-                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
                         case "hotel":
-                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         case "flight":
-                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
                         default:
                             return null
                     }
@@ -315,24 +605,24 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
                 <button
                     onClick={handleBackButtonClick}
                     className="mt-4 absolute top-0 left-[-30px] p-3 ml-4"
-                    >
+                >
                     <i className="fa-solid fa-arrow-left text-2xl"></i>
                 </button>
             </div>
             {/* For Stay */}
             {Object.keys(selectedItems).map(item => {
-                switch(selectedItems[item].type){
+                switch (selectedItems[item].type) {
                     case 'stay':
-                        return <ForDetailStay key={item.id} item={selectedItems[item].item}/>
+                        return <ForDetailStay key={item.id} item={selectedItems[item].item} />
                     case "experience":
-                        return <ForDetailExperience key={item.id} item={selectedItems[item].item}/>
+                        return <ForDetailExperience key={item.id} item={selectedItems[item].item} />
                     case "flight":
-                        return <ForDetailFlight key={item.id} item={selectedItems[item].item}/>
+                        return <ForDetailFlight key={item.id} item={selectedItems[item].item} />
                     default:
                         return null
                 }
             })}
-            
+
 
             {/* Add to itinerary button */}
             <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50">
@@ -345,11 +635,11 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
     );
 }
 
-function ForDetailStay({item}) {
+function ForDetailStay({ item }) {
     return (
         <>
             <div className="my-4">
-                <SavedStayCard item={item} setSelectedItems={false}/>
+                <SavedStayCard item={item} setSelectedItems={false} />
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
                 <div className="flex my-2">
@@ -686,11 +976,11 @@ function ForDetailStay({item}) {
     );
 }
 
-function ForDetailFlight({item}) {
+function ForDetailFlight({ item }) {
     return (
         <>
             <div className="my-4">
-                <SavedFlightCard item={item} setSelectedItems={false}/>
+                <SavedFlightCard item={item} setSelectedItems={false} />
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
                 <div className="flex my-2">
@@ -966,7 +1256,7 @@ function ForDetailFlight({item}) {
     );
 }
 
-function ForDetailExperience({item}) {
+function ForDetailExperience({ item }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDetails = () => {
@@ -975,7 +1265,7 @@ function ForDetailExperience({item}) {
     return (
         <>
             <div className="my-4">
-                <SavedExperienceCard item={item} setSelectedItems={false}/>
+                <SavedExperienceCard item={item} setSelectedItems={false} />
             </div>
             {/* Additional Details */}
             <div className="my-4">
@@ -1488,7 +1778,7 @@ export function BudgetCard() {
     );
 }
 
-export function SavedStayCard({item, setSelectedItems}) {
+export function SavedStayCard({ item, setSelectedItems, selectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1498,7 +1788,7 @@ export function SavedStayCard({item, setSelectedItems}) {
             setSelectedItems((prevSelectedItems) => {
                 const updatedItems = { ...prevSelectedItems };
                 if (newState) {
-                    updatedItems[item._id] = {item, type: "stay"};
+                    updatedItems[item._id] = { item, type: "stay" };
                 } else {
                     delete updatedItems[item._id];
                 }
@@ -1512,8 +1802,8 @@ export function SavedStayCard({item, setSelectedItems}) {
         <>
             <div
                 className={`card card-side bg-white p-3 border-[2px] ${isSelected
-                        ? "border-black"
-                        : "border-gray-300 hover:border-black duration-300"
+                    ? "border-black"
+                    : "border-gray-300 hover:border-black duration-300"
                     } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
@@ -1530,9 +1820,9 @@ export function SavedStayCard({item, setSelectedItems}) {
                     </h2>
                     <div class="flex space-x-1">
                         {Array.from({ length: Math.round(item.rating) }, (e, i) => (
-                                <svg
-                                    class="w-4 h-4 text-[#ffa732]"
-                                    key={i}
+                            <svg
+                                class="w-4 h-4 text-[#ffa732]"
+                                key={i}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="currentColor"
@@ -1551,7 +1841,7 @@ export function SavedStayCard({item, setSelectedItems}) {
     );
 }
 
-export function SavedFlightCard({item, setSelectedItems}) {
+export function SavedFlightCard({ item, setSelectedItems, selectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1562,8 +1852,8 @@ export function SavedFlightCard({item, setSelectedItems}) {
         <>
             <div
                 className={`card flex-col card-side bg-white p-3 border-[2px] ${isSelected
-                        ? "border-black"
-                        : "border-gray-300 hover:border-black duration-300"
+                    ? "border-black"
+                    : "border-gray-300 hover:border-black duration-300"
                     } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
@@ -1607,7 +1897,7 @@ export function SavedFlightCard({item, setSelectedItems}) {
     );
 }
 
-export function SavedExperienceCard({item, setSelectedItems}) {
+export function SavedExperienceCard({ item, setSelectedItems}) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1617,7 +1907,7 @@ export function SavedExperienceCard({item, setSelectedItems}) {
             setSelectedItems((prevSelectedItems) => {
                 const updatedItems = { ...prevSelectedItems };
                 if (newState) {
-                    updatedItems[item._id] = {item, type: "experience"};
+                    updatedItems[item._id] = { item, type: "experience" };
                 } else {
                     delete updatedItems[item._id];
                 }
@@ -1631,8 +1921,8 @@ export function SavedExperienceCard({item, setSelectedItems}) {
         <>
             <div
                 className={`card card-side bg-white p-3 border-[2px] ${isSelected
-                        ? "border-black"
-                        : "border-gray-300 hover:border-black duration-300"
+                    ? "border-black"
+                    : "border-gray-300 hover:border-black duration-300"
                     } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
@@ -1649,9 +1939,9 @@ export function SavedExperienceCard({item, setSelectedItems}) {
                     </h2>
                     <div class="flex space-x-1">
                         {Array.from({ length: Math.round(item.rating) }, (e, i) => (
-                                <svg
-                                    class="w-4 h-4 text-[#ffa732]"
-                                    key={i}
+                            <svg
+                                class="w-4 h-4 text-[#ffa732]"
+                                key={i}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="currentColor"

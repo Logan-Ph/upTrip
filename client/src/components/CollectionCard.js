@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function CollectionCard({collection}) {
+export function CollectionCard({ collection }) {
     const navigate = useNavigate();
     return (
         <>
@@ -15,7 +15,7 @@ export function CollectionCard({collection}) {
                 </figure>
                 <div className="card-body my-2">
                     <div className="flex flex-row justify-between">
-                        <h2 
+                        <h2
                             className="card-title text-3xl ml-2 pr-3 hover:underline cursor-pointer"
                             onClick={() => {
                                 navigate(`/favorite-items/?collectionId=${collection._id}`)
@@ -26,11 +26,11 @@ export function CollectionCard({collection}) {
                         <div className="card-actions justify-end">
                             <button
                                 className="btn"
-                                onClick={() =>
-                                    {   document
-                                            .getElementById("my_modal_1")
-                                            .showModal()
-                                    }
+                                onClick={() => {
+                                    document
+                                        .getElementById("my_modal_1")
+                                        .showModal()
+                                }
                                 }
                             >
                                 <svg
@@ -87,13 +87,13 @@ export function CollectionCard({collection}) {
                                         <div method="dialog flex flex-row">
                                             {/* if there is a button in form, it will close the modal */}
                                             <div className="flex flex-row space-x-2">
-                                                <button 
+                                                <button
                                                     className="btn"
                                                     onClick={() => document.getElementById("my_modal_1").close()}
                                                 >
                                                     Close
                                                 </button>
-                                                <button 
+                                                <button
                                                     className="flex btn btn-outline btn-success justify-end"
                                                     onClick={() => document.getElementById("my_modal_1").close()}
                                                 >
@@ -117,37 +117,14 @@ export function CollectionCard({collection}) {
     );
 }
 
-export function SavedCollectionCard({collection}) {
-    const [isSelected, setIsSelected] = useState(false);
-    const cardRef = useRef(null);
-
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (cardRef.current && !cardRef.current.contains(event.target)) {
-                setIsSelected(false);
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [cardRef]);
-
-    const handleCardClick = () => {
-        setIsSelected((prev) => !prev);
-    };
-
+export function SavedCollectionCard({ collection, isCollectionSelected }) {
     return (
         <>
             <div
-                ref={cardRef}
-                className={`card card-side bg-white p-3 border-[2px] ${
-                    isSelected
+                className={`card card-side bg-white p-3 border-[2px] ${isCollectionSelected
                         ? "border-black"
                         : "border-gray-300 hover:border-black duration-300"
-                } rounded-md items-start my-4`}
-                onClick={handleCardClick}
+                    } rounded-md items-start my-4`}
             >
                 <figure className="w-1/3">
                     <img
