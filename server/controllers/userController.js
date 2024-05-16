@@ -1032,7 +1032,7 @@ exports.getBayDepFlight = async (req, res) => {
         const response = await Promise.all(requests)
         for (const result of response) {
             if (!result.data.ListFareOption) {
-                return res.status(500).json(new Error("Server error"))
+                return res.status(500).json(new Error("Server not available"))
             }
             for (const item of result.data.ListFareOption) {
                 const flightNo = []
@@ -1049,7 +1049,6 @@ exports.getBayDepFlight = async (req, res) => {
         }
         return res.status(200).json(items)
     } catch (error) {
-        console.log(error)
         return res.status(500).json(error);
     }
 }
@@ -1510,10 +1509,11 @@ exports.addFlightItinerary = async (req, res) => {
     try {
         const {refreshToken} = req.cookies
         if(!refreshToken) return res.status(401).json("You are not logged in")
-        const { itineraryId, flightId } = req.body
+        const { itineraryId, flightId, price } = req.body
         const itinerary = await Itinerary.findById(itineraryId)
-        
-        
+        const flight = await Flight.findById(flightId)
+        flight.price = price;
+        await flight.save()
         if (itinerary.flights.includes(flightId)) {
             return res.status(500).json("Flight already added to itinerary")
         }

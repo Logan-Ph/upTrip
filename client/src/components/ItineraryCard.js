@@ -703,7 +703,7 @@ function ForDetailFlight({ item }) {
     const [child, setChild] = useState(0)
     const [infant, setInfant] = useState(0)
     const [dropdown, setDropdown] = useState(false)
-
+    const [selectedFlight, setSelectedFlight] = useState([])
 
     const [agodaPrice, setAgodaPrice] = useState()
     const [tripComPrice, setTripComPrice] = useState()
@@ -741,6 +741,9 @@ function ForDetailFlight({ item }) {
         mutationFn: () => fetchFlightAdvancedSearch(payload),
         onSuccess: (data) => {
             setAgodaPrice(data.flights.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.agodaPrice)
+        },
+        onError: (e) => {
+            console.log(e)
         }
     })
 
@@ -762,16 +765,31 @@ function ForDetailFlight({ item }) {
         mutationFn: () => fetchBayDepFlight(payload),
         onSuccess: (data) => {
             setBayDepPrice(data.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.price)
+        },
+        onError: (error) => {
+            console.log(error)
         }
     })
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        fetchAgoda.mutateAsync()
-        fetchTripCom.mutateAsync()
-        fetchMyTrip.mutateAsync()
-        fetchBayDep.mutateAsync()
+        e.preventDefault();
+
+        const mutations = [
+            fetchAgoda.mutateAsync(),
+            fetchTripCom.mutateAsync(),
+            fetchMyTrip.mutateAsync(),
+            fetchBayDep.mutateAsync()
+        ];
+
+        Promise.all(mutations)
+            .then()
+            .catch((error) => {
+                console.error(error);
+            });
     }
+
+
     return (
         <>
             <div className="my-4">
@@ -1034,28 +1052,37 @@ function ForDetailFlight({ item }) {
                         (<div className="flex justify-center my-10">
                             <span className="loading loading-dots loading-md"></span>
                         </div>)}
-                    {fetchAgoda.isSuccess && (<div class="border border-transparent bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]">
-                        <div class="mx-auto">
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
+                    {fetchAgoda.isSuccess && agodaPrice && (
+                        <div
+                            onClick={() => setSelectedFlight(
+                                (prev) => prev === 'agoda' ? '' : 'agoda'
+                                )}
+                            class={`border border-transparent ${selectedFlight==="agoda"?'bg-[#8DD3BB]': 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
+                            <div class="mx-auto">
+                                <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {agodaPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
                         </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                {agodaPrice?.toLocaleString("vi-VN")} VND
-                            </p>
-                        </div>
-                    </div>)
-                    }
+                    )}
                     {fetchMyTrip.isPending &&
                         (<div className="flex justify-center my-10">
                             <span className="loading loading-dots loading-md"></span>
                         </div>)
                     }
-                    {fetchMyTrip.isSuccess &&
-                        (<div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                    {fetchMyTrip.isSuccess && myTripPrice &&
+                        (<div
+                            onClick={() => setSelectedFlight(
+                                (prev) => prev === 'myTrip' ? '' : 'myTrip'
+                                )}
+                            class={`border border-transparent ${selectedFlight==="myTrip"?'bg-[#8DD3BB]': 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
                             <div class="mx-auto">
                                 <img
                                     src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Mytrip_Logo_Colar_Pink.png?updatedAt=1714385168260"
@@ -1075,8 +1102,10 @@ function ForDetailFlight({ item }) {
                             <span className="loading loading-dots loading-md"></span>
                         </div>)
                     }
-                    {fetchTripCom.isSuccess && (
-                        <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                    {fetchTripCom.isSuccess && tripComPrice && (
+                        <div
+                            
+                            class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
                             <div class="mx-auto">
                                 <img
                                     src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
@@ -1096,21 +1125,23 @@ function ForDetailFlight({ item }) {
                             <span className="loading loading-dots loading-md"></span>
                         </div>)
                     }
-                    {fetchBayDep.isSuccess &&
-                        (<div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
-                        <div class="mx-auto">
-                            <img
-                                src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
-                        </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                {bayDepPrice?.toLocaleString("vi-VN")} VND
-                            </p>
-                        </div>
-                    </div>)
+                    {fetchBayDep.isSuccess && bayDepPrice &&
+                        (<div
+
+                            class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                            <div class="mx-auto">
+                                <img
+                                    src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {bayDepPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
+                        </div>)
                     }
                 </div>
             </div>

@@ -87,7 +87,7 @@ export function fetchBayDepFlight(payload) {
 		.post("search-bay-dep-flights", payload, options)
 		.then(res => res.data)
 		.catch(er => {
-			return Promise.reject(new Error(er.response.data.message));
+			return Promise.reject(er);
 		});
 }
 
@@ -254,10 +254,10 @@ export function deleteItinerary(payload) {
 
 export function fetchDetailItinerary(payload) {
 	return axios.post("/fetch-detail-itinerary", payload, options)
-	.then(res => res.data)
-	.catch(er => {
-		return Promise.reject(new Error(er.response.data.message));
-	});
+		.then(res => res.data)
+		.catch(er => {
+			return Promise.reject(new Error(er.response.data.message));
+		});
 }
 
 export function editItinerary(payload) {
