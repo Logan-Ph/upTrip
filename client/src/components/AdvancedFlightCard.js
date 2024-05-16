@@ -24,9 +24,6 @@ export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myT
         year: searchParams.get("year"),
         seatClass: searchParams.get("seatClass"),
         imgSrc: imgSrc,
-        adult: searchParams.get("adult"),
-        child: searchParams.get("child"),
-        infant: searchParams.get("infant")
     }
     return (
         <>

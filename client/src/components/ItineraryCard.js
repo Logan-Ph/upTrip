@@ -699,43 +699,14 @@ function ForDetailStay({ item }) {
 }
 
 function ForDetailFlight({ item }) {
+    const [adult, setAdult] = useState(1)
+    const [child, setChild] = useState(0)
+    const [infant, setInfant] = useState(0)
+    const [dropdown, setDropdown] = useState(false)
     return (
         <>
             <div className="my-4">
                 <SavedFlightCard item={item} setSelectedItems={false} />
-                {/* Ask Date */}
-                <div className="text-start font-semibold text-lg">Date</div>
-                <div className="flex my-2">
-                    <div class="relative w-full">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none focus:ring-none">
-                            <svg
-                                class="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <input
-                                datepicker
-                                datepicker-autohide
-                                name="end"
-                                type="text"
-                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5"
-                                placeholder="dd/mm/yyyy"
-                            />
-                            <label
-                                for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                            >
-                                Departing
-                            </label>
-                        </div>
-                    </div>
-                </div>
                 {/* Ask Flight Details */}
                 <div class="text-start font-semibold text-lg">
                     Flight Information
@@ -747,6 +718,7 @@ function ForDetailFlight({ item }) {
                         data-dropdown-toggle="dropdown"
                         class="text-gray-900 bg-white font-medium rounded-lg  border border-gray-300 focus:ring-1 focus:ring-black focus:border-black text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none"
                         type="button"
+                        onClick={() => setDropdown(prev => !prev)}
                     >
                         <label
                             for="floating_filled"
@@ -757,7 +729,7 @@ function ForDetailFlight({ item }) {
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                         </div>
-                        1 Adult, 1 Child, 1 Infant{" "}
+                        {adult} Adult, {child} Child, {infant} Infant{" "}
                         <svg
                             class="w-2.5 h-2.5 ms-3"
                             aria-hidden="true"
@@ -778,7 +750,7 @@ function ForDetailFlight({ item }) {
                     {/* <!-- Dropdown menu --> */}
                     <div
                         id="dropdown"
-                        className="z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full hidden"
+                        className={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full ${dropdown ? "" : "hidden"}`}
                     >
                         <div
                             class="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
@@ -1567,7 +1539,20 @@ export function SavedFlightCard({ item, setSelectedItems, selectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
-        setIsSelected((prev) => !prev);
+        if (!setSelectedItems) return
+        setIsSelected((prev) => {
+            const newState = !prev;
+            setSelectedItems((prevSelectedItems) => {
+                const updatedItems = { ...prevSelectedItems };
+                if (newState) {
+                    updatedItems[item._id] = { item, type: "flight" };
+                } else {
+                    delete updatedItems[item._id];
+                }
+                return updatedItems;
+            });
+            return newState;
+        });
     };
 
     return (

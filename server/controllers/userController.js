@@ -1372,9 +1372,6 @@ exports.addToCollectionFlight = async (req, res) => {
             year,
             seatClass,
             imgSrc,
-            adult,
-            child,
-            infant,
 
         } = req.body.payload
 
@@ -1394,9 +1391,6 @@ exports.addToCollectionFlight = async (req, res) => {
             year,
             seatClass,
             imgSrc,
-            adult,
-            child,
-            infant
         })
         await newFlight.save()
 
