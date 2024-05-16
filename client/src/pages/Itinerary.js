@@ -117,7 +117,7 @@ export default function Itinerary() {
                             itinerary
                         </button>
                         <dialog id="create_itinerary_modal" className="modal">
-                            <div className="modal-box px-10">
+                            <div className="modal-box px-10" style={{zIndex:100}}>
                                 <form method="dialog">
                                     {/* if there is a button in form, it will close the modal */}
                                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -224,65 +224,89 @@ export default function Itinerary() {
                                             </div>
                                             <div className="mt-4">
                                                 {activeTab === 1 && (
-                                                    <div className="my-6 mb-10">
-                                                        {/* Datepicker */}
-                                                        {/* <span class="datepicker-toggle">
-                                                            <span class="datepicker-toggle-button">
-                                                                <i class="fa-regular fa-calendar"></i>
-                                                            </span>
-                                                            <input
-                                                                type="date"
-                                                                class="datepicker-input"
-                                                            />
-                                                        </span> */}
-
-                                                        {/*  */}
-                                                        <div className="flex flex-col md:flex-row my-2 justify-center">
-                                                            <div class="relative w-full md:w-1/2 h-[60px]">
-                                                                <div class="flex items-center">
-                                                                    <span class="custom-datepicker-toggle">
-                                                                        <span class="custom-datepicker-toggle-button">
-                                                                            <i class="fa-regular fa-calendar"></i>
-                                                                        </span>
-                                                                        <input
-                                                                            id="from-date"
-                                                                            type="date"
-                                                                            class="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                        />
-                                                                    </span>
-                                                                </div>
-                                                                <div>
-                                                                    <label
-                                                                        for="from-date"
-                                                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                                                    >
-                                                                        From
-                                                                    </label>
-                                                                </div>
+                                                <div className="my-6 mb-10">
+                                                    <div
+                                                        date-rangepicker
+                                                        class="flex items-center"
+                                                    >
+                                                        <div class="relative">
+                                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                                                <svg
+                                                                    class="w-4 h-4 text-gray-500"
+                                                                    aria-hidden="true"
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    fill="currentColor"
+                                                                    viewBox="0 0 20 20"
+                                                                >
+                                                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                                                </svg>
                                                             </div>
-                                                            <div class="relative w-full md:w-1/2 h-[60px] justify-end">
-                                                                <div class="flex items-center">
-                                                                    <span class="datepicker-toggle">
-                                                                        <span class="datepicker-toggle-button">
-                                                                        </span>
-                                                                        <input
-                                                                            id="to-date"
-                                                                            type="date"
-                                                                            class="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                        />
+                                                            <input
+                                                            style={{zIndex:1000}}
+                                                                ref={checkinDate}
+                                                                datepicker
+                                                                datepicker-format="dd/mm/yyyy"
+                                                                name="start"
+                                                                type="text"
+                                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 "
+                                                                placeholder="Select date start"
+                                                                value={checkinDate.current?.value}
+                                                            />
+                                                        </div>
+                                                        <span class="mx-4 text-gray-500">
+                                                            to
+                                                        </span>
+                                                        <input
+                                                            type="date"
+                                                            class="datepicker-input"
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col md:flex-row my-2 justify-center">
+                                                        <div class="relative w-full md:w-1/2 h-[60px]">
+                                                            <div class="flex items-center">
+                                                                <span class="custom-datepicker-toggle">
+                                                                    <span class="custom-datepicker-toggle-button">
+                                                                        <i class="fa-regular fa-calendar"></i>
                                                                     </span>
-                                                                </div>
-                                                                <div>
-                                                                    <label
-                                                                        for="to-date"
-                                                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                                                    >
-                                                                        To
-                                                                    </label>
-                                                                </div>
+                                                                    <input
+                                                                        id="from-date"
+                                                                        type="date"
+                                                                        class="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                    />
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <label
+                                                                    for="from-date"
+                                                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                >
+                                                                    From
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                                                            <div class="flex items-center">
+                                                                <span class="datepicker-toggle">
+                                                                    <span class="datepicker-toggle-button">
+                                                                    </span>
+                                                                    <input
+                                                                        id="to-date"
+                                                                        type="date"
+                                                                        class="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                    />
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <label
+                                                                    for="to-date"
+                                                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                >
+                                                                    To
+                                                                </label>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
                                                 )}
                                                 {activeTab === 2 && (
                                                     <div className="flex justify-between my-6 mb-10">

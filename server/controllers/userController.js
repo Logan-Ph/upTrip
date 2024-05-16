@@ -149,7 +149,7 @@ exports.googleLogin = async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             sameSite: "None",
-            maxAge: 30 * 60 * 1000,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
             secure: true,
         }); // 30 minutes
         return res.status(200).json({
@@ -167,9 +167,9 @@ exports.googleLogin = async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             sameSite: "None",
-            maxAge: 30 * 60 * 1000,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
             secure: true,
-        }); // 30 minutes
+        }); // a week
         return res.status(200).json({
             success: true,
             roles: [2001],
