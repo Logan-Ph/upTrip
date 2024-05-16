@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { deleteItinerary, fetchCollections } from "../api/fetch";
@@ -140,6 +140,10 @@ export function AddItemButton() {
     };
 
     const handleNextButtonClickSaved = () => {
+        if (!selectedItems) {
+            warningNotify("Please select an item")
+            return
+        }
         setCurrentPage("otherPage");
     };
 
@@ -147,6 +151,7 @@ export function AddItemButton() {
         if (currentPage === "chooseSavedItem") {
             setCurrentPage("main");
         } else {
+            setSelectedItems(null)
             setCurrentPage("chooseSavedItem");
         }
     };
@@ -174,6 +179,7 @@ export function AddItemButton() {
                             <ChooseCollection
                                 handleNextButtonClick={handleNextButtonClickMain}
                                 setSelectedCollection={setSelectedCollection}
+                                selectedCollection={selectedCollection}
                                 setItems={setItems}
                             />
                         ) : currentPage === "chooseSavedItem" ? (
@@ -182,6 +188,7 @@ export function AddItemButton() {
                                 handleBackButtonClick={handleBackButtonClick}
                                 items={items}
                                 setSelectedItems={setSelectedItems}
+                                selectedItems={selectedItems}
                             />
                         ) : (
                             <OtherPageContent
@@ -205,7 +212,7 @@ export function AddItemButton() {
 }
 
 // page 1 in the drawer, choose collection
-function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setItems }) {
+function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setItems, selectedCollection }) {
     const {
         data: collections,
     } = useQuery({
@@ -232,16 +239,19 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
                     ?
                     collections.map((collection) => (
                         <div onClick={() => {
-                            setSelectedCollection(collection)
-                            setItems(() => {
-                                return {
-                                    experience: collection.experience,
-                                    hotel: collection.hotels,
-                                    flight: collection.flights
+                            setSelectedCollection(prevSelected => {
+                                // Update the items only if the collection changes
+                                if (prevSelected?._id !== collection._id) {
+                                    setItems({
+                                        experience: collection.experience,
+                                        hotel: collection.hotels,
+                                        flight: collection.flights
+                                    });
                                 }
-                            })
+                                return {id: collection._id, collection: collection};
+                            });
                         }}>
-                            <SavedCollectionCard key={collection.id} collection={collection} />
+                            <SavedCollectionCard key={collection.id} collection={collection} isCollectionSelected={selectedCollection?.id === collection._id}/>
                         </div>
                     ))
                     :
@@ -266,7 +276,7 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
 }
 
 // page 2 in the drawer, choose item
-function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, setSelectedItems }) {
+function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, setSelectedItems, selectedItems }) {
     return (
         <>
             <div className="bg-white py-6 sticky mt-10 top-0 z-50 border-b">
@@ -284,11 +294,11 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                 {Object.keys(items).map(item => {
                     switch (item) {
                         case "experience":
-                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} />)
+                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
                         case "hotel":
-                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} />)
+                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
                         case "flight":
-                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} />)
+                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems}/>)
                         default:
                             return null
                     }
@@ -1490,7 +1500,7 @@ export function BudgetCard() {
     );
 }
 
-export function SavedStayCard({ item, setSelectedItems }) {
+export function SavedStayCard({ item, setSelectedItems, selectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1553,7 +1563,7 @@ export function SavedStayCard({ item, setSelectedItems }) {
     );
 }
 
-export function SavedFlightCard({ item, setSelectedItems }) {
+export function SavedFlightCard({ item, setSelectedItems, selectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1609,7 +1619,7 @@ export function SavedFlightCard({ item, setSelectedItems }) {
     );
 }
 
-export function SavedExperienceCard({ item, setSelectedItems }) {
+export function SavedExperienceCard({ item, setSelectedItems}) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {

@@ -47,82 +47,111 @@ export default function FavoriteItems() {
                         </ul>
                     </div>
                     <div className="my-6 space-y-4">
-                        <h2 className="font-semibold text-3xl">{favorite?.name}</h2>
+                        <h2 className="font-semibold text-3xl">
+                            {favorite?.name}
+                        </h2>
                         <p className="text-gray-500 text-lg">
                             {favorite?.description}
                         </p>
                         <p className="text-right text-gray-500 text-lg">
-                            {favorite?.experience?.length + favorite?.hotels?.length + favorite?.flights?.length} items
+                            {favorite?.experience?.length +
+                                favorite?.hotels?.length +
+                                favorite?.flights?.length}{" "}
+                            items
                         </p>
                         <div class="flex space-x-2 justify-between my-4 overflow-x-auto">
-                            <div 
-                                class={`px-7 py-2 border rounded shadow-sm font-medium text-gray-500 grow text-center ${tab === 'all' ? 'bg-gray-200' : 'bg-white'}`}
-                                onClick={() => setTab('all')}
+                            <div
+                                class={`px-7 py-2 border rounded shadow-sm font-medium text-gray-500 grow text-center cursor-pointer ${
+                                    tab === "all" ? "bg-gray-200" : "bg-white"
+                                }`}
+                                onClick={() => setTab("all")}
                             >
                                 All
                             </div>
-                            <div 
-                                class={`px-7 py-2 border rounded shadow-sm font-medium text-gray-500 grow text-center ${tab === 'stays' ? 'bg-gray-200' : 'bg-white'}`}
-                                onClick={() => setTab('stays')}
+                            <div
+                                class={`px-7 py-2 border rounded shadow-sm font-medium text-gray-500 grow text-center cursor-pointer ${
+                                    tab === "stays" ? "bg-gray-200" : "bg-white"
+                                }`}
+                                onClick={() => setTab("stays")}
                             >
                                 Stays
                             </div>
-                            <div 
-                                class={`px-7 py-2 border rounded shado  w-sm font-medium text-gray-500 grow text-center ${tab === 'flights' ? 'bg-gray-200' : 'bg-white'}`}
-                                onClick={() => setTab('flights')}
+                            <div
+                                class={`px-7 py-2 border rounded shado  w-sm font-medium text-gray-500 grow text-center cursor-pointer ${
+                                    tab === "flights"
+                                        ? "bg-gray-200"
+                                        : "bg-white"
+                                }`}
+                                onClick={() => setTab("flights")}
                             >
                                 Flights
                             </div>
-                            <div 
-                                class={`px-7 py-2 border rounded shadow-sm font-medium text-gray-500 grow text-center ${tab === 'experiences' ? 'bg-gray-200' : 'bg-white'}`}
-                                onClick={() => setTab('experiences')}
+                            <div
+                                class={`px-7 py-2 border rounded shadow-sm font-medium text-gray-500 grow text-center cursor-pointer ${
+                                    tab === "experiences"
+                                        ? "bg-gray-200"
+                                        : "bg-white"
+                                }`}
+                                onClick={() => setTab("experiences")}
                             >
                                 Experiences
                             </div>
                         </div>
-                        {isFavoriteLoading
-                        ? 
+                        {!favorite && 
+                        <>
+                            <div className="text-center text-xl py-16">
+                                <p>No items in your collection yet.</p>
+                                <a href="/" className="font-semibold text-[18px]">
+                                    Start browsing to add your favorite travel
+                                    items!
+                                </a>
+                            </div>
+                        </>
+                        }
+                        {isFavoriteLoading ? (
                             <div className="my-4">
                                 <InfoCardSkeleton />
                             </div>
-                        : tab === 'all' ?
+                        ) : tab === "all" ? (
                             <>
-                                {favorite?.hotels?.map(item => (
+                                {favorite?.hotels?.map((item) => (
                                     <div className="my-4">
                                         <StayCard key={item.id} item={item} />
                                     </div>
                                 ))}
-                                {favorite?.flights?.map(item => (
+                                {favorite?.flights?.map((item) => (
                                     <div className="my-4">
                                         <FlightCard key={item.id} item={item} />
                                     </div>
                                 ))}
-                                {favorite?.experience?.map(item => (
+                                {favorite?.experience?.map((item) => (
                                     <div className="my-4">
-                                        <ExperienceCard key={item.id} item={item} />
+                                        <ExperienceCard
+                                            key={item.id}
+                                            item={item}
+                                        />
                                     </div>
                                 ))}
                             </>
-                        : tab === 'stays' ?
-                            favorite?.hotels?.map(item => (
+                        ) : tab === "stays" ? (
+                            favorite?.hotels?.map((item) => (
                                 <div className="my-4">
                                     <StayCard key={item.id} item={item} />
                                 </div>
                             ))
-                        : tab === 'flights' ?
-                            favorite?.flights?.map(item => (
+                        ) : tab === "flights" ? (
+                            favorite?.flights?.map((item) => (
                                 <div className="my-4">
                                     <FlightCard key={item.id} item={item} />
                                 </div>
                             ))
-                        : tab === 'experiences' ?
-                            favorite?.experience?.map(item => (
+                        ) : tab === "experiences" ? (
+                            favorite?.experience?.map((item) => (
                                 <div className="my-4">
                                     <ExperienceCard key={item.id} item={item} />
                                 </div>
                             ))
-                        : null
-                        }
+                        ) : null}
                     </div>
                 </div>
             </div>
