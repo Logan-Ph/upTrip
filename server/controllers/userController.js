@@ -1519,18 +1519,21 @@ exports.addFlightItinerary = async (req, res) => {
     try {
         const {refreshToken} = req.cookies
         if(!refreshToken) return res.status(401).json("You are not logged in")
-        const { itineraryId, flightId, price } = req.body
+        const { itineraryId, flight} = req.body
         const itinerary = await Itinerary.findById(itineraryId)
-        const flight = await Flight.findById(flightId)
-        flight.price = price;
-        await flight.save()
-        if (itinerary.flights.includes(flightId)) {
+        if (!itinerary) return res.status(404).json("Itinerary not found");
+
+        const fl = await Flight.findById(flight.item._id)
+        fl.price = flight.item.price;
+        await fl.save()
+        if (itinerary.flights.includes(flight._id)) {
             return res.status(500).json("Flight already added to itinerary")
         }
-        itinerary.hotels.push(flightId)
+        itinerary.hotels.push(flight.item._id)
         await itinerary.save()
         return res.status(200).json("Hotel added to itinerary")
     } catch (e) {
+        console.log(e)
         return res.status(500).json(e)
     }
 }

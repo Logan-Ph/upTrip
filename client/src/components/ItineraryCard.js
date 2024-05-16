@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight } from "../api/fetch";
+import { addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight, addFlightItinerary } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
@@ -122,7 +122,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
 }
 
 // add item button in detailed itinerary page
-export function AddItemButton({refetchItinerary}) {
+export function AddItemButton({ refetchItinerary }) {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState("main");
     const [selectedCollection, setSelectedCollection] = useState()
@@ -287,7 +287,7 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                         </h1>
                     </>
                 )
-                : 
+                    :
                     <>
                         <h1 className="text-2xl text-center font-semibold mb-2">
                             Add to your itinerary
@@ -316,7 +316,7 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                 })}
             </div>
             {
-                !(items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0) && 
+                !(items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0) &&
                 (
                     <>
                         <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
@@ -330,7 +330,7 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                     </>
                 )
             }
-            
+
         </>
     );
 }
@@ -340,8 +340,16 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
     const [searchParams] = useSearchParams()
 
     const addHotel = useMutation({
-        mutationFn: (item) => addHotelItinerary({item: item, itineraryId: searchParams.get('itineraryId')}),
+        mutationFn: (item) => addHotelItinerary({ item: item, itineraryId: searchParams.get('itineraryId') }),
         retry: 0,
+        onSuccess: () => {
+            successNotify("Add to itinerary successfully")
+            refetchItinerary()
+        }
+    })
+
+    const addFlight = useMutation({
+        mutationFn: (item) => addFlightItinerary({itineraryId: searchParams.get('itineraryId'), flight: item }),
         onSuccess: () => {
             successNotify("Add to itinerary successfully")
             refetchItinerary()
@@ -357,6 +365,13 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
                     return
                 }
                 addHotel.mutate(selectedItems[item])
+            }
+            if (selectedItems[item].type === "flight") {
+                if (!selectedItems[item].price) {
+                    warningNotify("Please select price")
+                    return
+                }
+                addFlight.mutate(selectedItems[item])
             }
         })
     }
@@ -392,7 +407,7 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
 
 
             {/* Add to itinerary button */}
-            <div 
+            <div
                 className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50"
                 onClick={handleAddToItinerary}
             >
@@ -418,19 +433,19 @@ function ForDetailStay({ item, setSelectedItems }) {
     const [priceType, setPriceType] = useState("")
 
     const daysBetween = (checkin, checkout) =>
-    (new Date(
-        checkout.slice(0, 4),
-        checkout.slice(4, 6) - 1,
-        checkout.slice(6)
-    ) -
-        new Date(
-            checkin.slice(0, 4),
-            checkin.slice(4, 6) - 1,
-            checkin.slice(6)
-        )) /
-    (1000 * 60 * 60 * 24);
+        (new Date(
+            checkout.slice(0, 4),
+            checkout.slice(4, 6) - 1,
+            checkout.slice(6)
+        ) -
+            new Date(
+                checkin.slice(0, 4),
+                checkin.slice(4, 6) - 1,
+                checkin.slice(6)
+            )) /
+        (1000 * 60 * 60 * 24);
 
-    const formattedDate  = (date) => date.replace(/-/g, '');
+    const formattedDate = (date) => date.replace(/-/g, '');
 
     const hotel = useMutation({
         mutationFn: () => fetchSpecificHotel({
@@ -463,57 +478,58 @@ function ForDetailStay({ item, setSelectedItems }) {
 
     const getSpecificHotelPriceComparison = useMutation({
         mutationFn: () => fetchHotelPriceComparison(
-            { resultType: "H",
-            hotelId: item.hotelId,
-            city: item.city,
-            cityName: item.cityName,
-            hotelName: item.hotelName,
-            searchValue: item.searchValue,
-            provinceId: item.provinceId,
-            countryId: item.countryId,
-            districtId: item.districtId,
-            checkin: formattedDate(startDate),
-            checkout: formattedDate(endDate),
-            barCurr: "VND",
-            cityType: "OVERSEA",
-            latitude: item.latitude,
-            longitude: item.longitude,
-            searchCoordinate: item.searchCoordinate,
-            crn: numberOfRooms,
-            adult: numberOfAdults,
-            children: numberOfChildren,
-            domestic: true,
-            preHotelIds: [item.hotelId],
-            listFilters: `17~1*17*1*2`,
-            hotelNames: [item.hotelName] 
-        }),
+            {
+                resultType: "H",
+                hotelId: item.hotelId,
+                city: item.city,
+                cityName: item.cityName,
+                hotelName: item.hotelName,
+                searchValue: item.searchValue,
+                provinceId: item.provinceId,
+                countryId: item.countryId,
+                districtId: item.districtId,
+                checkin: formattedDate(startDate),
+                checkout: formattedDate(endDate),
+                barCurr: "VND",
+                cityType: "OVERSEA",
+                latitude: item.latitude,
+                longitude: item.longitude,
+                searchCoordinate: item.searchCoordinate,
+                crn: numberOfRooms,
+                adult: numberOfAdults,
+                children: numberOfChildren,
+                domestic: true,
+                preHotelIds: [item.hotelId],
+                listFilters: `17~1*17*1*2`,
+                hotelNames: [item.hotelName]
+            }),
         onSuccess: (data) => {
             const priceData = data[0]
             const agodaPrice = priceData?.agodaPrice?.price
                 ? Math.round(
-                        priceData.agodaPrice?.price?.[0]?.price
-                            ?.perRoomPerNight?.exclusive
-                            ?.display
-                    ).toLocaleString("vi-VN")
+                    priceData.agodaPrice?.price?.[0]?.price
+                        ?.perRoomPerNight?.exclusive
+                        ?.display
+                ).toLocaleString("vi-VN")
                 : null;
             const bookingPrice = priceData?.bookingPrice
                 ? Math.round(
-                        priceData.bookingPrice?.price?.reduce(
-                            (acc, curr) =>
-                                acc +
-                                Number(
-                                    curr.finalPrice.amount
-                                ),
-                            0
-                        ) /
-                            (Number(numberOfAdults) *
-                                Number(
-                                    daysBetween(
-                                        formattedDate(startDate),
-                                        formattedDate(endDate)
-                                    )
-                                ))
-                    ).toLocaleString("vi-VN")
+                    priceData.bookingPrice?.price?.reduce(
+                        (acc, curr) =>
+                            acc +
+                            Number(
+                                curr.finalPrice.amount
+                            ),
+                        0
+                    ) /
+                    (Number(numberOfAdults) *
+                        Number(
+                            daysBetween(
+                                formattedDate(startDate),
+                                formattedDate(endDate)
+                            )
+                        ))
+                ).toLocaleString("vi-VN")
                 : null;
             setAgodaPrice(agodaPrice)
             setBookingPrice(bookingPrice)
@@ -875,42 +891,42 @@ function ForDetailStay({ item, setSelectedItems }) {
                                 {Array.from(
                                     { length: numberOfChildren },
                                     (_, index) => {
-                                    return (
-                                        <form class="w-24 md:w-16 mb-3 md:mr-4">
-                                            <label
-                                                for="number-input"
-                                                class="block mb-2 text-xs text-start font-medium text-gray-900"
-                                            >
-                                                Child {index + 1}
-                                            </label>
-                                            <input
-                                                type="number"
-                                                id="number-input"
-                                                aria-describedby="helper-text-explanation"
-                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                placeholder="Age"
-                                                required
-                                                onChange={(e) => {
-                                                    setChildrenAges(
-                                                        (prev) => {
-                                                            const temp =
-                                                                [...prev];
-                                                            temp[index] = e.target.value;
-                                                            return temp;
-                                                        }
-                                                    );
-                                                }}
-                                            />
-                                        </form>
+                                        return (
+                                            <form class="w-24 md:w-16 mb-3 md:mr-4">
+                                                <label
+                                                    for="number-input"
+                                                    class="block mb-2 text-xs text-start font-medium text-gray-900"
+                                                >
+                                                    Child {index + 1}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id="number-input"
+                                                    aria-describedby="helper-text-explanation"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                    placeholder="Age"
+                                                    required
+                                                    onChange={(e) => {
+                                                        setChildrenAges(
+                                                            (prev) => {
+                                                                const temp =
+                                                                    [...prev];
+                                                                temp[index] = e.target.value;
+                                                                return temp;
+                                                            }
+                                                        );
+                                                    }}
+                                                />
+                                            </form>
                                         )
-                                    }   
+                                    }
                                 )}
                             </div>
                         </div>
                     </div>
                 </div>
                 {/* Search for price*/}
-                <div 
+                <div
                     className="flex justify-center"
                     onClick={(e) => handleSearch(e)}
                 >
@@ -925,115 +941,115 @@ function ForDetailStay({ item, setSelectedItems }) {
                     {/* Loading price */}
                     {
                         (getSpecificHotelPriceComparison.isPending || getSpecificHotelPriceComparison.isPending) ?
-                        (
-                            <div className="flex justify-center my-10">
-                                <span className="loading loading-dots loading-md"></span>
-                            </div>
-                        )
-                        :
-                        (getSpecificHotelPriceComparison.isSuccess && getSpecificHotelPriceComparison.isSuccess) 
-                        ?
-                        (
-                            <>
-                                <div 
-                                    class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "trip" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} `}
-                                    onClick={() => {
-                                        setPriceType("trip");
-                                        setSelectedItems((prev) => ({
-                                            ...prev,
-                                            [item._id]: {
-                                                ...prev[item._id],
-                                                checkin: formattedDate(startDate),
-                                                checkout: formattedDate(endDate),
-                                                tripPrice: Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-",
-                                                agodaPrice: null,
-                                                bookingPrice: null
-                                            }
-                                        }));
-                                    }}
-                                >
-                                <div class="mx-auto">
-                                    <img
-                                        src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
-                                        alt="website logo"
-                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                                    />
+                            (
+                                <div className="flex justify-center my-10">
+                                    <span className="loading loading-dots loading-md"></span>
                                 </div>
-                                <div 
-                                    class="mx-auto"
-                                >
-                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                        {Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") === '0' ? "-" : Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN")} VND
-                                    </p>
-                                </div>
-                            </div>
-                            <div 
-                                class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "booking" ? "bg-[#8DD3BB]" : " bg-[#CDEAE1]"} duration-300`}
-                                onClick={() => {
-                                    setPriceType("booking")
-                                    setSelectedItems((prev) => ({
-                                        ...prev,
-                                        [item._id]: {
-                                            ...prev[item._id],
-                                            checkin: formattedDate(startDate),
-                                            checkout: formattedDate(endDate),
-                                            bookingPrice: bookingPrice === '0' ? "-" : bookingPrice,
-                                            agodaPrice: null,
-                                            tripPrice: null
-                                        }
-                                    }))
-                                }}
-                            >
-                                <div class="mx-auto">
-                                    <img
-                                        src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
-                                        alt="website logo"
-                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                                    />
-                                </div>
-                                <div 
-                                    class="mx-auto"
-                                >
-                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                        {bookingPrice === '0' ? "-" : bookingPrice} VND
-                                    </p> 
-                                </div>
-                            </div>
-                            <div 
-                                class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "agoda" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} duration-300`}
-                                onClick={() => {
-                                    setPriceType("agoda");
-                                    setSelectedItems((prev) => ({
-                                        ...prev,
-                                        [item._id]: {
-                                            ...prev[item._id],
-                                            checkin: formattedDate(startDate),
-                                            checkout: formattedDate(endDate),
-                                            agodaPrice: agodaPrice === '0' ? "-" : agodaPrice,
-                                            tripPrice: null,
-                                            bookingPrice: null
-                                        }
-                                    }))
-                                }}
-                            >
-                                <div class="mx-auto">
-                                    <img
-                                        src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
-                                        alt="website logo"
-                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                                    />
-                                </div>
-                                <div 
-                                    class="mx-auto"
-                                >
-                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                        {agodaPrice || "-"} VND
-                                    </p>
-                                </div>
-                            </div>
-                            </>
-                        )
-                        : null
+                            )
+                            :
+                            (getSpecificHotelPriceComparison.isSuccess && getSpecificHotelPriceComparison.isSuccess)
+                                ?
+                                (
+                                    <>
+                                        <div
+                                            class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "trip" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} `}
+                                            onClick={() => {
+                                                setPriceType("trip");
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        checkin: formattedDate(startDate),
+                                                        checkout: formattedDate(endDate),
+                                                        tripPrice: Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-",
+                                                        agodaPrice: null,
+                                                        bookingPrice: null
+                                                    }
+                                                }));
+                                            }}
+                                        >
+                                            <div class="mx-auto">
+                                                <img
+                                                    src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+                                                    alt="website logo"
+                                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                                />
+                                            </div>
+                                            <div
+                                                class="mx-auto"
+                                            >
+                                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                                    {Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") === '0' ? "-" : Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN")} VND
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "booking" ? "bg-[#8DD3BB]" : " bg-[#CDEAE1]"} duration-300`}
+                                            onClick={() => {
+                                                setPriceType("booking")
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        checkin: formattedDate(startDate),
+                                                        checkout: formattedDate(endDate),
+                                                        bookingPrice: bookingPrice === '0' ? "-" : bookingPrice,
+                                                        agodaPrice: null,
+                                                        tripPrice: null
+                                                    }
+                                                }))
+                                            }}
+                                        >
+                                            <div class="mx-auto">
+                                                <img
+                                                    src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
+                                                    alt="website logo"
+                                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                                />
+                                            </div>
+                                            <div
+                                                class="mx-auto"
+                                            >
+                                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                                    {bookingPrice === '0' ? "-" : bookingPrice} VND
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "agoda" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} duration-300`}
+                                            onClick={() => {
+                                                setPriceType("agoda");
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        checkin: formattedDate(startDate),
+                                                        checkout: formattedDate(endDate),
+                                                        agodaPrice: agodaPrice === '0' ? "-" : agodaPrice,
+                                                        tripPrice: null,
+                                                        bookingPrice: null
+                                                    }
+                                                }))
+                                            }}
+                                        >
+                                            <div class="mx-auto">
+                                                <img
+                                                    src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+                                                    alt="website logo"
+                                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                                />
+                                            </div>
+                                            <div
+                                                class="mx-auto"
+                                            >
+                                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                                    {agodaPrice || "-"} VND
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </>
+                                )
+                                : null
                     }
                 </div>
             </div>
@@ -1132,6 +1148,11 @@ function ForDetailFlight({ item, setSelectedItems }) {
             });
     }
 
+    // useEffect(() => {
+    //     if (!selectedFlight) {
+    //         setSelectedItems
+    //     }
+    // })
 
     return (
         <>
@@ -1449,14 +1470,17 @@ function ForDetailFlight({ item, setSelectedItems }) {
                         <div
                             onClick={() => {
                                 setSelectedFlight(
-                                (prev) => prev === 'agoda' ? '' : 'agoda'
+                                    (prev) => prev === 'agoda' ? null : 'agoda'
                                 )
                                 setSelectedItems((prev) => ({
                                     ...prev,
-                                    
-                                }))
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: agodaPrice
+                                    }
+                                }));
                             }}
-                            class={`border border-transparent ${selectedFlight==="agoda"?'bg-[#8DD3BB]': 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
+                            class={`border border-transparent ${selectedFlight === "agoda" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
                             <div class="mx-auto">
                                 <img
                                     src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
@@ -1478,10 +1502,19 @@ function ForDetailFlight({ item, setSelectedItems }) {
                     }
                     {fetchMyTrip.isSuccess && myTripPrice &&
                         (<div
-                            onClick={() => setSelectedFlight(
-                                (prev) => prev === 'myTrip' ? '' : 'myTrip'
-                                )}
-                            class={`border border-transparent ${selectedFlight==="myTrip"?'bg-[#8DD3BB]': 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
+                            onClick={() => {
+                                setSelectedFlight(
+                                    (prev) => prev === 'myTrip' ? null : 'myTrip'
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: myTripPrice
+                                    }
+                                }));
+                            }}
+                            class={`border border-transparent ${selectedFlight === "myTrip" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
                             <div class="mx-auto">
                                 <img
                                     src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Mytrip_Logo_Colar_Pink.png?updatedAt=1714385168260"
@@ -1503,8 +1536,19 @@ function ForDetailFlight({ item, setSelectedItems }) {
                     }
                     {fetchTripCom.isSuccess && tripComPrice && (
                         <div
-                            
-                            class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                            onClick={() => {
+                                setSelectedFlight(
+                                    (prev) => prev === 'tripCom' ? null : 'tripCom'
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: tripComPrice
+                                    }
+                                }));
+                            }}
+                            class={`border border-transparent ${selectedFlight === "tripCom" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
                             <div class="mx-auto">
                                 <img
                                     src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
@@ -1526,8 +1570,19 @@ function ForDetailFlight({ item, setSelectedItems }) {
                     }
                     {fetchBayDep.isSuccess && bayDepPrice &&
                         (<div
-
-                            class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
+                            onClick={() => {
+                                setSelectedFlight(
+                                    (prev) => prev === 'bayDep' ? null : 'bayDep'
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: bayDepPrice
+                                    }
+                                }));
+                            }}
+                            class={`border border-transparent ${selectedFlight === "bayDep" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
                             <div class="mx-auto">
                                 <img
                                     src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952"
@@ -1682,7 +1737,7 @@ export function EmptySection() {
     );
 }
 
-export function StayCard({item, refetchItinerary}) {
+export function StayCard({ item, refetchItinerary }) {
     const convertDate = (date) => `${date.substring(6, 8)}.${date.substring(4, 6)}.${date.substring(0, 4)}`
     const [searchParams] = useSearchParams()
 
@@ -1693,7 +1748,7 @@ export function StayCard({item, refetchItinerary}) {
     }
 
     const deleteHotel = useMutation({
-        mutationFn: () => deleteHotelFromItinerary({itineraryId: searchParams.get("itineraryId"), hotelId: item._id}),
+        mutationFn: () => deleteHotelFromItinerary({ itineraryId: searchParams.get("itineraryId"), hotelId: item._id }),
         onSuccess: () => {
             successNotify("Hotel deleted from itinerary")
             refetchItinerary()
@@ -1702,7 +1757,7 @@ export function StayCard({item, refetchItinerary}) {
 
     const handleDelete = (e) => {
         e.preventDefault()
-        console.log({itineraryId: searchParams.get("itineraryId"), hotelId: item._id})
+        console.log({ itineraryId: searchParams.get("itineraryId"), hotelId: item._id })
         deleteHotel.mutate()
     }
 
@@ -1774,9 +1829,9 @@ export function StayCard({item, refetchItinerary}) {
                                             <button className="btn rounded-lg mx-2">
                                                 Cancel
                                             </button>
-                                            <button 
-                                            onClick={(e) => handleDelete(e)}
-                                            className="btn bg-black text-white rounded-lg">
+                                            <button
+                                                onClick={(e) => handleDelete(e)}
+                                                className="btn bg-black text-white rounded-lg">
                                                 Delete
                                             </button>
                                         </form>
