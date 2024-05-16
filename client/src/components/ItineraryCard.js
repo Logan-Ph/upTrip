@@ -1030,7 +1030,7 @@ function ForDetailStay({ item, setSelectedItems }) {
     );
 }
 
-function ForDetailFlight({ item }) {
+function ForDetailFlight({ item, setSelectedItems }) {
     const [adult, setAdult] = useState(1)
     const [child, setChild] = useState(0)
     const [infant, setInfant] = useState(0)
@@ -1436,9 +1436,15 @@ function ForDetailFlight({ item }) {
                         </div>)}
                     {fetchAgoda.isSuccess && agodaPrice && (
                         <div
-                            onClick={() => setSelectedFlight(
+                            onClick={() => {
+                                setSelectedFlight(
                                 (prev) => prev === 'agoda' ? '' : 'agoda'
-                                )}
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    
+                                }))
+                            }}
                             class={`border border-transparent ${selectedFlight==="agoda"?'bg-[#8DD3BB]': 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
                             <div class="mx-auto">
                                 <img
