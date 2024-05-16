@@ -148,6 +148,21 @@ function AdvancedSearchFlight({ setTab }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
+        if (!from.airportCode){
+            warningNotify("Please select your origin")
+            return
+        }
+
+        if (!to.airportCode){
+            warningNotify("Please select your destination")
+            return
+        }
+
+        if (!date.current.value){
+            warningNotify("Please select your departure date")
+            return
+        }
 
         const payload = {
             from: from.airportCode,
@@ -163,17 +178,9 @@ function AdvancedSearchFlight({ setTab }) {
             day: date.current?.value.substring(3, 5),
         }
 
-        for (let key in payload) {
-            if (payload.hasOwnProperty(key) && payload[key] === null) {
-                warningNotify("Please provide all information.")
-                return;
-            }
-        }
-
         navigate(
             `advanced-flight-search?ori=${payload.fromCity}&des=${payload.toCity}&from=${payload.from}&to=${payload.to}&adult=${payload.adult}&child=${payload.child}&infant=${payload.infant}&seatClass=${payload.seatClass}&year=${payload.year}&month=${payload.month}&day=${payload.day}`
         );
-
     }
 
     return (
@@ -761,6 +768,16 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
             return;
         }
 
+        if (!checkinDate.current.value){
+            warningNotify("Please select checkin date")
+            return
+        }
+
+        if (!checkoutDate.current.value){
+            warningNotify("Please select checkout date")
+            return
+        }
+
         let payload = {
             checkin: checkinDate.current.value.replace(
                 /(\d{2})\/(\d{2})\/(\d{4})/,
@@ -1023,9 +1040,6 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-r-none md:rounded-none border-l-"
                                             placeholder="dd/mm/yyyy"
                                             value={checkinDate.current?.value}
-                                            onSelect={(e) =>
-                                                console.log(e.target.value)
-                                            }
                                         />
                                         <label
                                             for="floating_filled"
@@ -1057,9 +1071,6 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none"
                                             placeholder="dd/mm/yyyy"
                                             value={checkoutDate.current?.value}
-                                            onSelect={(e) =>
-                                                console.log(e.target.value)
-                                            }
                                         />
                                         <label
                                             for="floating_filled"

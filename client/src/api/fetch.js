@@ -189,38 +189,73 @@ export function getHotelComments(payload) {
 }
 
 export function fetchCollections() {
-    return axios
-        .get("/fetch-collection", options)
-        .then((res) => res.data)
-        .catch((er) => {
-            return Promise.reject(new Error(er.response.data));
-        });
+	return axios
+		.get("/fetch-collection", options)
+		.then(res => res.data)
+		.catch(er => {
+			return Promise.reject(new Error(er.response.data));
+		});
 }
 
 export function addHotelToCollection(payload) {
-    return axios
-        .post("/add-to-collection/hotel", payload, options)
-        .then((res) => res.data)
-        .catch((er) => {
-            return Promise.reject(new Error(er.response.data));
-        });
+	return axios
+		.post("/add-to-collection/hotel", payload, options)
+		.then(res => res.data)
+		.catch(er => {
+			return Promise.reject(new Error(er.response.data));
+		});
 }
 
 export function addExperienceToCollection(payload) {
-    return axios
-        .post("/add-to-collection/experience", payload, options)
-        .then((res) => res.data)
-        .catch((er) => {
-            return Promise.reject(new Error(er.response.data));
-        });
+	return axios
+		.post("/add-to-collection/experience", payload, options)
+		.then(res => res.data)
+		.catch(er => {
+			return Promise.reject(new Error(er.response.data));
+		});
 }
 
 export function fetchFavoriteItems(payload) {
-    return axios
-        .get(`/favorite-items`, { params: payload }, options)
-        .then((res) => res.data)
-        .catch((er) => {
-            return Promise.reject(new Error(er.response.data));
-        });
+	return axios
+		.get(`/favorite-items`, { params: payload }, options)
+		.then(res => res.data)
+		.catch(er => {
+			return Promise.reject(new Error(er.response.data));
+		});
 }
 
+export function addFlightToCollection(payload, collectionId) {
+	return axios
+		.post("/add-to-collection/flight", { payload, collectionId }, options)
+		.then(res => res.data)
+		.catch(er => {
+			return Promise.reject(new Error(er.response.data));
+		});
+}
+
+export function addNewCollection(name, description) {
+	if (!name) {
+		return Promise.reject("Name is required");
+	}
+	return axios.post("/add-new-collection", { name, description }, options);
+}
+
+export function addNewItinerary(payload) {
+	return axios.post("/add-new-itinerary", payload, options);
+}
+
+export function fetchItinerary() {
+	return axios.get("/fetch-itinerary", options);
+}
+
+export function deleteItinerary(payload) {
+	return axios.post("/delete-itinerary", payload, options);
+}
+
+export function fetchDetailItinerary(payload) {
+	return axios.post("/fetch-detail-itinerary", payload, options)
+	.then(res => res.data)
+	.catch(er => {
+		return Promise.reject(new Error(er.response.data.message));
+	});
+}

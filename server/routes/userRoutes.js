@@ -93,9 +93,14 @@ router.get('/favorite-items', userController.favoriteItems)
 router.post("/add-to-collection/hotel", userController.addToCollectionHotel)
 router.post("/add-to-collection/experience", userController.addToCollectionExperience)
 
-// add-to-favorites/hotel
-// add-to-favorites/flight
-// add-to-favorites/experience
+router.post("/add-to-collection/flight", userController.addToCollectionFlight)
+
+router.post("/add-new-itinerary", userController.addNewItinerary)
+
+router.get("/fetch-itinerary", userController.fetchItinerary)
+router.post("/fetch-detail-itinerary", userController.fetchDetailItinerary)
+
+router.post("/delete-itinerary", userController.deleteItinerary)
 
 // remove-from-favorites/hotel
 // remove-from-favorites/flight

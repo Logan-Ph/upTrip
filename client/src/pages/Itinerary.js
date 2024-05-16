@@ -1,16 +1,91 @@
-import React, { useState } from "react";
+import CollectionCardSkeleton from "../components/skeletonLoadings/CollectionCardSkeleton";
+import Datepicker from "flowbite-datepicker/Datepicker";
+import { Suspense, useState, useContext, useEffect, useRef } from "react";
+import AuthContext from "../context/AuthProvider";
 import { ItineraryCard } from "../components/ItineraryCard";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ItineraryCardSkeleton from "../components/skeletonLoadings/ItinerarySkeleton";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import warningNotify from "../utils/warningNotify";
+import successNotify from "../utils/successNotify";
+import { addNewItinerary, fetchItinerary, deleteItinerary } from "../api/fetch";
 
 export default function Itinerary() {
+    const { auth } = useContext(AuthContext);
+    const checkinDate = useRef();
+    const checkoutDate = useRef();
     const [activeTab, setActiveTab] = useState(1); // Default active tab is 1
     const navigate = useNavigate();
     const handleTabClick = (tabNumber) => {
         setActiveTab(tabNumber);
     };
-    
-    
+
+    useEffect(() => {
+        if (!auth?.accessToken) {
+            navigate('/login')
+        }
+    }, [auth, navigate])
+
+    useEffect(() => {
+        let checkinPicker;
+        let checkoutPicker;
+
+        if (checkinDate.current && checkoutDate.current) {
+            // Initialize the check-in datepicker
+            checkinPicker = new Datepicker(checkinDate.current, {
+                autohide: true,
+                minDate: checkoutDate.current.value
+                    ? new Date(checkoutDate.current.value)
+                    : new Date(),
+            });
+
+            const initialMinDate = new Date();
+            initialMinDate.setDate(initialMinDate.getDate() + 1);
+            checkoutPicker = new Datepicker(checkoutDate.current, {
+                autohide: true,
+                minDate: checkinDate.current.value
+                    ? new Date(initialMinDate)
+                    : new Date(),
+            });
+        }
+
+        // Cleanup function to destroy datepickers when component unmounts or rerenders
+        return () => {
+            if (checkinPicker) checkinPicker.destroy();
+            if (checkoutPicker) checkoutPicker.destroy();
+        };
+    }, []);
+
+    const [name, setName] = useState();
+    const [destination, setDestination] = useState();
+    const [description, setDescription] = useState();
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
+    const [tripLength, setTripLength] = useState(1);
+
+    const getItinerary = useQuery({
+        queryKey: ["fetch-itinerary"],
+        queryFn: () => fetchItinerary(),
+        retry: false,
+        refetchOnWindowFocus: false,
+    })
+
+    const createItinerary = useMutation({
+        mutationFn: () => addNewItinerary({ name, destination, description, startDate, endDate, tripLength }),
+        onSuccess: (data) => {
+            successNotify(data.data)
+            getItinerary.refetch()
+        },
+        onError: (error) => {
+            warningNotify(error.response.data);
+        }
+    })
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        createItinerary.mutate();
+    }
+
     return (
         <>
             <div className="md:px-10 bg-[#FAFBFC]">
@@ -48,6 +123,7 @@ export default function Itinerary() {
                                             Name
                                         </label>
                                         <input
+                                            onChange={e => setName(e.target.value)}
                                             type="text"
                                             id="name"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-3 focus:ring-black focus:border-black"
@@ -63,52 +139,14 @@ export default function Itinerary() {
                                             Destination
                                         </label>
                                         <div className="relative">
-                                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                <svg
-                                                    className="w-4 h-4 text-gray-500"
-                                                    aria-hidden="true"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path
-                                                        stroke="currentColor"
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                                    />
-                                                </svg>
-                                            </div>
                                             <input
-                                                type="search"
+                                                onChange={e => setDestination(e.target.value)}
+                                                type="text"
                                                 id="destination"
-                                                className="block w-full p-3 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-black focus:border-black"
+                                                className="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-black focus:border-black"
                                                 placeholder="Where to?"
                                                 required
                                             />
-                                            <div className="relative drop-shadow-md">
-                                                <ul className="absolute menu bg-white w-full rounded-lg mt-1">
-                                                    <li>
-                                                        <div>
-                                                            <i
-                                                                class="fa-solid fa-location-dot"
-                                                                aria-hidden="true"
-                                                            ></i>{" "}
-                                                            Ho Chi Minh City
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div>
-                                                            <i
-                                                                class="fa-solid fa-location-dot"
-                                                                aria-hidden="true"
-                                                            ></i>{" "}
-                                                            Ho Chi Minh City
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
                                         </div>
                                     </div>
                                     <div className="mb-5 text-start">
@@ -119,6 +157,7 @@ export default function Itinerary() {
                                             Description
                                         </label>
                                         <textarea
+                                            onChange={e => setDescription(e.target.value)}
                                             type="text"
                                             id="description"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5 focus:ring-black focus:border-black"
@@ -138,11 +177,10 @@ export default function Itinerary() {
                                         <div className="max-w-md mx-auto">
                                             <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
-                                                        activeTab === 1
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 1
                                                             ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
                                                             : "text-black font-thin"
-                                                    }`}
+                                                        }`}
                                                     onClick={() =>
                                                         handleTabClick(1)
                                                     }
@@ -150,11 +188,10 @@ export default function Itinerary() {
                                                     Dates
                                                 </button>
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
-                                                        activeTab === 2
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 2
                                                             ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
                                                             : "text-black font-thin"
-                                                    }`}
+                                                        }`}
                                                     onClick={() =>
                                                         handleTabClick(2)
                                                     }
@@ -181,6 +218,12 @@ export default function Itinerary() {
                                                                 stroke-width="1.5"
                                                                 stroke="currentColor"
                                                                 className="w-6 h-6"
+                                                                onClick={() =>
+                                                                    setTripLength((prev) =>
+                                                                        prev === 1
+                                                                            ? prev
+                                                                            : prev - 1
+                                                                    )}
                                                             >
                                                                 <path
                                                                     stroke-linecap="round"
@@ -189,7 +232,7 @@ export default function Itinerary() {
                                                                 ></path>
                                                             </svg>
                                                             <span className="text-lg">
-                                                                1
+                                                                {tripLength}
                                                             </span>
 
                                                             <svg
@@ -199,6 +242,10 @@ export default function Itinerary() {
                                                                 stroke-width="1.5"
                                                                 stroke="currentColor"
                                                                 className="w-6 h-6"
+                                                                onClick={() =>
+                                                                    setTripLength((prev) =>
+                                                                            prev + 1
+                                                                    )}
                                                             >
                                                                 <path
                                                                     stroke-linecap="round"
@@ -216,18 +263,21 @@ export default function Itinerary() {
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
-                                    <button className="flex btn btn-outline w-full justify-center">
+                                    <button 
+                                        onClick={handleSubmit}
+                                        className="flex btn btn-outline w-full justify-center">
                                         Create
                                     </button>
                                 </div>
                             </div>
                         </dialog>
                     </div>
-
-                    {/* Itinerary Card */}
-                    <ItineraryCard />
-                    <ItineraryCard />
-                    <ItineraryCardSkeleton />
+                    {getItinerary.isSuccess ? 
+                        getItinerary.data.data.map((item) => {
+                            return (
+                            <Suspense fallback={<ItineraryCardSkeleton />}> <ItineraryCard itinerary={item} getItinerary={getItinerary} />
+                            </Suspense>)
+                        }) : <CollectionCardSkeleton />}
                 </div>
             </div>
         </>

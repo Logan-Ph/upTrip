@@ -182,7 +182,7 @@ function AdvancedSearchExperience() {
                     </div>
                     {isFetched && !autocompletePayload && (
                         <div class="relative z-40">
-                            <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto max-h-40 flex-nowrap">
+                            <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto max-h-40 flex-nowrap h-[400px] overflow-x-auto ">
                                 {data.length === 0 ? (
                                     <li className="p-2 font-semibold">No results found</li>
                                 ) : (
@@ -287,6 +287,20 @@ function AdvancedSearchFlight() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if (!from) {
+            warningNotify("PLease select your origin")
+            return
+        }
+
+        if (!to){
+            warningNotify("PLease select your destination")
+            return
+        }
+
+        if (!toAutocomplete || !fromAutocomplete){
+            return
+        }
+
         const payload = {
             from: from.airportCode,
             fromCity: from.cityName,
@@ -299,14 +313,6 @@ function AdvancedSearchFlight() {
             year: date.current?.value.substring(6, 10),
             month: date.current?.value.substring(0, 2),
             day: date.current?.value.substring(3, 5),
-        }
-
-        for (let key in payload) {
-            if (payload.hasOwnProperty(key) && payload[key] === null) {
-                console.log(key)
-                warningNotify("Please provide all information.")
-                return;
-            }
         }
 
         setKeywordFrom()
@@ -821,6 +827,16 @@ function AdvancedSearchHotel() {
         if (!autocompletePayload) {
             warningNotify("Please select a location");
             return;
+        }
+
+        if (!checkinDate.current.value){
+            warningNotify("Please select checkin date")
+            return
+        }
+
+        if (!checkoutDate.current.value){
+            warningNotify("Please select checkout date")
+            return
         }
 
         let payload = {

@@ -2,23 +2,23 @@ import { useState, React } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import {IconX} from '@tabler/icons-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { addExperienceToCollection, addHotelToCollection, fetchCollections } from '../api/fetch';
+import { addExperienceToCollection, addHotelToCollection, fetchCollections, addFlightToCollection } from '../api/fetch';
 import CollectionCardSkeleton from "./skeletonLoadings/CollectionCardSkeleton";
-import { addNewCollection } from "../api/post";
+import { addNewCollection } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
-export default function AddToFavorite({payload, hotel, experience}){
+export default function AddToFavorite({payload, hotel, experience, flight}){
     return(
         <>
             <div className="mt-10">
-                <AddItemButton payload={payload} hotel={hotel} experience={experience}/>
+                <AddItemButton payload={payload} hotel={hotel} experience={experience} flight={flight}/>
             </div>
         </>
     )
 }
 
-function AddItemButton({payload, hotel, experience}) {
+function AddItemButton({payload, hotel, experience, flight}) {
     const [isOpen, setIsOpen] = useState(false);
     const handleClose = () => setIsOpen(false);
     const [name, setName] = useState();
@@ -112,6 +112,20 @@ function AddItemButton({payload, hotel, experience}) {
         }
     })
 
+    const addToCollectionFlight = useMutation({
+        mutationFn: () => addFlightToCollection(payload, selectedCollection._id),
+        onMutate: () => {
+            console.log("send")
+        },
+        onSuccess: () => {
+            successNotify("Added to collection")
+            refetchCollections()
+        },
+        onError: (e) => {
+            warningNotify(e.response.data);
+        }
+    })
+
     const handleCreateCollection = (e) => {
         e.preventDefault()
         createCollection.mutate()
@@ -127,6 +141,7 @@ function AddItemButton({payload, hotel, experience}) {
                 // addToCollectionHotel.mutate()
             }
             if (experience) addToCollectionExperience.mutate()
+            if (flight) addToCollectionFlight.mutate()
         }
     }
 
@@ -145,12 +160,9 @@ function AddItemButton({payload, hotel, experience}) {
             {(isOpen && !isErrorCollections) && (
                 <div className="">
                 {/* Drawer */}
-                
-                <div className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${
-                        isOpen ? "translate-x-0" : "translate-x-full"
-                    } overflow-y-auto`}>
-
+                <div className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 
                     
+                    ${isOpen ? "translate-x-0" : "translate-x-full"} overflow-auto`}>
                     {/* close button */}
                     <div 
                         onClick={handleClose} className="material-icons cursor-pointer my-6 transition ease-in-out delay-150:-translate-y-1 hover:scale-110 duration-300" style={{ float: 'right' }}>

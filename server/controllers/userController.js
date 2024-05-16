@@ -6,6 +6,7 @@ const Favorites = require("../models/favorites");
 const Collection = require("../models/collection");
 const Hotel = require("../models/hotel")
 const Experience = require("../models/experience")
+const Flight = require("../models/flight")
 const Itinerary = require("../models/itinerary");
 const { stringSimilarity } = require("string-similarity-js");
 const {
@@ -98,7 +99,7 @@ exports.postLogin = async (req, res) => {
         sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         secure: true,
-    }); // 7 days
+    }); // a week
 
     return res.status(200).json({
         success: true,
@@ -1111,9 +1112,9 @@ exports.fetchCollections = async (req, res) => {
                 path: 'collections',
                 model: 'Collection',
                 populate: [
-                    // { path: 'flights', model: 'Flight' },
+                    { path: 'flights', model: 'Flight' },
                     { path: 'hotels', model: 'Hotel' },
-                    // { path: 'experience', model: 'Experience' }
+                    { path: 'experience', model: 'Experience' }
                 ]
             });
         if (!favorites) {
@@ -1241,10 +1242,10 @@ exports.favoriteItems = async (req, res) => {
             path: 'experience',
             model: 'Experience'
         })
-        // .populate({
-        //     path: 'flight',
-        //     model: 'Flight'
-        // })
+        .populate({
+            path: 'flights',
+            model: 'Flight'
+        })
         if (!collection) return res.status(404).json("Collection not found")
         return res.status(200).json(collection)
     } catch (er) {
@@ -1353,3 +1354,138 @@ exports.hotelComments = async (req, res) => {
     }
 }
 
+exports.addToCollectionFlight = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+
+        const {
+            flightNo,
+            from,
+            to,
+            departureTime,
+            arrivalTime,
+            carrier,
+            duration,
+            day,
+            month,
+            year,
+            seatClass,
+            imgSrc,
+            adult,
+            child,
+            infant,
+
+        } = req.body.payload
+
+        let collection = await Collection.findById(req.body.collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+
+        const newFlight = new Flight({
+            flightNo,
+            from,
+            to,
+            departureTime,
+            arrivalTime,
+            carrier,
+            duration,
+            day,
+            month,
+            year,
+            seatClass,
+            imgSrc,
+            adult,
+            child,
+            infant
+        })
+        await newFlight.save()
+
+        collection.flights.push(newFlight)
+        await collection.save()
+        return res.status(200).json("Flight added to collection")
+    } catch (er) {
+        console.log(er)
+        return res.status(500).json(er);
+    }
+}
+
+exports.addNewItinerary = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const user = await authenticateToken(refreshToken);
+        const { name, destination, description, startDate, endDate, tripLength } = req.body
+
+        if (!name || !destination)  return res.status(400).json("Please fill all the fields")
+        
+        await new Itinerary({
+            userID: user._id,
+            name: name,
+            destination: destination,
+            description: description,
+            startDate: startDate,
+            endDate: endDate,
+            tripLength: tripLength,
+        }).save()
+
+        return res.status(200).json("New itinerary added")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.fetchItinerary = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+        const user = await authenticateToken(refreshToken);
+
+        let itinerary = await Itinerary.find({ userID: user._id })
+            
+        if (!itinerary) {
+            return res.status(200).json([])
+        }
+        return res.status(200).json(itinerary);
+
+    } catch (e) {
+        return res.status(500).json(e)
+    }
+}
+
+exports.deleteItinerary = async (req,res) => {
+    try{
+        const {refreshToken} = req.cookies
+        if(!refreshToken) return res.status(401).json("You are not logged in")
+
+        const {itineraryId} = req.body
+        await Itinerary.findByIdAndDelete(itineraryId)
+        return res.status(200).json("Itinerary deleted")
+    }catch(err){
+        return res.status(500).json(err)
+    }
+}
+
+exports.fetchDetailItinerary = async (req, res) => {
+    try {
+        const {refreshToken} = req.cookies
+        if(!refreshToken) return res.status(401).json("You are not logged in")
+        
+        const { itineraryId } = req.body
+        const itinerary = await Itinerary.findById(itineraryId)
+        .populate({
+            path: 'hotels',
+            model: 'Hotel'
+        })
+        .populate({
+            path: 'experiences',
+            model: 'Experience'
+        })
+        .populate({
+            path: 'flights',
+            model: 'Flight'
+        })
+        return res.status(200).json(itinerary)
+    } catch (err) {
+        return res.status(500).json(err)
+    }
+}

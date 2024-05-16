@@ -1,18 +1,40 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { StayCard } from "../components/ItineraryCard";
 import { AddItemButton } from "../components/ItineraryCard";
 import { FlightCard } from "../components/ItineraryCard";
 import { EmptySection } from "../components/ItineraryCard";
 import { ActivityCard } from "../components/ItineraryCard";
 import { BudgetCard } from "../components/ItineraryCard";
+import AuthContext from "../context/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import { fetchDetailItinerary } from "../api/fetch";
 
 export default function DetailedItinerary() {
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState(1); // Default active tab is 1
+    const { auth } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (!auth?.accessToken) {
+            navigate('/login')
+        }
+    }, [auth, navigate])
 
     const handleTabClick = (tabNumber) => {
         setActiveTab(tabNumber);
     };
+
+    const {
+        data: itinerary,
+        isLoading: itineraryLoading,
+    } = useQuery({
+        queryKey: ['itinerary'],
+        queryFn: () => fetchDetailItinerary({itineraryId: searchParams.get('itineraryId')}),
+        retry: 0,
+        refetchOnWindowFocus: false,
+    })
 
     return (
         <>
@@ -22,7 +44,7 @@ export default function DetailedItinerary() {
                         <div className="mx-auto max-w-8xl md:px-6 py-4 md:py-10">
                             <div className="flex justify-between mb-2">
                                 <p className="font-bold text-3xl">
-                                    Summer Vaction in Da Nang
+                                    {itinerary?.name}
                                 </p>
                                 <div>
                                     <button
@@ -319,13 +341,7 @@ export default function DetailedItinerary() {
                             </div>
                             <div>
                                 <p className="text-gray-500 font-thin text-lg mb-4">
-                                    Counting down the days until our family
-                                    adventure in Danang this June! ☀️🌴 5 days
-                                    of excitement await us as we explore the
-                                    beautiful beaches, indulge in delicious
-                                    local cuisine, and create unforgettable
-                                    memories together. Let the countdown to
-                                    summer vacation begin! 🏖️😎
+                                    {itinerary?.description}
                                 </p>
                             </div>
                             {/* Cover Image */}
@@ -334,7 +350,7 @@ export default function DetailedItinerary() {
                                     <img
                                         className="rounded-lg w-full h-[450px] object-cover"
                                         src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/428850473.jpg?k=2d17b2dd618528271d24068071f67168b6aa7179b9a5c812f48b2e13f97ab146&o=&hp=1"
-                                        alt="image description"
+                                        alt="description"
                                     />
 
                                     <figcaption className="absolute px-8  text-white bottom-6">
@@ -342,17 +358,24 @@ export default function DetailedItinerary() {
                                             <div>
                                                 <p class="text-white text-sm md:text-2xl">
                                                     <i class="fa-solid fa-location-dot"></i>
-                                                    &ensp; Ho Chi Minh City
+                                                    &ensp; {itinerary?.destination}
                                                 </p>
                                             </div>
                                             <div className="divider divider-horizontal"></div>
 
                                             <div>
                                                 <p class="text-white text-sm md:text-2xl mt-4 mb-2">
-                                                    <i class="fa-regular fa-calendar"></i>
-                                                    &ensp; Mar 6{" "}
-                                                    <i class="fa-solid fa-arrow-right"></i>{" "}
-                                                    Mar 20, 2024
+                                                    {itinerary?.startDate ?
+                                                        (<span>
+                                                            <i class="fa-regular fa-calendar"></i>&ensp; {itinerary?.startDate}{" "}
+                                                            <i class="fa-solid fa-arrow-right"></i> {itinerary?.endDate}
+                                                        </span>)
+                                                        : (
+                                                            <span>
+                                                                <i class="fa-regular fa-calendar"></i>&ensp; {itinerary?.tripLength} day(s)
+                                                            </span>
+                                                        )
+                                                    }
                                                 </p>
                                             </div>
                                         </div>
@@ -367,9 +390,18 @@ export default function DetailedItinerary() {
                                 </p>
 
                                 {/*  Stays List */}
-                                <StayCard/>
-                        <StayCard/>
-                                <EmptySection />
+                                {itineraryLoading 
+                                    ? <StayCardSkeleton/> 
+                                    : itinerary?.hotels?.length === 0
+                                    ? 
+                                    <EmptySection/> 
+                                    :
+                                    <>
+                                    {itinerary?.hotels?.map(stay => <StayCard key={stay.id}/>)}
+                                    <AddItemButton />
+                                    </>
+                                }
+
                             </div>
 
                             {/* Flight */}
@@ -379,9 +411,17 @@ export default function DetailedItinerary() {
                                 </p>
 
                                 {/*  Flights List */}
-                                <FlightCard />
-                                <FlightCard />
-                                <AddItemButton />
+                                {itineraryLoading 
+                                    ? <FlightCardSkeleton/> 
+                                    : itinerary?.flights?.length === 0
+                                    ? 
+                                    <EmptySection/> 
+                                    : 
+                                    <>
+                                    {itinerary?.flights?.map(flight => <FlightCard key={flight.id}/>)}
+                                    <AddItemButton />
+                                    </>
+                                }
                             </div>
 
                             {/* Schedule */}
@@ -439,4 +479,33 @@ export default function DetailedItinerary() {
             </div>
         </>
     );
+}
+
+function StayCardSkeleton() {
+    return (
+        <>
+            <div className="grid grid-cols-2 card card-compact w-94 md:w-auto bg-white shadow-xl rounded-md">
+                <figure className="skeleton h-72 rounded-t-md rounded-b-none"></figure>
+                <div className="card-body my-2">
+                    <div className="flex flex-row justify-between ">
+                        <div class="flex flex-col gap-4 w-full">
+                            <div class="skeleton h-10 w-28"></div>
+                            <div class="skeleton h-4 w-full"></div>
+                            <div class="skeleton h-4 w-full"></div>
+                            <div class="skeleton h-4 w-full"></div>
+                            <div class="skeleton h-4 w-20"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+function FlightCardSkeleton(){
+    return (
+        <>
+            <figure className="skeleton w-auto h-[230px] rounded-t-md rounded-b-none"></figure>
+        </>
+    )
 }

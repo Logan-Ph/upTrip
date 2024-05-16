@@ -1,9 +1,28 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import AddToFavorite from "./AddToFavorite";
-// import AddToFavorite from "./AddToFavorite";
+
 
 export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess }) {
+    const [searchParams] = useSearchParams();
+    const [imgSrc, setImgSrc] = useState();
+    const payload = {
+        flightNo: flight.flightNo,
+        from: from,
+        to: to,
+        departureTime: flight.departureTime,
+        arrivalTime: flight.arrivalTime,
+        carrier: flight.airline[0],
+        duration: flight.duration,
+        day: searchParams.get("day"),
+        month: searchParams.get("month"),
+        year: searchParams.get("year"),
+        seatClass: searchParams.get("seatClass"),
+        imgSrc: imgSrc,
+        adult: searchParams.get("adult"),
+        child: searchParams.get("child"),
+        infant: searchParams.get("infant")
+    }
     return (
         <>
             <div className="relative">
@@ -24,31 +43,33 @@ export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myT
                         tripComSuccess={tripComSuccess}
                         myTripSuccess={myTripSuccess}
                         bayDepSuccess={bayDepSuccess}
+                        setImgSrc={setImgSrc}
                     />
                 </div>
                 <div className="absolute top-0 right-0">
-                    <AddToFavorite/>
+                    <AddToFavorite payload={payload} hotel={false} experience={false} flight={true}/>
                 </div>
             </div>
-            
+
 
         </>
     )
 }
 
-function FlightCard({ from, to, departure, arrival, duration, stop, carrier, agodaPrice, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess }) {
+function FlightCard({ from, to, departure, arrival, duration, stop, carrier, agodaPrice, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess, setImgSrc }) {
     const websiteLogo = useMemo(() => [
         {
             id: 1,
             imgLogo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
             price: agodaPrice,
-            success: true
+            success: true,
+            link: `https://www.agoda.com/flights/results?departureFrom=${from}&departureFromType=1&arrivalTo=${to}&arrivalToType=1&departDate=2024-05-27&returnDate=2024-05-28&searchType=1&cabinType=Economy&adults=1&sort=8`
         },
         {
             id: 2,
             imgLogo: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952",
             price: bayDepPrice,
-            success: bayDepSuccess
+            success: bayDepSuccess,
         },
         {
             id: 3,
@@ -65,32 +86,29 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
     ], [agodaPrice, myTripPrice, tripComPrice, bayDepPrice])
 
     const airlineLogo = [
-        {name: "Bamboo Airways", imgSrc: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Bamboo_Airways_Logo_QH-BAV.png"},
-        {name: "Vietravel Airlines", imgSrc: "https://apea.asia/wp-content/uploads/2022/11/vn-vietravel-logo-ib-2.png"},
-        {name: "Vietnam Airlines", imgSrc: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/Logo-VNA-Sky-Te-V-removebg-preview.png?updatedAt=1714388660575"},
-        {name: "VietJet Air", imgSrc: "https://media.loveitopcdn.com/3807/logo-vietjet-20.png"}
+        { name: "Bamboo Airways", imgSrc: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Bamboo_Airways_Logo_QH-BAV.png" },
+        { name: "Vietravel Airlines", imgSrc: "https://apea.asia/wp-content/uploads/2022/11/vn-vietravel-logo-ib-2.png" },
+        { name: "Vietnam Airlines", imgSrc: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/Logo-VNA-Sky-Te-V-removebg-preview.png?updatedAt=1714388660575" },
+        { name: "VietJet Air", imgSrc: "https://media.loveitopcdn.com/3807/logo-vietjet-20.png" },
+        { name: "Hahn Air Systems", imgSrc: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/HahnAir.png?updatedAt=1715785511442"}
     ]
 
-     // Find the logo based on the carrier
-     const findAirlineLogo = airlineLogo.find(logo => logo.name === carrier)?.imgSrc || "https://via.placeholder.com/150";
+    // Find the logo based on the carrier
+    const findAirlineLogo = airlineLogo.find(logo => logo.name === carrier)?.imgSrc || "https://via.placeholder.com/150";
 
+    useEffect(() => {
+        setImgSrc(findAirlineLogo)
+    }, [findAirlineLogo])
 
     const [hearts, setHearts] = useState(
-        websiteLogo.map(logo => ({ 
-            isFilled: false, 
+        websiteLogo.map(logo => ({
+            isFilled: false,
             id: logo.id,
-            imgLogo: logo.imgLogo, 
-            price: logo.price, 
-            success: logo.success }))
+            imgLogo: logo.imgLogo,
+            price: logo.price,
+            success: logo.success
+        }))
     );
-            
-    const toggleHeart = (index) => {
-        const updatedHearts = hearts.map((heart, i) => ({
-            ...heart,
-            isFilled: i === index ? !heart.isFilled : false,
-        }));
-        setHearts(updatedHearts);
-    };
 
     const [isIntersecting, setIsIntersecting] = useState(false);
     const ref = useRef(null);
@@ -144,6 +162,7 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
             case 2: return "w-[90px] h-[22px] md:w-[100px] md:h-[25px] cursor-pointer md:scale-90";
             case 3: return "w-[80px] h-[30px] md:w-[100px] md:h-[40px] object-cover cursor-pointer";
             case 4: return "w-[70px] h-[22px] md:w-[90px] md:h-[22px]  cursor-pointer md:scale-90";
+            case 5: return "w-[80px] h-[30px] md:w-[100px] md:h-[40px] object-cover cursor-pointer";
             default: return "bg-gray-500";
         }
     };
@@ -151,14 +170,14 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
 
     return (
         <>
-        <div ref={ref} className={`bg-white rounded-md gap-4 md:gap-8 mb-4 shadow-lg ${visibilityClass}`}>
+            <div ref={ref} className={`bg-white rounded-md gap-4 md:gap-8 mb-4 shadow-lg ${visibilityClass}`}>
                 <div className="flex-col space-y-2 py-4 px-4 md:px-0 col-span-2">
 
                     <div className="grid grid-cols-4 space-x-2 xl:space-x-2">
 
                         <div>
-                            <img src={findAirlineLogo} alt="airline logo" 
-                            className="lg:ms-8 md:w-[120px] md:h-[50px] lg:w-[130px] h-[70px] object-contain lg:object-fill sm:scale-90 md:scale-95"/>
+                            <img src={findAirlineLogo} alt="airline logo"
+                                className="lg:ms-8 md:w-[120px] md:h-[50px] lg:w-[130px] h-[70px] object-contain lg:object-fill sm:scale-90 md:scale-95" />
                         </div>
 
                         <div className="flex-col justify-center items-center my-auto sm:gap-y-2">
@@ -170,7 +189,7 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
 
                         <div className="flex-col my-auto">
                             <div className="font-bold text-sm xl:text-lg">{duration}</div>
-                            <div className="font-extralight text-sm xl:text-lg text-[#9A9A9A]">{from}-{to} </div>
+                            <div className="font-extralight text-sm xl:text-lg text-[#9A9A9A]">{from}-{to}</div>
                         </div>
                     </div>
 
@@ -178,31 +197,68 @@ function FlightCard({ from, to, departure, arrival, duration, stop, carrier, ago
 
                     {/* price tracking among three websites */}
                     <div className="pl-[5.5rem] pr-[0.5px] md:pr-10 md:pl-[10.5rem] xl:pl-[14rem] xl:pr-32">
-                      
-                            {hearts.map((heart, index) => (
+                        {!tripComSuccess || !myTripSuccess || !bayDepSuccess ?
+                        <div>
+                            <div className=" flex items-center pr-6 my-2">
+                            <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
+                                <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+                                <div className="mx-auto">
+                                    <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+                                </div>
+                            </div>
+                            </div>
 
-                            <div key={index} className="my-2 items-center">
-
+                            <div className=" flex items-center pr-6 my-2">
                                 {/* Placeholder for the rest of the div content */}
+                                <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
+                                    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+                                    <div className="mx-auto">
+                                        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className=" flex items-center pr-6 my-2">
+                                {/* Placeholder for the rest of the div content */}
+                                <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
+                                    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+                                    <div className="mx-auto">
+                                        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className=" flex items-center pr-6 my-2">
+                                {/* Placeholder for the rest of the div content */}
+                                <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
+                                    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
+                                    <div className="mx-auto">
+                                        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        :    
+                        hearts.map((heart, index) => (
+                            <div key={index} className="my-2 items-center">
                                 <div className="border border-transparent
                                 bg-[#CDEAE1] rounded-lg grid grid-cols-2 h-[42px] hover:bg-[#8DD3BB] ">
                                     <div className="mx-auto my-auto">
                                         <Link to="">
-                                            <img src={heart.imgLogo} alt="website logo" 
-                                            className={getClassName(heart.id)} />
+                                            <img src={heart.imgLogo} alt="website logo"
+                                                className={getClassName(heart.id)} />
                                         </Link>
                                     </div>
                                     <div className="mx-auto my-auto">
-                                        <p className="text-xs md:text-lg text-[#222160] font-bold">{heart.success  && heart.price !== null ? heart.price.toLocaleString("vi-VN") + " VND" : "- VND" }</p>
+                                        <p className="text-xs md:text-lg text-[#222160] font-bold">{heart.success && heart.price !== null ? heart.price.toLocaleString("vi-VN") + " VND" : "- VND"}</p>
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                        </div>
-                        
+                        ))
+                        }
+                    </div>
                 </div>
-
-                </div>
+            </div>
         </>
     )
 }
