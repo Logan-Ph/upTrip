@@ -1513,7 +1513,7 @@ exports.addFlightItinerary = async (req, res) => {
         if(!refreshToken) return res.status(401).json("You are not logged in")
         const { itineraryId, flightId } = req.body
         const itinerary = await Itinerary.findById(itineraryId)
-        const 
+        
         if (itinerary.flights.includes(flightId)) {
             return res.status(500).json("Flight already added to itinerary")
         }

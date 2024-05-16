@@ -213,7 +213,6 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
         refetchOnWindowFocus: false,
     })
 
-
     return (
         <>
             <div className="bg-white py-8 mt-10 sticky top-0 z-50 border-b">
@@ -287,7 +286,9 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                         case "hotel":
                             return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
                         case "flight":
-                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedFlightCard 
+                                onClick ={() => setSelectedItems(item)}
+                                key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
                         default:
                             return null
                     }
@@ -1570,38 +1571,38 @@ export function SavedFlightCard({item, setSelectedItems}) {
             >
                 <figure className="flex w-full">
                     <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQslxFGty6vilA5c2QqOQNNTu3QxMkHIbGO1LTLlwdy9A&s"
+                        src={item.imgSrc}
                         className="w-6 h-6 rounded-md"
                         alt="Airline"
                     />
                     <div className="text-gray-500 text-start ml-2">
-                        Vietnam Airlines
+                        {item.carrier}
                     </div>
                 </figure>
                 <div className="flex space-y-1 flex-col items-start px-4 w-full">
                     <div className="flex justify-between w-full">
                         <div className="flex flex-col">
-                            <div className="font-semibold">21:15</div>
-                            <div className="text-gray-500">SGN</div>
+                            <div className="font-semibold">{item.departureTime.substring(11, 16)}</div>
+                            <div className="text-gray-500">{item.from}</div>
                         </div>
                         <div className="flex flex-col">
                             <div className="text-gray-500 pb-1 font-thin">
-                                2h 0m
+                                {item.duration}
                             </div>
                             <hr className="text-gray-500"></hr>
                             <div className="text-gray-500 mt-1 font-thin">
-                                non stop
+                                {item.flightNo.length === 1 ? "non-stop" : item.flightNo.length + 1 + "stop(s)"}
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <div className="font-semibold">23:15</div>
-                            <div className="text-gray-500">DAD</div>
+                            <div className="font-semibold">{item.arrivalTime.substring(11, 16)}</div>
+                            <div className="text-gray-500">{item.to}</div>
                         </div>
                     </div>
 
-                    <div className="text-base font-semibold mt-2">
+                    {/* <div className="text-base font-semibold mt-2">
                         from 1.200.000
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>
