@@ -169,7 +169,7 @@ export function AddItemButton() {
             <div className="relative">
                 {/* Drawer */}
                 <div
-                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
+                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 lg:w-4/12   bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
                         } overflow-y-auto`}
                 >
                     <div className="p-4 relative">
@@ -364,44 +364,49 @@ function ForDetailStay({ item }) {
                 <div className="text-start font-semibold text-lg">Date</div>
 
                 {/* Datepicker */}
-                <div className="flex flex-col md:flex-row my-2">
-                    <div class="relative w-full md:w-1/2 h-[60px]">
-                        <div class="flex items-center">
-                            <span class="custom-datepicker-toggle">
-                                <span class="custom-datepicker-toggle-button">
-                                    <i class="fa-regular fa-calendar"></i>
+                <div className="grid grid-cols-2 my-2 sm:gap-x-2">
+
+                    <div className="relative h-[60px]">
+
+                        <div className="flex items-center">
+                            <div className="custom-datepicker-toggle w-full">
+                                <span className="custom-datepicker-toggle-button">
+                                    <i className="fa-regular fa-calendar"></i>
                                 </span>
                                 <input
                                     id="check-in"
                                     type="date"
-                                    class="custom-datepicker-input p-2.5 pt-5 rounded-lg border-gray-300 w-fit focus:ring-black focus:border-black block"
+                                    className="custom-datepicker-input px-5 pb-2.5 pt-5 rounded-lg border-gray-300 sm:w-[150px] xl:w-[185px] 2xl:w-[250px] focus:ring-black focus:border-black block "
                                 />
-                            </span>
+                            </div>
                         </div>
+
+
                         <div>
                             <label
                                 for="check-in"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto px-4"
                             >
                                 Check-in
                             </label>
                         </div>
                     </div>
-                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
-                        <div class="flex items-center">
-                            <span class="datepicker-toggle">
-                                <span class="datepicker-toggle-button"></span>
+
+                    <div className="relative h-[60px] mx-auto">
+                        <div className="flex items-center ">
+                            <span className="datepicker-toggle">
+                                <span className="datepicker-toggle-button"></span>
                                 <input
                                     id="check-out"
                                     type="date"
-                                    class="datepicker-input p-2.5 pt-5 rounded-lg w-fit border-gray-300 focus:ring-black focus:border-black"
+                                    className="datepicker-input px-5 pb-2.5 pt-5 rounded-lg sm:w-[150px] xl:w-[185px] 2xl:w-[250px] border-gray-300 focus:ring-black focus:border-black"
                                 />
                             </span>
                         </div>
                         <div>
                             <label
                                 for="check-out"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto px-4"
                             >
                                 Check-out
                             </label>
