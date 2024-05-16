@@ -1,4 +1,3 @@
-
 import CollectionCardSkeleton from "../components/skeletonLoadings/CollectionCardSkeleton";
 import { Suspense, useState, useContext, useEffect, useRef } from "react";
 import AuthContext from "../context/AuthProvider";
@@ -23,9 +22,9 @@ export default function Itinerary() {
 
     useEffect(() => {
         if (!auth?.accessToken) {
-            navigate('/login')
+            navigate("/login");
         }
-    }, [auth, navigate])
+    }, [auth, navigate]);
 
     useEffect(() => {
         let checkinPicker;
@@ -69,28 +68,36 @@ export default function Itinerary() {
         queryFn: () => fetchItinerary(),
         retry: false,
         refetchOnWindowFocus: false,
-    })
+    });
 
     const createItinerary = useMutation({
-        mutationFn: () => addNewItinerary({ name, destination, description, startDate, endDate, tripLength }),
+        mutationFn: () =>
+            addNewItinerary({
+                name,
+                destination,
+                description,
+                startDate,
+                endDate,
+                tripLength,
+            }),
         onSuccess: (data) => {
-            successNotify(data.data)
-            getItinerary.refetch()
+            successNotify(data.data);
+            getItinerary.refetch();
         },
         onError: (error) => {
             warningNotify(error.response.data);
-        }
-    })
+        },
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!destination || !description) {
-            warningNotify("Please fill in all the fields")
-            return
+            warningNotify("Please fill in all the fields");
+            return;
         }
 
         createItinerary.mutate();
-    }
+    };
 
     return (
         <>
@@ -129,7 +136,9 @@ export default function Itinerary() {
                                             Name
                                         </label>
                                         <input
-                                            onChange={e => setName(e.target.value)}
+                                            onChange={(e) =>
+                                                setName(e.target.value)
+                                            }
                                             type="text"
                                             id="name"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-3 focus:ring-black focus:border-black"
@@ -146,7 +155,11 @@ export default function Itinerary() {
                                         </label>
                                         <div className="relative">
                                             <input
-                                                onChange={e => setDestination(e.target.value)}
+                                                onChange={(e) =>
+                                                    setDestination(
+                                                        e.target.value
+                                                    )
+                                                }
                                                 type="text"
                                                 id="destination"
                                                 className="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-black focus:border-black"
@@ -163,7 +176,9 @@ export default function Itinerary() {
                                             Description
                                         </label>
                                         <textarea
-                                            onChange={e => setDescription(e.target.value)}
+                                            onChange={(e) =>
+                                                setDescription(e.target.value)
+                                            }
                                             type="text"
                                             id="description"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5 focus:ring-black focus:border-black"
@@ -183,10 +198,11 @@ export default function Itinerary() {
                                         <div className="max-w-md mx-auto">
                                             <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 1
-                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
-                                                        : "text-black font-thin"
-                                                        }`}
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                        activeTab === 1
+                                                            ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                            : "text-black font-thin"
+                                                    }`}
                                                     onClick={() =>
                                                         handleTabClick(1)
                                                     }
@@ -194,10 +210,11 @@ export default function Itinerary() {
                                                     Dates
                                                 </button>
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 2
-                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
-                                                        : "text-black font-thin"
-                                                        }`}
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                        activeTab === 2
+                                                            ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                            : "text-black font-thin"
+                                                    }`}
                                                     onClick={() =>
                                                         handleTabClick(2)
                                                     }
@@ -209,58 +226,60 @@ export default function Itinerary() {
                                                 {activeTab === 1 && (
                                                     <div className="my-6 mb-10">
                                                         {/* Datepicker */}
-                                                        <div
-                                                            date-rangepicker
-                                                            class="flex items-center"
-                                                        >
-                                                            <div class="relative">
-                                                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                                    <svg
-                                                                        class="w-4 h-4 text-gray-500"
-                                                                        aria-hidden="true"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="currentColor"
-                                                                        viewBox="0 0 20 20"
-                                                                    >
-                                                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                                                    </svg>
-                                                                </div>
-                                                                <input
-                                                                    ref={checkinDate}
-                                                                    datepicker
-                                                                    datepicker-format="dd/mm/yyyy"
-                                                                    name="start"
-                                                                    type="text"
-                                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 "
-                                                                    placeholder="Select date start"
-                                                                    value={checkinDate.current?.value}
-                                                                />
-                                                            </div>
-                                                            <span class="mx-4 text-gray-500">
-                                                                to
+                                                        {/* <span class="datepicker-toggle">
+                                                            <span class="datepicker-toggle-button">
+                                                                <i class="fa-regular fa-calendar"></i>
                                                             </span>
-                                                            <div class="relative">
-                                                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                                    <svg
-                                                                        class="w-4 h-4 text-gray-500"
-                                                                        aria-hidden="true"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                        fill="currentColor"
-                                                                        viewBox="0 0 20 20"
-                                                                    >
-                                                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                                                    </svg>
+                                                            <input
+                                                                type="date"
+                                                                class="datepicker-input"
+                                                            />
+                                                        </span> */}
+
+                                                        {/*  */}
+                                                        <div className="flex flex-col md:flex-row my-2 justify-center">
+                                                            <div class="relative w-full md:w-1/2 h-[60px]">
+                                                                <div class="flex items-center">
+                                                                    <span class="custom-datepicker-toggle">
+                                                                        <span class="custom-datepicker-toggle-button">
+                                                                            <i class="fa-regular fa-calendar"></i>
+                                                                        </span>
+                                                                        <input
+                                                                            id="from-date"
+                                                                            type="date"
+                                                                            class="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                        />
+                                                                    </span>
                                                                 </div>
-                                                                <input
-                                                                    ref={checkoutDate}
-                                                                    datepicker
-                                                                    datepicker-format="dd/mm/yyyy"
-                                                                    name="end"
-                                                                    type="text"
-                                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5"
-                                                                    placeholder="Select date end"
-                                                                    value={checkoutDate.current?.value}
-                                                                />
+                                                                <div>
+                                                                    <label
+                                                                        for="from-date"
+                                                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                    >
+                                                                        From
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                                                                <div class="flex items-center">
+                                                                    <span class="datepicker-toggle">
+                                                                        <span class="datepicker-toggle-button">
+                                                                        </span>
+                                                                        <input
+                                                                            id="to-date"
+                                                                            type="date"
+                                                                            class="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                        />
+                                                                    </span>
+                                                                </div>
+                                                                <div>
+                                                                    <label
+                                                                        for="to-date"
+                                                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                    >
+                                                                        To
+                                                                    </label>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -279,11 +298,17 @@ export default function Itinerary() {
                                                                 stroke="currentColor"
                                                                 className="w-6 h-6"
                                                                 onClick={() =>
-                                                                    setTripLength((prev) =>
-                                                                        prev === 1
-                                                                            ? prev
-                                                                            : prev - 1
-                                                                    )}
+                                                                    setTripLength(
+                                                                        (
+                                                                            prev
+                                                                        ) =>
+                                                                            prev ===
+                                                                            1
+                                                                                ? prev
+                                                                                : prev -
+                                                                                  1
+                                                                    )
+                                                                }
                                                             >
                                                                 <path
                                                                     stroke-linecap="round"
@@ -303,9 +328,14 @@ export default function Itinerary() {
                                                                 stroke="currentColor"
                                                                 className="w-6 h-6"
                                                                 onClick={() =>
-                                                                    setTripLength((prev) =>
-                                                                        prev + 1
-                                                                    )}
+                                                                    setTripLength(
+                                                                        (
+                                                                            prev
+                                                                        ) =>
+                                                                            prev +
+                                                                            1
+                                                                    )
+                                                                }
                                                             >
                                                                 <path
                                                                     stroke-linecap="round"
@@ -324,19 +354,29 @@ export default function Itinerary() {
                                 <div className="flex justify-end">
                                     <button
                                         onClick={handleSubmit}
-                                        className="flex btn btn-outline w-full justify-center">
+                                        className="flex btn btn-outline w-full justify-center"
+                                    >
                                         Create
                                     </button>
                                 </div>
                             </div>
                         </dialog>
                     </div>
-                    {getItinerary.isSuccess ?
+                    {getItinerary.isSuccess ? (
                         getItinerary.data.data.map((item) => {
                             return (
-                                <Suspense fallback={<ItineraryCardSkeleton />}> <ItineraryCard itinerary={item} getItinerary={getItinerary} />
-                                </Suspense>)
-                        }) : <CollectionCardSkeleton />}
+                                <Suspense fallback={<ItineraryCardSkeleton />}>
+                                    {" "}
+                                    <ItineraryCard
+                                        itinerary={item}
+                                        getItinerary={getItinerary}
+                                    />
+                                </Suspense>
+                            );
+                        })
+                    ) : (
+                        <CollectionCardSkeleton />
+                    )}
                 </div>
             </div>
         </>
