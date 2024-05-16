@@ -136,10 +136,7 @@ function AddItemButton({payload, hotel, experience, flight}) {
         if (!selectedCollection) {
             warningNotify("Please select a collection")
         }else{
-            if (hotel) {
-                console.log(hotel)    
-                // addToCollectionHotel.mutate()
-            }
+            if (hotel) addToCollectionHotel.mutate()
             if (experience) addToCollectionExperience.mutate()
             if (flight) addToCollectionFlight.mutate()
         }

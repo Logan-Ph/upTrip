@@ -2,7 +2,7 @@
 import CollectionCardSkeleton from "../components/skeletonLoadings/CollectionCardSkeleton";
 import { Suspense, useState, useContext, useEffect, useRef } from "react";
 import AuthContext from "../context/AuthProvider";
-import { Datepicker } from "flowbite-react";
+import Datepicker from "flowbite-datepicker/Datepicker";
 import { ItineraryCard } from "../components/ItineraryCard";
 import { useNavigate } from "react-router-dom";
 import ItineraryCardSkeleton from "../components/skeletonLoadings/ItinerarySkeleton";
@@ -84,6 +84,11 @@ export default function Itinerary() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!destination || !description) {
+            warningNotify("Please fill in all the fields")
+            return
+        }
+
         createItinerary.mutate();
     }
 
@@ -148,28 +153,6 @@ export default function Itinerary() {
                                                 placeholder="Where to?"
                                                 required
                                             />
-                                            <div className="relative drop-shadow-md">
-                                                <ul className="rounded-lg mt-1 absolute menu bg-white w-full overflow-y-auto max-h-40 flex-nowrap">
-                                                    <li>
-                                                        <div>
-                                                            <i
-                                                                class="fa-solid fa-location-dot"
-                                                                aria-hidden="true"
-                                                            ></i>{" "}
-                                                            Ho Chi Minh City
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div>
-                                                            <i
-                                                                class="fa-solid fa-location-dot"
-                                                                aria-hidden="true"
-                                                            ></i>{" "}
-                                                            Ho Chi Minh City
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
                                         </div>
                                     </div>
                                     <div className="mb-5 text-start">
@@ -201,8 +184,8 @@ export default function Itinerary() {
                                             <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
                                                 <button
                                                     className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 1
-                                                            ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
-                                                            : "text-black font-thin"
+                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                        : "text-black font-thin"
                                                         }`}
                                                     onClick={() =>
                                                         handleTabClick(1)
@@ -212,8 +195,8 @@ export default function Itinerary() {
                                                 </button>
                                                 <button
                                                     className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 2
-                                                            ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
-                                                            : "text-black font-thin"
+                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                        : "text-black font-thin"
                                                         }`}
                                                     onClick={() =>
                                                         handleTabClick(2)
@@ -243,10 +226,14 @@ export default function Itinerary() {
                                                                     </svg>
                                                                 </div>
                                                                 <input
+                                                                    ref={checkinDate}
+                                                                    datepicker
+                                                                    datepicker-format="dd/mm/yyyy"
                                                                     name="start"
                                                                     type="text"
                                                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 "
                                                                     placeholder="Select date start"
+                                                                    value={checkinDate.current?.value}
                                                                 />
                                                             </div>
                                                             <span class="mx-4 text-gray-500">
@@ -265,10 +252,14 @@ export default function Itinerary() {
                                                                     </svg>
                                                                 </div>
                                                                 <input
+                                                                    ref={checkoutDate}
+                                                                    datepicker
+                                                                    datepicker-format="dd/mm/yyyy"
                                                                     name="end"
                                                                     type="text"
                                                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5"
                                                                     placeholder="Select date end"
+                                                                    value={checkoutDate.current?.value}
                                                                 />
                                                             </div>
                                                         </div>
@@ -313,7 +304,7 @@ export default function Itinerary() {
                                                                 className="w-6 h-6"
                                                                 onClick={() =>
                                                                     setTripLength((prev) =>
-                                                                            prev + 1
+                                                                        prev + 1
                                                                     )}
                                                             >
                                                                 <path
@@ -327,12 +318,11 @@ export default function Itinerary() {
                                                 )}
                                             </div>
                                         </div>
-
                                         {/*  */}
                                     </div>
                                 </div>
                                 <div className="flex justify-end">
-                                    <button 
+                                    <button
                                         onClick={handleSubmit}
                                         className="flex btn btn-outline w-full justify-center">
                                         Create
@@ -341,11 +331,11 @@ export default function Itinerary() {
                             </div>
                         </dialog>
                     </div>
-                    {getItinerary.isSuccess ? 
+                    {getItinerary.isSuccess ?
                         getItinerary.data.data.map((item) => {
                             return (
-                            <Suspense fallback={<ItineraryCardSkeleton />}> <ItineraryCard itinerary={item} getItinerary={getItinerary} />
-                            </Suspense>)
+                                <Suspense fallback={<ItineraryCardSkeleton />}> <ItineraryCard itinerary={item} getItinerary={getItinerary} />
+                                </Suspense>)
                         }) : <CollectionCardSkeleton />}
                 </div>
             </div>

@@ -23,8 +23,6 @@ export function ItineraryCard({ itinerary, getItinerary }) {
     const handleDelete = (e) => {
         e.preventDefault()
         handleDeleteItinerary.mutate()
-        
-
     }
 
     return (
