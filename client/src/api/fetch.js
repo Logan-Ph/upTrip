@@ -267,3 +267,8 @@ export function editItinerary(payload) {
 export function addFlightItinerary(payload) {
 	return axios.post("/add-to-itinerary/flight", payload, options)
 }
+
+export function addHotelItinerary(payload) {
+	return axios.post("/add-to-itinerary/hotel", payload, options)
+}
+

@@ -67,8 +67,6 @@ function AddItemButton({payload, hotel, experience, flight}) {
             provinceId: payload.provinceId,
             countryId: payload.countryId,
             districtId: payload.districtId,
-            checkin: payload.checkin,
-            checkout: payload.checkout,
             hotelName: hotel.hotelBasicInfo.hotelName || payload.hotelName,
             lat: hotel.positionInfo.coordinate.lat || payload.latitude,
             lon: hotel.positionInfo.coordinate.lng || payload.longitude,
@@ -134,10 +132,7 @@ function AddItemButton({payload, hotel, experience, flight}) {
         if (!selectedCollection) {
             warningNotify("Please select a collection")
         }else{
-            if (hotel) {
-                console.log(hotel)    
-                // addToCollectionHotel.mutate()
-            }
+            if (hotel) addToCollectionHotel.mutate()
             if (experience) addToCollectionExperience.mutate()
             if (flight) addToCollectionFlight.mutate()
         }
@@ -250,16 +245,16 @@ function AddItemButton({payload, hotel, experience, flight}) {
                     <div className=" ">
                         <div className="py-6 bg-white mb-6 text-center sticky top-0 z-50 border-b-2">
                             {isSuccessCollections && collections.length > 0 ?
-                            <>
-                                <h1 className="text-2xl font-semibold mb-2">Choose a collection</h1>
-                                <p className="text-gray-500 text-center">Select the collection to save your favorite items</p>
-                            </>
-                            :
-                            <>
-                                <h1 className="text-2xl font-semibold mb-2">No collection found</h1>
-                                <p className="text-gray-500 text-center">Create a new collection to save your favorite items</p>
-                            </>
-                        }
+                                <>
+                                    <h1 className="text-2xl font-semibold mb-2">Choose a collection</h1>
+                                    <p className="text-gray-500 text-center">Select the collection to save your favorite items</p>
+                                </>
+                                :
+                                <>
+                                    <h1 className="text-2xl font-semibold mb-2">No collection found</h1>
+                                    <p className="text-gray-500 text-center">Create a new collection to save your favorite items</p>
+                                </>
+                            }
                         </div>
 
                         {isLoadingCollections && (

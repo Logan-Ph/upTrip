@@ -20,7 +20,12 @@ export default function DetailedItinerary() {
     const [name, setName] = useState()
     const [description, setDescription] = useState()
     const [destination, setDestination] = useState()
-    const [tripLength, setTripLength] = useState()
+    const [tripLength, setTripLength] = useState(1)
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
+    const formattedDate  = (date) => date.replace(/-/g, '');
+    const convertDate = (date) => `${date.substring(6, 8)}-${date.substring(4, 6)}-${date.substring(0, 4)}`
+
     useEffect(() => {
         if (!auth?.accessToken) {
             navigate('/login')
@@ -56,7 +61,10 @@ export default function DetailedItinerary() {
             itineraryId: searchParams.get('itineraryId'),
             name: name,
             description: description,
-            destination: destination
+            destination: destination,
+            startDate: formattedDate(startDate),
+            endDate: formattedDate(endDate),
+            tripLength
         }),
         onSuccess: (data) => {
             successNotify(data.data)
@@ -87,6 +95,28 @@ export default function DetailedItinerary() {
         e.preventDefault()
         edit.mutate()
     }
+
+    const generateScheduleDates = (startDate, endDate) => {
+        const formatDate = (dateStr) => {
+            return `${dateStr?.substring(0, 4)}-${dateStr?.substring(4, 6)}-${dateStr?.substring(6, 8)}`;
+        };
+        let dates = [];
+        let currentDate = new Date(formatDate(startDate));
+        const end = new Date(formatDate(endDate));
+
+        while (currentDate <= end) {
+            dates.push(new Date(currentDate));
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return dates.map(date => 
+            `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
+        );
+    };
+
+    // Assuming startDate and endDate are available in your state or props
+    const scheduleDates = generateScheduleDates(itinerary?.startDate, itinerary?.endDate);
+
     return (
         <>
             <div className="md:px-10 bg-[#FAFBFC]">
@@ -222,60 +252,72 @@ export default function DetailedItinerary() {
                                                                 1 && (
                                                                 <div className="my-6 mb-10">
                                                                     {/* Datepicker */}
-                                                                    <div
-                                                                        date-rangepicker
-                                                                        class="flex items-center"
-                                                                    >
-                                                                        <div class="relative">
-                                                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                                                <svg
-                                                                                    class="w-4 h-4 text-gray-500"
-                                                                                    aria-hidden="true"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    fill="currentColor"
-                                                                                    viewBox="0 0 20 20"
-                                                                                >
-                                                                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                                                                </svg>
-                                                                            </div>
-                                                                            <input
-                                                                                name="start"
-                                                                                type="text"
-                                                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 "
-                                                                                placeholder="Select date start"
-                                                                            />
+                                                                    <div className="flex flex-col md:flex-row my-2 justify-center">
+                                                                    <div class="relative w-full md:w-1/2 h-[60px]">
+                                                                        <div class="flex items-center">
+                                                                            <span class="custom-datepicker-toggle">
+                                                                                <span class="custom-datepicker-toggle-button">
+                                                                                    <i class="fa-regular fa-calendar"></i>
+                                                                                </span>
+                                                                                <input
+                                                                                    id="from-date"
+                                                                                    type="date"
+                                                                                    className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                                    min={new Date().toISOString().split('T')[0]} // Set min date to today
+                                                                                    max={endDate || ''} // Set max date to endDate if it exists
+                                                                                    onChange={(e) => {
+                                                                                        const newStartDate = e.target.value;
+                                                                                        setStartDate(newStartDate);
+                                                                                    }}
+                                                                                />
+                                                                            </span>
                                                                         </div>
-                                                                        <span class="mx-4 text-gray-500">
-                                                                            to
-                                                                        </span>
-                                                                        <div class="relative">
-                                                                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                                                                <svg
-                                                                                    class="w-4 h-4 text-gray-500"
-                                                                                    aria-hidden="true"
-                                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                                    fill="currentColor"
-                                                                                    viewBox="0 0 20 20"
-                                                                                >
-                                                                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                                                                </svg>
-                                                                            </div>
-                                                                            <input
-                                                                                name="end"
-                                                                                type="text"
-                                                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5"
-                                                                                placeholder="Select date end"
-                                                                            />
+                                                                        <div>
+                                                                            <label
+                                                                                for="from-date"
+                                                                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                            >
+                                                                                From
+                                                                            </label>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                                                                        <div class="flex items-center">
+                                                                            <span class="datepicker-toggle">
+                                                                                <span class="datepicker-toggle-button">
+                                                                                </span>
+                                                                                <input
+                                                                                    id="to-date"
+                                                                                    type="date"
+                                                                                    className="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                                    min={startDate || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
+                                                                                    onChange={(e) => {
+                                                                                        const newEndDate = e.target.value;
+                                                                                        if (newEndDate < startDate) {
+                                                                                            setStartDate(newEndDate);
+                                                                                        }
+                                                                                        setEndDate(newEndDate);
+                                                                                    }}
+                                                                                />
+                                                                            </span>
+                                                                        </div>
+                                                                        <div>
+                                                                            <label
+                                                                                for="to-date"
+                                                                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                            >
+                                                                                To
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                                 </div>
                                                             )}
                                                             {activeTab ===
                                                                 2 && (
                                                                     <div className="flex justify-between my-6 mb-10">
                                                                         <p className="text-base">
-                                                                            Number
-                                                                            of days
+                                                                            Number of days
                                                                         </p>
                                                                         <div className="flex space-x-3 items-center">
                                                                             <svg
@@ -299,9 +341,8 @@ export default function DetailedItinerary() {
                                                                                 ></path>
                                                                             </svg>
                                                                             <span className="text-lg">
-                                                                                {tripLength}
+                                                                                {tripLength || 1}
                                                                             </span>
-
                                                                             <svg
                                                                                 xmlns="http://www.w3.org/2000/svg"
                                                                                 fill="none"
@@ -325,7 +366,6 @@ export default function DetailedItinerary() {
                                                                 )}
                                                         </div>
                                                     </div>
-
                                                     {/*  */}
                                                 </div>
                                                 <div className="divider"></div>
@@ -400,7 +440,7 @@ export default function DetailedItinerary() {
                                             </div>
                                             <div className="flex justify-end">
                                                 <button 
-                                                    onClick={handleEdit}
+                                                    onClick={(e) => handleEdit(e)}
                                                     className="flex btn btn-outline w-full justify-center">
                                                     Save Changes
                                                 </button>
@@ -437,8 +477,8 @@ export default function DetailedItinerary() {
                                                 <p class="text-white text-sm md:text-2xl mt-4 mb-2">
                                                     {itinerary?.startDate ?
                                                         (<span>
-                                                            <i class="fa-regular fa-calendar"></i>&ensp; {itinerary?.startDate}{" "}
-                                                            <i class="fa-solid fa-arrow-right"></i> {itinerary?.endDate}
+                                                            <i class="fa-regular fa-calendar"></i>&ensp; {convertDate(itinerary?.startDate)}{" "}
+                                                            <i class="fa-solid fa-arrow-right"></i> {convertDate(itinerary?.endDate)}
                                                         </span>)
                                                         : (
                                                             <span>
@@ -499,32 +539,28 @@ export default function DetailedItinerary() {
                                 <p className="font-semibold text-2xl my-4">
                                     Schedule
                                 </p>
-                                <div className="ml-4">
-                                    <p className="font-semibold text-xl py-4">
-                                        Day one (19/03/2024)
-                                    </p>
-                                    <div className="flex flex-col">
-                                        {/* Items */}
-                                        <div className="flex items-center">
-                                            <div className="mr-8 text-3xl">
-                                                <i class="fa-solid fa-circle-check"></i>
+                                {scheduleDates.map((date, index) => (
+                                    <div key={index} className="ml-4">
+                                        <p className="font-semibold text-xl py-4">
+                                            Day {index + 1} ({date})
+                                        </p>
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center">
+                                                <div className="mr-8 text-3xl">
+                                                    <i className="fa-solid fa-circle-check"></i>
+                                                </div>
+                                                <ActivityCard />
                                             </div>
-                                            {/*Schedule Item */}
-                                            <ActivityCard />
-                                        </div>
-                                        <div className="flex items-center">
-                                            <div className="mr-8  text-3xl">
-                                                <i class="fa-regular fa-circle"></i>
+                                            <div className="flex items-center">
+                                                <div className="mr-8 text-3xl">
+                                                    <i className="fa-regular fa-circle"></i>
+                                                </div>
+                                                <ActivityCard />
                                             </div>
-                                            {/*Schedule Item */}
-                                            <ActivityCard />
                                         </div>
+                                        <AddItemButton />
                                     </div>
-
-                                    {/* Add items button */}
-                                    <AddItemButton />
-                                </div>
-
+                                ))}
                                 {/* Another day */}
                                 <div className="ml-4">
                                     <p className="font-semibold text-xl py-4">

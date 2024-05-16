@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { deleteItinerary, fetchCollections, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight } from "../api/fetch";
+import { addHotelItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
 // Itinerary card for the itinerary page. list the itinerary info card
 export function ItineraryCard({ itinerary, getItinerary }) {
-
+    const convertDate = (date) => `${date.substring(6, 8)}-${date.substring(4, 6)}-${date.substring(0, 4)}`
     const handleDeleteItinerary = useMutation({
         mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
         onSuccess: (data) => {
@@ -23,8 +23,6 @@ export function ItineraryCard({ itinerary, getItinerary }) {
     const handleDelete = (e) => {
         e.preventDefault()
         handleDeleteItinerary.mutate()
-
-
     }
 
     return (
@@ -50,8 +48,8 @@ export function ItineraryCard({ itinerary, getItinerary }) {
                         <p class="text-gray-500 text-sm md:text-lg mt-1 md:mt-4 mb-2">
                             {itinerary.startDate ?
                                 (<span>
-                                    <i class="fa-regular fa-calendar"></i>&ensp; {itinerary.startDate}{" "}
-                                    <i class="fa-solid fa-arrow-right"></i> {itinerary.endDate}
+                                    <i class="fa-regular fa-calendar"></i>&ensp; {convertDate(itinerary.startDate)}{" "}
+                                    <i class="fa-solid fa-arrow-right"></i> {convertDate(itinerary.endDate)}
                                 </span>)
                                 : (
                                     <span>
@@ -171,7 +169,7 @@ export function AddItemButton() {
             <div className="relative">
                 {/* Drawer */}
                 <div
-                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 md:w-4/12 bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
+                    className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 lg:w-4/12   bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
                         } overflow-y-auto`}
                 >
                     <div className="p-4 relative">
@@ -194,6 +192,7 @@ export function AddItemButton() {
                             <OtherPageContent
                                 handleBackButtonClick={handleBackButtonClick}
                                 selectedItems={selectedItems}
+                                setSelectedItems={setSelectedItems}
                             />
                         )}
                     </div>
@@ -280,9 +279,20 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
     return (
         <>
             <div className="bg-white py-6 sticky mt-10 top-0 z-50 border-b">
-                <h1 className="text-2xl text-center font-semibold mb-2">
-                    Add to your itinerary
-                </h1>
+                {items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0 ? (
+                    <>
+                        <h1 className="text-2xl text-center font-semibold mb-2">
+                            No item found
+                        </h1>
+                    </>
+                )
+                : 
+                    <>
+                        <h1 className="text-2xl text-center font-semibold mb-2">
+                            Add to your itinerary
+                        </h1>
+                    </>
+                }
                 <button
                     onClick={handleBackButtonClick}
                     className="mt-4 absolute top-0 left-[-30px] p-3 ml-4"
@@ -304,20 +314,46 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                     }
                 })}
             </div>
-            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
-                <div
-                    className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
-                    onClick={handleNextButtonClick}
-                >
-                    Next
-                </div>
-            </div>
+            {
+                !(items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0) && 
+                (
+                    <>
+                        <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
+                            <div
+                                className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full"
+                                onClick={handleNextButtonClick}
+                            >
+                                Next
+                            </div>
+                        </div>
+                    </>
+                )
+            }
+            
         </>
     );
 }
 
 // page 3 in the drawer, input details of the item
-function OtherPageContent({ handleBackButtonClick, selectedItems }) {
+function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedItems }) {
+    const [searchParams] = useSearchParams()
+
+    const addHotel = useMutation({
+        mutationFn: (item) => addHotelItinerary({item: item, itineraryId: searchParams.get('itineraryId')}),
+        retry: 0,
+    })
+
+    const handleAddToItinerary = (e) => {
+        e.preventDefault()
+        Object.keys(selectedItems).forEach(item => {
+            if (selectedItems[item].type === "stay") {
+                addHotel.mutate(selectedItems[item])
+            }
+        })
+    }
+
+
+
     return (
         <>
             <div className="bg-white py-6 mt-10 sticky top-0 z-50 border-b">
@@ -335,11 +371,11 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
             {Object.keys(selectedItems).map(item => {
                 switch (selectedItems[item].type) {
                     case 'stay':
-                        return <ForDetailStay key={item.id} item={selectedItems[item].item} />
+                        return <ForDetailStay setSelectedItems={setSelectedItems} key={item.id} item={selectedItems[item].item} />
                     case "experience":
-                        return <ForDetailExperience key={item.id} item={selectedItems[item].item} />
+                        return <ForDetailExperience setSelectedItems={setSelectedItems} key={item.id} item={selectedItems[item].item} />
                     case "flight":
-                        return <ForDetailFlight key={item.id} item={selectedItems[item].item} />
+                        return <ForDetailFlight setSelectedItems={setSelectedItems} key={item.id} item={selectedItems[item].item} />
                     default:
                         return null
                 }
@@ -347,7 +383,10 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
 
 
             {/* Add to itinerary button */}
-            <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50">
+            <div 
+                className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50"
+                onClick={handleAddToItinerary}
+            >
                 {/* Add any other content or buttons */}
                 <div className="btn btn-outline bg-black text-white hover:bg-gray-900 rounded-full">
                     Add to itinerary
@@ -357,73 +396,207 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
     );
 }
 
-function ForDetailStay({ item }) {
+function ForDetailStay({ item, setSelectedItems }) {
+    const [isOpen, setIsOpen] = useState(false)
+    const [numberOfAdults, setNumberOfAdults] = useState(1);
+    const [numberOfChildren, setNumberOfChildren] = useState(0);
+    const [numberOfRooms, setNumberOfRooms] = useState(1);
+    const [childrenAges, setChildrenAges] = useState([]);
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
+    const [agodaPrice, setAgodaPrice] = useState(false)
+    const [bookingPrice, setBookingPrice] = useState(false)
+    const [selectedPrice, setSelectedPrice] = useState()
+    const [priceType, setPriceType] = useState("")
+
+    const daysBetween = (checkin, checkout) =>
+    (new Date(
+        checkout.slice(0, 4),
+        checkout.slice(4, 6) - 1,
+        checkout.slice(6)
+    ) -
+        new Date(
+            checkin.slice(0, 4),
+            checkin.slice(4, 6) - 1,
+            checkin.slice(6)
+        )) /
+    (1000 * 60 * 60 * 24);
+
+    const formattedDate  = (date) => date.replace(/-/g, '');
+
+    const hotel = useMutation({
+        mutationFn: () => fetchSpecificHotel({
+            resultType: "H",
+            hotelId: item.hotelId,
+            city: item.city,
+            cityName: item.cityName,
+            hotelName: item.hotelName,
+            searchValue: item.searchValue,
+            provinceId: item.provinceId,
+            countryId: item.countryId,
+            districtId: item.districtId,
+            checkin: formattedDate(startDate),
+            checkout: formattedDate(endDate),
+            barCurr: "VND",
+            cityType: "OVERSEA",
+            latitude: item.latitude,
+            longitude: item.longitude,
+            searchCoordinate: item.searchCoordinate,
+            crn: numberOfRooms,
+            adult: numberOfAdults,
+            children: numberOfChildren,
+            domestic: true,
+            preHotelIds: [item.hotelId],
+            listFilters: `17~1*17*1*2`,
+        }),
+        retry: false,
+        refetchOnWindowFocus: false,
+    });
+
+    const getSpecificHotelPriceComparison = useMutation({
+        mutationFn: () => fetchHotelPriceComparison(
+            { resultType: "H",
+            hotelId: item.hotelId,
+            city: item.city,
+            cityName: item.cityName,
+            hotelName: item.hotelName,
+            searchValue: item.searchValue,
+            provinceId: item.provinceId,
+            countryId: item.countryId,
+            districtId: item.districtId,
+            checkin: formattedDate(startDate),
+            checkout: formattedDate(endDate),
+            barCurr: "VND",
+            cityType: "OVERSEA",
+            latitude: item.latitude,
+            longitude: item.longitude,
+            searchCoordinate: item.searchCoordinate,
+            crn: numberOfRooms,
+            adult: numberOfAdults,
+            children: numberOfChildren,
+            domestic: true,
+            preHotelIds: [item.hotelId],
+            listFilters: `17~1*17*1*2`,
+            hotelNames: [item.hotelName] 
+        }),
+        onSuccess: (data) => {
+            const priceData = data[0]
+            const agodaPrice = priceData?.agodaPrice?.price
+                ? Math.round(
+                        priceData.agodaPrice?.price?.[0]?.price
+                            ?.perRoomPerNight?.exclusive
+                            ?.display
+                    ).toLocaleString("vi-VN")
+                : null;
+            const bookingPrice = priceData?.bookingPrice
+                ? Math.round(
+                        priceData.bookingPrice?.price?.reduce(
+                            (acc, curr) =>
+                                acc +
+                                Number(
+                                    curr.finalPrice.amount
+                                ),
+                            0
+                        ) /
+                            (Number(numberOfAdults) *
+                                Number(
+                                    daysBetween(
+                                        formattedDate(startDate),
+                                        formattedDate(endDate)
+                                    )
+                                ))
+                    ).toLocaleString("vi-VN")
+                : null;
+            setAgodaPrice(agodaPrice)
+            setBookingPrice(bookingPrice)
+        },
+        retry: false,
+        refetchOnWindowFocus: false,
+    });
+
+    const handleSearch = (e) => {
+        e.preventDefault()
+        if (!startDate || !endDate) {
+            warningNotify("Please select date")
+            return
+        }
+        hotel.mutate()
+        getSpecificHotelPriceComparison.mutate()
+    }
+
     return (
         <>
             <div className="my-4">
                 <SavedStayCard item={item} setSelectedItems={false} />
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
-                <div className="flex my-2">
-                    <div class="relative w-1/2">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg
-                                class="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
+
+                {/* Datepicker */}
+                <div className="grid grid-cols-2 my-2 sm:gap-x-2">
+
+                    <div className="relative h-[60px]">
+
+                        <div className="flex items-center">
+                            <div className="custom-datepicker-toggle w-full">
+                                <span className="custom-datepicker-toggle-button">
+                                    <i className="fa-regular fa-calendar"></i>
+                                </span>
+                                <input
+                                    id="check-in"
+                                    type="date"
+                                    className="custom-datepicker-input px-5 pb-2.5 pt-5 rounded-lg border-gray-300 sm:w-[150px] xl:w-[185px] 2xl:w-[250px] focus:ring-black focus:border-black block "
+                                    min={new Date().toISOString().split('T')[0]} // Set min date to today
+                                    max={endDate || ''} // Set max date to endDate if it exists
+                                    onChange={(e) => {
+                                        const newStartDate = e.target.value;
+                                        setStartDate(newStartDate);
+                                    }}
+                                />
+                            </div>
                         </div>
+
+
                         <div>
-                            <input
-                                datepicker
-                                datepicker-autohide
-                                name="start"
-                                type="text"
-                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 rounded-r-none border-l-"
-                                placeholder="dd/mm/yyyy"
-                            />
                             <label
-                                for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                for="check-in"
+                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto px-4"
                             >
                                 Check-in
                             </label>
                         </div>
                     </div>
-                    <div class="relative w-1/2">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none focus:ring-none">
-                            <svg
-                                class="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
+
+                    <div className="relative h-[60px] mx-auto">
+                        <div className="flex items-center ">
+                            <span className="datepicker-toggle">
+                                <span className="datepicker-toggle-button"></span>
+                                <input
+                                    id="check-out"
+                                    type="date"
+                                    className="datepicker-input px-5 pb-2.5 pt-5 rounded-lg sm:w-[150px] xl:w-[185px] 2xl:w-[250px] border-gray-300 focus:ring-black focus:border-black"
+                                    min={startDate || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
+                                    onChange={(e) => {
+                                        const newEndDate = e.target.value;
+                                        if (newEndDate < startDate) {
+                                            setStartDate(newEndDate);
+                                        }
+                                        setEndDate(newEndDate);
+                                    }}
+                                />
+                            </span>
                         </div>
                         <div>
-                            <input
-                                datepicker
-                                datepicker-autohide
-                                name="end"
-                                type="text"
-                                class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0"
-                                placeholder="dd/mm/yyyy"
-                            />
                             <label
-                                for="floating_filled"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                for="check-out"
+                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto px-4"
                             >
                                 Check-out
                             </label>
                         </div>
                     </div>
                 </div>
+                {/*  */}
+
                 {/* Ask Guest and Room */}
                 <div className="text-start font-semibold text-lg">
                     Room information
@@ -434,6 +607,7 @@ function ForDetailStay({ item }) {
                         data-dropdown-toggle="dropdownDivider"
                         class="text-gray-500 bg-white focus:ring-1 focus:ring-black focus:border-black font-medium rounded-lg border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 mr-5 pt-5 ps-10 w-full justify-between"
                         type="button"
+                        onClick={() => setIsOpen((prev) => !prev)}
                     >
                         <label
                             for="floating_filled"
@@ -444,7 +618,7 @@ function ForDetailStay({ item }) {
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                         </div>
-                        1 adult, 1 child, 1 room{" "}
+                        {numberOfAdults} adult, {numberOfChildren} child, {numberOfRooms} room{" "}
                         <svg
                             class="w-2.5 h-2.5 ms-3"
                             aria-hidden="true"
@@ -465,7 +639,7 @@ function ForDetailStay({ item }) {
                     {/* <!-- Dropdown menu --> */}
                     <div
                         id="dropdownDivider"
-                        className="z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full hidden"
+                        className={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full ${isOpen ? "block" : "hidden"}`}
                     >
                         {/* Ask user to input room information */}
                         <div
@@ -488,6 +662,14 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfRooms(
+                                                    (prev) =>
+                                                        prev > 1
+                                                            ? prev - 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -495,8 +677,7 @@ function ForDetailStay({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg">1</span>
-
+                                        <span class="text-lg">{numberOfRooms}</span>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -504,6 +685,24 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() => {
+                                                setNumberOfRooms(
+                                                    (prev) => {
+                                                        if (prev >= 10)
+                                                            return prev;
+
+                                                        if (
+                                                            prev ===
+                                                            numberOfAdults
+                                                        ) {
+                                                            setNumberOfAdults(
+                                                                prev + 1
+                                                            );
+                                                        }
+                                                        return prev + 1;
+                                                    }
+                                                );
+                                            }}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -533,6 +732,16 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfAdults(
+                                                    (prev) =>
+                                                        prev - 1 > 0 &&
+                                                            prev >
+                                                            numberOfRooms
+                                                            ? prev - 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -540,7 +749,7 @@ function ForDetailStay({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg">1</span>
+                                        <span class="text-lg">{numberOfAdults}</span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -549,6 +758,11 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfAdults(
+                                                    (prev) => prev + 1
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -581,6 +795,29 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfChildren(
+                                                    (prev) => {
+                                                        if (prev > 0) {
+                                                            setChildrenAges(
+                                                                (
+                                                                    prev
+                                                                ) =>
+                                                                    prev.slice(
+                                                                        0,
+                                                                        prev.length -
+                                                                        1
+                                                                    )
+                                                            );
+                                                            return (
+                                                                prev - 1
+                                                            );
+                                                        } else {
+                                                            return prev;
+                                                        }
+                                                    }
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -588,7 +825,7 @@ function ForDetailStay({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {numberOfChildren} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -597,6 +834,16 @@ function ForDetailStay({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setNumberOfChildren(
+                                                    (prev) =>
+                                                        prev <
+                                                            numberOfRooms *
+                                                            6
+                                                            ? prev + 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -617,81 +864,166 @@ function ForDetailStay({ item }) {
                                 check-in
                             </div>
                             <div class="overflow-y-scroll flex flex-wrap items-start px-5 mx-auto justify-between md:justify-normal w-full md:max-h-[150px]">
-                                <form class="w-24 md:w-16 mb-3 md:mr-4">
-                                    <label
-                                        for="number-input"
-                                        class="block mb-2 text-xs text-start font-medium text-gray-900"
-                                    >
-                                        Child 1
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="number-input"
-                                        aria-describedby="helper-text-explanation"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                        placeholder="Age"
-                                        required
-                                    />
-                                </form>
+                                {Array.from(
+                                    { length: numberOfChildren },
+                                    (_, index) => {
+                                    return (
+                                        <form class="w-24 md:w-16 mb-3 md:mr-4">
+                                            <label
+                                                for="number-input"
+                                                class="block mb-2 text-xs text-start font-medium text-gray-900"
+                                            >
+                                                Child {index + 1}
+                                            </label>
+                                            <input
+                                                type="number"
+                                                id="number-input"
+                                                aria-describedby="helper-text-explanation"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                placeholder="Age"
+                                                required
+                                                onChange={(e) => {
+                                                    setChildrenAges(
+                                                        (prev) => {
+                                                            const temp =
+                                                                [...prev];
+                                                            temp[index] = e.target.value;
+                                                            return temp;
+                                                        }
+                                                    );
+                                                }}
+                                            />
+                                        </form>
+                                        )
+                                    }   
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
                 {/* Search for price*/}
-                <div className="flex justify-center">
-                    <div className="btn btn-sm text-center rounded-full text-sm text-gray-800">
+                <div 
+                    className="flex justify-center"
+                    onClick={(e) => handleSearch(e)}
+                >
+                    <div
+                        className="btn btn-sm text-center rounded-full text-sm text-gray-800"
+                    >
                         Search
                     </div>
                 </div>
                 {/* Price */}
-                <div className="my-4">
+                <div className="my-10 ">
                     {/* Loading price */}
-                    <div className="flex justify-center my-10">
-                        <span className="loading loading-dots loading-md"></span>
-                    </div>
-                    {/* If user choose this price, change to bg-[#8DD3BB] , otherwise bg-[#CDEAE1] */}
-                    <div class="border border-transparent bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]">
-                        <div class="mx-auto">
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
-                        </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                346.405 VND
-                            </p>
-                        </div>
-                    </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
-                        <div class="mx-auto">
-                            <img
-                                src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
-                        </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                412.397 VND
-                            </p>
-                        </div>
-                    </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
-                        <div class="mx-auto">
-                            <img
-                                src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
-                        </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                330.614 VND
-                            </p>
-                        </div>
-                    </div>
+                    {
+                        (getSpecificHotelPriceComparison.isPending || getSpecificHotelPriceComparison.isPending) ?
+                        (
+                            <div className="flex justify-center my-10">
+                                <span className="loading loading-dots loading-md"></span>
+                            </div>
+                        )
+                        :
+                        (getSpecificHotelPriceComparison.isSuccess && getSpecificHotelPriceComparison.isSuccess) 
+                        ?
+                        (
+                            <>
+                                <div 
+                                    class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "trip" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} `}
+                                    onClick={() => {
+                                        setSelectedPrice(Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-");
+                                        setPriceType("trip");
+                                        setSelectedItems((prev) => ({
+                                            ...prev,
+                                            [item._id]: {
+                                                ...prev[item._id],
+                                                checkin: formattedDate(startDate),
+                                                checkout: formattedDate(endDate),
+                                                price: Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-"
+                                            }
+                                        }));
+                                    }}
+                                >
+                                <div class="mx-auto">
+                                    <img
+                                        src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+                                        alt="website logo"
+                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                    />
+                                </div>
+                                <div 
+                                    class="mx-auto"
+                                >
+                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                        {Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") === '0' ? "-" : Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN")} VND
+                                    </p>
+                                </div>
+                            </div>
+                            <div 
+                                class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "booking" ? "bg-[#8DD3BB]" : " bg-[#CDEAE1]"} duration-300`}
+                                onClick={() => {
+                                    setSelectedPrice(bookingPrice)
+                                    setPriceType("booking")
+                                    setSelectedItems((prev) => ({
+                                        ...prev,
+                                        [item._id]: {
+                                            ...prev[item._id],
+                                            checkin: formattedDate(startDate),
+                                            checkout: formattedDate(endDate),
+                                            price: bookingPrice === '0' ? "-" : bookingPrice
+                                        }
+                                    }))
+                                }}
+                            >
+                                <div class="mx-auto">
+                                    <img
+                                        src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
+                                        alt="website logo"
+                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                    />
+                                </div>
+                                <div 
+                                    class="mx-auto"
+                                >
+                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                        {bookingPrice === '0' ? "-" : bookingPrice} VND
+                                    </p> 
+                                </div>
+                            </div>
+                            <div 
+                                class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "agoda" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} duration-300`}
+                                onClick={() => {
+                                    setSelectedPrice(agodaPrice);
+                                    setPriceType("agoda");
+                                    setSelectedItems((prev) => ({
+                                        ...prev,
+                                        [item._id]: {
+                                            ...prev[item._id],
+                                            checkin: formattedDate(startDate),
+                                            checkout: formattedDate(endDate),
+                                            price: agodaPrice === '0' ? "-" : agodaPrice
+                                        }
+                                    }))
+                                }}
+                            >
+                                <div class="mx-auto">
+                                    <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+                                        alt="website logo"
+                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                    />
+                                </div>
+                                <div 
+                                    class="mx-auto"
+                                >
+                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                        {agodaPrice || "-"} VND
+                                    </p>
+                                </div>
+                            </div>
+                            </>
+                        )
+                        : null
+                    }
                 </div>
             </div>
         </>
@@ -794,6 +1126,56 @@ function ForDetailFlight({ item }) {
         <>
             <div className="my-4">
                 <SavedFlightCard item={item} setSelectedItems={false} />
+                {/* Ask Date */}
+                <div className="text-start font-semibold text-lg">Date</div>
+
+                {/*  */}
+                <div className="flex flex-col md:flex-row my-2">
+                    <div class="relative w-full md:w-1/2 h-[60px]">
+                        <div class="flex items-center">
+                            <span class="custom-datepicker-toggle">
+                                <span class="custom-datepicker-toggle-button">
+                                    <i class="fa-regular fa-calendar"></i>
+                                </span>
+                                <input
+                                    id="check-in"
+                                    type="date"
+                                    class="custom-datepicker-input p-2.5 pt-5 rounded-lg border-gray-300 w-fit focus:ring-black focus:border-black block"
+                                />
+                            </span>
+                        </div>
+                        <div>
+                            <label
+                                for="check-in"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                            >
+                                Check-in
+                            </label>
+                        </div>
+                    </div>
+                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                        <div class="flex items-center">
+                            <span class="datepicker-toggle">
+                                <span class="datepicker-toggle-button"></span>
+                                <input
+                                    id="check-out"
+                                    type="date"
+                                    class="datepicker-input p-2.5 pt-5 rounded-lg w-fit border-gray-300 focus:ring-black focus:border-black"
+                                />
+                            </span>
+                        </div>
+                        <div>
+                            <label
+                                for="check-out"
+                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                            >
+                                Check-out
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                {/*  */}
+
                 {/* Ask Flight Details */}
                 <div class="text-start font-semibold text-lg">
                     Flight Information
