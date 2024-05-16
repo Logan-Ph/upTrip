@@ -1152,6 +1152,7 @@ exports.addToCollectionHotel = async (req,res) => {
             address,
             rating,
             imgSrc, 
+            hotelId,
             collectionId
         } = req.body
 
@@ -1178,6 +1179,7 @@ exports.addToCollectionHotel = async (req,res) => {
             crn,
             address,
             rating,
+            hotelId,
             imgSrc
         })
         await newHotel.save()
