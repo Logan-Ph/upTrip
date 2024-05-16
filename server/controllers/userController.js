@@ -1540,24 +1540,54 @@ exports.addHotelItinerary = async (req, res) => {
         const itinerary = await Itinerary.findById(itineraryId);
         if (!itinerary) return res.status(404).json("Itinerary not found");
 
-        const hotel = await Hotel.findById(item.item._id);
-        if (!hotel) return res.status(404).json("Hotel not found");
+        const newHotel = new Hotel({
+            city: item.item.city,
+            cityName: item.item.cityName,
+            provinceId: item.item.provinceId,
+            countryId: item.item.countryId,
+            districtId: item.item.districtId,
+            checkin: item.checkin,
+            checkout: item.checkout,
+            hotelName: item.item.hotelName,
+            lat: item.item.lat,
+            lon: item.item.lon,
+            searchValue: item.item.searchValue,
+            searchCoordinate: item.item.searchCoordinate,
+            adult: item.item.adult,
+            ages: item.item.ages,
+            domestic: item.item.domestic,
+            children: item.item.children,
+            crn: item.item.crn,
+            address: item.item.address,
+            rating: item.item.rating,
+            hotelId: item.item.hotelId,
+            imgSrc: item.item.imgSrc,
+            tripPrice: item.tripPrice,
+            agodaPrice: item.agodaPrice,
+            bookingPrice: item.bookingPrice
+        })
 
-        // Check if the hotel is already in the itinerary
-        const hotelExists = itinerary.hotels.some(h => h.equals(hotel._id));
-
-        hotel.checkin = item.checkin;
-        hotel.checkout = item.checkout;
-        hotel.price = item.price;
-
-        await hotel.save();
-        if (!hotelExists) {
-            itinerary.hotels.push(hotel);
-            await itinerary.save();
-        }
+        itinerary.hotels.push(newHotel);
+        await newHotel.save()
+        await itinerary.save();
         return res.status(200).json("Hotel added to itinerary");
     } catch (er) {
         return res.status(500).json(er);
+    }
+}
+
+exports.deleteHotelFromItinerary = async (req, res) => {
+    try {
+        const { itineraryId, hotelId } = req.body
+        const itinerary = await Itinerary.findById(itineraryId)
+        await Hotel.findByIdAndDelete(hotelId)
+
+        if (!itinerary) return res.status(404).json("Itinerary not found")
+        itinerary.hotels = itinerary.hotels.filter(hotel => hotel._id != hotelId)
+        await itinerary.save()
+        return res.status(200).json("Hotel deleted from itinerary")
+    } catch (er) {
+        return res.status(500).json(er)
     }
 }
 
