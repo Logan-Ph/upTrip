@@ -7,7 +7,7 @@ import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
 // Itinerary card for the itinerary page. list the itinerary info card
-export function ItineraryCard({ itinerary, getItinerary }) {   
+export function ItineraryCard({ itinerary, getItinerary }) {
 
     const handleDeleteItinerary = useMutation({
         mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
@@ -23,6 +23,8 @@ export function ItineraryCard({ itinerary, getItinerary }) {
     const handleDelete = (e) => {
         e.preventDefault()
         handleDeleteItinerary.mutate()
+        
+
     }
 
     return (
@@ -106,7 +108,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
                                         </button>
                                         <button
                                             className="btn bg-black text-white rounded-3xl"
-                                            onClick={(e) => handleDelete(e)}    
+                                            onClick={(e) => handleDelete(e)}
                                         >
                                             Delete
                                         </button>
@@ -227,22 +229,22 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
             <div className="my-4">
                 {/* If no collection */}
                 {collections?.length > 0
-                ?
+                    ?
                     collections.map((collection) => (
                         <div onClick={() => {
                             setSelectedCollection(collection)
                             setItems(() => {
-                                return{
+                                return {
                                     experience: collection.experience,
                                     hotel: collection.hotels,
                                     flight: collection.flights
                                 }
                             })
-                        }}>                            
+                        }}>
                             <SavedCollectionCard key={collection.id} collection={collection} />
                         </div>
                     ))
-                :
+                    :
                     <div className="text-lg my-10">
                         <p className="font-thin text-xl">Your collection is empty.</p>
                         {/* Direct to the favorite collection page */}
@@ -280,13 +282,13 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
             </div>
             <div className="my-4">
                 {Object.keys(items).map(item => {
-                    switch(item){
+                    switch (item) {
                         case "experience":
-                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} />)
                         case "hotel":
-                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} />)
                         case "flight":
-                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} />)
                         default:
                             return null
                     }
@@ -315,24 +317,24 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
                 <button
                     onClick={handleBackButtonClick}
                     className="mt-4 absolute top-0 left-[-30px] p-3 ml-4"
-                    >
+                >
                     <i className="fa-solid fa-arrow-left text-2xl"></i>
                 </button>
             </div>
             {/* For Stay */}
             {Object.keys(selectedItems).map(item => {
-                switch(selectedItems[item].type){
+                switch (selectedItems[item].type) {
                     case 'stay':
-                        return <ForDetailStay key={item.id} item={selectedItems[item].item}/>
+                        return <ForDetailStay key={item.id} item={selectedItems[item].item} />
                     case "experience":
-                        return <ForDetailExperience key={item.id} item={selectedItems[item].item}/>
+                        return <ForDetailExperience key={item.id} item={selectedItems[item].item} />
                     case "flight":
-                        return <ForDetailFlight key={item.id} item={selectedItems[item].item}/>
+                        return <ForDetailFlight key={item.id} item={selectedItems[item].item} />
                     default:
                         return null
                 }
             })}
-            
+
 
             {/* Add to itinerary button */}
             <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50">
@@ -345,11 +347,11 @@ function OtherPageContent({ handleBackButtonClick, selectedItems }) {
     );
 }
 
-function ForDetailStay({item}) {
+function ForDetailStay({ item }) {
     return (
         <>
             <div className="my-4">
-                <SavedStayCard item={item} setSelectedItems={false}/>
+                <SavedStayCard item={item} setSelectedItems={false} />
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
                 <div className="flex my-2">
@@ -686,11 +688,11 @@ function ForDetailStay({item}) {
     );
 }
 
-function ForDetailFlight({item}) {
+function ForDetailFlight({ item }) {
     return (
         <>
             <div className="my-4">
-                <SavedFlightCard item={item} setSelectedItems={false}/>
+                <SavedFlightCard item={item} setSelectedItems={false} />
                 {/* Ask Date */}
                 <div className="text-start font-semibold text-lg">Date</div>
                 <div className="flex my-2">
@@ -966,7 +968,7 @@ function ForDetailFlight({item}) {
     );
 }
 
-function ForDetailExperience({item}) {
+function ForDetailExperience({ item }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDetails = () => {
@@ -975,7 +977,7 @@ function ForDetailExperience({item}) {
     return (
         <>
             <div className="my-4">
-                <SavedExperienceCard item={item} setSelectedItems={false}/>
+                <SavedExperienceCard item={item} setSelectedItems={false} />
             </div>
             {/* Additional Details */}
             <div className="my-4">
@@ -1488,7 +1490,7 @@ export function BudgetCard() {
     );
 }
 
-export function SavedStayCard({item, setSelectedItems}) {
+export function SavedStayCard({ item, setSelectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1498,7 +1500,7 @@ export function SavedStayCard({item, setSelectedItems}) {
             setSelectedItems((prevSelectedItems) => {
                 const updatedItems = { ...prevSelectedItems };
                 if (newState) {
-                    updatedItems[item._id] = {item, type: "stay"};
+                    updatedItems[item._id] = { item, type: "stay" };
                 } else {
                     delete updatedItems[item._id];
                 }
@@ -1512,8 +1514,8 @@ export function SavedStayCard({item, setSelectedItems}) {
         <>
             <div
                 className={`card card-side bg-white p-3 border-[2px] ${isSelected
-                        ? "border-black"
-                        : "border-gray-300 hover:border-black duration-300"
+                    ? "border-black"
+                    : "border-gray-300 hover:border-black duration-300"
                     } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
@@ -1530,9 +1532,9 @@ export function SavedStayCard({item, setSelectedItems}) {
                     </h2>
                     <div class="flex space-x-1">
                         {Array.from({ length: Math.round(item.rating) }, (e, i) => (
-                                <svg
-                                    class="w-4 h-4 text-[#ffa732]"
-                                    key={i}
+                            <svg
+                                class="w-4 h-4 text-[#ffa732]"
+                                key={i}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="currentColor"
@@ -1551,7 +1553,7 @@ export function SavedStayCard({item, setSelectedItems}) {
     );
 }
 
-export function SavedFlightCard({item, setSelectedItems}) {
+export function SavedFlightCard({ item, setSelectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1562,8 +1564,8 @@ export function SavedFlightCard({item, setSelectedItems}) {
         <>
             <div
                 className={`card flex-col card-side bg-white p-3 border-[2px] ${isSelected
-                        ? "border-black"
-                        : "border-gray-300 hover:border-black duration-300"
+                    ? "border-black"
+                    : "border-gray-300 hover:border-black duration-300"
                     } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
@@ -1607,7 +1609,7 @@ export function SavedFlightCard({item, setSelectedItems}) {
     );
 }
 
-export function SavedExperienceCard({item, setSelectedItems}) {
+export function SavedExperienceCard({ item, setSelectedItems }) {
     const [isSelected, setIsSelected] = useState(false);
 
     const handleCardClick = () => {
@@ -1617,7 +1619,7 @@ export function SavedExperienceCard({item, setSelectedItems}) {
             setSelectedItems((prevSelectedItems) => {
                 const updatedItems = { ...prevSelectedItems };
                 if (newState) {
-                    updatedItems[item._id] = {item, type: "experience"};
+                    updatedItems[item._id] = { item, type: "experience" };
                 } else {
                     delete updatedItems[item._id];
                 }
@@ -1631,8 +1633,8 @@ export function SavedExperienceCard({item, setSelectedItems}) {
         <>
             <div
                 className={`card card-side bg-white p-3 border-[2px] ${isSelected
-                        ? "border-black"
-                        : "border-gray-300 hover:border-black duration-300"
+                    ? "border-black"
+                    : "border-gray-300 hover:border-black duration-300"
                     } rounded-md items-start my-4`}
                 onClick={handleCardClick}
             >
@@ -1649,9 +1651,9 @@ export function SavedExperienceCard({item, setSelectedItems}) {
                     </h2>
                     <div class="flex space-x-1">
                         {Array.from({ length: Math.round(item.rating) }, (e, i) => (
-                                <svg
-                                    class="w-4 h-4 text-[#ffa732]"
-                                    key={i}
+                            <svg
+                                class="w-4 h-4 text-[#ffa732]"
+                                key={i}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="currentColor"
