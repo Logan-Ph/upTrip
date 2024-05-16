@@ -286,9 +286,7 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                         case "hotel":
                             return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
                         case "flight":
-                            return items[item].map(item => <SavedFlightCard 
-                                onClick ={() => setSelectedItems(item)}
-                                key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
+                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems}/>)
                         default:
                             return null
                     }
