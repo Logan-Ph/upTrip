@@ -117,14 +117,14 @@ export function HotelCard({
                 ref={ref}
                 className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md  ${isSpecific ? "border-8 p-2 border-[#8DD3BB]" : ""} ${visibilityClass}`}
             >
-                <div 
-                onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}>
+                <a href={`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`} target="_blank">
                     <img
                         src={imgSrc}
                         alt="hotel cover"
                         className="w-[450px] h-full object-cover"
                     />
-                </div>
+                </a>
+
 
                 <div className="flex-col space-y-4 py-4 col-span-2">
                     <p 

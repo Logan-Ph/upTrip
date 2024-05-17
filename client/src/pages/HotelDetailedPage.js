@@ -122,7 +122,12 @@ export default function HotelDetailedPage(){
     return(
         <>
         <div className="bg-[#FAFBFC] md:p-10">
-                <section className="mx-auto max-w-8xl px-6 py-6">
+                <section className="mx-auto max-w-8xl px-6 pb-6">
+                    <div className="mb-2 flex items-center">
+                        <i className="fas fa-chevron-left mr-2 hover:cursor-pointer"></i>
+                        <a className="text-lg font-bold hover:cursor-pointer">All Propertise in <span>Ha Long</span></a>
+                    </div>
+                    
                     {(!hotelAlbums || isFetchingHotelAlbums ) ? <DetailedPageGallerySkeleton /> : <DetailPageGallery hotelAlbums={hotelAlbums}/> }
                     <div className="my-6"></div>
                     <DetailedPageHotelInformation isFetchingHotelComments={isFetchingHotelComments} isFetchingNearByHotels={isFetchingNearByHotels} nearByHotels={nearByHotels} hotelInfo={hotelInfo} hotelComments={hotelComments} specificHotel={specificHotel} specificHotelPriceComparison={specificHotelPriceComparison} payload={payload}/>

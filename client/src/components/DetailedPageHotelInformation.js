@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 export default function DetailedPageHotelInformation({ nearByHotels, hotelInfo, hotelComments, specificHotel, specificHotelPriceComparison, payload, isFetchingHotelComments, isFetchingNearByHotels }) {
     return (
         <>
+            
             {hotelInfo ? 
                 <div className="border-transparent bg-white border-2 p-4 rounded-lg space-y-2 shadow-md">
                     <div className="flex flex-col space-y-2 lg:flex-row md:items-center lg:space-x-4 mb-2">
