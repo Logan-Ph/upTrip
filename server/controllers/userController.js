@@ -1463,8 +1463,6 @@ exports.addNewItinerary = async (req, res) => {
         if (!refreshToken) return res.status(401).json("You are not logged in");
         const user = await authenticateToken(refreshToken);
         const { name, destination, description, startDate, endDate, tripLength } = req.body
-
-        if (!name || !destination)  return res.status(400).json("Please fill all the fields")
         
         await new Itinerary({
             userID: user._id,
