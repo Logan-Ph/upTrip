@@ -5,15 +5,17 @@ import { fetchHotelPriceComparison, fetchSpecificHotel, fetchTripAutoComplete, g
 import { useEffect, useRef, useState } from "react";
 import DetailPageGallery from "../components/DetailPageGallery";
 import DetailedPageGallerySkeleton from "../components/skeletonLoadings/DetailedPageGallerySkeleton";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function HotelDetailedPage(){
     const [searchParams] = useSearchParams()
+    const navigate = useHandleNavigate();
     const listSort = useRef(searchParams.get("listFilters")?.split(",")?.[0]);
     const listFilter = useRef(
         searchParams.get("listFilters")?.split(",")?.slice(1)
-    );
-    const [payload, setPayload] = useState({
-        resultType: searchParams.get("resultType"),
+        );
+        const [payload, setPayload] = useState({
+        resultType: "H",
         city: searchParams.get("city"),
         hotelId: searchParams.get("hotelId"),
         cityName: searchParams.get("cityName"),
@@ -39,6 +41,14 @@ export default function HotelDetailedPage(){
         refetchOnWindowFocus: false,
         enabled: !!payload.hotelName,
     });
+
+    const getURL = () => {
+        if (searchParams.get("resultType") === "H") {
+            return `/advanced-hotel-search/?resultType=${searchParams.get("resultType")}&hotelId=${searchParams.get("hotelId")}&city=${searchParams.get("city")}&cityName=${searchParams.get("cityName")}&hotelName=${searchParams.get("hotelName")}&searchValue=${searchParams.get("searchValue")}&provinceId=${searchParams.get("provinceId")}&countryId=${searchParams.get("countryId")}&districtId=${searchParams.get("districtId")}&checkin=${searchParams.get("checkin")}&checkout=${searchParams.get("checkout")}&barCurr=${searchParams.get("barCurr")}&cityType=${searchParams.get("cityType")}&latitude=${searchParams.get("latitude")}&longitude=${searchParams.get("longitude")}&searchCoordinate=${searchParams.get("searchCoordinate")}&crn=${searchParams.get("crn")}&adult=${searchParams.get("adult")}&children=${searchParams.get("children")}&preHotelIds=${searchParams.get("preHotelIds")}&listFilters=${searchParams.get("listFilters")}&domestic=${searchParams.get("domestic")}`
+        }else{
+            return `/advanced-hotel-search/?resultType=${searchParams.get("resultType")}&city=${searchParams.get("city")}&cityName=${searchParams.get("cityName")}&provinceId=${searchParams.get("provinceId")}&countryId=${searchParams.get("countryId")}&districtId=${searchParams.get("districtId")}&checkin=${searchParams.get("checkin")}&checkout=${searchParams.get("checkout")}&barCurr=${searchParams.get("barCurr")}&cityType=${searchParams.get("cityType")}&latitude=${searchParams.get("latitude")}&longitude=${searchParams.get("longitude")}&searchCoordinate=${searchParams.get("searchCoordinate")}&crn=${searchParams.get("crn")}&adult=${searchParams.get("adult")}&children=${searchParams.get("children")}&listFilters=${searchParams.get("listFilters")}&domestic=${searchParams.get("domestic")}`
+        }
+    }
 
     useEffect(() => {
         if(isAutocompleteSuccess){
@@ -122,10 +132,13 @@ export default function HotelDetailedPage(){
     return(
         <>
         <div className="bg-[#FAFBFC] md:p-10">
-                <section className="mx-auto max-w-8xl px-6 pb-6">
+                <section 
+                    onClick={() => navigate(getURL())}
+                    className="mx-auto max-w-8xl px-6 pb-6"
+                >
                     <div className="mb-2 flex items-center">
                         <i className="fas fa-chevron-left mr-2 hover:cursor-pointer"></i>
-                        <div className="text-lg font-bold hover:cursor-pointer">All Propertises in <span>Ha Long</span></div>
+                        <div className="text-lg font-bold hover:cursor-pointer">All Propertises in <span>{searchParams.get("cityName")}</span></div>
                     </div>
                     
                     {(!hotelAlbums || isFetchingHotelAlbums ) ? <DetailedPageGallerySkeleton /> : <DetailPageGallery hotelAlbums={hotelAlbums}/> }

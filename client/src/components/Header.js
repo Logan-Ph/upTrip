@@ -1166,7 +1166,7 @@ function AdvancedSearchHotel() {
                         {/* <!-- Dropdown menu --> */}
                         <div
                             id="dropdownDivider"
-                            class={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow ${dropdown ? "" : "hidden"
+                            class={`z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow ${dropdown ? "" : "hidden"
                                 }`}
                         >
                             {/* Ask user to input room information */}
