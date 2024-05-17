@@ -96,26 +96,52 @@ export default function DetailedItinerary() {
         edit.mutate()
     }
 
-    const generateScheduleDates = (startDate, endDate) => {
+    const generateScheduleDates = (startDate, endDate, experiences) => {
         const formatDate = (dateStr) => {
             return `${dateStr?.substring(0, 4)}-${dateStr?.substring(4, 6)}-${dateStr?.substring(6, 8)}`;
         };
+    
+        const formatDisplayDate = (date) => {
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+        };
+    
         let dates = [];
         let currentDate = new Date(formatDate(startDate));
         const end = new Date(formatDate(endDate));
-
+    
+        // Sort experiences by start time
+        const sortedExperiences = experiences?.sort((a, b) => {
+            const timeA = a.startTime; // Assuming startTime is in a comparable format, e.g., 'HH:MM'
+            const timeB = b.startTime;
+            return timeA.localeCompare(timeB);
+        });
+    
+        // Create a map to store experiences by their start date
+        const experienceMap = sortedExperiences?.reduce((acc, experience) => {
+            const expDate = experience.startDate.replace(/-/g, '');
+            if (!acc[expDate]) {
+                acc[expDate] = [];
+            }
+            acc[expDate].push(experience);
+            return acc;
+        }, {});
+    
         while (currentDate <= end) {
-            dates.push(new Date(currentDate));
+            const formattedDate = formatDisplayDate(currentDate);
+            const dateKey = currentDate.toISOString().split('T')[0].replace(/-/g, '');
+            const convertDate = (date) =>  `${date.substring(6, 8)}/${date.substring(4, 6)}/${date.substring(0, 4)}`;
+            dates.push({
+                date: formattedDate,
+                experiences: experienceMap[convertDate(dateKey)] || []
+            });
             currentDate.setDate(currentDate.getDate() + 1);
         }
-
-        return dates.map(date => 
-            `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`
-        );
+    
+        return dates;
     };
-
+    
     // Assuming startDate and endDate are available in your state or props
-    const scheduleDates = generateScheduleDates(itinerary?.startDate, itinerary?.endDate);
+    const scheduleDates = generateScheduleDates(itinerary?.startDate, itinerary?.endDate, itinerary?.experiences);
 
     return (
         <>
@@ -504,11 +530,11 @@ export default function DetailedItinerary() {
                                     ? <StayCardSkeleton />
                                     : itinerary?.hotels?.length === 0
                                         ?
-                                        <EmptySection />
+                                        <EmptySection refetchItinerary={refetchItinerary} isAddingExperience={false}/>
                                         :
                                         <>
                                             {itinerary?.hotels?.map(stay => <StayCard key={stay.id} item={stay} refetchItinerary={refetchItinerary}/>)}
-                                            <AddItemButton refetchItinerary={refetchItinerary}/>
+                                            <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={false}/>
                                         </>
                                 }
 
@@ -539,35 +565,29 @@ export default function DetailedItinerary() {
                                 <p className="font-semibold text-2xl my-4">
                                     Schedule
                                 </p>
-                                {scheduleDates.map((date, index) => (
+                                {scheduleDates.map((schedule, index) => (
                                     <div key={index} className="ml-4">
                                         <p className="font-semibold text-xl py-4">
-                                            Day {index + 1} ({date})
+                                            Day {index + 1} ({schedule.date})
                                         </p>
                                         <div className="flex flex-col">
-                                            <div className="flex items-center">
-                                                <div className="mr-8 text-3xl">
-                                                    <i className="fa-solid fa-circle-check"></i>
-                                                </div>
-                                                <ActivityCard />
-                                            </div>
-                                            <div className="flex items-center">
-                                                <div className="mr-8 text-3xl">
-                                                    <i className="fa-regular fa-circle"></i>
-                                                </div>
-                                                <ActivityCard />
-                                            </div>
+                                            {schedule.experiences.length > 0 ? (
+                                                <>
+                                                    {schedule.experiences.map((experience, expIndex) => (
+                                                        <div key={expIndex} className="flex items-center">
+                                                            <ActivityCard experience={experience} />
+                                                        </div>
+                                                    ))}
+                                                    <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={true} date={schedule.date} />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <EmptySection refetchItinerary={refetchItinerary} isAddingExperience={true} date={schedule.date}/>
+                                                </>
+                                            )}
                                         </div>
-                                        <AddItemButton />
                                     </div>
                                 ))}
-                                {/* Another day */}
-                                <div className="ml-4">
-                                    <p className="font-semibold text-xl py-4">
-                                        Day two (20/03/2024)
-                                    </p>
-                                    <EmptySection />
-                                </div>
                             </div>
 
                             {/* Budget */}
@@ -578,7 +598,7 @@ export default function DetailedItinerary() {
                             </div>
                         </div>
                         <div className="md:w-5/12 mb-10">
-                            <BudgetCard />
+                            <BudgetCard itinerary={itinerary}/>
                         </div>
                     </div>
                 </div>

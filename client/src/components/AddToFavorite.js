@@ -271,10 +271,10 @@ function AddItemButton({payload, hotel, experience, flight}) {
                             isSuccessCollections && collections.length > 0  &&      
                             collections.map((collection) => {
                                 return (
-                                            <div key={collection._id} onClick={() => setSelectedCollection(collection)}>
-                                                <SavedCollectionCard key={collection._id} collection={collection} />
-                                            </div>
-                                        )
+                                    <div key={collection._id} onClick={() => setSelectedCollection(collection)}>
+                                        <SavedCollectionCard key={collection._id} collection={collection} isCollectionSelected={selectedCollection?._id === collection._id} />
+                                    </div>
+                                )
                             })
 
                         }

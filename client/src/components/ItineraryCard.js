@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel } from "../api/fetch";
+import { addExperienceItinerary, addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
@@ -122,7 +122,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
 }
 
 // add item button in detailed itinerary page
-export function AddItemButton({refetchItinerary}) {
+export function AddItemButton({refetchItinerary, isAddingExperience, date}) {
     const [isOpen, setIsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState("main");
     const [selectedCollection, setSelectedCollection] = useState()
@@ -187,6 +187,8 @@ export function AddItemButton({refetchItinerary}) {
                                 items={items}
                                 setSelectedItems={setSelectedItems}
                                 selectedItems={selectedItems}
+                                isAddingExperience={isAddingExperience}
+
                             />
                         ) : (
                             <OtherPageContent
@@ -194,6 +196,7 @@ export function AddItemButton({refetchItinerary}) {
                                 selectedItems={selectedItems}
                                 setSelectedItems={setSelectedItems}
                                 refetchItinerary={refetchItinerary}
+                                date={date}
                             />
                         )}
                     </div>
@@ -276,10 +279,10 @@ function ChooseCollection({ handleNextButtonClick, setSelectedCollection, setIte
 }
 
 // page 2 in the drawer, choose item
-function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, setSelectedItems, selectedItems }) {
+function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, setSelectedItems, selectedItems, isAddingExperience }) {
     return (
         <>
-            <div className="bg-white py-6 sticky mt-10 top-0 z-50 border-b">
+            <div className="bg-white py-6 sticky mt-10 top-0 z-50">
                 {items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0 ? (
                     <>
                         <h1 className="text-2xl text-center font-semibold mb-2">
@@ -287,7 +290,14 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                         </h1>
                     </>
                 )
-                : 
+                : items.experience.length === 0 && isAddingExperience
+                ?
+                    <>
+                        <h1 className="text-2xl text-center font-semibold mb-2">
+                            No experience card found
+                        </h1>
+                    </>
+                :
                     <>
                         <h1 className="text-2xl text-center font-semibold mb-2">
                             Add to your itinerary
@@ -302,18 +312,22 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                 </button>
             </div>
             <div className="my-4">
-                {Object.keys(items).map(item => {
-                    switch (item) {
-                        case "experience":
-                            return items[item].map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
-                        case "hotel":
-                            return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
-                        case "flight":
-                            return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
-                        default:
-                            return null
-                    }
-                })}
+                {isAddingExperience 
+                    ? (
+                        items.experience.map(item => <SavedExperienceCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
+                    )
+                    :
+                    (Object.keys(items).map(item => {
+                        switch (item) {
+                            case "hotel":
+                                return items[item].map(item => <SavedStayCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
+                            case "flight":
+                                return items[item].map(item => <SavedFlightCard key={item.id} item={item} setSelectedItems={setSelectedItems} selectedItems={selectedItems} />)
+                            default:
+                                return null
+                        }
+                    }))
+                }
             </div>
             {
                 !(items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0) && 
@@ -336,11 +350,20 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
 }
 
 // page 3 in the drawer, input details of the item
-function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedItems, refetchItinerary }) {
+function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedItems, refetchItinerary, date }) {
     const [searchParams] = useSearchParams()
 
     const addHotel = useMutation({
         mutationFn: (item) => addHotelItinerary({item: item, itineraryId: searchParams.get('itineraryId')}),
+        retry: 0,
+        onSuccess: () => {
+            successNotify("Add to itinerary successfully")
+            refetchItinerary()
+        }
+    })
+
+    const addExperience = useMutation({
+        mutationFn: (item) => addExperienceItinerary({item: item.item, itineraryId: searchParams.get('itineraryId'), startDate: item.date, startTime: item.startTime, endTime: item.endTime, description: item.description}),
         retry: 0,
         onSuccess: () => {
             successNotify("Add to itinerary successfully")
@@ -357,6 +380,9 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
                     return
                 }
                 addHotel.mutate(selectedItems[item])
+            }
+            if (selectedItems[item].type === "experience") {
+                addExperience.mutate(selectedItems[item])
             }
         })
     }
@@ -382,7 +408,7 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
                     case 'stay':
                         return <ForDetailStay setSelectedItems={setSelectedItems} key={item.id} item={selectedItems[item].item} />
                     case "experience":
-                        return <ForDetailExperience setSelectedItems={setSelectedItems} key={item.id} item={selectedItems[item].item} />
+                        return <ForDetailExperience setSelectedItems={setSelectedItems} key={item.id} item={selectedItems[item].item} date={date}/>
                     case "flight":
                         return <ForDetailFlight setSelectedItems={setSelectedItems} key={item.id} item={selectedItems[item].item} />
                     default:
@@ -1343,12 +1369,10 @@ function ForDetailFlight({ item }) {
     );
 }
 
-function ForDetailExperience({ item }) {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleDetails = () => {
-        setIsOpen(!isOpen);
-    };
+function ForDetailExperience({ item, setSelectedItems, date }) {
+    const [startTime, setStartTime] = useState(item.startTime)
+    const [endTime, setEndTime] = useState(item.endTime)
+    const [description, setDescription] = useState("")
     return (
         <>
             <div className="my-4">
@@ -1357,113 +1381,151 @@ function ForDetailExperience({ item }) {
             {/* Additional Details */}
             <div className="my-4">
                 <div className="toggleable-details">
-                    <div
-                        className="text-start text-lg font-semibold hover:underline cursor-pointer"
-                        onClick={toggleDetails}
-                    >
-                        Additional Details
-                        {isOpen ? (
-                            <i className="fa-solid fa-chevron-up ml-2"></i>
-                        ) : (
-                            <i className="fa-solid fa-chevron-down ml-2"></i>
-                        )}
-                    </div>
-                    {isOpen && (
-                        <div className="details">
-                            <form class="w-full mx-auto grid grid-cols-2 gap-4 my-2">
-                                <div>
-                                    <label
-                                        for="start-time"
-                                        class="block mb-2 text-md font-medium text-gray-900 text-start"
-                                    >
-                                        Start Time
-                                    </label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                            <svg
-                                                class="w-4 h-4 text-gray-500"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    fill-rule="evenodd"
-                                                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
-                                                    clip-rule="evenodd"
-                                                />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="time"
-                                            id="start-time"
-                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
-                                            min="09:00"
-                                            max="18:00"
-                                            value="00:00"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label
-                                        for="end-time"
-                                        class="block mb-2 text-md font-medium text-gray-900 text-start"
-                                    >
-                                        End Time
-                                    </label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
-                                            <svg
-                                                class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                                                aria-hidden="true"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    fill-rule="evenodd"
-                                                    d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
-                                                    clip-rule="evenodd"
-                                                />
-                                            </svg>
-                                        </div>
-                                        <input
-                                            type="time"
-                                            id="end-time"
-                                            class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
-                                            min="09:00"
-                                            max="18:00"
-                                            value="00:00"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="my-2 text-start">
+                    <div className="details">
+                        <form class="w-full mx-auto grid grid-cols-2 gap-4 my-2">
+                            <div>
                                 <label
-                                    for="note"
-                                    class="block mb-2 text-base font-medium text-gray-900"
+                                    for="start-time"
+                                    class="block mb-2 text-md font-medium text-gray-900 text-start"
                                 >
-                                    Note
+                                    Start Time
                                 </label>
-                                <textarea
-                                    type="text"
-                                    id="note"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5 focus:ring-black focus:border-black"
-                                    placeholder="Add an extra details."
-                                    required=""
-                                ></textarea>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                        <svg
+                                            class="w-4 h-4 text-gray-500"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <input
+                                        type="time"
+                                        id="start-time"
+                                        class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
+                                        max={endTime}
+                                        required
+                                        value={startTime}
+                                        onChange={(e) => {
+                                            setStartTime(e.target.value);
+                                            if (e.target.value && e.target.value >= endTime) {
+                                                setEndTime('');
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        endTime: null,
+                                                    }
+                                                }))
+                                            }
+                                            setSelectedItems((prev) => ({
+                                                ...prev,
+                                                [item._id]: {
+                                                    ...prev[item._id],
+                                                    startTime: e.target.value,
+                                                    date: date,
+                                                }
+                                            }))
+                                        }}
+                                    />
+                                </div>
                             </div>
+                            <div>
+                                <label
+                                    for="end-time"
+                                    class="block mb-2 text-md font-medium text-gray-900 text-start"
+                                >
+                                    End Time
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                        <svg
+                                            class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                            aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                    </div>
+                                    <input
+                                        type="time"
+                                        id="end-time"
+                                        class="bg-gray-50 border leading-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
+                                        min={startTime}
+                                        value={endTime}
+                                        onChange={(e) => {
+                                            setEndTime(e.target.value);
+                                            if (e.target.value && e.target.value <= startTime) {
+                                                setStartTime('');
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        startTime: null,
+                                                    }
+                                                }))
+                                            }
+                                            setSelectedItems((prev) => ({
+                                                ...prev,
+                                                [item._id]: {
+                                                    ...prev[item._id],
+                                                    endTime: e.target.value,
+                                                    date: date,
+                                                }
+                                            }))
+                                        }}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </form>
+                        <div class="my-2 text-start">
+                            <label
+                                for="note"
+                                class="block mb-2 text-base font-medium text-gray-900"
+                            >
+                                Note
+                            </label>
+                            <textarea
+                                type="text"
+                                id="note"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md w-full p-2.5 focus:ring-black focus:border-black"
+                                placeholder="Add an extra details."
+                                required=""
+                                value={description}
+                                onChange={(e) => {
+                                    setDescription(e.target.value)
+                                    setSelectedItems((prev) => ({
+                                        ...prev,
+                                        [item._id]: {
+                                            ...prev[item._id],
+                                            description: e.target.value,
+                                        }
+                                    }))
+                                }}
+                            ></textarea>
                         </div>
-                    )}
+                    </div>
                 </div>
             </div>
         </>
     );
 }
 
-export function EmptySection() {
+export function EmptySection({refetchItinerary, isAddingExperience, date}) {
     return (
         <>
             <div className="shadow-lg rounded-lg border-gray-400 text-center p-8 pt-12">
@@ -1471,7 +1533,7 @@ export function EmptySection() {
                     Build your plan by adding items from your favorites or
                     customizing your trip day
                 </p>
-                <AddItemButton />
+                <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={isAddingExperience} date={date}/>
             </div>
         </>
     );
@@ -1620,7 +1682,7 @@ export function StayCard({item, refetchItinerary}) {
                             </div>
                         </div>
                         <div className="font-bold text-2xl text-end">
-                            {item.tripPrice || item.agodaPrice || item.bookingPrice} VND
+                            {item.tripPrice || item.agodaPrice || item.bookingPrice} {"VND"}
                         </div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>
@@ -1729,14 +1791,14 @@ export function FlightCard() {
     );
 }
 
-export function ActivityCard() {
+export function ActivityCard({experience}) {
     return (
         <>
             <div class="flex-1 card card-side flex-col md:flex-row rounded-lg bg-white shadow-md my-4">
                 <Link>
                     <figure className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg h-full">
                         <img
-                            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/228033379.jpg?k=5559966043302855e467dfa2c28ad78034f95b8ffaec437ca19004ba936c7b49&o=&hp=1"
+                            src={experience.imgSrc}
                             alt="Itinerary Cover Pic"
                             className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
@@ -1745,13 +1807,7 @@ export function ActivityCard() {
 
                 <div class="card-body flex-1 px-5 p-7">
                     <div className="flex justify-between items-center mb-2">
-                        <div>
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/1280px-Booking.com_logo.svg.png"
-                                alt="Logo of platform"
-                                className="w-[120px]"
-                            />
-                        </div>
+                        <div className="w-[120px]" />
                         <div>
                             <div className="dropdown dropdown-end">
                                 <div>
@@ -1812,21 +1868,20 @@ export function ActivityCard() {
                             </dialog>
                         </div>
                     </div>
-                    <Link>
-                        <h2 class="card-title text-base md:text-2xl hover:underline underline-offset-4 mb-4">
-                            InterContinental Da Nang Sun Peninsula Resort
+                    <div>
+                        <h2 class="card-title text-base md:text-2xl mb-4">
+                            {experience.name}
                         </h2>
-                    </Link>
-                    <div className="mb-2">
-                        <p className="text-gray-600">
-                            The theme park is a popular day trip from the
-                            coastal city of Da Nang, about a 45-minute drive.
-                            Have fantastic cable car ride, Golden Bridge. The
-                            theme park is a popular day trip from the coastal
-                            city of Da Nang, about a 45-minute drive. Have
-                            fantastic cable car ride, Golden Bridge
-                        </p>
                     </div>
+                    {experience.description
+                        ? 
+                        <div className="mb-2">
+                            <p className="text-gray-600">
+                                {experience.description}
+                            </p>
+                        </div>
+                        : null
+                    }
 
                     <div className="md:flex justify-between items-center">
                         <div className="flex flex-col md:flex-row md:space-x-20 mb-4">
@@ -1839,13 +1894,16 @@ export function ActivityCard() {
                                         Estimated Time
                                     </p>
                                     <p className="font-semibold">
-                                        8:30 - 10:30
+                                        {experience.startTime} - {experience.endTime}
                                     </p>
                                 </div>
                             </div>
                         </div>
                         <div className="font-bold text-2xl text-end">
-                            1.200.000
+                            {experience.price
+                                ? `${experience.price.toLocaleString('vi-VN')} VND`
+                                : "Free"
+                            }
                         </div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>
@@ -1855,7 +1913,11 @@ export function ActivityCard() {
     );
 }
 
-export function BudgetCard() {
+export function BudgetCard({itinerary}) {
+    const stayExpenses = Math.round(1000 * itinerary?.hotels.reduce((total, item) => total + (Number(item.tripPrice) || Number(item.agodaPrice) || Number(item.bookingPrice)), 0))
+    const flightExpenses = itinerary?.flights.reduce((total, item) => total + (Number(item.price)), 0)
+    const experienceExpenses = itinerary?.experiences.reduce((total, item) => total + (item.price ? Number(item.price) : 0), 0)
+    
     return (
         <>
             <div className="py-8 px-2 shadow-md border rounded-lg md:ml-4 drop-shadow-xl">
@@ -1865,7 +1927,7 @@ export function BudgetCard() {
                 <div className="divider px-3 md:px-8"></div>
                 <div className="flex justify-between px-3 md:px-8 my-2 text-xl space-x-16">
                     <div>Accomodation</div>
-                    <div>12.000.000</div>
+                    <div>{stayExpenses?.toLocaleString('vi-VN')} VND</div>
                 </div>
                 <div className="flex justify-between px-3 md:px-8 my-2 text-xl">
                     <div>Transport</div>
@@ -1873,12 +1935,12 @@ export function BudgetCard() {
                 </div>
                 <div className="flex justify-between px-3 md:px-8 my-2 text-xl">
                     <div>Activities</div>
-                    <div>12.000.000</div>
+                    <div>{experienceExpenses?.toLocaleString('vi-VN')} VND</div>
                 </div>
                 <div className="divider px-3 md:px-8"></div>
                 <div className="flex justify-between px-3 md:px-8 my-2 text-xl font-semibold">
                     <div>Subtotal</div>
-                    <div>30.000.000</div>
+                    <div>{Math.round(stayExpenses + flightExpenses + experienceExpenses)?.toLocaleString('vi-VN')} VND</div>
                 </div>
             </div>
         </>
@@ -2072,7 +2134,10 @@ export function SavedExperienceCard({ item, setSelectedItems }) {
                         ))}
                     </div>
                     <div className="text-base font-semibold">
-                        from {item?.price?.toLocaleString('vi-VN')} VND
+                        {item?.price
+                            ? (`from ${item?.price?.toLocaleString('vi-VN')} VND`)
+                            : ( "free" )
+                        }
                     </div>
                 </div>
             </div>

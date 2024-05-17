@@ -276,3 +276,7 @@ export function deleteHotelFromItinerary(payload) {
 	return axios.post("/delete-from-itinerary/hotel", payload, options)
 }
 
+export function addExperienceItinerary(payload) {
+	return axios.post("/add-to-itinerary/experience", payload, options)
+}
+

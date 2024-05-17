@@ -1579,6 +1579,9 @@ exports.addHotelItinerary = async (req, res) => {
 exports.deleteHotelFromItinerary = async (req, res) => {
     try {
         const { itineraryId, hotelId } = req.body
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+
         const itinerary = await Itinerary.findById(itineraryId)
         await Hotel.findByIdAndDelete(hotelId)
 
@@ -1586,6 +1589,37 @@ exports.deleteHotelFromItinerary = async (req, res) => {
         itinerary.hotels = itinerary.hotels.filter(hotel => hotel._id != hotelId)
         await itinerary.save()
         return res.status(200).json("Hotel deleted from itinerary")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.addExperienceItinerary = async (req, res) => {
+    try {
+        const { itineraryId, item, startDate, startTime, endTime, description } = req.body
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+
+        const itinerary = await Itinerary.findById(itineraryId)
+        if (!itinerary) return res.status(404).json("Itinerary not found")
+
+        const newExperience = new Experience({
+            name: item.name,
+            rating: item.rating,
+            price: item.price,
+            imgSrc: item.imgSrc,
+            startDate: startDate,
+            startTime: startTime,
+            endTime: endTime,
+            description: description
+        })
+
+        itinerary.experiences.push(newExperience)
+
+        await newExperience.save()
+        await itinerary.save()
+
+        return res.status(200).json("Experience added to itinerary")
     } catch (er) {
         return res.status(500).json(er)
     }
