@@ -7,11 +7,12 @@ import useHandleNavigate from "../utils/useHandleNavigate";
 export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess }) {
     const [searchParams] = useSearchParams();
     const [imgSrc, setImgSrc] = useState();
-    const info = {
-        day: searchParams.get( "day" ),
-        month: searchParams.get( "month" ),
-        year: searchParams.get( "year" ),
-    }
+    // const info = {
+    //     day: searchParams.get( "day" ),
+    //     month: searchParams.get( "month" ),
+    //     year: searchParams.get( "year" ),
+    //     seatClass: searchParams.get("seatClass")
+    // }
     const payload = {
         flightNo: flight.flightNo,
         from: from,
@@ -32,7 +33,7 @@ export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myT
                 <div>
                     <FlightCard
                         key={flight.flightNo}
-                        info={info}
+                        info={payload}
                         from={from}
                         to={to}
                         departure={flight.departureTime}
@@ -68,24 +69,28 @@ function FlightCard({info, from, to, departure, arrival, duration, stop, carrier
             imgLogo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
             price: agodaPrice,
             success: true,
+            link: `https://www.agoda.com/flights/results?departureFrom=${from}&departureFromType=1&arrivalTo=${to}&arrivalToType=1&departDate=${info.year}-${info.month}-${info.day}&returnDate=${info.year}-${info.month}-${info.day}&searchType=1&cabinType=${info.seatClass.charAt(0).toUpperCase() + info.seatClass.slice(1).toLowerCase()}&adults=1&sort=8`
         },
         {
             id: 2,
             imgLogo: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952",
             price: bayDepPrice,
             success: bayDepSuccess,
+            link: `https://baydep.vn/flights/${from}${to}${info.day}${info.month}${info.year}/1/0/0?nearby-airport=yes`
         },
         {
             id: 3,
             imgLogo: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655",
             price: tripComPrice,
-            success: tripComSuccess
+            success: tripComSuccess,
+            link: `https://us.trip.com/flights/${from}-to-${to}/tickets-${from.toLowerCase()}-${to.toLowerCase()}?dcity=${from.toLowerCase()}&acity=${to.toLowerCase()}&ddate=${info.year}-${info.month}-${info.day}&flighttype=ow&class=y&lowpricesource=searchform&quantity=1&searchboxarg=t`
         },
         {
             id: 4,
             imgLogo: "https://ik.imagekit.io/m1g1xkxvo/Uptrip/Mytrip_Logo_Colar_Pink.png?updatedAt=1714385168260",
             price: myTripPrice,
-            success: myTripSuccess
+            success: myTripSuccess,
+            link: "https://us.mytrip.com/rf/start"
         },
     ], [agodaPrice, myTripPrice, tripComPrice, bayDepPrice])
 
@@ -110,7 +115,8 @@ function FlightCard({info, from, to, departure, arrival, duration, stop, carrier
             id: logo.id,
             imgLogo: logo.imgLogo,
             price: logo.price,
-            success: logo.success
+            success: logo.success,
+            link: logo.link
         }))
     );
 
@@ -203,11 +209,13 @@ function FlightCard({info, from, to, departure, arrival, duration, stop, carrier
                     <div className="pl-[5.5rem] pr-[0.5px] md:pr-10 md:pl-[10.5rem] xl:pl-[14rem] xl:pr-32">
                         {hearts.map((heart, index) => (
                             <div key={index} className="my-2 items-center">
-                                <div className="border border-transparent
+                                {console.log(heart.link)}
+                                <Link to={heart.link}>
+                                <div
+                                    className="border border-transparent
                                 bg-[#CDEAE1] rounded-lg grid grid-cols-2 h-[42px] hover:bg-[#8DD3BB] ">
                                     <div className="mx-auto my-auto">
                                         <Link 
-                                            onClick={() => handleNavigate(heart.link)}
                                         >
                                             <img src={heart.imgLogo} alt="website logo"
                                                 className={getClassName(heart.id)} />
@@ -217,6 +225,7 @@ function FlightCard({info, from, to, departure, arrival, duration, stop, carrier
                                         <p className="text-xs md:text-lg text-[#222160] font-bold">{heart.success && heart.price !== null ? heart.price.toLocaleString("vi-VN") + " VND" : "not available"}</p>
                                     </div>
                                 </div>
+                                </Link>
                             </div>
                         ))
                         }

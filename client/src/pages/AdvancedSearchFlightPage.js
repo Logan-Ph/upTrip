@@ -1,6 +1,6 @@
 import { AdvancedFlightFilter } from "../components/AdvancedFlightFilter";
 import { useQuery } from "@tanstack/react-query";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import ASearchSkeleton from "../components/skeletonLoadings/ASearchSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { fetchFlightAdvancedSearch, fetchTripComFlight, fetchBayDepFlight, fetchMyTripFlight } from "../api/fetch.js";
@@ -53,20 +53,14 @@ export default function AdvancedSearchFlightPage() {
         queryKey: ["advanced-search-flight", payload, sortField, sortDir, prefer, priceFilter, departureTime, arrivalTime],
         queryFn: () => fetchFlightAdvancedSearch(payload),
         refetchOnWindowFocus: false,
-        retry: (failureCount, error) => {
-            if (error.message === 'Data is null') {
-                return true; 
-            } else {
-                return false; 
-            }
-        },
-        select: data => {
-            if (data.flights.length === 0) {
-                throw new Error('Data is null'); 
-            }
-            return data;
-        }
+        retry: false,
     });
+
+    useEffect(() => {
+        if (agoda.isSuccess && agoda.data.flights.length == 0) {
+            agoda.refetch()
+        }
+    }, [agoda])
 
     const priceMax = agoda.isSuccess ? agoda.data.priceMax : 0;
 
