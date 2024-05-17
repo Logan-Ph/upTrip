@@ -23,7 +23,8 @@ export default function FavoriteItems() {
 
     const {
         data: favorite,
-        isLoading: isFavoriteLoading
+        isLoading: isFavoriteLoading,
+        refetch: refetchFavorite
     } = useQuery({
         queryKey: ['favorite-items', collectionId],
         queryFn: () => fetchFavoriteItems({ collectionId }),
@@ -116,12 +117,12 @@ export default function FavoriteItems() {
                             <>
                                 {favorite?.hotels?.map((item) => (
                                     <div className="my-4">
-                                        <StayCard key={item.id} item={item} />
+                                        <StayCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
                                     </div>
                                 ))}
                                 {favorite?.flights?.map((item) => (
                                     <div className="my-4">
-                                        <FlightCard key={item.id} item={item} />
+                                        <FlightCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
                                     </div>
                                 ))}
                                 {favorite?.experience?.map((item) => (
@@ -129,6 +130,7 @@ export default function FavoriteItems() {
                                         <ExperienceCard
                                             key={item.id}
                                             item={item}
+                                            refetchFavorite={refetchFavorite}
                                         />
                                     </div>
                                 ))}
@@ -136,19 +138,19 @@ export default function FavoriteItems() {
                         ) : tab === "stays" ? (
                             favorite?.hotels?.map((item) => (
                                 <div className="my-4">
-                                    <StayCard key={item.id} item={item} />
+                                    <StayCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
                                 </div>
                             ))
                         ) : tab === "flights" ? (
                             favorite?.flights?.map((item) => (
                                 <div className="my-4">
-                                    <FlightCard key={item.id} item={item} />
+                                    <FlightCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
                                 </div>
                             ))
                         ) : tab === "experiences" ? (
                             favorite?.experience?.map((item) => (
                                 <div className="my-4">
-                                    <ExperienceCard key={item.id} item={item} />
+                                    <ExperienceCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
                                 </div>
                             ))
                         ) : null}

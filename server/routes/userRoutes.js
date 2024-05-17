@@ -81,6 +81,8 @@ router.get('/user/:token/verify-email', userController.verifyEmail)
 
 // add new favorite collection
 router.post('/add-new-collection', userController.addNewCollection);
+router.post('/delete-collection', userController.deleteCollection)
+router.post('/edit-collection', userController.editCollection)
 
 // fetch collection
 router.get('/fetch-collection', userController.fetchCollections);
@@ -91,7 +93,10 @@ router.get('/favorite-items', userController.favoriteItems)
 // edit collection
 
 router.post("/add-to-collection/hotel", userController.addToCollectionHotel)
+router.post("/delete-from-collection/hotel", userController.deleteFromCollectionHotel)
+
 router.post("/add-to-collection/experience", userController.addToCollectionExperience)
+router.post("/delete-from-collection/experience", userController.deleteFromCollectionExperience)
 
 router.post("/add-to-collection/flight", userController.addToCollectionFlight)
 router.post("/delete-from-collection/flight", userController.deleteFromCollectionFlight)

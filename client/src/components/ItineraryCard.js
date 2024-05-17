@@ -23,6 +23,7 @@ import warningNotify from "../utils/warningNotify";
 
 // Itinerary card for the itinerary page. list the itinerary info card
 export function ItineraryCard({ itinerary, getItinerary }) {
+    const modalId = `delete_itinerary_card_modal_${itinerary._id}`
     const convertDate = (date) => `${date.substring(6, 8)}-${date.substring(4, 6)}-${date.substring(0, 4)}`
     const handleDeleteItinerary = useMutation({
         mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
@@ -82,7 +83,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
                             className="btn bg-transparent border-[1.5px] text-red-400 hover:text-red-500"
                             onClick={() =>
                                 document
-                                    .getElementById("delete_modal")
+                                    .getElementById(modalId)
                                     .showModal()
                             }
                         >
@@ -103,7 +104,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
                         </button>
 
                         <dialog
-                            id="delete_modal"
+                            id={modalId}
                             className="modal modal-bottom sm:modal-middle"
                         >
                             <div className="modal-box w-11/12 max-w-5xl px-10">
@@ -181,14 +182,14 @@ export function AddItemButton({refetchItinerary, isAddingExperience, date}) {
                 </div>
             </div>
 
-            <div className="relative">
+            {isOpen && <div className="relative">
                 {/* Drawer */}
                 <div
                     className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 lg:w-4/12   bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
                         } overflow-y-auto`}
                 >
                     <div className="p-4 relative">
-                        {currentPage === "main" ? (
+                        { currentPage === "main" ? (
                             <ChooseCollection
                                 handleNextButtonClick={handleNextButtonClickMain}
                                 setSelectedCollection={setSelectedCollection}
@@ -218,13 +219,12 @@ export function AddItemButton({refetchItinerary, isAddingExperience, date}) {
                 </div>
 
                 {/* Overlay to close the drawer */}
-                {isOpen && (
                     <div
                         onClick={() => setIsOpen(false)}
                         className="fixed top-0 left-0 h-full w-full bg-gray-800 opacity-50 transition-opacity duration-300 ease-in-out z-10"
                     ></div>
-                )}
-            </div>
+                </div>
+            }
         </>
     );
 }

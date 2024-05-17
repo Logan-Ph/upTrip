@@ -1,7 +1,7 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
