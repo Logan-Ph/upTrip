@@ -392,6 +392,7 @@ export function FlightCard({item, refetchFavorite}) {
         mutationFn: () => deleteFlightFromCollection({collectionId: searchParams.get("collectionId"), flightId: item._id}),
         onSuccess: (data) => {
             successNotify(data.data)
+            document.getElementById(modalId).close(); 
             refetchFavorite();
         },
         onError: (e) => {
