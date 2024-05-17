@@ -825,7 +825,7 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         const hotel = searchQueriesArray[1]["results"][0]; // select the name by ".displayName.text"
         return res.status(200).json({ price: hotel.blocks, pageName: hotel.basicPropertyData.pageName });
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         return res.status(500).json(error);
     }
 };

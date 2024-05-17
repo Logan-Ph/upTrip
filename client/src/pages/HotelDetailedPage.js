@@ -133,10 +133,12 @@ export default function HotelDetailedPage(){
         <>
         <div className="bg-[#FAFBFC] md:p-10">
                 <section 
-                    onClick={() => navigate(getURL())}
                     className="mx-auto max-w-8xl px-6 pb-6"
                 >
-                    <div className="mb-2 flex items-center">
+                    <div 
+                        className="mb-2 flex items-center"
+                        onClick={() => navigate(getURL())}
+                    >
                         <i className="fas fa-chevron-left mr-2 hover:cursor-pointer"></i>
                         <div className="text-lg font-bold hover:cursor-pointer">All Propertises in <span>{searchParams.get("cityName")}</span></div>
                     </div>
