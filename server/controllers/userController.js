@@ -823,6 +823,7 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         const hotel = searchQueriesArray[1]["results"][0]; // select the name by ".displayName.text"
         return res.status(200).json({ price: hotel.blocks, pageName: hotel.basicPropertyData.pageName });
     } catch (error) {
+        console.log(error)
         return res.status(500).json(error);
     }
 };
@@ -1352,6 +1353,7 @@ exports.hotelInfo = async (req, res) => {
         const hotelInfo = JSON.parse(ldJsonScript.html());
         return res.status(200).json({ hotelInfo, hotelDescription, ratingsMap, hotelReviewComment })
     } catch (err) {
+        console.log(err)
         return res.status(500).json(err)
     }
 }
