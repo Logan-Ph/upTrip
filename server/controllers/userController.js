@@ -812,14 +812,10 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         });
 
         const html = response.data;
-        console.log(html);
         const $ = cheerio.load(html);
         // Find the script tag with the specific data-capla-namespace attribute
         const scriptTag = $('script[data-capla-store-data="apollo"]');
-        if (scriptTag.length === 0) {
-            console.error('Script tag with data-capla-store-data="apollo" not found');
-            return res.status(500).json({ error: 'Required script tag not found' });
-        }
+        console.log(scriptTag.html());
         // Extract the content of the script tag
         const scriptContent = JSON.parse(scriptTag.html());
         if (!scriptContent["ROOT_QUERY"] || !scriptContent["ROOT_QUERY"]["searchQueries"]) {
@@ -832,7 +828,7 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         const hotel = searchQueriesArray[1]["results"][0]; // select the name by ".displayName.text"
         return res.status(200).json({ price: hotel.blocks, pageName: hotel.basicPropertyData.pageName });
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return res.status(500).json(error);
     }
 };
