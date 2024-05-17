@@ -81,6 +81,8 @@ router.get('/user/:token/verify-email', userController.verifyEmail)
 
 // add new favorite collection
 router.post('/add-new-collection', userController.addNewCollection);
+router.post('/delete-collection', userController.deleteCollection)
+router.post('/edit-collection', userController.editCollection)
 
 // fetch collection
 router.get('/fetch-collection', userController.fetchCollections);

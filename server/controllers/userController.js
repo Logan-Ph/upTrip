@@ -1125,6 +1125,52 @@ exports.fetchCollections = async (req, res) => {
     }
 }
 
+exports.deleteCollection = async (req, res) => {
+    try {
+        const { collectionId } = req.body;
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
+
+        // Retrieve the collection to get references
+        const collection = await Collection.findById(collectionId);
+        if (!collection) return res.status(404).json("Collection not found");
+
+        // Delete referenced flights, hotels, and experiences
+        if (collection.flights.length) {
+            await Flight.deleteMany({ _id: { $in: collection.flights } });
+        }
+        if (collection.hotels.length) {
+            await Hotel.deleteMany({ _id: { $in: collection.hotels } });
+        }
+        if (collection.experience.length) {
+            await Experience.deleteMany({ _id: { $in: collection.experience } });
+        }
+
+        // Delete the collection itself
+        await Collection.findByIdAndDelete(collectionId);
+
+        return res.status(200).json("Collection and all associated items deleted");
+    } catch (er) {
+        console.log(er);
+        return res.status(500).json(er);
+    }
+};
+
+exports.editCollection = async (req,res) => {
+    try {
+        const { collectionId, name, description } = req.body;
+        const collection = await Collection.findById(collectionId);
+        if (!collection) return res.status(404).json("Collection not found");
+        collection.name = name;
+        collection.description = description;
+        await collection.save();
+        return res.status(200).json("Collection edited");
+    } catch (er) {
+        console.log(er);
+        return res.status(500).json(er);
+    }
+}
+ 
 exports.addToCollectionHotel = async (req,res) => {
     try {
         const { refreshToken } = req.cookies;
@@ -1449,18 +1495,36 @@ exports.fetchItinerary = async (req, res) => {
     }
 }
 
-exports.deleteItinerary = async (req,res) => {
-    try{
-        const {refreshToken} = req.cookies
-        if(!refreshToken) return res.status(401).json("You are not logged in")
+exports.deleteItinerary = async (req, res) => {
+    try {
+        const { refreshToken } = req.cookies;
+        if (!refreshToken) return res.status(401).json("You are not logged in");
 
-        const {itineraryId} = req.body
-        await Itinerary.findByIdAndDelete(itineraryId)
-        return res.status(200).json("Itinerary deleted")
-    }catch(err){
-        return res.status(500).json(err)
+        const { itineraryId } = req.body;
+        // Retrieve the itinerary to get references
+        const itinerary = await Itinerary.findById(itineraryId);
+        if (!itinerary) return res.status(404).json("Itinerary not found");
+
+        // Delete referenced hotels, flights, and experiences
+        if (itinerary.hotels.length) {
+            await Hotel.deleteMany({ _id: { $in: itinerary.hotels } });
+        }
+        if (itinerary.flights.length) {
+            await Flight.deleteMany({ _id: { $in: itinerary.flights } });
+        }
+        if (itinerary.experiences.length) {
+            await Experience.deleteMany({ _id: { $in: itinerary.experiences } });
+        }
+
+        // Delete the itinerary itself
+        await Itinerary.findByIdAndDelete(itineraryId);
+
+        return res.status(200).json("Itinerary and all associated items deleted");
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json(err);
     }
-}
+};
 
 exports.fetchDetailItinerary = async (req, res) => {
     try {

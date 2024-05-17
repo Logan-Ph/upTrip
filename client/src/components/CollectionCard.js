@@ -1,7 +1,51 @@
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { deleteCollection, editCollection } from "../api/fetch";
+import successNotify from "../utils/successNotify";
+import { useState } from "react";
 
-export function CollectionCard({ collection }) {
+export function CollectionCard({ collection, refetchCollections }) {
     const navigate = useNavigate();
+    const editModalId = `edit_collection_modal_${collection._id}`
+    const deleteModalId = `delete_collection_modal_${collection._id}`
+
+    const [name, setName] = useState(collection.name)
+    const [description, setDescription] = useState(collection.description)
+
+    const deleteCollectionMutation = useMutation({
+        mutationFn: () => deleteCollection({collectionId: collection._id}),
+        onSuccess: () => {
+            successNotify("Collection deleted")
+            document.getElementById(deleteModalId).close(); 
+            refetchCollections()
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const editCollectionMutation = useMutation({
+        mutationFn: () => editCollection({collectionId: collection._id, name, description}),
+        onSuccess: () => {
+            successNotify("Collection edited")
+            document.getElementById(editModalId).close(); 
+            refetchCollections()
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        deleteCollectionMutation.mutate()
+    }
+
+    const handleEdit = (e) => {
+        e.preventDefault()
+        editCollectionMutation.mutate()
+    }
+
     return (
         <>
             <div className="card card-compact w-94 md:w-auto bg-white shadow-xl rounded-md">
@@ -29,7 +73,7 @@ export function CollectionCard({ collection }) {
                                 className="btn"
                                 onClick={() => {
                                     document
-                                        .getElementById("my_modal_1")
+                                        .getElementById(editModalId)
                                         .showModal();
                                 }}
                             >
@@ -48,7 +92,7 @@ export function CollectionCard({ collection }) {
                                     />
                                 </svg>
                             </button>
-                            <dialog id="my_modal_1" className="modal">
+                            <dialog id={editModalId} className="modal">
                                 <div className="modal-box">
                                     <h3 className="font-bold text-lg my-4">
                                         Edit collection
@@ -66,6 +110,8 @@ export function CollectionCard({ collection }) {
                                                 id="name"
                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl w-full p-2.5 focus:ring-black focus:border-black"
                                                 required
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
                                             />
                                         </div>
                                         <div className="mb-5 text-start">
@@ -80,6 +126,8 @@ export function CollectionCard({ collection }) {
                                                 id="description"
                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 focus:ring-black focus:border-black"
                                                 required
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -90,7 +138,7 @@ export function CollectionCard({ collection }) {
                                             onClick={() =>
                                                 document
                                                     .getElementById(
-                                                        "delete_collection_modal"
+                                                        deleteModalId
                                                     )
                                                     .showModal()
                                             }
@@ -112,7 +160,7 @@ export function CollectionCard({ collection }) {
                                             Delete Trip
                                         </button>
                                         <dialog
-                                            id="delete_collection_modal"
+                                            id={deleteModalId}
                                             class="modal modal-bottom sm:modal-middle"
                                         >
                                             <div class="bg-white py-10 rounded-xl max-w-4xl px-10">
@@ -134,7 +182,10 @@ export function CollectionCard({ collection }) {
                                                         <button class="btn rounded-3xl mx-2">
                                                             Cancel
                                                         </button>
-                                                        <button class="btn bg-black text-white rounded-3xl">
+                                                        <button 
+                                                            onClick={handleDelete}
+                                                            class="btn bg-black text-white rounded-3xl"
+                                                        >
                                                             Delete
                                                         </button>
                                                     </form>
@@ -150,7 +201,7 @@ export function CollectionCard({ collection }) {
                                                 onClick={() =>
                                                     document
                                                         .getElementById(
-                                                            "my_modal_1"
+                                                            editModalId
                                                         )
                                                         .close()
                                                 }
@@ -159,15 +210,9 @@ export function CollectionCard({ collection }) {
                                             </button>
                                             <button
                                                 className="flex btn btn-outline bg-black text-white w-1/2"
-                                                onClick={() =>
-                                                    document
-                                                        .getElementById(
-                                                            "my_modal_1"
-                                                        )
-                                                        .close()
-                                                }
+                                                onClick={handleEdit}
                                             >
-                                                Save
+                                                Save   
                                             </button>
                                         </div>
                                     </div>

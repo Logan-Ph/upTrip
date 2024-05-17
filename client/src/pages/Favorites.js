@@ -131,7 +131,7 @@ export default function Favorites() {
 
                         {   isSuccessCollections && 
                             collections.map((collection) => {
-                                return <CollectionCard key={collection._id} collection={collection} />
+                                return <CollectionCard key={collection._id} collection={collection} refetchCollections={refetchCollections}/>
                             })
                         }
                     </div>

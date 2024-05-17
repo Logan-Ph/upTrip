@@ -240,6 +240,14 @@ export function addNewCollection(name, description) {
 	return axios.post("/add-new-collection", { name, description }, options);
 }
 
+export function deleteCollection(payload) {
+	return axios.post("/delete-collection", payload, options);
+}
+
+export function editCollection(payload) {
+	return axios.post("/edit-collection", payload, options);
+}
+
 export function addNewItinerary(payload) {
 	return axios.post("/add-new-itinerary", payload, options);
 }
