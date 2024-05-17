@@ -860,6 +860,8 @@ exports.advancedSearchFlights = async (req, res) => {
             }
         });
 
+        console.log(response.data.trips[0].bundles)
+
         for (const item of response.data.trips[0].bundles) {
             const flightNo = []
             const airline = []
@@ -1759,6 +1761,21 @@ exports.deleteFromCollectionExperience = async (req, res) => {
         await Experience.findByIdAndDelete(experienceId)
         await collection.save()
         return res.status(200).json("Experience removed from collection")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteFromCollectionFlight = async (req, res) => {
+    try {
+        const { collectionId, flightId } = req.body
+        const collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+        collection.flights = collection.flights.filter(flight => flight._id != flightId)
+
+        await Flight.findByIdAndDelete(flightId)
+        await collection.save()
+        return res.status(200).json("Experience removed from collection") 
     } catch (er) {
         return res.status(500).json(er)
     }

@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { deleteExperienceFromCollection, deleteHotelFromCollection } from "../api/fetch";
+import { deleteExperienceFromCollection, deleteFlightFromCollection, deleteHotelFromCollection } from "../api/fetch";
 import successNotify from "../utils/successNotify";
+import warningNotify from "../utils/warningNotify";
 
 export function QuickStayCard({ hotel }) {
     return (
@@ -383,7 +384,27 @@ export function StayCard({item, refetchFavorite}) {
     );
 }
 
-export function FlightCard({item}) {
+export function FlightCard({item, refetchFavorite}) {
+    const modalId = `delete_flight_item_card_modal_${item._id}`; 
+    const [searchParams] = useSearchParams()
+
+    const deleteFlight = useMutation({
+        mutationFn: () => deleteFlightFromCollection({collectionId: searchParams.get("collectionId"), flightId: item._id}),
+        onSuccess: (data) => {
+            successNotify(data.data)
+            document.getElementById(modalId).close(); 
+            refetchFavorite();
+        },
+        onError: (e) => {
+            warningNotify(e.response.data)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault();
+        deleteFlight.mutate()
+
+    }
     return (
         <>
             <div>
@@ -441,7 +462,7 @@ export function FlightCard({item}) {
                                                 onClick={() =>
                                                     document
                                                         .getElementById(
-                                                            "delete_flight_modal"
+                                                           modalId
                                                         )
                                                         .showModal()
                                                 }
@@ -453,7 +474,7 @@ export function FlightCard({item}) {
                                     </ul>
                                 </div>
                                 <dialog
-                                    id={"delete_flight_modal"}
+                                    id={modalId}
                                     className="modal modal-bottom sm:modal-middle"
                                 >
                                     <div className="modal-box">
@@ -466,7 +487,9 @@ export function FlightCard({item}) {
                                                 <button className="btn rounded-lg mx-2">
                                                     Cancel
                                                 </button>
-                                                <button className="btn bg-black text-white rounded-lg">
+                                                <button 
+                                                    onClick={handleDelete}
+                                                    className="btn bg-black text-white rounded-lg">
                                                     Delete
                                                 </button>
                                             </form>

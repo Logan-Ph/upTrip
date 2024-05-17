@@ -302,3 +302,7 @@ export function deleteExperienceFromCollection(payload) {
 	return axios.post("/delete-from-collection/experience", payload, options)
 }
 
+export function deleteFlightFromCollection(payload) {
+	return axios.post("/delete-from-collection/flight", payload, options)
+}
+

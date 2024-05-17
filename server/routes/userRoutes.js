@@ -99,6 +99,7 @@ router.post("/add-to-collection/experience", userController.addToCollectionExper
 router.post("/delete-from-collection/experience", userController.deleteFromCollectionExperience)
 
 router.post("/add-to-collection/flight", userController.addToCollectionFlight)
+router.post("/delete-from-collection/flight", userController.deleteFromCollectionFlight)
 
 router.post("/add-new-itinerary", userController.addNewItinerary)
 
