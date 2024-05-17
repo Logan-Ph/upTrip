@@ -8,7 +8,7 @@ const Hotel = require("../models/hotel")
 const Experience = require("../models/experience")
 const Flight = require("../models/flight")
 const Itinerary = require("../models/itinerary");
-const { baseOrigin } = require('../utils/url.js');
+const { serverOrigin } = require('../utils/url.js');
 const { stringSimilarity } = require("string-similarity-js");
 const {
     generateToken,
@@ -509,13 +509,13 @@ exports.priceComparisonHotels = async (req, res) => {
         };
 
         const agodaPromises = hotelNames.map((hotelName) =>
-            axios.post(`${baseOrigin}/agoda/autocomplete`, {
+            axios.post(`${serverOrigin}/agoda/autocomplete`, {
                 keyword: keyword(hotelName, cityName, resultType),
             })
         );
 
         const bookingPromises = hotelNames.map((hotelName) =>
-            axios.post(`${baseOrigin}/booking/autocomplete`, {
+            axios.post(`${serverOrigin}/booking/autocomplete`, {
                 keyword: keyword(hotelName, cityName, resultType),
             })
         );
@@ -573,7 +573,7 @@ exports.priceComparisonHotels = async (req, res) => {
 
             return axios
                 .post(
-                    `${baseOrigin}/advanced-search/hotels/agoda`,
+                    `${serverOrigin}/advanced-search/hotels/agoda`,
                     payload
                 )
                 .then((response) => response.data) // Extract only the data needed
@@ -597,7 +597,7 @@ exports.priceComparisonHotels = async (req, res) => {
 
             return axios
                 .post(
-                    `${baseOrigin}/advanced-search/hotels/booking`,
+                    `${serverOrigin}/advanced-search/hotels/booking`,
                     payload
                 )
                 .then((response) => response.data)
