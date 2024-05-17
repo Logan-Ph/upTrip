@@ -62,7 +62,7 @@ export default function Itinerary() {
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
     const [tripLength, setTripLength] = useState(1);
-    const formattedDate  = (date) => date.replace(/-/g, '');
+    const formattedDate = (date) => date.replace(/-/g, '');
 
 
     const getItinerary = useQuery({
@@ -94,7 +94,7 @@ export default function Itinerary() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!destination || !description || (!startDate && !endDate)) {
+        if (!destination || !name || !((startDate && endDate) || tripLength)) {
             warningNotify("Please fill in all the fields");
             return;
         }
@@ -120,7 +120,7 @@ export default function Itinerary() {
                             itinerary
                         </button>
                         <dialog id="create_itinerary_modal" className="modal">
-                            <div className="modal-box px-10" style={{zIndex:100}}>
+                            <div className="modal-box px-10" style={{ zIndex: 100 }}>
                                 <form method="dialog">
                                     {/* if there is a button in form, it will close the modal */}
                                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -201,11 +201,10 @@ export default function Itinerary() {
                                         <div className="max-w-md mx-auto">
                                             <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
-                                                        activeTab === 1
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 1
                                                             ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
                                                             : "text-black font-thin"
-                                                    }`}
+                                                        }`}
                                                     onClick={() =>
                                                         handleTabClick(1)
                                                     }
@@ -213,11 +212,10 @@ export default function Itinerary() {
                                                     Dates
                                                 </button>
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
-                                                        activeTab === 2
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 2
                                                             ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
                                                             : "text-black font-thin"
-                                                    }`}
+                                                        }`}
                                                     onClick={() =>
                                                         handleTabClick(2)
                                                     }
@@ -227,68 +225,68 @@ export default function Itinerary() {
                                             </div>
                                             <div className="mt-4">
                                                 {activeTab === 1 && (
-                                                <div className="my-6 mb-10">
-                                                    
-                                                    <div className="flex flex-col md:flex-row my-2 justify-center">
-                                                        <div class="relative w-full md:w-1/2 h-[60px]">
-                                                            <div class="flex items-center">
-                                                                <span class="custom-datepicker-toggle">
-                                                                    <span class="custom-datepicker-toggle-button">
-                                                                        <i class="fa-regular fa-calendar"></i>
+                                                    <div className="my-6 mb-10">
+
+                                                        <div className="flex flex-col md:flex-row my-2 justify-center">
+                                                            <div class="relative w-full md:w-1/2 h-[60px]">
+                                                                <div class="flex items-center">
+                                                                    <span class="custom-datepicker-toggle">
+                                                                        <span class="custom-datepicker-toggle-button">
+                                                                            <i class="fa-regular fa-calendar"></i>
+                                                                        </span>
+                                                                        <input
+                                                                            id="from-date"
+                                                                            type="date"
+                                                                            className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                            min={new Date().toISOString().split('T')[0]} // Set min date to today
+                                                                            max={endDate || ''} // Set max date to endDate if it exists
+                                                                            onChange={(e) => {
+                                                                                const newStartDate = e.target.value;
+                                                                                setStartDate(newStartDate);
+                                                                            }}
+                                                                        />
                                                                     </span>
-                                                                    <input
-                                                                        id="from-date"
-                                                                        type="date"
-                                                                        className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                        min={new Date().toISOString().split('T')[0]} // Set min date to today
-                                                                        max={endDate || ''} // Set max date to endDate if it exists
-                                                                        onChange={(e) => {
-                                                                            const newStartDate = e.target.value;
-                                                                            setStartDate(newStartDate);
-                                                                        }}
-                                                                    />
-                                                                </span>
+                                                                </div>
+                                                                <div>
+                                                                    <label
+                                                                        for="from-date"
+                                                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                    >
+                                                                        From
+                                                                    </label>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <label
-                                                                    for="from-date"
-                                                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                                                >
-                                                                    From
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="relative w-full md:w-1/2 h-[60px] justify-end">
-                                                            <div class="flex items-center">
-                                                                <span class="datepicker-toggle">
-                                                                    <span class="datepicker-toggle-button">
+                                                            <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                                                                <div class="flex items-center">
+                                                                    <span class="datepicker-toggle">
+                                                                        <span class="datepicker-toggle-button">
+                                                                        </span>
+                                                                        <input
+                                                                            id="to-date"
+                                                                            type="date"
+                                                                            className="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                            min={startDate || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
+                                                                            onChange={(e) => {
+                                                                                const newEndDate = e.target.value;
+                                                                                if (newEndDate < startDate) {
+                                                                                    setStartDate(newEndDate);
+                                                                                }
+                                                                                setEndDate(newEndDate);
+                                                                            }}
+                                                                        />
                                                                     </span>
-                                                                    <input
-                                                                        id="to-date"
-                                                                        type="date"
-                                                                        className="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                        min={startDate || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
-                                                                        onChange={(e) => {
-                                                                            const newEndDate = e.target.value;
-                                                                            if (newEndDate < startDate) {
-                                                                                setStartDate(newEndDate);
-                                                                            }
-                                                                            setEndDate(newEndDate);
-                                                                        }}
-                                                                    />
-                                                                </span>
-                                                            </div>
-                                                            <div>
-                                                                <label
-                                                                    for="to-date"
-                                                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                                                >
-                                                                    To
-                                                                </label>
+                                                                </div>
+                                                                <div>
+                                                                    <label
+                                                                        for="to-date"
+                                                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                    >
+                                                                        To
+                                                                    </label>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
                                                 )}
                                                 {activeTab === 2 && (
                                                     <div className="flex justify-between my-6 mb-10">
@@ -309,10 +307,10 @@ export default function Itinerary() {
                                                                             prev
                                                                         ) =>
                                                                             prev ===
-                                                                            1
+                                                                                1
                                                                                 ? prev
                                                                                 : prev -
-                                                                                  1
+                                                                                1
                                                                     )
                                                                 }
                                                             >

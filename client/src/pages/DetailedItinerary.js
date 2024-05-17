@@ -61,6 +61,8 @@ export default function DetailedItinerary() {
             setDescription(itinerary?.description)
             setDestination(itinerary?.destination)
             setTripLength(itinerary?.tripLength)
+            setStartDate(itinerary?.startDate)
+            setEndDate(itinerary?.endDate)
         }
     }, [itinerary, itineraryLoading])
 
@@ -70,8 +72,8 @@ export default function DetailedItinerary() {
             name: name,
             description: description,
             destination: destination,
-            startDate: formattedDate(startDate),
-            endDate: formattedDate(endDate),
+            startDate: formattedDate(startDate) || null,
+            endDate: formattedDate(endDate) || null,
             tripLength
         }),
         onSuccess: (data) => {
@@ -298,6 +300,7 @@ export default function DetailedItinerary() {
                                                                                     <i class="fa-regular fa-calendar"></i>
                                                                                 </span>
                                                                                 <input
+                                                                                    
                                                                                     id="from-date"
                                                                                     type="date"
                                                                                     className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
