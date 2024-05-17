@@ -1667,3 +1667,47 @@ exports.deleteExperienceFromItinerary = async (req,res) => {
     }
 }
 
+exports.deleteFromCollectionHotel = async (req, res) => {
+    try {
+        const { collectionId, hotelId } = req.body
+        const collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+        collection.hotels = collection.hotels.filter(hotel => hotel._id != hotelId)
+        await Hotel.findByIdAndDelete(hotelId)
+
+        await collection.save()
+        return res.status(200).json("Hotel removed from collection")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteFromCollectionExperience = async (req, res) => {
+    try {
+        const { collectionId, experienceId } = req.body
+        const collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+        collection.experience = collection.experience.filter(experience => experience._id != experienceId)
+
+        await Experience.findByIdAndDelete(experienceId)
+        await collection.save()
+        return res.status(200).json("Experience removed from collection")
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteFromCollectionFlight = async (req, res) => {
+    try {
+        const { collectionId, flightId } = req.body
+        const collection = await Collection.findById(collectionId)
+        if (!collection) return res.status(404).json("Collection not found")
+        collection.flights = collection.flights.filter(flight => flight._id != flightId)
+
+        await Flight.findByIdAndDelete(flightId)
+        await collection.save()
+        return res.status(200).json("Experience removed from collection") 
+    } catch (er) {
+        return res.status(500).json(er)
+    }
+}

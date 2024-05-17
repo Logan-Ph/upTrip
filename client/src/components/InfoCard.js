@@ -1,4 +1,8 @@
-import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useSearchParams } from "react-router-dom";
+import { deleteExperienceFromCollection, deleteFlightFromCollection, deleteHotelFromCollection } from "../api/fetch";
+import successNotify from "../utils/successNotify";
+import warningNotify from "../utils/warningNotify";
 
 export function QuickStayCard({ hotel }) {
     return (
@@ -282,7 +286,26 @@ export function StayCard({item}) {
     );
 }
 
-export function FlightCard({item}) {
+export function FlightCard({item, refetchFavorite}) {
+    const modalId = `delete_flight_item_card_modal_${item._id}`; 
+    const [searchParams] = useSearchParams()
+
+    const deleteFlight = useMutation({
+        mutationFn: () => deleteFlightFromCollection({collectionId: searchParams.get("collectionId"), flightId: item._id}),
+        onSuccess: (data) => {
+            successNotify(data.data)
+            refetchFavorite();
+        },
+        onError: (e) => {
+            warningNotify(e.response.data)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault();
+        deleteFlight.mutate()
+
+    }
     return (
         <>
             <div>
@@ -307,9 +330,60 @@ export function FlightCard({item}) {
                             <div className="text-gray-500 font-semibold">
                                 {item.flightNo.length === 1 ? "non-stop" : item.flightNo.length + 1 + "stop(s)"}
                             </div>
-                            <div className="flex flex-col">
-                                <div className="font-semibold">{item.duration}</div>
-                                <div className="text-gray-500">{item.from} - {item.to}</div>
+                            <div>
+                                <div className="dropdown dropdown-end">
+                                    <div>
+                                        <button
+                                            className="bg-transparent text-lg border-n"
+                                            tabIndex={0}
+                                        >
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                    </div>
+                                    <ul
+                                        tabIndex={0}
+                                        className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
+                                    >
+                                        <li>
+                                            <div
+                                                className="text-red-600"
+                                                onClick={() =>
+                                                    document
+                                                        .getElementById(
+                                                           modalId
+                                                        )
+                                                        .showModal()
+                                                }
+                                            >
+                                                <i class="fa-solid fa-trash"></i>
+                                                Delete
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <dialog
+                                    id={modalId}
+                                    className="modal modal-bottom sm:modal-middle"
+                                >
+                                    <div className="modal-box">
+                                        <h3 className="font-bold text-lg text-center pt-4 pb-1">
+                                            Are you sure you want to delete this
+                                            item?
+                                        </h3>
+                                        <div className="modal-action">
+                                            <form method="dialog">
+                                                <button className="btn rounded-lg mx-2">
+                                                    Cancel
+                                                </button>
+                                                <button 
+                                                    onClick={handleDelete}
+                                                    className="btn bg-black text-white rounded-lg">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </dialog>
                             </div>
                         </div>
                         <div class="card-actions md:justify-between flex-col md:flex-row md:items-end mt-3 md:mt-0">

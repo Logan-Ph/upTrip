@@ -286,3 +286,15 @@ export function deleteExperienceFromItinerary(payload) {
 	return axios.post("/delete-from-itinerary/experience", payload, options)
 }
 
+export function deleteHotelFromCollection(payload) {
+	return axios.post("/delete-from-collection/hotel", payload, options)
+}
+
+export function deleteExperienceFromCollection(payload) {
+	return axios.post("/delete-from-collection/experience", payload, options)
+}
+
+export function deleteFlightFromCollection(payload) {
+	return axios.post("/delete-from-collection/flight", payload, options)
+}
+
