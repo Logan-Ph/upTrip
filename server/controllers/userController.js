@@ -858,6 +858,8 @@ exports.advancedSearchFlights = async (req, res) => {
             }
         });
 
+        console.log(response.data.trips[0].bundles)
+
         for (const item of response.data.trips[0].bundles) {
             const flightNo = []
             const airline = []

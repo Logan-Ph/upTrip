@@ -52,14 +52,26 @@ export default function AdvancedSearchFlightPage() {
     const agoda = useQuery({
         queryKey: ["advanced-search-flight", payload, sortField, sortDir, prefer, priceFilter, departureTime, arrivalTime],
         queryFn: () => fetchFlightAdvancedSearch(payload),
-        retry: false,
         refetchOnWindowFocus: false,
+        retry: (failureCount, error) => {
+            if (error.message === 'Data is null') {
+                return true; 
+            } else {
+                return false; 
+            }
+        },
+        select: data => {
+            if (data.flights.length === 0) {
+                throw new Error('Data is null'); 
+            }
+            return data;
+        }
     });
 
     const priceMax = agoda.isSuccess ? agoda.data.priceMax : 0;
 
     const tripCom = useQuery({
-        queryKey: ["tripcom-flight"],
+        queryKey: ["tripcom-flight", payload],
         queryFn: () => fetchTripComFlight(payload),
         retry: false,
         refetchOnWindowFocus: false,
@@ -67,14 +79,14 @@ export default function AdvancedSearchFlightPage() {
 
 
     const myTrip = useQuery({
-        queryKey: ["mytrip-flight"],
+        queryKey: ["mytrip-flight", payload],
         queryFn: () => fetchMyTripFlight(payload),
         retry: false,
         refetchOnWindowFocus: false,
     })
 
     const bayDep = useQuery({
-        queryKey: ["baydep-flight"],
+        queryKey: ["baydep-flight", payload],
         queryFn: () => fetchBayDepFlight(payload),
         retry: false,
         refetchOnWindowFocus: false,
