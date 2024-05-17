@@ -72,13 +72,13 @@ export default function DetailedPageHotelInformation({ nearByHotels, hotelInfo, 
                 <HotelRelatedInformation />
             </div>
             <div className="my-6">
-                {(isFetchingHotelComments || !hotelComments)  
+                {(!hotelInfo || isFetchingHotelComments || !hotelComments)  
                 ? <ReviewsSkeleton/>
                 : hotelComments ? <Reviews hotelComments={hotelComments} hotelInfo={hotelInfo} /> : null
                 }
             </div>
             <div className="my-6">
-                {(isFetchingNearByHotels || !nearByHotels)
+                {(!hotelInfo || isFetchingNearByHotels || !nearByHotels)
                  ? <NearbyHotelSkeleton/>
                  : <NearbyHotel nearByHotels={nearByHotels} payload={payload} />
                 }
