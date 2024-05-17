@@ -815,13 +815,10 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         const $ = cheerio.load(html);
         // Find the script tag with the specific data-capla-namespace attribute
         const scriptTag = $('script[data-capla-store-data="apollo"]');
-        console.log(scriptTag.html());
         // Extract the content of the script tag
         const scriptContent = JSON.parse(scriptTag.html());
-        if (!scriptContent["ROOT_QUERY"] || !scriptContent["ROOT_QUERY"]["searchQueries"]) {
-            console.error('Search queries not found in script content');
-            return res.status(500).json({ error: 'Search queries not found' });
-        }
+
+        console.log(scriptContent)
         const searchQueriesArray = Object?.values(
             scriptContent["ROOT_QUERY"]["searchQueries"]
         );
