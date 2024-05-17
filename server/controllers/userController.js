@@ -812,11 +812,20 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         });
 
         const html = response.data;
+        console.log(html);
         const $ = cheerio.load(html);
         // Find the script tag with the specific data-capla-namespace attribute
         const scriptTag = $('script[data-capla-store-data="apollo"]');
+        if (scriptTag.length === 0) {
+            console.error('Script tag with data-capla-store-data="apollo" not found');
+            return res.status(500).json({ error: 'Required script tag not found' });
+        }
         // Extract the content of the script tag
         const scriptContent = JSON.parse(scriptTag.html());
+        if (!scriptContent["ROOT_QUERY"] || !scriptContent["ROOT_QUERY"]["searchQueries"]) {
+            console.error('Search queries not found in script content');
+            return res.status(500).json({ error: 'Search queries not found' });
+        }
         const searchQueriesArray = Object?.values(
             scriptContent["ROOT_QUERY"]["searchQueries"]
         );
