@@ -372,7 +372,7 @@ const bookingAdvancedSearchHotelQueryParam = (
 		lang: "en-gb", // Language code
 		src: "searchresults", // Source of the search
 		dest_type: "hotel", // Destination type (hotel)
-		ac_langcode: "vi", // Autocomplete language code
+		ac_langcode: "en", // Autocomplete language code
 		checkin: checkin, // Check-in date (YYYY-MM-DD)
 		checkout: checkout, // Check-out date (YYYY-MM-DD)
 		group_adults: group_adults, // Number of adults in the group

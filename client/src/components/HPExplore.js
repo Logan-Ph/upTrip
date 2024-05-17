@@ -24,6 +24,8 @@ export default function HPExplore() {
 }
 
 function Carousel() {
+    const handleNavigate = useHandleNavigate();
+
     const wondersOfVn = [
         { imgUrl: "https://ik.imagekit.io/Uptrip/halongbay.jpg?updatedAt=1712308141006", destination: "Ha Long", city: "Quang Ninh" },
         { imgUrl: "https://ik.imagekit.io/Uptrip/hoian.jpg?updatedAt=1712471800654", destination: "Hoi An", city: "Quang Nam" },
@@ -38,7 +40,11 @@ function Carousel() {
         <div className='relative'>
             <div className="carousel carousel-end space-x-6 py-4">
             {wondersOfVn.map((wonder, index) => (
-                <div key={index} id={`slide${index}`} className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
+                <div 
+                    key={index} 
+                    id={`slide${index}`} 
+                    onClick={handleNavigate(`/quick-search/?keyword=${wonder.destination}`)}
+                    className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
                     <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
                 </div>
             ))}
@@ -70,10 +76,9 @@ function navigateCarousel(e, targetIndex) {
 }
 
 function DecorativeCard({ imgUrl, destination, city }) {
-    const handleNavigate = useHandleNavigate(`/quick-search/?keyword=${destination}`);
 
     return (<>
-        <div onClick={handleNavigate}>
+        <div>
             <Link to="" className='transition duration-150 ease-out hover:ease-in-out'>
                 <img loading='lazy' src={imgUrl} alt={`${destination}`} class="h-[300px] w-[200px] object-cover shadow-lg rounded-xl" />
             </Link>

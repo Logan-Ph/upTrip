@@ -11,14 +11,12 @@ export default function Header() {
     const [keyword, setKeyword] = useState("");
     const [tab, setTab] = useState("stay");
 
-    const handleNavigate = useHandleNavigate(
-        `/quick-search/?keyword=${keyword}`
-    );
+    const handleNavigate = useHandleNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setKeyword(null);
-        handleNavigate();
+        handleNavigate(`/quick-search/?keyword=${keyword}`);
     };
 
     return (

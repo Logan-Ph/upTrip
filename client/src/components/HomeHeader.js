@@ -1422,13 +1422,12 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
 
 function QuickSearchAll({ setTab }) {
     const [keyword, setKeyword] = useState("");
-    const handleNavigate = useHandleNavigate(
-        `/quick-search/?keyword=${keyword}`
-    );
+    const handleNavigate = useHandleNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleNavigate();
+        setKeyword(null);
+        handleNavigate(`/quick-search/?keyword=${keyword}`);
     };
 
     return (
