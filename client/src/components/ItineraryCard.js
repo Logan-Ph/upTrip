@@ -182,14 +182,14 @@ export function AddItemButton({refetchItinerary, isAddingExperience, date}) {
                 </div>
             </div>
 
-            <div className="relative">
+            {isOpen && <div className="relative">
                 {/* Drawer */}
                 <div
                     className={`fixed top-0 right-0 h-full w-11/12 sm:w-1/2 lg:w-4/12   bg-white shadow-lg transition-all duration-300 ease-in-out z-50 px-2 md:px-6 ${isOpen ? "translate-x-0" : "translate-x-full"
                         } overflow-y-auto`}
                 >
                     <div className="p-4 relative">
-                        {currentPage === "main" ? (
+                        { currentPage === "main" ? (
                             <ChooseCollection
                                 handleNextButtonClick={handleNextButtonClickMain}
                                 setSelectedCollection={setSelectedCollection}
@@ -219,13 +219,12 @@ export function AddItemButton({refetchItinerary, isAddingExperience, date}) {
                 </div>
 
                 {/* Overlay to close the drawer */}
-                {isOpen && (
                     <div
                         onClick={() => setIsOpen(false)}
                         className="fixed top-0 left-0 h-full w-full bg-gray-800 opacity-50 transition-opacity duration-300 ease-in-out z-10"
                     ></div>
-                )}
-            </div>
+                </div>
+            }
         </>
     );
 }
