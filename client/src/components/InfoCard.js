@@ -143,7 +143,6 @@ export function ExperienceCard({item}) {
                                         <button
                                             className="bg-transparent text-lg border-n"
                                             tabIndex={0}
-                                            role="button"
                                         >
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
@@ -153,13 +152,13 @@ export function ExperienceCard({item}) {
                                         className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                     >
                                         <li>
-                                            <a>
+                                            <div>
                                                 <i class="fa-solid fa-gear"></i>{" "}
                                                 Edit
-                                            </a>
+                                            </div>
                                         </li>
                                         <li>
-                                            <a
+                                            <div
                                                 className="text-red-600"
                                                 onClick={() =>
                                                     document
@@ -171,7 +170,7 @@ export function ExperienceCard({item}) {
                                             >
                                                 <i class="fa-solid fa-trash"></i>
                                                 Delete
-                                            </a>
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>

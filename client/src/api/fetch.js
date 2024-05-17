@@ -87,7 +87,7 @@ export function fetchBayDepFlight(payload) {
 		.post("search-bay-dep-flights", payload, options)
 		.then(res => res.data)
 		.catch(er => {
-			return Promise.reject(new Error(er.response.data.message));
+			return Promise.reject(er);
 		});
 }
 
@@ -254,10 +254,10 @@ export function deleteItinerary(payload) {
 
 export function fetchDetailItinerary(payload) {
 	return axios.post("/fetch-detail-itinerary", payload, options)
-	.then(res => res.data)
-	.catch(er => {
-		return Promise.reject(new Error(er.response.data.message));
-	});
+		.then(res => res.data)
+		.catch(er => {
+			return Promise.reject(new Error(er.response.data.message));
+		});
 }
 
 export function editItinerary(payload) {
@@ -267,7 +267,9 @@ export function editItinerary(payload) {
 export function addFlightItinerary(payload) {
 	return axios.post("/add-to-itinerary/flight", payload, options)
 }
-
+export function deleteFlightItinerary(payload) {
+	return axios.post("/delete-from-itinerary/flight", payload, options)
+}
 export function addHotelItinerary(payload) {
 	return axios.post("/add-to-itinerary/hotel", payload, options)
 }
@@ -278,5 +280,9 @@ export function deleteHotelFromItinerary(payload) {
 
 export function addExperienceItinerary(payload) {
 	return axios.post("/add-to-itinerary/experience", payload, options)
+}
+
+export function deleteExperienceFromItinerary(payload) {
+	return axios.post("/delete-from-itinerary/experience", payload, options)
 }
 

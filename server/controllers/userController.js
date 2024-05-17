@@ -993,12 +993,10 @@ exports.getMyTripFlight = async (req, res) => {
             for (const item of response.data.data.search.flights) {
                 const flightNo = []
                 const airline = []
-                let arrival;
                 for (const flight of item.bounds[0].segments) {
                     if (flight.__typename == 'TripSegment') {
                         flightNo.push(flight.flightNumber)
                         airline.push(flight.marketingCarrier.code)
-                        arrival = flight.arrivedAt
                     }
                 }
                 items.push({
@@ -1032,11 +1030,11 @@ exports.getBayDepFlight = async (req, res) => {
             return sendRequest(bayDepGetFlightURL, payload);
         });
         const response = await Promise.all(requests)
-        for (const res of response) {
-            if (!res.data.ListFareOption) {
-                throw new Error('Invalid response: ListFareOption not found');
+        for (const result of response) {
+            if (!result.data.ListFareOption) {
+                return res.status(500).json(new Error("Server not available"))
             }
-            for (const item of res.data.ListFareOption) {
+            for (const item of result.data.ListFareOption) {
                 const flightNo = []
                 const airline = []
                 airline.push(item.Carrier)
@@ -1375,8 +1373,13 @@ exports.addToCollectionFlight = async (req, res) => {
 
         } = req.body.payload
 
+
         let collection = await Collection.findById(req.body.collectionId)
         if (!collection) return res.status(404).json("Collection not found")
+
+        if (await Flight.findOne({flightNo: flightNo})) {
+            return res.status(400).json("Flight already exists in collection")
+        }
 
         const newFlight = new Flight({
             flightNo,
@@ -1391,6 +1394,7 @@ exports.addToCollectionFlight = async (req, res) => {
             year,
             seatClass,
             imgSrc,
+            price: null,
         })
         await newFlight.save()
 
@@ -1398,7 +1402,6 @@ exports.addToCollectionFlight = async (req, res) => {
         await collection.save()
         return res.status(200).json("Flight added to collection")
     } catch (er) {
-        console.log(er)
         return res.status(500).json(er);
     }
 }
@@ -1517,16 +1520,37 @@ exports.addFlightItinerary = async (req, res) => {
     try {
         const {refreshToken} = req.cookies
         if(!refreshToken) return res.status(401).json("You are not logged in")
-        const { itineraryId, flightId } = req.body
+        const { itineraryId, flight} = req.body
         const itinerary = await Itinerary.findById(itineraryId)
-        
-        if (itinerary.flights.includes(flightId)) {
+        if (!itinerary) return res.status(404).json("Itinerary not found");
+
+        const fl = await Flight.findById(flight.item._id)
+        fl.price = flight.price;
+        await fl.save()
+        if (itinerary.flights.includes(flight.item._id)) {
             return res.status(500).json("Flight already added to itinerary")
         }
-        itinerary.hotels.push(hotelId)
+        itinerary.flights.push(flight.item._id)
         await itinerary.save()
-        return res.status(200).json("Hotel added to itinerary")
+        return res.status(200).json("Flight added to itinerary")
     } catch (e) {
+        console.log(e)
+        return res.status(500).json(e)
+    }
+}
+
+exports.deleteFlightItinerary = async (req, res) => {
+    try {
+        const {refreshToken} = req.cookies
+        if(!refreshToken) return res.status(401).json("You are not logged in")
+        const { itineraryId, flightId} = req.body
+        const itinerary = await Itinerary.findById(itineraryId)
+        if (!itinerary) return res.status(404).json("Itinerary not found");
+        itinerary.flights = itinerary.flights.filter(flight => !flight.equals(flightId));
+        await itinerary.save()
+        return res.status(200).json("Flight removed")
+    } catch (e) {
+        console.log(e)
         return res.status(500).json(e)
     }
 }
@@ -1621,6 +1645,24 @@ exports.addExperienceItinerary = async (req, res) => {
 
         return res.status(200).json("Experience added to itinerary")
     } catch (er) {
+        return res.status(500).json(er)
+    }
+}
+
+exports.deleteExperienceFromItinerary = async (req,res) => {
+    try{
+        const {itineraryId, experienceId} = req.body
+
+        const itinerary = await Itinerary.findById(itineraryId)
+
+        if (!itinerary) return res.status(404).json("Itinerary not found")
+
+        itinerary.experiences = itinerary.experiences.filter(experience => experience._id != experienceId)
+        await Experience.findByIdAndDelete(experienceId)
+
+        await itinerary.save()
+        return res.status(200).json("Experience removed from itinerary")
+    }catch (er) {
         return res.status(500).json(er)
     }
 }

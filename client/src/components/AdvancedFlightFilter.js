@@ -30,12 +30,10 @@ function PriceRange({priceMax, priceStep, setPriceFilter}) {
         }
     }, [priceMax]); 
     
-    const handleFilter = (event, newValue) => {
-        setPriceFilter(value);
-    };
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        setPriceFilter(newValue);
     };
 
     const valueLabelFormat = (value) => {
@@ -78,11 +76,9 @@ function DepartureTime({setDepartureTime}) {
     const [showPriceRang, setPriceRange] = useState(true);
     const [value, setValue] = useState([0, 24]);
 
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
 
     const handleFilter = (event, newValue) => {
+        setValue(newValue)
         setDepartureTime(value.map(v => v * 60)); // convert
     };
 
@@ -112,7 +108,7 @@ function DepartureTime({setDepartureTime}) {
                     <Slider
                         getAriaLabel={() => 'Price range'}
                         value={value}
-                        onChangeCommitted={handleChange}
+                        onChangeCommitted={handleFilter}
                         valueLabelDisplay="auto" // Display the label on the slider thumb
                         valueLabelFormat={valueLabelFormat} // Format the label to show a dollar sign
                         min={0}
@@ -131,9 +127,6 @@ function ArrivalTime({setArrivalTime}) {
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
-    };
-
-    const handleFilter = (event, newValue) => {
         setArrivalTime(value.map(v => v * 60));
     };
 

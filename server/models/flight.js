@@ -32,11 +32,11 @@ const flightSchema = new mongoose.Schema({
         required: true,
     },
     day:  {
-        type: Number,
+        type: String,
         required: true
     },
     month: {
-        type: Number,
+        type: String,
         required: true
     },
     year: {
@@ -51,18 +51,21 @@ const flightSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    agodaPrice: {
+    price: {
         type: Number,
     },
-    tripPrice: {
-        type: Number
-    },
-    myTrip: {
-        type: Number
-    },
-    bayDep: {
-        type: Number
-    },
+    // agodaPrice: {
+    //     type: Number,
+    // },
+    // tripPrice: {
+    //     type: Number
+    // },
+    // myTrip: {
+    //     type: Number
+    // },
+    // bayDep: {
+    //     type: Number
+    // },
     adult: {
         type: Number,
     },

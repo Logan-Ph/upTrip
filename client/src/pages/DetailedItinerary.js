@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { StayCard } from "../components/ItineraryCard";
 import { AddItemButton } from "../components/ItineraryCard";
 import { FlightCard } from "../components/ItineraryCard";
@@ -11,9 +11,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { editItinerary, fetchDetailItinerary, deleteItinerary } from "../api/fetch";
 import warningNotify from "../utils/warningNotify";
 import successNotify from "../utils/successNotify";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function DetailedItinerary() {
-    const navigate = useNavigate();
+    const handleNavigate = useHandleNavigate();
     const [searchParams] = useSearchParams();
     const [activeTab, setActiveTab] = useState(1); // Default active tab is 1
     const { auth } = useContext(AuthContext);
@@ -26,12 +27,6 @@ export default function DetailedItinerary() {
     const formattedDate  = (date) => date.replace(/-/g, '');
     const convertDate = (date) => `${date.substring(6, 8)}-${date.substring(4, 6)}-${date.substring(0, 4)}`
 
-    useEffect(() => {
-        if (!auth?.accessToken) {
-            navigate('/login')
-        }
-    }, [auth, navigate])
-
     const handleTabClick = (tabNumber) => {
         setActiveTab(tabNumber);
     };
@@ -39,7 +34,8 @@ export default function DetailedItinerary() {
     const {
         data: itinerary,
         isLoading: itineraryLoading,
-        refetch: refetchItinerary
+        refetch: refetchItinerary,
+        isError: isErrorItinerary
     } = useQuery({
         queryKey: ['itinerary'],
         queryFn: () => fetchDetailItinerary({ itineraryId: searchParams.get('itineraryId') }),
@@ -47,12 +43,24 @@ export default function DetailedItinerary() {
         refetchOnWindowFocus: false,
     })
 
+    
+    useEffect(() => {
+        if (!auth?.accessToken) {
+            handleNavigate('/login')
+        }
+
+        if (isErrorItinerary) {
+            handleNavigate('/itinerary')
+        }
+
+    }, [auth, handleNavigate, isErrorItinerary])
+
     useEffect(() => {
         if (!itineraryLoading) {
-            setName(itinerary.name)
-            setDescription(itinerary.description)
-            setDestination(itinerary.destination)
-            setTripLength(itinerary.tripLength)
+            setName(itinerary?.name)
+            setDescription(itinerary?.description)
+            setDestination(itinerary?.destination)
+            setTripLength(itinerary?.tripLength)
         }
     }, [itinerary, itineraryLoading])
 
@@ -79,7 +87,7 @@ export default function DetailedItinerary() {
         mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
         onSuccess: (data) => {
             successNotify(data.data)
-            navigate('/itinerary')
+            handleNavigate('/itinerary')
         },
         onError: (error) => {
             warningNotify(error.response.data);
@@ -142,6 +150,10 @@ export default function DetailedItinerary() {
     
     // Assuming startDate and endDate are available in your state or props
     const scheduleDates = generateScheduleDates(itinerary?.startDate, itinerary?.endDate, itinerary?.experiences);
+
+    if (itineraryLoading) {
+        return null
+    }
 
     return (
         <>
@@ -533,7 +545,11 @@ export default function DetailedItinerary() {
                                         <EmptySection refetchItinerary={refetchItinerary} isAddingExperience={false}/>
                                         :
                                         <>
-                                            {itinerary?.hotels?.map(stay => <StayCard key={stay.id} item={stay} refetchItinerary={refetchItinerary}/>)}
+                                            {itinerary?.hotels?.map(stay => 
+                                                (
+                                                    <StayCard key={stay.id} item={stay} refetchItinerary={refetchItinerary}/>)
+                                                )
+                                            }
                                             <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={false}/>
                                         </>
                                 }
@@ -555,7 +571,7 @@ export default function DetailedItinerary() {
                                         :
                                         <>
                                             {itinerary?.flights?.map(flight => <FlightCard key={flight.id} item={flight} refetchItinerary={refetchItinerary}/>)}
-                                            <AddItemButton />
+                                            <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={false}/>
                                         </>
                                 }
                             </div>
@@ -575,7 +591,7 @@ export default function DetailedItinerary() {
                                                 <>
                                                     {schedule.experiences.map((experience, expIndex) => (
                                                         <div key={expIndex} className="flex items-center">
-                                                            <ActivityCard experience={experience} />
+                                                            <ActivityCard experience={experience} refetchItinerary={refetchItinerary}/>
                                                         </div>
                                                     ))}
                                                     <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={true} date={schedule.date} />

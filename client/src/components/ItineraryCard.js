@@ -1,8 +1,23 @@
 import { Link, useSearchParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addExperienceItinerary, addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel } from "../api/fetch";
+import {
+    addExperienceItinerary,
+    addHotelItinerary,
+    addFlightItinerary,
+    deleteHotelFromItinerary,
+    deleteFlightItinerary,
+    deleteItinerary,
+    fetchCollections,
+    fetchHotelPriceComparison,
+    fetchSpecificHotel,
+    fetchFlightAdvancedSearch,
+    fetchBayDepFlight,
+    fetchTripComFlight,
+    fetchMyTripFlight,
+    deleteExperienceFromItinerary
+} from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
@@ -330,7 +345,7 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                 }
             </div>
             {
-                !(items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0) && 
+                !(items.experience.length === 0 && items.hotel.length === 0 && items.flight.length === 0) &&
                 (
                     <>
                         <div className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t">
@@ -344,7 +359,7 @@ function ChooseSavedItem({ handleNextButtonClick, handleBackButtonClick, items, 
                     </>
                 )
             }
-            
+
         </>
     );
 }
@@ -354,8 +369,20 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
     const [searchParams] = useSearchParams()
 
     const addHotel = useMutation({
-        mutationFn: (item) => addHotelItinerary({item: item, itineraryId: searchParams.get('itineraryId')}),
+        mutationFn: (item) => addHotelItinerary({ item: item, itineraryId: searchParams.get('itineraryId') }),
         retry: 0,
+        onSuccess: () => {
+            successNotify("Add to itinerary successfully")
+            refetchItinerary()
+        },
+        onError: (e) => {
+            console.log(e)
+            warningNotify(e.response.data)
+        }
+    })
+
+    const addFlight = useMutation({
+        mutationFn: (item) => addFlightItinerary({itineraryId: searchParams.get('itineraryId'), flight: item }),
         onSuccess: () => {
             successNotify("Add to itinerary successfully")
             refetchItinerary()
@@ -381,8 +408,17 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
                 }
                 addHotel.mutate(selectedItems[item])
             }
+            
             if (selectedItems[item].type === "experience") {
                 addExperience.mutate(selectedItems[item])
+            }
+
+            if (selectedItems[item].type === "flight") {
+                if (!selectedItems[item].price) {
+                    warningNotify("Please select price")
+                    return
+                }
+                addFlight.mutate(selectedItems[item])
             }
         })
     }
@@ -418,7 +454,7 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
 
 
             {/* Add to itinerary button */}
-            <div 
+            <div
                 className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50"
                 onClick={handleAddToItinerary}
             >
@@ -444,19 +480,19 @@ function ForDetailStay({ item, setSelectedItems }) {
     const [priceType, setPriceType] = useState("")
 
     const daysBetween = (checkin, checkout) =>
-    (new Date(
-        checkout.slice(0, 4),
-        checkout.slice(4, 6) - 1,
-        checkout.slice(6)
-    ) -
-        new Date(
-            checkin.slice(0, 4),
-            checkin.slice(4, 6) - 1,
-            checkin.slice(6)
-        )) /
-    (1000 * 60 * 60 * 24);
+        (new Date(
+            checkout.slice(0, 4),
+            checkout.slice(4, 6) - 1,
+            checkout.slice(6)
+        ) -
+            new Date(
+                checkin.slice(0, 4),
+                checkin.slice(4, 6) - 1,
+                checkin.slice(6)
+            )) /
+        (1000 * 60 * 60 * 24);
 
-    const formattedDate  = (date) => date.replace(/-/g, '');
+    const formattedDate = (date) => date.replace(/-/g, '');
 
     const hotel = useMutation({
         mutationFn: () => fetchSpecificHotel({
@@ -489,57 +525,58 @@ function ForDetailStay({ item, setSelectedItems }) {
 
     const getSpecificHotelPriceComparison = useMutation({
         mutationFn: () => fetchHotelPriceComparison(
-            { resultType: "H",
-            hotelId: item.hotelId,
-            city: item.city,
-            cityName: item.cityName,
-            hotelName: item.hotelName,
-            searchValue: item.searchValue,
-            provinceId: item.provinceId,
-            countryId: item.countryId,
-            districtId: item.districtId,
-            checkin: formattedDate(startDate),
-            checkout: formattedDate(endDate),
-            barCurr: "VND",
-            cityType: "OVERSEA",
-            latitude: item.latitude,
-            longitude: item.longitude,
-            searchCoordinate: item.searchCoordinate,
-            crn: numberOfRooms,
-            adult: numberOfAdults,
-            children: numberOfChildren,
-            domestic: true,
-            preHotelIds: [item.hotelId],
-            listFilters: `17~1*17*1*2`,
-            hotelNames: [item.hotelName] 
-        }),
+            {
+                resultType: "H",
+                hotelId: item.hotelId,
+                city: item.city,
+                cityName: item.cityName,
+                hotelName: item.hotelName,
+                searchValue: item.searchValue,
+                provinceId: item.provinceId,
+                countryId: item.countryId,
+                districtId: item.districtId,
+                checkin: formattedDate(startDate),
+                checkout: formattedDate(endDate),
+                barCurr: "VND",
+                cityType: "OVERSEA",
+                latitude: item.latitude,
+                longitude: item.longitude,
+                searchCoordinate: item.searchCoordinate,
+                crn: numberOfRooms,
+                adult: numberOfAdults,
+                children: numberOfChildren,
+                domestic: true,
+                preHotelIds: [item.hotelId],
+                listFilters: `17~1*17*1*2`,
+                hotelNames: [item.hotelName]
+            }),
         onSuccess: (data) => {
             const priceData = data[0]
             const agodaPrice = priceData?.agodaPrice?.price
                 ? Math.round(
-                        priceData.agodaPrice?.price?.[0]?.price
-                            ?.perRoomPerNight?.exclusive
-                            ?.display
-                    ).toLocaleString("vi-VN")
+                    priceData.agodaPrice?.price?.[0]?.price
+                        ?.perRoomPerNight?.exclusive
+                        ?.display
+                ).toLocaleString("vi-VN")
                 : null;
             const bookingPrice = priceData?.bookingPrice
                 ? Math.round(
-                        priceData.bookingPrice?.price?.reduce(
-                            (acc, curr) =>
-                                acc +
-                                Number(
-                                    curr.finalPrice.amount
-                                ),
-                            0
-                        ) /
-                            (Number(numberOfAdults) *
-                                Number(
-                                    daysBetween(
-                                        formattedDate(startDate),
-                                        formattedDate(endDate)
-                                    )
-                                ))
-                    ).toLocaleString("vi-VN")
+                    priceData.bookingPrice?.price?.reduce(
+                        (acc, curr) =>
+                            acc +
+                            Number(
+                                curr.finalPrice.amount
+                            ),
+                        0
+                    ) /
+                    (Number(numberOfAdults) *
+                        Number(
+                            daysBetween(
+                                formattedDate(startDate),
+                                formattedDate(endDate)
+                            )
+                        ))
+                ).toLocaleString("vi-VN")
                 : null;
             setAgodaPrice(agodaPrice)
             setBookingPrice(bookingPrice)
@@ -901,42 +938,42 @@ function ForDetailStay({ item, setSelectedItems }) {
                                 {Array.from(
                                     { length: numberOfChildren },
                                     (_, index) => {
-                                    return (
-                                        <form class="w-24 md:w-16 mb-3 md:mr-4">
-                                            <label
-                                                for="number-input"
-                                                class="block mb-2 text-xs text-start font-medium text-gray-900"
-                                            >
-                                                Child {index + 1}
-                                            </label>
-                                            <input
-                                                type="number"
-                                                id="number-input"
-                                                aria-describedby="helper-text-explanation"
-                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                                                placeholder="Age"
-                                                required
-                                                onChange={(e) => {
-                                                    setChildrenAges(
-                                                        (prev) => {
-                                                            const temp =
-                                                                [...prev];
-                                                            temp[index] = e.target.value;
-                                                            return temp;
-                                                        }
-                                                    );
-                                                }}
-                                            />
-                                        </form>
+                                        return (
+                                            <form class="w-24 md:w-16 mb-3 md:mr-4">
+                                                <label
+                                                    for="number-input"
+                                                    class="block mb-2 text-xs text-start font-medium text-gray-900"
+                                                >
+                                                    Child {index + 1}
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    id="number-input"
+                                                    aria-describedby="helper-text-explanation"
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                    placeholder="Age"
+                                                    required
+                                                    onChange={(e) => {
+                                                        setChildrenAges(
+                                                            (prev) => {
+                                                                const temp =
+                                                                    [...prev];
+                                                                temp[index] = e.target.value;
+                                                                return temp;
+                                                            }
+                                                        );
+                                                    }}
+                                                />
+                                            </form>
                                         )
-                                    }   
+                                    }
                                 )}
                             </div>
                         </div>
                     </div>
                 </div>
                 {/* Search for price*/}
-                <div 
+                <div
                     className="flex justify-center"
                     onClick={(e) => handleSearch(e)}
                 >
@@ -951,115 +988,115 @@ function ForDetailStay({ item, setSelectedItems }) {
                     {/* Loading price */}
                     {
                         (getSpecificHotelPriceComparison.isPending || getSpecificHotelPriceComparison.isPending) ?
-                        (
-                            <div className="flex justify-center my-10">
-                                <span className="loading loading-dots loading-md"></span>
-                            </div>
-                        )
-                        :
-                        (getSpecificHotelPriceComparison.isSuccess && getSpecificHotelPriceComparison.isSuccess) 
-                        ?
-                        (
-                            <>
-                                <div 
-                                    class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "trip" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} `}
-                                    onClick={() => {
-                                        setPriceType("trip");
-                                        setSelectedItems((prev) => ({
-                                            ...prev,
-                                            [item._id]: {
-                                                ...prev[item._id],
-                                                checkin: formattedDate(startDate),
-                                                checkout: formattedDate(endDate),
-                                                tripPrice: Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-",
-                                                agodaPrice: null,
-                                                bookingPrice: null
-                                            }
-                                        }));
-                                    }}
-                                >
-                                <div class="mx-auto">
-                                    <img
-                                        src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
-                                        alt="website logo"
-                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                                    />
+                            (
+                                <div className="flex justify-center my-10">
+                                    <span className="loading loading-dots loading-md"></span>
                                 </div>
-                                <div 
-                                    class="mx-auto"
-                                >
-                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                        {Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") === '0' ? "-" : Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN")} VND
-                                    </p>
-                                </div>
-                            </div>
-                            <div 
-                                class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "booking" ? "bg-[#8DD3BB]" : " bg-[#CDEAE1]"} duration-300`}
-                                onClick={() => {
-                                    setPriceType("booking")
-                                    setSelectedItems((prev) => ({
-                                        ...prev,
-                                        [item._id]: {
-                                            ...prev[item._id],
-                                            checkin: formattedDate(startDate),
-                                            checkout: formattedDate(endDate),
-                                            bookingPrice: bookingPrice === '0' ? "-" : bookingPrice,
-                                            agodaPrice: null,
-                                            tripPrice: null
-                                        }
-                                    }))
-                                }}
-                            >
-                                <div class="mx-auto">
-                                    <img
-                                        src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
-                                        alt="website logo"
-                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                                    />
-                                </div>
-                                <div 
-                                    class="mx-auto"
-                                >
-                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                        {bookingPrice === '0' ? "-" : bookingPrice} VND
-                                    </p> 
-                                </div>
-                            </div>
-                            <div 
-                                class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "agoda" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} duration-300`}
-                                onClick={() => {
-                                    setPriceType("agoda");
-                                    setSelectedItems((prev) => ({
-                                        ...prev,
-                                        [item._id]: {
-                                            ...prev[item._id],
-                                            checkin: formattedDate(startDate),
-                                            checkout: formattedDate(endDate),
-                                            agodaPrice: agodaPrice === '0' ? "-" : agodaPrice,
-                                            tripPrice: null,
-                                            bookingPrice: null
-                                        }
-                                    }))
-                                }}
-                            >
-                                <div class="mx-auto">
-                                    <img
-                                        src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
-                                        alt="website logo"
-                                        class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                                    />
-                                </div>
-                                <div 
-                                    class="mx-auto"
-                                >
-                                    <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                        {agodaPrice || "-"} VND
-                                    </p>
-                                </div>
-                            </div>
-                            </>
-                        )
-                        : null
+                            )
+                            :
+                            (getSpecificHotelPriceComparison.isSuccess && getSpecificHotelPriceComparison.isSuccess)
+                                ?
+                                (
+                                    <>
+                                        <div
+                                            class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "trip" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} `}
+                                            onClick={() => {
+                                                setPriceType("trip");
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        checkin: formattedDate(startDate),
+                                                        checkout: formattedDate(endDate),
+                                                        tripPrice: Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") || "-",
+                                                        agodaPrice: null,
+                                                        bookingPrice: null
+                                                    }
+                                                }));
+                                            }}
+                                        >
+                                            <div class="mx-auto">
+                                                <img
+                                                    src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+                                                    alt="website logo"
+                                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                                />
+                                            </div>
+                                            <div
+                                                class="mx-auto"
+                                            >
+                                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                                    {Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN") === '0' ? "-" : Math.round(hotel?.data?.matchHotel?.price)?.toLocaleString("vi-VN")} VND
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "booking" ? "bg-[#8DD3BB]" : " bg-[#CDEAE1]"} duration-300`}
+                                            onClick={() => {
+                                                setPriceType("booking")
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        checkin: formattedDate(startDate),
+                                                        checkout: formattedDate(endDate),
+                                                        bookingPrice: bookingPrice === '0' ? "-" : bookingPrice,
+                                                        agodaPrice: null,
+                                                        tripPrice: null
+                                                    }
+                                                }))
+                                            }}
+                                        >
+                                            <div class="mx-auto">
+                                                <img
+                                                    src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
+                                                    alt="website logo"
+                                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                                />
+                                            </div>
+                                            <div
+                                                class="mx-auto"
+                                            >
+                                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                                    {bookingPrice === '0' ? "-" : bookingPrice} VND
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class={`border border-transparent rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer ${priceType === "agoda" ? "bg-[#8DD3BB]" : "bg-[#CDEAE1]"} duration-300`}
+                                            onClick={() => {
+                                                setPriceType("agoda");
+                                                setSelectedItems((prev) => ({
+                                                    ...prev,
+                                                    [item._id]: {
+                                                        ...prev[item._id],
+                                                        checkin: formattedDate(startDate),
+                                                        checkout: formattedDate(endDate),
+                                                        agodaPrice: agodaPrice === '0' ? "-" : agodaPrice,
+                                                        tripPrice: null,
+                                                        bookingPrice: null
+                                                    }
+                                                }))
+                                            }}
+                                        >
+                                            <div class="mx-auto">
+                                                <img
+                                                    src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+                                                    alt="website logo"
+                                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                                />
+                                            </div>
+                                            <div
+                                                class="mx-auto"
+                                            >
+                                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                                    {agodaPrice || "-"} VND
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </>
+                                )
+                                : null
                     }
                 </div>
             </div>
@@ -1067,64 +1104,102 @@ function ForDetailStay({ item, setSelectedItems }) {
     );
 }
 
-function ForDetailFlight({ item }) {
+function ForDetailFlight({ item, setSelectedItems }) {
     const [adult, setAdult] = useState(1)
     const [child, setChild] = useState(0)
     const [infant, setInfant] = useState(0)
     const [dropdown, setDropdown] = useState(false)
+    const [selectedFlight, setSelectedFlight] = useState([])
+
+    const [agodaPrice, setAgodaPrice] = useState()
+    const [tripComPrice, setTripComPrice] = useState()
+    const [myTripPrice, setMyTripPrice] = useState()
+    const [bayDepPrice, setBayDepPrice] = useState()
+
+    const payload = {
+        year: item.year,
+        month: item.month,
+        day: item.day,
+        from: item.from,
+        to: item.to,
+        adult: adult,
+        child: child,
+        infant: infant,
+        seatClass: item.seatClass,
+        sortField: "best",
+        sortDir: "asc",
+        prefer: [],
+        priceFilter: [],
+        departureTime: [0, 1440],
+        arrivalTime: [0, 1440]
+    }
+
+    useEffect(() => {
+        if (adult * 2 < child) {
+            setChild(adult * 2)
+        }
+        if (adult < infant) {
+            setInfant(adult)
+        }
+    }, [adult])
+
+    const fetchAgoda = useMutation({
+        mutationFn: () => fetchFlightAdvancedSearch(payload),
+        onSuccess: (data) => {
+            setAgodaPrice(data.flights.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.agodaPrice)
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const fetchTripCom = useMutation({
+        mutationFn: () => fetchTripComFlight(payload),
+        onSuccess: (data) => {
+            setTripComPrice(data.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.price)
+        }
+    })
+
+    const fetchMyTrip = useMutation({
+        mutationFn: () => fetchMyTripFlight(payload),
+        onSuccess: (data) => {
+            setMyTripPrice(data.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.price)
+        }
+    })
+
+    const fetchBayDep = useMutation({
+        mutationFn: () => fetchBayDepFlight(payload),
+        onSuccess: (data) => {
+            setBayDepPrice(data.find(flight => JSON.stringify(item.flightNo) === JSON.stringify(flight.flightNo))?.price)
+        },
+        onError: (error) => {
+            console.log(error)
+        }
+    })
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        e.preventDefault();
+
+        const mutations = [
+            fetchAgoda.mutateAsync(),
+            fetchTripCom.mutateAsync(),
+            fetchMyTrip.mutateAsync(),
+            fetchBayDep.mutateAsync()
+        ];
+
+        Promise.all(mutations)
+            .then()
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+
     return (
         <>
             <div className="my-4">
                 <SavedFlightCard item={item} setSelectedItems={false} />
-                {/* Ask Date */}
-                <div className="text-start font-semibold text-lg">Date</div>
-
-                {/*  */}
-                <div className="flex flex-col md:flex-row my-2">
-                    <div class="relative w-full md:w-1/2 h-[60px]">
-                        <div class="flex items-center">
-                            <span class="custom-datepicker-toggle">
-                                <span class="custom-datepicker-toggle-button">
-                                    <i class="fa-regular fa-calendar"></i>
-                                </span>
-                                <input
-                                    id="check-in"
-                                    type="date"
-                                    class="custom-datepicker-input p-2.5 pt-5 rounded-lg border-gray-300 w-fit focus:ring-black focus:border-black block"
-                                />
-                            </span>
-                        </div>
-                        <div>
-                            <label
-                                for="check-in"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                            >
-                                Check-in
-                            </label>
-                        </div>
-                    </div>
-                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
-                        <div class="flex items-center">
-                            <span class="datepicker-toggle">
-                                <span class="datepicker-toggle-button"></span>
-                                <input
-                                    id="check-out"
-                                    type="date"
-                                    class="datepicker-input p-2.5 pt-5 rounded-lg w-fit border-gray-300 focus:ring-black focus:border-black"
-                                />
-                            </span>
-                        </div>
-                        <div>
-                            <label
-                                for="check-out"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                            >
-                                Check-out
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                {/*  */}
 
                 {/* Ask Flight Details */}
                 <div class="text-start font-semibold text-lg">
@@ -1194,6 +1269,14 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setAdult(
+                                                    (prev) =>
+                                                        prev - 1 > 0
+                                                            ? prev - 1
+                                                            : 1
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -1201,7 +1284,7 @@ function ForDetailFlight({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {adult} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -1210,6 +1293,17 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setAdult(
+                                                    (prev) =>
+                                                        prev +
+                                                            1 +
+                                                            child +
+                                                            infant <=
+                                                            6
+                                                            ? prev + 1
+                                                            : prev
+                                                )}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -1237,6 +1331,14 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setChild(
+                                                    (prev) =>
+                                                        prev === 0
+                                                            ? prev
+                                                            : prev - 1
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -1244,7 +1346,7 @@ function ForDetailFlight({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {child} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -1253,6 +1355,19 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() => setChild(
+                                                (prev) =>
+                                                    prev <
+                                                        adult *
+                                                        2 &&
+                                                        prev +
+                                                        1 +
+                                                        adult +
+                                                        infant <=
+                                                        6
+                                                        ? prev + 1
+                                                        : prev
+                                            )}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -1279,6 +1394,14 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() =>
+                                                setInfant(
+                                                    (prev) =>
+                                                        prev - 1 >= 0
+                                                            ? prev - 1
+                                                            : prev
+                                                )
+                                            }
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -1286,7 +1409,7 @@ function ForDetailFlight({ item }) {
                                                 d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                                             ></path>
                                         </svg>
-                                        <span class="text-lg"> 1 </span>
+                                        <span class="text-lg"> {infant} </span>
 
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -1295,6 +1418,18 @@ function ForDetailFlight({ item }) {
                                             stroke-width="1.5"
                                             stroke="currentColor"
                                             class="w-6 h-6"
+                                            onClick={() => setInfant(
+                                                (prev) =>
+                                                    prev + 1 <=
+                                                        adult &&
+                                                        prev +
+                                                        1 +
+                                                        adult +
+                                                        child <=
+                                                        6
+                                                        ? prev + 1
+                                                        : prev
+                                            )}
                                         >
                                             <path
                                                 stroke-linecap="round"
@@ -1310,59 +1445,151 @@ function ForDetailFlight({ item }) {
                 </div>
                 {/* Search for price*/}
                 <div className="flex justify-center">
-                    <div className="btn btn-sm text-center rounded-full text-sm text-gray-800">
+                    <div
+                        onClick={handleSubmit}
+                        className="btn btn-sm text-center rounded-full text-sm text-gray-800">
                         Search
                     </div>
                 </div>
                 {/* Price */}
                 <div className="my-4">
                     {/* Loading price */}
-                    <div className="flex justify-center my-10">
-                        <span className="loading loading-dots loading-md"></span>
-                    </div>
                     {/* If user choose this price, change to bg-[#8DD3BB] , otherwise bg-[#CDEAE1] */}
-                    <div class="border border-transparent bg-[#8DD3BB] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]">
-                        <div class="mx-auto">
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
+                    {fetchAgoda.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)}
+                    {fetchAgoda.isSuccess && agodaPrice && (
+                        <div
+                            onClick={() => {
+                                setSelectedFlight(
+                                    (prev) => prev === 'agoda' ? null : 'agoda'
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: agodaPrice * (adult + child)
+                                    }
+                                }));
+                            }}
+                            class={`border border-transparent ${selectedFlight === "agoda" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
+                            <div class="mx-auto">
+                                <img
+                                    src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {agodaPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
                         </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                346.405 VND
-                            </p>
+                    )}
+                    {fetchMyTrip.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)
+                    }
+                    {fetchMyTrip.isSuccess && myTripPrice &&
+                        (<div
+                            onClick={() => {
+                                setSelectedFlight(
+                                    (prev) => prev === 'myTrip' ? null : 'myTrip'
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: myTripPrice * (adult + child)
+                                    }
+                                }));
+                            }}
+                            class={`border border-transparent ${selectedFlight === "myTrip" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
+                            <div class="mx-auto">
+                                <img
+                                    src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/Mytrip_Logo_Colar_Pink.png?updatedAt=1714385168260"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {myTripPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
+                        </div>)
+                    }
+                    {fetchTripCom.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)
+                    }
+                    {fetchTripCom.isSuccess && tripComPrice && (
+                        <div
+                            onClick={() => {
+                                setSelectedFlight(
+                                    (prev) => prev === 'tripCom' ? null : 'tripCom'
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: tripComPrice * (adult + child)
+                                    }
+                                }));
+                            }}
+                            class={`border border-transparent ${selectedFlight === "tripCom" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
+                            <div class="mx-auto">
+                                <img
+                                    src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {tripComPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
-                        <div class="mx-auto">
-                            <img
-                                src="https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
-                        </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                412.397 VND
-                            </p>
-                        </div>
-                    </div>
-                    <div class="border border-transparent bg-[#CDEAE1] rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB] duration-300">
-                        <div class="mx-auto">
-                            <img
-                                src="https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655"
-                                alt="website logo"
-                                class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
-                            />
-                        </div>
-                        <div class="mx-auto">
-                            <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
-                                330.614 VND
-                            </p>
-                        </div>
-                    </div>
+                    )}
+                    {fetchBayDep.isPending &&
+                        (<div className="flex justify-center my-10">
+                            <span className="loading loading-dots loading-md"></span>
+                        </div>)
+                    }
+                    {fetchBayDep.isSuccess && bayDepPrice &&
+                        (<div
+                            onClick={() => {
+                                setSelectedFlight(
+                                    (prev) => prev === 'bayDep' ? null : 'bayDep'
+                                )
+                                setSelectedItems((prev) => ({
+                                    ...prev,
+                                    [item._id]: {
+                                        ...prev[item._id],
+                                        price: bayDepPrice * (adult + child)
+                                    }
+                                }));
+                            }}
+                            class={`border border-transparent ${selectedFlight === "bayDep" ? 'bg-[#8DD3BB]' : 'bg-[#CDEAE1]'} rounded-md flex items-center space-y-1 w-full gap-2 my-2 cursor-pointer hover:bg-[#8DD3BB]`}>
+                            <div class="mx-auto">
+                                <img
+                                    src="https://ik.imagekit.io/m1g1xkxvo/Uptrip/baydep.png?updatedAt=1714385150952"
+                                    alt="website logo"
+                                    class="w-[60px] h-[30px] md:w-[80px] md:h-[40px] object-cover cursor-pointer"
+                                />
+                            </div>
+                            <div class="mx-auto">
+                                <p class="text-xs md:text-lg text-[#222160] font-medium md:font-bold">
+                                    {bayDepPrice?.toLocaleString("vi-VN")} VND
+                                </p>
+                            </div>
+                        </div>)
+                    }
                 </div>
             </div>
         </>
@@ -1539,7 +1766,7 @@ export function EmptySection({refetchItinerary, isAddingExperience, date}) {
     );
 }
 
-export function StayCard({item, refetchItinerary}) {
+export function StayCard({ item, refetchItinerary }) {
     const convertDate = (date) => `${date.substring(6, 8)}.${date.substring(4, 6)}.${date.substring(0, 4)}`
     const [searchParams] = useSearchParams()
 
@@ -1549,17 +1776,19 @@ export function StayCard({item, refetchItinerary}) {
         if (item.bookingPrice) return "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252"
     }
 
+    const modalId = `delete_itinerary_item_card_modal_${item._id}`; 
+
     const deleteHotel = useMutation({
-        mutationFn: () => deleteHotelFromItinerary({itineraryId: searchParams.get("itineraryId"), hotelId: item._id}),
+        mutationFn: () => deleteHotelFromItinerary({ itineraryId: searchParams.get("itineraryId"), hotelId: item._id }),
         onSuccess: () => {
             successNotify("Hotel deleted from itinerary")
             refetchItinerary()
+            document.getElementById(modalId).close();
         }
     })
 
     const handleDelete = (e) => {
         e.preventDefault()
-        console.log({itineraryId: searchParams.get("itineraryId"), hotelId: item._id})
         deleteHotel.mutate()
     }
 
@@ -1606,7 +1835,7 @@ export function StayCard({item, refetchItinerary}) {
                                             onClick={() =>
                                                 document
                                                     .getElementById(
-                                                        "delete_itinerary_item_card_modal"
+                                                        modalId
                                                     )
                                                     .showModal()
                                             }
@@ -1618,7 +1847,7 @@ export function StayCard({item, refetchItinerary}) {
                                 </ul>
                             </div>
                             <dialog
-                                id="delete_itinerary_item_card_modal"
+                                id={modalId}
                                 className="modal modal-bottom sm:modal-middle"
                             >
                                 <div className="modal-box">
@@ -1631,9 +1860,11 @@ export function StayCard({item, refetchItinerary}) {
                                             <button className="btn rounded-lg mx-2">
                                                 Cancel
                                             </button>
-                                            <button 
-                                            onClick={(e) => handleDelete(e)}
-                                            className="btn bg-black text-white rounded-lg">
+                                            <button
+                                                onClick={(e) => {
+                                                    handleDelete(e)
+                                                }}
+                                                className="btn bg-black text-white rounded-lg">
                                                 Delete
                                             </button>
                                         </form>
@@ -1692,14 +1923,35 @@ export function StayCard({item, refetchItinerary}) {
     );
 }
 
-export function FlightCard() {
+export function FlightCard({item, refetchItinerary}) {
+    const [searchParams] = useSearchParams()
+
+    const modalId = `delete_itinerary_item_card_modal_${item._id}`; 
+
+    const deleteFLight = useMutation({
+        mutationFn: () => deleteFlightItinerary({itineraryId: searchParams.get("itineraryId"), flightId: item._id}),
+        onSuccess: () => {
+            successNotify("Flight deleted from itinerary")
+            refetchItinerary()
+            document.getElementById(modalId).close(); 
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        deleteFLight.mutate()
+    }
+
     return (
         <>
             <div class="card card-side rounded-lg py-4 md:py-0 bg-white shadow-xl my-4">
                 <div class="card-body flex-1 p-0 px-5 md:p-7">
                     <div className="flex justify-between items-center mb-2">
                         <div className="font-thin text-xl">
-                            <p>Tue, Mar 18</p>
+                            <p>{item.departureTime.substring(0, 10)}</p>
                         </div>
                         <div>
                             <div className="dropdown dropdown-end">
@@ -1716,18 +1968,12 @@ export function FlightCard() {
                                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                 >
                                     <li>
-                                        <a>
-                                            <i class="fa-solid fa-gear"></i>{" "}
-                                            Edit
-                                        </a>
-                                    </li>
-                                    <li>
                                         <div
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
                                                     .getElementById(
-                                                        "delete_itinerary_item_card_modal"
+                                                        modalId
                                                     )
                                                     .showModal()
                                             }
@@ -1739,7 +1985,7 @@ export function FlightCard() {
                                 </ul>
                             </div>
                             <dialog
-                                id="delete_itinerary_item_card_modal"
+                                id={modalId}
                                 className="modal modal-bottom sm:modal-middle"
                             >
                                 <div className="modal-box">
@@ -1752,7 +1998,9 @@ export function FlightCard() {
                                             <button className="btn rounded-lg mx-2">
                                                 Cancel
                                             </button>
-                                            <button className="btn bg-black text-white rounded-lg">
+                                            <button 
+                                                onClick={handleDelete}
+                                                className="btn bg-black text-white rounded-lg">
                                                 Delete
                                             </button>
                                         </form>
@@ -1763,26 +2011,26 @@ export function FlightCard() {
                     </div>
                     <Link>
                         <img
-                            src="https://www.vietnamairlines.com/~/media/Images/VNANew/Home/Logo%20Header/logo_vna-mobile.png"
+                            src={item.imgSrc}
                             alt="Logo of platform"
                             className="w-[200px]"
                         />
                     </Link>
                     <div className="flex flex-col md:flex-row items-start mb-4 md:items-center justify-around md:px-10">
                         <p className="font-semibold text-lg flex justify-end">
-                            12:00 pm
+                            {item.departureTime.substring(11, 16)}
                         </p>
                         <p className="font-thin text-lg flex justify-end">
-                            Ho Chi Minh City (SGN)
+                            {item.from}
                         </p>
                         <div className="mx-4">
                             <i class="fa-solid fa-plane"></i>
                         </div>
-                        <p className="font-thin text-lg">Ha Noi (HAN)</p>
-                        <p className="font-semibold text-lg">14:00 pm</p>
+                        <p className="font-thin text-lg">{item.to}</p>
+                        <p className="font-semibold text-lg">{item.arrivalTime.substring(11, 16)}</p>
                     </div>
                     <div className="flex justify-end">
-                        <div className="font-bold text-2xl">1.200.000</div>
+                        <div className="font-bold text-2xl">{item.price.toLocaleString('vi-VN')} VND</div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>
                 </div>
@@ -1791,7 +2039,28 @@ export function FlightCard() {
     );
 }
 
-export function ActivityCard({experience}) {
+export function ActivityCard({experience, refetchItinerary}) {
+    const [searchParams] = useSearchParams()
+
+    const modalId = `delete_itinerary_item_card_modal_${experience._id}`; 
+
+    const deleteExperience = useMutation({
+        mutationFn: () => deleteExperienceFromItinerary({itineraryId: searchParams.get("itineraryId"), experienceId: experience._id}),
+        onSuccess: () => {
+            successNotify("Activity deleted from itinerary")
+            refetchItinerary()
+            document.getElementById(modalId).close(); 
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        deleteExperience.mutate()
+    }
+
     return (
         <>
             <div class="flex-1 card card-side flex-col md:flex-row rounded-lg bg-white shadow-md my-4">
@@ -1823,18 +2092,12 @@ export function ActivityCard({experience}) {
                                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                 >
                                     <li>
-                                        <div>
-                                            <i class="fa-solid fa-gear"></i>{" "}
-                                            Edit
-                                        </div>
-                                    </li>
-                                    <li>
                                         <div
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
                                                     .getElementById(
-                                                        "delete_itinerary_item_card_modal"
+                                                        modalId
                                                     )
                                                     .showModal()
                                             }
@@ -1846,7 +2109,7 @@ export function ActivityCard({experience}) {
                                 </ul>
                             </div>
                             <dialog
-                                id="delete_itinerary_item_card_modal"
+                                id={modalId}
                                 className="modal modal-bottom sm:modal-middle"
                             >
                                 <div className="modal-box">
@@ -1859,7 +2122,9 @@ export function ActivityCard({experience}) {
                                             <button className="btn rounded-lg mx-2">
                                                 Cancel
                                             </button>
-                                            <button className="btn bg-black text-white rounded-lg">
+                                            <button
+                                                onClick={handleDelete}
+                                                className="btn bg-black text-white rounded-lg">
                                                 Delete
                                             </button>
                                         </form>
@@ -1931,7 +2196,7 @@ export function BudgetCard({itinerary}) {
                 </div>
                 <div className="flex justify-between px-3 md:px-8 my-2 text-xl">
                     <div>Transport</div>
-                    <div>12.000.000</div>
+                    <div>{flightExpenses?.toLocaleString('vi-VN')} VND</div>
                 </div>
                 <div className="flex justify-between px-3 md:px-8 my-2 text-xl">
                     <div>Activities</div>
@@ -2069,10 +2334,6 @@ export function SavedFlightCard({ item, setSelectedItems, selectedItems }) {
                             <div className="text-gray-500">{item.to}</div>
                         </div>
                     </div>
-
-                    {/* <div className="text-base font-semibold mt-2">
-                        from 1.200.000
-                    </div> */}
                 </div>
             </div>
         </>

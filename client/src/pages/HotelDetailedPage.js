@@ -125,7 +125,7 @@ export default function HotelDetailedPage(){
                 <section className="mx-auto max-w-8xl px-6 pb-6">
                     <div className="mb-2 flex items-center">
                         <i className="fas fa-chevron-left mr-2 hover:cursor-pointer"></i>
-                        <a className="text-lg font-bold hover:cursor-pointer">All Propertise in <span>Ha Long</span></a>
+                        <div className="text-lg font-bold hover:cursor-pointer">All Propertises in <span>Ha Long</span></div>
                     </div>
                     
                     {(!hotelAlbums || isFetchingHotelAlbums ) ? <DetailedPageGallerySkeleton /> : <DetailPageGallery hotelAlbums={hotelAlbums}/> }

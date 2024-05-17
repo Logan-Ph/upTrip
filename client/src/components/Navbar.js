@@ -48,13 +48,13 @@ export default function Header() {
                                 </label>
                             </div>
                             <div className="flex-1 px-2 mx-2">
-                                <Link onClick={() => handleNavigate('/')}>
+                                <div onClick={() => handleNavigate('/')}>
                                     <img
                                         src={Logo}
                                         className="w-28 h-auto"
                                         alt="logo"
                                     />
-                                </Link>
+                                </div>
                             </div>
                         </div>
                         <div className="navbar-end">
@@ -62,38 +62,38 @@ export default function Header() {
                                 <ul className="menu menu-horizontal">
                                     {/* <!-- Navbar menu content here --> */}
                                     <li>
-                                        <Link
+                                        <div
                                             onClick={() => handleNavigate('/')}
                                             className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Explore
-                                        </Link>
+                                        </div>
                                     </li>
                                     <li>
-                                        <Link
+                                        <div
                                             onClick={() => handleNavigate('/favorites')}
                                             className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Favorites
-                                        </Link>
+                                        </div>
                                     </li>
                                     <li>
-                                        <Link
+                                        <div
                                             onClick={() => handleNavigate('/itinerary')}
                                             class="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Itinerary
-                                        </Link>
+                                        </div>
                                     </li>
                                 </ul>
                             </div>
                             <div className="flex-none md:pl-3 drop-shadow-xl lg:block">
-                                <Link
+                                <div
                                     onClick={() => handleNavigate('/login')}
                                     className={`bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg ${auth?.accessToken ? 'hidden' : ''}`}
                                 >
                                     Login
-                                </Link>
+                                </div>
 
                                 {auth?.accessToken && (
                                     <div className="lg:flex items-center relative hidden">

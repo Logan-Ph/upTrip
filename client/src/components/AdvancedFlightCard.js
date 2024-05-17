@@ -201,49 +201,7 @@ function FlightCard({info, from, to, departure, arrival, duration, stop, carrier
 
                     {/* price tracking among three websites */}
                     <div className="pl-[5.5rem] pr-[0.5px] md:pr-10 md:pl-[10.5rem] xl:pl-[14rem] xl:pr-32">
-                        {!tripComSuccess || !myTripSuccess || !bayDepSuccess ?
-                        <div>
-                            <div className=" flex items-center pr-6 my-2">
-                            <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
-                                <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
-                                <div className="mx-auto">
-                                    <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
-                                </div>
-                            </div>
-                            </div>
-
-                            <div className=" flex items-center pr-6 my-2">
-                                {/* Placeholder for the rest of the div content */}
-                                <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
-                                    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
-                                    <div className="mx-auto">
-                                        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className=" flex items-center pr-6 my-2">
-                                {/* Placeholder for the rest of the div content */}
-                                <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
-                                    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
-                                    <div className="mx-auto">
-                                        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className=" flex items-center pr-6 my-2">
-                                {/* Placeholder for the rest of the div content */}
-                                <div className="border-[#DDDDDD] bg-[#DDDDDD] rounded-md flex items-center space-y-1  w-full">
-                                    <div className="mx-auto border-[#F3F3F3] bg-[#F3F3F3] h-[34px]"></div>
-                                    <div className="mx-auto">
-                                        <div className="border-[#F3F3F3] bg-[#F3F3F3]"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        :    
-                        hearts.map((heart, index) => (
+                        {hearts.map((heart, index) => (
                             <div key={index} className="my-2 items-center">
                                 <div className="border border-transparent
                                 bg-[#CDEAE1] rounded-lg grid grid-cols-2 h-[42px] hover:bg-[#8DD3BB] ">
@@ -256,7 +214,7 @@ function FlightCard({info, from, to, departure, arrival, duration, stop, carrier
                                         </Link>
                                     </div>
                                     <div className="mx-auto my-auto">
-                                        <p className="text-xs md:text-lg text-[#222160] font-bold">{heart.success && heart.price !== null ? heart.price.toLocaleString("vi-VN") + " VND" : "- VND"}</p>
+                                        <p className="text-xs md:text-lg text-[#222160] font-bold">{heart.success && heart.price !== null ? heart.price.toLocaleString("vi-VN") + " VND" : "not available"}</p>
                                     </div>
                                 </div>
                             </div>
