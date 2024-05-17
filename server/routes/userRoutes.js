@@ -91,7 +91,10 @@ router.get('/favorite-items', userController.favoriteItems)
 // edit collection
 
 router.post("/add-to-collection/hotel", userController.addToCollectionHotel)
+router.post("/delete-from-collection/hotel", userController.deleteFromCollectionHotel)
+
 router.post("/add-to-collection/experience", userController.addToCollectionExperience)
+router.post("/delete-from-collection/experience", userController.deleteFromCollectionExperience)
 
 router.post("/add-to-collection/flight", userController.addToCollectionFlight)
 

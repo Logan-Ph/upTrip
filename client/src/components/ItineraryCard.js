@@ -23,6 +23,7 @@ import warningNotify from "../utils/warningNotify";
 
 // Itinerary card for the itinerary page. list the itinerary info card
 export function ItineraryCard({ itinerary, getItinerary }) {
+    const modalId = `delete_itinerary_card_modal_${itinerary._id}`
     const convertDate = (date) => `${date.substring(6, 8)}-${date.substring(4, 6)}-${date.substring(0, 4)}`
     const handleDeleteItinerary = useMutation({
         mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
@@ -82,7 +83,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
                             className="btn bg-transparent border-[1.5px] text-red-400 hover:text-red-500"
                             onClick={() =>
                                 document
-                                    .getElementById("delete_modal")
+                                    .getElementById(modalId)
                                     .showModal()
                             }
                         >
@@ -103,7 +104,7 @@ export function ItineraryCard({ itinerary, getItinerary }) {
                         </button>
 
                         <dialog
-                            id="delete_modal"
+                            id={modalId}
                             className="modal modal-bottom sm:modal-middle"
                         >
                             <div className="modal-box w-11/12 max-w-5xl px-10">

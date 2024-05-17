@@ -1,4 +1,7 @@
-import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useSearchParams } from "react-router-dom";
+import { deleteExperienceFromCollection, deleteHotelFromCollection } from "../api/fetch";
+import successNotify from "../utils/successNotify";
 
 export function QuickStayCard({ hotel }) {
     return (
@@ -120,7 +123,27 @@ export function QuickExperienceCard({ attraction }) {
     );
 }
 
-export function ExperienceCard({item}) {
+export function ExperienceCard({item, refetchFavorite}) {
+    const modalId = `delete_experience_item_card_modal_${item._id}`; 
+    const [searchParams] = useSearchParams()
+
+    const deleteExperience = useMutation({
+        mutationFn: () => deleteExperienceFromCollection({collectionId: searchParams.get("collectionId"), experienceId: item._id}),
+        onSuccess: () => {
+            successNotify("Experience deleted from collection")
+            document.getElementById(modalId).close(); 
+            refetchFavorite()
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        deleteExperience.mutate()
+    }
+
     return (
         <>
             <div>
@@ -152,18 +175,12 @@ export function ExperienceCard({item}) {
                                         className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                     >
                                         <li>
-                                            <div>
-                                                <i class="fa-solid fa-gear"></i>{" "}
-                                                Edit
-                                            </div>
-                                        </li>
-                                        <li>
                                             <div
                                                 className="text-red-600"
                                                 onClick={() =>
                                                     document
                                                         .getElementById(
-                                                            "delete_itinerary_item_card_modal"
+                                                            modalId
                                                         )
                                                         .showModal()
                                                 }
@@ -175,7 +192,7 @@ export function ExperienceCard({item}) {
                                     </ul>
                                 </div>
                                 <dialog
-                                    id="delete_itinerary_item_card_modal"
+                                    id={modalId}
                                     className="modal modal-bottom sm:modal-middle"
                                 >
                                     <div className="modal-box">
@@ -188,7 +205,10 @@ export function ExperienceCard({item}) {
                                                 <button className="btn rounded-lg mx-2">
                                                     Cancel
                                                 </button>
-                                                <button className="btn bg-black text-white rounded-lg">
+                                                <button 
+                                                    onClick={handleDelete}
+                                                    className="btn bg-black text-white rounded-lg"
+                                                >
                                                     Delete
                                                 </button>
                                             </form>
@@ -238,7 +258,28 @@ export function ExperienceCard({item}) {
     );
 }
 
-export function StayCard({item}) {
+export function StayCard({item, refetchFavorite}) {
+    const modalId = `delete_stay_item_card_modal_${item._id}`; 
+
+    const [searchParams] = useSearchParams()
+
+    const deleteStay = useMutation({
+        mutationFn: () => deleteHotelFromCollection({collectionId: searchParams.get("collectionId"), hotelId: item._id}),
+        onSuccess: () => {
+            successNotify("Hotel deleted from collection")
+            document.getElementById(modalId).close(); 
+            refetchFavorite()
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        deleteStay.mutate()
+    }
+
     return (
         <>
             <div>
@@ -250,10 +291,66 @@ export function StayCard({item}) {
                             className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
                         />
                     </figure>
-                    <div class="card-body flex-1 px-5 pt-3 pb-7 md:p-7">
+                    <div class="card-body flex px-5 pt-3 pb-7 md:p-7">
                         <h2 class="card-title text-base md:text-xl">
                             {item.hotelName}
                         </h2>
+                            <div>
+                                <div className="dropdown dropdown-end">
+                                    <div>
+                                        <button
+                                            className="bg-transparent text-lg border-n"
+                                            tabIndex={0}
+                                        >
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                    </div>
+                                    <ul
+                                        tabIndex={0}
+                                        className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
+                                    >
+                                        <li>
+                                            <div
+                                                className="text-red-600"
+                                                onClick={() =>
+                                                    document
+                                                        .getElementById(
+                                                            modalId
+                                                        )
+                                                        .showModal()
+                                                }
+                                            >
+                                                <i class="fa-solid fa-trash"></i>
+                                                Delete
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <dialog
+                                    id={modalId}
+                                    className="modal modal-bottom sm:modal-middle"
+                                >
+                                    <div className="modal-box">
+                                        <h3 className="font-bold text-lg text-center pt-4 pb-1">
+                                            Are you sure you want to delete this
+                                            item?
+                                        </h3>
+                                        <div className="modal-action">
+                                            <form method="dialog">
+                                                <button className="btn rounded-lg mx-2">
+                                                    Cancel
+                                                </button>
+                                                <button 
+                                                    onClick={handleDelete}
+                                                    className="btn bg-black text-white rounded-lg"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </dialog>
+                            </div>
                         <div class="flex space-x-1">
                             {Array.from({ length: Math.round(item.rating) }, (_, i) => (
                                 <svg
