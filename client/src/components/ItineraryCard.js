@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SavedCollectionCard } from "./CollectionCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight, addFlightItinerary } from "../api/fetch";
+import { addHotelItinerary, deleteHotelFromItinerary, deleteItinerary, fetchCollections, fetchHotelPriceComparison, fetchSpecificHotel, fetchFlightAdvancedSearch, fetchBayDepFlight, fetchTripComFlight, fetchMyTripFlight, addFlightItinerary, deleteFlightItinerary } from "../api/fetch";
 import successNotify from "../utils/successNotify";
 import warningNotify from "../utils/warningNotify";
 
@@ -345,6 +345,10 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
         onSuccess: () => {
             successNotify("Add to itinerary successfully")
             refetchItinerary()
+        },
+        onError: (e) => {
+            console.log(e)
+            warningNotify(e.response.data)
         }
     })
 
@@ -1148,65 +1152,11 @@ function ForDetailFlight({ item, setSelectedItems }) {
             });
     }
 
-    // useEffect(() => {
-    //     if (!selectedFlight) {
-    //         setSelectedItems
-    //     }
-    // })
 
     return (
         <>
             <div className="my-4">
                 <SavedFlightCard item={item} setSelectedItems={false} />
-                {/* Ask Date */}
-                <div className="text-start font-semibold text-lg">Date</div>
-
-                {/*  */}
-                <div className="flex flex-col md:flex-row my-2">
-                    <div class="relative w-full md:w-1/2 h-[60px]">
-                        <div class="flex items-center">
-                            <span class="custom-datepicker-toggle">
-                                <span class="custom-datepicker-toggle-button">
-                                    <i class="fa-regular fa-calendar"></i>
-                                </span>
-                                <input
-                                    id="check-in"
-                                    type="date"
-                                    class="custom-datepicker-input p-2.5 pt-5 rounded-lg border-gray-300 w-fit focus:ring-black focus:border-black block"
-                                />
-                            </span>
-                        </div>
-                        <div>
-                            <label
-                                for="check-in"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                            >
-                                Check-in
-                            </label>
-                        </div>
-                    </div>
-                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
-                        <div class="flex items-center">
-                            <span class="datepicker-toggle">
-                                <span class="datepicker-toggle-button"></span>
-                                <input
-                                    id="check-out"
-                                    type="date"
-                                    class="datepicker-input p-2.5 pt-5 rounded-lg w-fit border-gray-300 focus:ring-black focus:border-black"
-                                />
-                            </span>
-                        </div>
-                        <div>
-                            <label
-                                for="check-out"
-                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                            >
-                                Check-out
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                {/*  */}
 
                 {/* Ask Flight Details */}
                 <div class="text-start font-semibold text-lg">
@@ -1476,7 +1426,7 @@ function ForDetailFlight({ item, setSelectedItems }) {
                                     ...prev,
                                     [item._id]: {
                                         ...prev[item._id],
-                                        price: agodaPrice
+                                        price: agodaPrice * (adult + child)
                                     }
                                 }));
                             }}
@@ -1510,7 +1460,7 @@ function ForDetailFlight({ item, setSelectedItems }) {
                                     ...prev,
                                     [item._id]: {
                                         ...prev[item._id],
-                                        price: myTripPrice
+                                        price: myTripPrice * (adult + child)
                                     }
                                 }));
                             }}
@@ -1544,7 +1494,7 @@ function ForDetailFlight({ item, setSelectedItems }) {
                                     ...prev,
                                     [item._id]: {
                                         ...prev[item._id],
-                                        price: tripComPrice
+                                        price: tripComPrice * (adult + child)
                                     }
                                 }));
                             }}
@@ -1578,7 +1528,7 @@ function ForDetailFlight({ item, setSelectedItems }) {
                                     ...prev,
                                     [item._id]: {
                                         ...prev[item._id],
-                                        price: bayDepPrice
+                                        price: bayDepPrice * (adult + child)
                                     }
                                 }));
                             }}
@@ -1890,14 +1840,31 @@ export function StayCard({ item, refetchItinerary }) {
     );
 }
 
-export function FlightCard() {
+export function FlightCard({item, refetchItinerary}) {
+    const [searchParams] = useSearchParams()
+    const deleteFLight = useMutation({
+        mutationFn: () => deleteFlightItinerary({itineraryId: searchParams.get("itineraryId"), flightId: item._id}),
+        onSuccess: (data) => {
+            successNotify(data)
+            refetchItinerary()
+        },
+        onError: (e) => {
+            console.log(e)
+        }
+    })
+
+    const handleDelete = (e) => {
+        e.preventDefault()
+        deleteFLight.mutate()
+    }
+
     return (
         <>
             <div class="card card-side rounded-lg py-4 md:py-0 bg-white shadow-xl my-4">
                 <div class="card-body flex-1 p-0 px-5 md:p-7">
                     <div className="flex justify-between items-center mb-2">
                         <div className="font-thin text-xl">
-                            <p>Tue, Mar 18</p>
+                            <p>{item.departureTime.substring(0, 10)}</p>
                         </div>
                         <div>
                             <div className="dropdown dropdown-end">
@@ -1913,12 +1880,6 @@ export function FlightCard() {
                                     tabIndex={0}
                                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box"
                                 >
-                                    <li>
-                                        <a>
-                                            <i class="fa-solid fa-gear"></i>{" "}
-                                            Edit
-                                        </a>
-                                    </li>
                                     <li>
                                         <div
                                             className="text-red-600"
@@ -1950,7 +1911,9 @@ export function FlightCard() {
                                             <button className="btn rounded-lg mx-2">
                                                 Cancel
                                             </button>
-                                            <button className="btn bg-black text-white rounded-lg">
+                                            <button 
+                                                onClick={handleDelete}
+                                                className="btn bg-black text-white rounded-lg">
                                                 Delete
                                             </button>
                                         </form>
@@ -1961,26 +1924,26 @@ export function FlightCard() {
                     </div>
                     <Link>
                         <img
-                            src="https://www.vietnamairlines.com/~/media/Images/VNANew/Home/Logo%20Header/logo_vna-mobile.png"
+                            src={item.imgSrc}
                             alt="Logo of platform"
                             className="w-[200px]"
                         />
                     </Link>
                     <div className="flex flex-col md:flex-row items-start mb-4 md:items-center justify-around md:px-10">
                         <p className="font-semibold text-lg flex justify-end">
-                            12:00 pm
+                            {item.departureTime.substring(11, 16)}
                         </p>
                         <p className="font-thin text-lg flex justify-end">
-                            Ho Chi Minh City (SGN)
+                            {item.from}
                         </p>
                         <div className="mx-4">
                             <i class="fa-solid fa-plane"></i>
                         </div>
-                        <p className="font-thin text-lg">Ha Noi (HAN)</p>
-                        <p className="font-semibold text-lg">14:00 pm</p>
+                        <p className="font-thin text-lg">{item.to}</p>
+                        <p className="font-semibold text-lg">{item.arrivalTime.substring(11, 16)}</p>
                     </div>
                     <div className="flex justify-end">
-                        <div className="font-bold text-2xl">1.200.000</div>
+                        <div className="font-bold text-2xl">{item.price}</div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>
                 </div>

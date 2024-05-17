@@ -105,8 +105,11 @@ router.post("/delete-itinerary", userController.deleteItinerary)
 router.post("/edit-itinerary", userController.editItinerary)
 
 router.post("/add-to-itinerary/flight", userController.addFlightItinerary)
+router.post("/delete-from-itinerary/flight", userController.deleteFlightItinerary)
+
 router.post("/add-to-itinerary/hotel", userController.addHotelItinerary)
 router.post("/delete-from-itinerary/hotel", userController.deleteHotelFromItinerary)
+
 
 // remove-from-favorites/hotel
 // remove-from-favorites/flight
