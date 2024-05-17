@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AddToFavorite from "./AddToFavorite";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function AdvancedHotelCard({ payload, hotel, agodaPrice, bookingPrice, isSuccess, isSpecific, priceData }) {
     return (
@@ -48,7 +49,7 @@ export function HotelCard({
     payload,
     priceData
 }) {
-    const navigate = useNavigate()
+    const handleNavigate = useHandleNavigate()
     const daysBetween = (checkin, checkout) => (new Date(checkout.slice(0, 4), checkout.slice(4, 6) - 1, checkout.slice(6)) - new Date(checkin.slice(0, 4), checkin.slice(4, 6) - 1, checkin.slice(6))) / (1000 * 60 * 60 * 24);
     const formatDate = dateStr => dateStr.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
     const bookingURL = `https://www.booking.com/hotel/vn/${priceData?.bookingPrice?.pageName}.vi.html?checkin=${formatDate(payload.checkin)};checkout=${formatDate(payload.checkout)};dest_id=${priceData?.booking?.matchHotel?.dest_id};dest_type=${priceData?.booking?.matchHotel?.dest_type};group_adults=${payload.adult};group_children=${payload.children};no_rooms=${payload.crn}`
@@ -117,19 +118,21 @@ export function HotelCard({
                 ref={ref}
                 className={`bg-white rounded-md grid grid-cols-3 gap-4 md:gap-8 mb-4 shadow-md  ${isSpecific ? "border-8 p-2 border-[#8DD3BB]" : ""} ${visibilityClass}`}
             >
-                <a href={`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`} target="_blank">
+                <Link 
+                onClick={() => handleNavigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
+                >
                     <img
                         src={imgSrc}
                         alt="hotel cover"
                         className="w-[450px] h-full object-cover"
                     />
-                </a>
+                </Link>
 
 
                 <div className="flex-col space-y-4 py-4 col-span-2">
                     <p 
                         className="text-lg md:text-xl font-bold hover:underline cursor-pointer mt-2"
-                        onClick={() => navigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
+                        onClick={() => handleNavigate(`/hotel-detailed-page?resultType=H&hotelId=${hotel?.hotelBasicInfo?.hotelId || payload.hotelId}&city=${payload.city}&cityName=${payload.cityName}&hotelName=${hotel?.hotelBasicInfo?.hotelName || payload.hotelName}&searchValue=${payload.searchValue}&provinceId=${payload.provinceId}&countryId=${payload.countryId}&districtId=${payload.districtId}&checkin=${payload.checkin}&checkout=${payload.checkout}&barCurr=USD&cityType=${payload.cityType}&latitude=${payload.latitude}&longitude=${payload.longitude}&searchCoordinate=${payload.searchCoordinate}&crn=${payload.crn}&adult=${payload.adult}&children=${payload.children}&preHotelIds=${payload.preHotelIds}&listFilters=${payload.listFilters}&domestic=${payload.domestic}`)}
                     >
                         {hotelName}
                     </p>

@@ -1,15 +1,12 @@
 import { startTransition } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function useHandleNavigate(url){
+export default function useHandleNavigate() {
     const navigate = useNavigate(); // get the navigate function
-    const location = useLocation(); // get the location object
-    const from = location.state?.from?.pathname || url || "/"; // default to home
 
-    return () => {
+    return (url) => {
         startTransition(() => {
-            navigate(from, { replace: true }); // replace the current entry in the history stack
+            navigate(url, { replace: true }); // navigate to the given url
         });
     };
 }
-

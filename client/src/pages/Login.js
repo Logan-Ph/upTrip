@@ -32,7 +32,7 @@ const Login = () => {
 			setAuth({ roles, accessToken, email, _id });
 			setUserEmail('');
 			setPassword('');
-			handleNavigate()
+			handleNavigate("/")
 		} catch (err) {
 			failedNotify(err.response.data)
 		}
@@ -52,7 +52,7 @@ const Login = () => {
 				setAuth({ roles, accessToken, email, _id });
 				setUserEmail('');
 				setPassword('');
-				handleNavigate()
+				handleNavigate("/")
 			} catch (err) {
 				failedNotify(err.response.data)
 			}
@@ -147,7 +147,6 @@ const Login = () => {
 
 							<div className="text-sm">
 								<Link
-									href="#"
 									className="font-medium text-black hover:underline"
 								>
 									Forgot your password?
@@ -170,7 +169,7 @@ const Login = () => {
 								Don't have an account?{" "}
 								<Link
 									className="items-center font-bold"
-									to="/signup"
+									onClick={() => handleNavigate('/signup')}
 								>
 									Sign up
 								</Link>

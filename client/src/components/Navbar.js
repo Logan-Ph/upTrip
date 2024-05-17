@@ -3,6 +3,7 @@ import Logo from "../components/images/UptripLogo.png";
 import { useContext, useState } from "react";
 import AuthContext from "../context/AuthProvider";
 import useLogout from "../hooks/useLogout";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 export default function Header() {
     const { auth } = useContext(AuthContext);
@@ -12,6 +13,8 @@ export default function Header() {
     const handleLogout = async () => {
         await logout();
     }
+
+    const handleNavigate = useHandleNavigate();
 
     return (
         <div>
@@ -45,7 +48,7 @@ export default function Header() {
                                 </label>
                             </div>
                             <div className="flex-1 px-2 mx-2">
-                                <Link to="/">
+                                <Link onClick={() => handleNavigate('/')}>
                                     <img
                                         src={Logo}
                                         className="w-28 h-auto"
@@ -60,7 +63,7 @@ export default function Header() {
                                     {/* <!-- Navbar menu content here --> */}
                                     <li>
                                         <Link
-                                            to="/"
+                                            onClick={() => handleNavigate('/')}
                                             className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Explore
@@ -68,7 +71,7 @@ export default function Header() {
                                     </li>
                                     <li>
                                         <Link
-                                            to="/favorites"
+                                            onClick={() => handleNavigate('/favorites')}
                                             className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Favorites
@@ -76,7 +79,7 @@ export default function Header() {
                                     </li>
                                     <li>
                                         <Link
-                                            to="/itinerary"
+                                            onClick={() => handleNavigate('/itinerary')}
                                             class="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Itinerary
@@ -86,7 +89,7 @@ export default function Header() {
                             </div>
                             <div className="flex-none md:pl-3 drop-shadow-xl lg:block">
                                 <Link
-                                    to="/login"
+                                    onClick={() => handleNavigate('/login')}
                                     className={`bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg ${auth?.accessToken ? 'hidden' : ''}`}
                                 >
                                     Login

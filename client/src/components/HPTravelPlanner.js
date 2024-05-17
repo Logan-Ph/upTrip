@@ -1,3 +1,5 @@
+import useHandleNavigate from "../utils/useHandleNavigate";
+
 export default function HPTravelPlanner() {
     const ImageLink = [
         {
@@ -52,6 +54,8 @@ export default function HPTravelPlanner() {
 }
 
 function Ininerary() {
+    const handleNavigate = useHandleNavigate()
+
     return (
         <>
             <div className="bg-[#8DD3BB] border border-transparent rounded-xl p-8">
@@ -69,7 +73,9 @@ function Ininerary() {
                         collaborate with family and friends by sharing your
                         itinerary. Ready to plan your adventure?
                     </p>
-                    <button className="bg-white hover:bg-[#FAFBFC] text-black font-bold py-2 px-2 mt-5 rounded w-full transition ease-in-out delay-50 hover:-translate-y-1 duration-100 capitalize text-lg">
+                    <button 
+                    onClick={()=>handleNavigate("/itinerary")}
+                    className="bg-white hover:bg-[#FAFBFC] text-black font-bold py-2 px-2 mt-5 rounded w-full transition ease-in-out delay-50 hover:-translate-y-1 duration-100 capitalize text-lg">
                         Create your itinerary
                     </button>
                 </div>

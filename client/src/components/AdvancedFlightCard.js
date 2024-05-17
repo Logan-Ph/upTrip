@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import AddToFavorite from "./AddToFavorite";
+import useHandleNavigate from "../utils/useHandleNavigate";
 
 
 export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess }) {
@@ -60,6 +61,7 @@ export default function AdvancedFlightCard({ from, to, flight, tripComPrice, myT
 }
 
 function FlightCard({info, from, to, departure, arrival, duration, stop, carrier, agodaPrice, tripComPrice, myTripPrice, bayDepPrice, tripComSuccess, myTripSuccess, bayDepSuccess, setImgSrc }) {
+    const handleNavigate = useHandleNavigate();
     const websiteLogo = useMemo(() => [
         {
             id: 1,
@@ -246,7 +248,9 @@ function FlightCard({info, from, to, departure, arrival, duration, stop, carrier
                                 <div className="border border-transparent
                                 bg-[#CDEAE1] rounded-lg grid grid-cols-2 h-[42px] hover:bg-[#8DD3BB] ">
                                     <div className="mx-auto my-auto">
-                                        <Link to={heart.link}>
+                                        <Link 
+                                            onClick={() => handleNavigate(heart.link)}
+                                        >
                                             <img src={heart.imgLogo} alt="website logo"
                                                 className={getClassName(heart.id)} />
                                         </Link>
