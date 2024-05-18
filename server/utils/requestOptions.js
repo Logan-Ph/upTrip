@@ -389,19 +389,19 @@ const bookingAdvancedSearchHotelQueryParam = (
 	// return params;
 
 	return {
-		ss: "Nha Trang, Khanh Hoa, Vietnam",
+		ss: "Libra Nha Trang, Nha Trang, Khanh Hoa, Vietnam",
 		ssne: "Nha Trang",
 		ssne_untouched: "Nha Trang",
 		lang: "vi",
 		sb: "1",
 		src_elem: "sb",
 		src: "searchresults",
-		dest_id: "-3723998",
-		dest_type: "city",
+		dest_id: "3654837",
+		dest_type: "hotel",
 		ac_position: "0",
 		ac_click_type: "b",
 		ac_langcode: "en",
-		ac_suggestion_list_length: "5",
+		ac_suggestion_list_length: "1",
 		search_selected: "true",
 		checkin: "2024-06-01",
 		checkout: "2024-06-06",
