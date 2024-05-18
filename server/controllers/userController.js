@@ -587,6 +587,7 @@ exports.priceComparisonHotels = async (req, res) => {
             const payload = {
                 keyword:
                     hotel.booking?.matchHotel?.value || hotel.booking?.label,
+                dest_id: hotel.booking?.matchHotel?.dest_id,
                 checkin: checkin.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 checkout: checkout.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                 group_adults: adult,
@@ -788,10 +789,12 @@ exports.advancedSearchHotelBooking = async (req, res) => {
             no_rooms,
             group_children,
             age,
+            dest_id
         } = req.body;
 
         const params = bookingAdvancedSearchHotelQueryParam(
             keyword,
+            dest_id,
             checkin,
             checkout,
             Number(group_adults),

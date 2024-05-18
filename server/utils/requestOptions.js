@@ -347,6 +347,7 @@ const bookingAdvancedSearchHotelURL =
 
 const bookingAdvancedSearchHotelQueryParam = (
 	keyword,
+	dest_id,
 	checkin,
 	checkout,
 	group_adults,
@@ -367,48 +368,49 @@ const bookingAdvancedSearchHotelQueryParam = (
 	// age : 0, // age of children
 	// age : 3, // age of children
 
-	// const params = {
-	// 	ss: keyword, // Search keyword for the hotel
-	// 	lang: "en-gb", // Language code
-	// 	src: "searchresults", // Source of the search
-	// 	dest_type: "hotel", // Destination type (hotel)
-	// 	ac_langcode: "en", // Autocomplete language code
-	// 	checkin: checkin, // Check-in date (YYYY-MM-DD)
-	// 	checkout: checkout, // Check-out date (YYYY-MM-DD)
-	// 	group_adults: group_adults, // Number of adults in the group
-	// 	no_rooms: no_rooms, // Number of rooms required
-	// 	group_children: group_children // Number of children in the group
-	// };
+	const params = {
+		ss: keyword, // Search keyword for the hotel
+		lang: "en-gb", // Language code
+		src: "searchresults", // Source of the search
+		dest_id: dest_id,
+		dest_type: "hotel", // Destination type (hotel)
+		ac_langcode: "en", // Autocomplete language code
+		checkin: checkin, // Check-in date (YYYY-MM-DD)
+		checkout: checkout, // Check-out date (YYYY-MM-DD)
+		group_adults: group_adults, // Number of adults in the group
+		no_rooms: no_rooms, // Number of rooms required
+		group_children: group_children // Number of children in the group
+	};
 
-	// if (group_children > 0) {
-	// 	age.forEach(childAge => {
-	// 		params.age = childAge; // Age of each child in the group
-	// 	});
-	// }
-
-	// return params;
-
-	return {
-		ss: "Libra Nha Trang, Nha Trang, Khanh Hoa, Vietnam",
-		ssne: "Nha Trang",
-		ssne_untouched: "Nha Trang",
-		lang: "vi",
-		sb: "1",
-		src_elem: "sb",
-		src: "searchresults",
-		dest_id: "3654837",
-		dest_type: "hotel",
-		ac_position: "0",
-		ac_click_type: "b",
-		ac_langcode: "en",
-		ac_suggestion_list_length: "1",
-		search_selected: "true",
-		checkin: "2024-06-01",
-		checkout: "2024-06-06",
-		group_adults: "1",
-		no_rooms: "1",
-		group_children: "0"
+	if (group_children > 0) {
+		age.forEach(childAge => {
+			params.age = childAge; // Age of each child in the group
+		});
 	}
+
+	return params;
+
+	// return {
+	// 	ss: "Libra Nha Trang, Nha Trang, Khanh Hoa, Vietnam",
+	// 	ssne: "Nha Trang",
+	// 	ssne_untouched: "Nha Trang",
+	// 	lang: "vi",
+	// 	sb: "1",
+	// 	src_elem: "sb",
+	// 	src: "searchresults",
+	// 	dest_id: "3654837",
+	// 	dest_type: "hotel",
+	// 	ac_position: "0",
+	// 	ac_click_type: "b",
+	// 	ac_langcode: "en",
+	// 	ac_suggestion_list_length: "1",
+	// 	search_selected: "true",
+	// 	checkin: "2024-06-01",
+	// 	checkout: "2024-06-06",
+	// 	group_adults: "1",
+	// 	no_rooms: "1",
+	// 	group_children: "0"
+	// }
 };
 
 // advanced sarch for specific hotels at Agoda.com
