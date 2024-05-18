@@ -19,11 +19,14 @@ export default function Header() {
     return (
         <div>
             <div className="drawer z-50">
-                <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
+                <input
+                    id="my-drawer-3"
+                    type="checkbox"
+                    className="drawer-toggle"
+                />
                 <div className="drawer-content flex flex-col">
                     {/* <!-- Navbar --> */}
                     <div className="mx-auto max-w-8xl px-6 py-6 navbar mt-4 mb-12">
-
                         <div className="navbar-start">
                             <div className="flex-none lg:hidden">
                                 <label
@@ -48,7 +51,7 @@ export default function Header() {
                                 </label>
                             </div>
                             <div className="flex-1 px-2 mx-2">
-                                <div onClick={() => handleNavigate('/')}>
+                                <div onClick={() => handleNavigate("/")}>
                                     <img
                                         src={Logo}
                                         className="w-28 h-auto"
@@ -63,7 +66,7 @@ export default function Header() {
                                     {/* <!-- Navbar menu content here --> */}
                                     <li>
                                         <div
-                                            onClick={() => handleNavigate('/')}
+                                            onClick={() => handleNavigate("/")}
                                             className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Explore
@@ -71,7 +74,9 @@ export default function Header() {
                                     </li>
                                     <li>
                                         <div
-                                            onClick={() => handleNavigate('/favorites')}
+                                            onClick={() =>
+                                                handleNavigate("/favorites")
+                                            }
                                             className="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Favorites
@@ -79,7 +84,9 @@ export default function Header() {
                                     </li>
                                     <li>
                                         <div
-                                            onClick={() => handleNavigate('/itinerary')}
+                                            onClick={() =>
+                                                handleNavigate("/itinerary")
+                                            }
                                             class="font-semibold text-white text-lg drop-shadow-xl"
                                         >
                                             Itinerary
@@ -89,8 +96,10 @@ export default function Header() {
                             </div>
                             <div className="flex-none md:pl-3 drop-shadow-xl lg:block">
                                 <div
-                                    onClick={() => handleNavigate('/login')}
-                                    className={`bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg ${auth?.accessToken ? 'hidden' : ''}`}
+                                    onClick={() => handleNavigate("/login")}
+                                    className={`bg-transparent btn btn-sm rounded-xl text-white font-semibold shadow-lg text-lg ${
+                                        auth?.accessToken ? "hidden" : ""
+                                    }`}
                                 >
                                     Login
                                 </div>
@@ -99,7 +108,7 @@ export default function Header() {
                                     <div className="lg:flex items-center relative hidden">
                                         <button
                                             type="button"
-                                            className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
+                                            className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-gray-300 focus:ring-0 focus:ring-offset-0"
                                             id="user-menu-button"
                                             aria-expanded="false"
                                             data-dropdown-toggle="user-dropdown"
@@ -111,8 +120,13 @@ export default function Header() {
                                             <div className="avatar placeholder">
                                                 {" "}
                                                 {/* hidden */}
-                                                <div className="bg-neutral text-neutral-content rounded-full w-12"
-                                                    onClick={() => setIsOpen((prev) => !prev)}
+                                                <div
+                                                    className="bg-neutral text-neutral-content rounded-full w-12"
+                                                    onClick={() =>
+                                                        setIsOpen(
+                                                            (prev) => !prev
+                                                        )
+                                                    }
                                                 >
                                                     <span className="text-xl">
                                                         {auth.email[0].toUpperCase()}
@@ -135,7 +149,7 @@ export default function Header() {
                                         {/* <!-- Dropdown menu --> */}
                                         {isOpen && (
                                             <div
-                                                className="my-4 text-base list-none bg-white divide-gray-100 rounded-lg shadow w-36 ml-4 absolute -left-2 top-8 hover:bg-gray-100"
+                                                className="my-4 text-base list-none bg-white divide-gray-100 rounded-lg shadow w-36 ml-4 absolute -left-[7.5rem] top-[36px] hover:bg-gray-100"
                                                 id="user-dropdown"
                                             >
                                                 <ul
@@ -143,7 +157,12 @@ export default function Header() {
                                                     aria-labelledby="user-menu-button"
                                                 >
                                                     <li>
-                                                        <Link className="flex px-4 py-2 text-sm text-gray-700" onClick={handleLogout}>
+                                                        <Link
+                                                            className="flex px-4 py-2 text-sm text-gray-700"
+                                                            onClick={
+                                                                handleLogout
+                                                            }
+                                                        >
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
                                                                 fill="none"
@@ -182,7 +201,9 @@ export default function Header() {
                         <div className="flex justify-end drop-shadow-xl">
                             <Link
                                 to="/login"
-                                className={`bg-transparent btn btn-sm rounded-xl text-black font-semibold shadow-lg text-lg border-black ${auth?.accessToken ? 'hidden' : ''}`}
+                                className={`bg-transparent btn btn-sm rounded-xl text-black font-semibold shadow-lg text-lg border-black ${
+                                    auth?.accessToken ? "hidden" : ""
+                                }`}
                             >
                                 Login
                             </Link>
@@ -199,7 +220,9 @@ export default function Header() {
                             {auth?.accessToken && (
                                 <div className="avatar placeholder">
                                     <div className="bg-neutral text-neutral-content rounded-full w-12">
-                                        <span className="text-xl">{auth.email[0].toUpperCase()}</span>
+                                        <span className="text-xl">
+                                            {auth.email[0].toUpperCase()}
+                                        </span>
                                     </div>
                                 </div>
                             )}
@@ -225,7 +248,7 @@ export default function Header() {
                                 <Link
                                     className="font-semibold border-black border-2 hover:bg-black hover:text-white"
                                     onClick={handleLogout}
-                                    >
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -233,12 +256,12 @@ export default function Header() {
                                         stroke-width="1.5"
                                         stroke="currentColor"
                                         className="w-6 h-6"
-                                        >
+                                    >
                                         <path
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
-                                            />
+                                        />
                                     </svg>
                                     Sign out
                                 </Link>

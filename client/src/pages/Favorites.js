@@ -13,7 +13,7 @@ export default function Favorites() {
     const navigate = useNavigate();
     const [name, setName] = useState();
     const [description, setDescription] = useState();
-    
+
     useEffect(() => {
         if (!auth?.accessToken) {
             navigate('/login')
@@ -89,7 +89,9 @@ export default function Favorites() {
                                             Name
                                         </label>
                                         <input
-                                            onChange={(e) => setName(e.target.value)}
+                                            onChange={(e) =>
+                                                setName(e.target.value)
+                                            }
                                             type="text"
                                             id="name"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl w-full p-2.5 focus:ring-black focus:border-black"
@@ -104,7 +106,9 @@ export default function Favorites() {
                                             Description
                                         </label>
                                         <textarea
-                                            onChange={(e) => setDescription(e.target.value)}
+                                            onChange={(e) =>
+                                                setDescription(e.target.value)
+                                            }
                                             type="text"
                                             id="description"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 focus:ring-black focus:border-black"
@@ -115,13 +119,25 @@ export default function Favorites() {
                                 <div className="flex justify-end">
                                     <button
                                         onClick={(e) => handleSubmit(e)}
-                                        className="flex btn btn-outline btn-success justify-end">
+                                        className="flex btn btn-outline btn-success justify-end"
+                                    >
                                         Save
                                     </button>
                                 </div>
                             </div>
                         </dialog>
                     </div>
+
+                    {collections?.length === 0 && 
+                        <>
+                            <div className="text-center my-20 py-10">
+                                <p className="text-3xl font-thin py-2">
+                                    You have no collection!
+                                </p>
+                                <p className="text-xl">Create one and start planning the trips.</p>
+                            </div>
+                        </>
+                    }
 
                     <div className="grid md:grid-cols-3 gap-6 md:gap-12">
                         {isLoadingCollections && (
@@ -132,9 +148,15 @@ export default function Favorites() {
                             </>
                         )}
 
-                        {   isSuccessCollections && 
+                        {isSuccessCollections &&
                             collections.map((collection) => {
-                                return <CollectionCard key={collection._id} collection={collection} refetchCollections={refetchCollections}/>
+                                return (
+                                    <CollectionCard
+                                        key={collection._id}
+                                        collection={collection}
+                                        refetchCollections={refetchCollections}
+                                    />
+                                );
                             })
                         }
                     </div>

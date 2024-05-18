@@ -65,8 +65,8 @@ export function QuickStayCard({ hotel }) {
 export function QuickExperienceCard({ attraction }) {
     return (
         <>
-            <div>
-                <div class="card card-side rounded-sm md:bg-base-100 md:shadow-xl">
+            <Link>
+                <div class="card card-side rounded-sm md:bg-base-100 md:shadow-xl items-start md:items-stretch">
                     <figure class="items-start">
                         <img
                             src={attraction.imageUrl}
@@ -119,7 +119,7 @@ export function QuickExperienceCard({ attraction }) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </Link>
         </>
     );
 }

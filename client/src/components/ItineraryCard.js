@@ -458,7 +458,7 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
 
             {/* Add to itinerary button */}
             <div
-                className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-50"
+                className="sticky bottom-[-10px] bg-white w-full py-6 flex justify-end border-t z-30"
                 onClick={handleAddToItinerary}
             >
                 {/* Add any other content or buttons */}
@@ -713,7 +713,7 @@ function ForDetailStay({ item, setSelectedItems }) {
                     {/* <!-- Dropdown menu --> */}
                     <div
                         id="dropdownDivider"
-                        className={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full ${isOpen ? "block" : "hidden"}`}
+                        className={`z-40 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full ${isOpen ? "block" : "hidden"}`}
                     >
                         {/* Ask user to input room information */}
                         <div
@@ -1247,7 +1247,7 @@ function ForDetailFlight({ item, setSelectedItems }) {
                     {/* <!-- Dropdown menu --> */}
                     <div
                         id="dropdown"
-                        className={`z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full ${dropdown ? "" : "hidden"}`}
+                        className={`z-40 bg-white divide-y divide-gray-100 rounded-b-lg shadow absolute mt-[1.5px] w-full ${dropdown ? "" : "hidden"}`}
                     >
                         <div
                             class="py-5 text-sm text-gray-700 my-3 mx-5 space-y-4"
@@ -1803,19 +1803,18 @@ export function StayCard({ item, refetchItinerary }) {
                         <img
                             src={item.imgSrc}
                             alt="Itinerary Cover Pic"
-                            className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
+                            className="w-full h-[150px] md:w-[280px] md:h-[360px] object-cover"
                         />
                     </figure>
                 </Link>
 
-
                 <div class="card-body flex-1 px-5 p-7">
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center">
                         <div>
                             <img
                                 src={getURLImage(item)}
                                 alt="Logo of platform"
-                                className="w-[120px]"
+                                className="w-[120px] h-[60px] object-cover"
                             />
                         </div>
                         <div>
@@ -1837,9 +1836,7 @@ export function StayCard({ item, refetchItinerary }) {
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
-                                                    .getElementById(
-                                                        modalId
-                                                    )
+                                                    .getElementById(modalId)
                                                     .showModal()
                                             }
                                         >
@@ -1865,9 +1862,10 @@ export function StayCard({ item, refetchItinerary }) {
                                             </button>
                                             <button
                                                 onClick={(e) => {
-                                                    handleDelete(e)
+                                                    handleDelete(e);
                                                 }}
-                                                className="btn bg-black text-white rounded-lg">
+                                                className="btn bg-black text-white rounded-lg"
+                                            >
                                                 Delete
                                             </button>
                                         </form>
@@ -1888,7 +1886,9 @@ export function StayCard({ item, refetchItinerary }) {
                             </div>
                             <div>
                                 <p className="text-gray-600">Check-out</p>
-                                <p className="font-semibold">{convertDate(item.checkout)}</p>
+                                <p className="font-semibold">
+                                    {convertDate(item.checkout)}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center space-x-4">
@@ -1897,12 +1897,14 @@ export function StayCard({ item, refetchItinerary }) {
                             </div>
                             <div>
                                 <p className="text-gray-600">Check-in</p>
-                                <p className="font-semibold">{convertDate(item.checkin)}</p>
+                                <p className="font-semibold">
+                                    {convertDate(item.checkin)}
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <div className="md:flex justify-between md:items-end">
-                        <div className="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div className="flex flex-col">
+                        <div className="flex items-center space-x-4 mb-4">
                             <div className="text-xl text-gray-600">
                                 <i class="fa-regular fa-user"></i>
                             </div>
@@ -1911,12 +1913,16 @@ export function StayCard({ item, refetchItinerary }) {
                                     Guest(s) and Room(s)
                                 </p>
                                 <p className="font-semibold">
-                                    {item.adult} adult(s), {item.child || 0} child(ren), {item.crn || 1} room(s)
+                                    {item.adult} adult(s), {item.child || 0}{" "}
+                                    child(ren), {item.crn || 1} room(s)
                                 </p>
                             </div>
                         </div>
                         <div className="font-bold text-2xl text-end">
-                            {item.tripPrice || item.agodaPrice || item.bookingPrice} {"VND"}
+                            {item.tripPrice ||
+                                item.agodaPrice ||
+                                item.bookingPrice}{" "}
+                            {"VND"}
                         </div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>
@@ -1975,9 +1981,7 @@ export function FlightCard({item, refetchItinerary}) {
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
-                                                    .getElementById(
-                                                        modalId
-                                                    )
+                                                    .getElementById(modalId)
                                                     .showModal()
                                             }
                                         >
@@ -2001,9 +2005,10 @@ export function FlightCard({item, refetchItinerary}) {
                                             <button className="btn rounded-lg mx-2">
                                                 Cancel
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={handleDelete}
-                                                className="btn bg-black text-white rounded-lg">
+                                                className="btn bg-black text-white rounded-lg"
+                                            >
                                                 Delete
                                             </button>
                                         </form>
@@ -2012,28 +2017,35 @@ export function FlightCard({item, refetchItinerary}) {
                             </dialog>
                         </div>
                     </div>
-                    <Link>
-                        <img
-                            src={item.imgSrc}
-                            alt="Logo of platform"
-                            className="w-[200px]"
-                        />
-                    </Link>
-                    <div className="flex flex-col md:flex-row items-start mb-4 md:items-center justify-around md:px-10">
-                        <p className="font-semibold text-lg flex justify-end">
-                            {item.departureTime.substring(11, 16)}
-                        </p>
-                        <p className="font-thin text-lg flex justify-end">
-                            {item.from}
-                        </p>
-                        <div className="mx-4">
-                            <i class="fa-solid fa-plane"></i>
+                    <div className="flex flex-col md:flex-row items-center justify-between">
+                        <Link>
+                            <img
+                                src={item.imgSrc}
+                                alt="Logo of platform"
+                                className="w-[100px] md:w-[180px]"
+                            />
+                        </Link>
+                        <div className="w-full flex flex-row items-start m-4 md:items-center justify-around md:px-2 flex-1">
+                            <p className="font-semibold text-lg flex justify-end">
+                                {item.departureTime.substring(11, 16)}
+                            </p>
+                            <p className="font-thin text-lg flex justify-end">
+                                {item.from}
+                            </p>
+                            <div className="mx-4">
+                                <i class="fa-solid fa-plane"></i>
+                            </div>
+                            <p className="font-thin text-lg">{item.to}</p>
+                            <p className="font-semibold text-lg">
+                                {item.arrivalTime.substring(11, 16)}
+                            </p>
                         </div>
-                        <p className="font-thin text-lg">{item.to}</p>
-                        <p className="font-semibold text-lg">{item.arrivalTime.substring(11, 16)}</p>
                     </div>
+
                     <div className="flex justify-end">
-                        <div className="font-bold text-2xl">{item.price.toLocaleString('vi-VN')} VND</div>
+                        <div className="font-bold text-2xl">
+                            {item.price.toLocaleString("vi-VN")} VND
+                        </div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>
                 </div>
@@ -2072,14 +2084,18 @@ export function ActivityCard({experience, refetchItinerary}) {
                         <img
                             src={experience.imgSrc}
                             alt="Itinerary Cover Pic"
-                            className="w-full h-[150px] md:w-[380px] md:h-full object-cover"
+                            className="w-full h-[150px] md:w-[280px] md:h-[280px] object-cover"
                         />
                     </figure>
                 </Link>
 
                 <div class="card-body flex-1 px-5 p-7">
-                    <div className="flex justify-between items-center mb-2">
-                        <div className="w-[120px]" />
+                    <div className="flex justify-between items-start mb-2">
+                        <div>
+                            <h2 class="card-title text-base md:text-2xl mb-4">
+                                {experience.name}
+                            </h2>
+                        </div>
                         <div>
                             <div className="dropdown dropdown-end">
                                 <div>
@@ -2099,9 +2115,7 @@ export function ActivityCard({experience, refetchItinerary}) {
                                             className="text-red-600"
                                             onClick={() =>
                                                 document
-                                                    .getElementById(
-                                                        modalId
-                                                    )
+                                                    .getElementById(modalId)
                                                     .showModal()
                                             }
                                         >
@@ -2127,7 +2141,8 @@ export function ActivityCard({experience, refetchItinerary}) {
                                             </button>
                                             <button
                                                 onClick={handleDelete}
-                                                className="btn bg-black text-white rounded-lg">
+                                                className="btn bg-black text-white rounded-lg"
+                                            >
                                                 Delete
                                             </button>
                                         </form>
@@ -2136,20 +2151,14 @@ export function ActivityCard({experience, refetchItinerary}) {
                             </dialog>
                         </div>
                     </div>
-                    <div>
-                        <h2 class="card-title text-base md:text-2xl mb-4">
-                            {experience.name}
-                        </h2>
-                    </div>
-                    {experience.description
-                        ? 
+
+                    {experience.description ? (
                         <div className="mb-2">
                             <p className="text-gray-600">
                                 {experience.description}
                             </p>
                         </div>
-                        : null
-                    }
+                    ) : null}
 
                     <div className="md:flex justify-between items-center">
                         <div className="flex flex-col md:flex-row md:space-x-20 mb-4">
@@ -2162,16 +2171,18 @@ export function ActivityCard({experience, refetchItinerary}) {
                                         Estimated Time
                                     </p>
                                     <p className="font-semibold">
-                                        {experience.startTime} - {experience.endTime}
+                                        {experience.startTime} -{" "}
+                                        {experience.endTime}
                                     </p>
                                 </div>
                             </div>
                         </div>
                         <div className="font-bold text-2xl text-end">
                             {experience.price
-                                ? `${experience.price.toLocaleString('vi-VN')} VND`
-                                : "Free"
-                            }
+                                ? `${experience.price.toLocaleString(
+                                      "vi-VN"
+                                  )} VND`
+                                : "Free"}
                         </div>
                     </div>
                     <div class="card-actions md:justify-between flex-col md:flex-row md:items-end flex-1"></div>

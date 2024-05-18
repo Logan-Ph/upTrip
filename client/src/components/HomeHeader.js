@@ -190,7 +190,7 @@ function AdvancedSearchFlight({ setTab }) {
                             <div className="join join-horizontal w-full md:rounded-r-none">
                                 <select
                                     id="form-selector-2"
-                                    class="h-[52px] px-2 select select-bordered w-full md:w-[90px] pr-2 pl-3 md:rounded-r-none"
+                                    class="h-[52px] px-2 select select-bordered w-full md:w-[90px] pr-2 pl-3 md:rounded-r-none focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                     onChange={(e) => setTab(e.target.value)}
                                 >
                                     <option value="All">All</option>
@@ -213,7 +213,7 @@ function AdvancedSearchFlight({ setTab }) {
                                     <input
                                         name="origin"
                                         type="text"
-                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px]"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px] focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                         placeholder="City or airport"
                                         value={
                                             fromEdit
@@ -231,35 +231,42 @@ function AdvancedSearchFlight({ setTab }) {
                                         Origin
                                     </label>
                                 </div>
-                                {fromAutocomplete.isFetched && fromEdit && keywordFrom && fromAutocomplete?.data?.length > 0 && (
-                                    <div class="relative z-40">
-                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto">
-                                            {fromAutocomplete?.data?.map(
-                                                (item) => {
-                                                    return (
-                                                        <li
-                                                            onClick={() => {
-                                                                setFrom(item);
-                                                                setFromEdit(
-                                                                    false
-                                                                );
-                                                            }}
-                                                        >
-                                                            <div>
-                                                                <i class="fa-solid fa-plane"></i>{" "}
-                                                                {item.cityName}{" "}
-                                                                -{" "}
-                                                                {
-                                                                    item.airportCode
-                                                                }
-                                                            </div>
-                                                        </li>
-                                                    );
-                                                }
-                                            )}
-                                        </ul>
-                                    </div>
-                                )}
+                                {fromAutocomplete.isFetched &&
+                                    fromEdit &&
+                                    keywordFrom &&
+                                    fromAutocomplete?.data?.length > 0 && (
+                                        <div class="relative z-40">
+                                            <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto">
+                                                {fromAutocomplete?.data?.map(
+                                                    (item) => {
+                                                        return (
+                                                            <li
+                                                                onClick={() => {
+                                                                    setFrom(
+                                                                        item
+                                                                    );
+                                                                    setFromEdit(
+                                                                        false
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <div>
+                                                                    <i class="fa-solid fa-plane"></i>{" "}
+                                                                    {
+                                                                        item.cityName
+                                                                    }{" "}
+                                                                    -{" "}
+                                                                    {
+                                                                        item.airportCode
+                                                                    }
+                                                                </div>
+                                                            </li>
+                                                        );
+                                                    }
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
                             </div>
                         </div>
                         <div class="join-item h-[52px]">
@@ -271,7 +278,7 @@ function AdvancedSearchFlight({ setTab }) {
                                     <input
                                         name="destination"
                                         type="text"
-                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px]"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px] focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                         placeholder="City or airport"
                                         value={toEdit ? keywordTo : to.cityName}
                                         onChange={(e) =>
@@ -285,57 +292,55 @@ function AdvancedSearchFlight({ setTab }) {
                                         Destination
                                     </label>
                                 </div>
-                                {toAutocomplete.isFetched && toEdit && keywordTo && toAutocomplete?.data?.length > 0 && (
-                                    <div class="relative z-40">
-                                        <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto">
-                                            {toAutocomplete?.data?.map(
-                                                (item) => {
-                                                    return (
-                                                        <li
-                                                            onClick={() => {
-                                                                setTo(item);
-                                                                setToEdit(
-                                                                    false
-                                                                );
-                                                            }}
-                                                        >
-                                                            <a>
-                                                                <i class="fa-solid fa-plane"></i>{" "}
-                                                                {item.cityName}{" "}
-                                                                -{" "}
-                                                                {
-                                                                    item.airportCode
-                                                                }
-                                                            </a>
-                                                        </li>
-                                                    );
-                                                }
-                                            )}
-                                        </ul>
-                                    </div>
-                                )}
+                                {toAutocomplete.isFetched &&
+                                    toEdit &&
+                                    keywordTo &&
+                                    toAutocomplete?.data?.length > 0 && (
+                                        <div class="relative z-40">
+                                            <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto">
+                                                {toAutocomplete?.data?.map(
+                                                    (item) => {
+                                                        return (
+                                                            <li
+                                                                onClick={() => {
+                                                                    setTo(item);
+                                                                    setToEdit(
+                                                                        false
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <a>
+                                                                    <i class="fa-solid fa-plane"></i>{" "}
+                                                                    {
+                                                                        item.cityName
+                                                                    }{" "}
+                                                                    -{" "}
+                                                                    {
+                                                                        item.airportCode
+                                                                    }
+                                                                </a>
+                                                            </li>
+                                                        );
+                                                    }
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
                             </div>
                         </div>
                         <div class="join-item h-[52px]">
                             <div class="relative">
-                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <svg
-                                        class="w-4 h-4 text-gray-500"
-                                        aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="currentColor"
-                                        viewBox="0 0 20 20"
-                                    >
-                                        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                    </svg>
-                                </div>
                                 <div>
                                     <input
                                         name="start"
                                         type="date"
-                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px]"
+                                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-4 p-2.5 pt-5 md:rounded-none h-[52px] focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                         placeholder="dd/mm/yyyy"
-                                        min={new Date().toISOString().split('T')[0]} // Set min date to today
+                                        min={
+                                            new Date()
+                                                .toISOString()
+                                                .split("T")[0]
+                                        } // Set min date to today
                                         onChange={(e) => {
                                             const newStartDate = e.target.value;
                                             setStartDate(newStartDate);
@@ -343,7 +348,7 @@ function AdvancedSearchFlight({ setTab }) {
                                     />
                                     <label
                                         for="floating_filled"
-                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                        class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                     >
                                         Departing
                                     </label>
@@ -356,7 +361,7 @@ function AdvancedSearchFlight({ setTab }) {
                                 <button
                                     id="dropdownDefaultButton"
                                     data-dropdown-toggle="dropdown"
-                                    class="text-gray-900 bg-white border border-gray-300  outline-none font-medium rounded-lg md:rounded-l-none  md:border-l text-sm px-5 py-2.5 inline-flex items-center relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none h-[80px] text-start md:text-center md:h-[52px]"
+                                    class="text-gray-900 bg-white border border-gray-300  outline-none font-medium rounded-lg md:rounded-l-none  md:border-l text-sm px-5 py-2.5 inline-flex items-center relative p-2.5 pt-5 ps-10 w-full justify-between appearance-none h-[80px] text-start md:text-center md:h-[52px] focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                     type="button"
                                     onClick={() => setOpenMenu((prev) => !prev)}
                                 >
@@ -370,7 +375,8 @@ function AdvancedSearchFlight({ setTab }) {
                                         <i class="fa-regular fa-user w-4 h-4 text-gray-500"></i>
                                     </div>
                                     {numberOfAdult} Adult, {numberOfChild}{" "}
-                                    Child, {numberOfInfant} Infant and {seatClass}
+                                    Child, {numberOfInfant} Infant and{" "}
+                                    {seatClass}
                                     <svg
                                         class="w-2.5 h-2.5 ms-3"
                                         aria-hidden="true"
@@ -402,7 +408,10 @@ function AdvancedSearchFlight({ setTab }) {
                                         <div class="flex justify-between">
                                             <div class="flex flex-col">
                                                 <div>
-                                                    <i class="fa-solid fa-person text-gray-500" aria-hidden="true" ></i>{" "}
+                                                    <i
+                                                        class="fa-solid fa-person text-gray-500"
+                                                        aria-hidden="true"
+                                                    ></i>{" "}
                                                     Adult(s)
                                                 </div>
                                             </div>
@@ -415,7 +424,15 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() => setNumberOfAdult( (prev) => prev - 1 > 0 ? prev - 1 : 1 ) }
+                                                        onClick={() =>
+                                                            setNumberOfAdult(
+                                                                (prev) =>
+                                                                    prev - 1 > 0
+                                                                        ? prev -
+                                                                          1
+                                                                        : 1
+                                                            )
+                                                        }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -435,7 +452,19 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() => setNumberOfAdult( (prev) =>  prev + 1 + numberOfChild + numberOfInfant <= 6 ? prev + 1  : prev ) }
+                                                        onClick={() =>
+                                                            setNumberOfAdult(
+                                                                (prev) =>
+                                                                    prev +
+                                                                        1 +
+                                                                        numberOfChild +
+                                                                        numberOfInfant <=
+                                                                    6
+                                                                        ? prev +
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -463,7 +492,15 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() => setNumberOfChild( (prev) => prev - 1 >= 0 ? prev - 1 : 0 )
+                                                        onClick={() =>
+                                                            setNumberOfChild(
+                                                                (prev) =>
+                                                                    prev - 1 >=
+                                                                    0
+                                                                        ? prev -
+                                                                          1
+                                                                        : 0
+                                                            )
                                                         }
                                                     >
                                                         <path
@@ -484,7 +521,22 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() => setNumberOfChild( (prev) => prev < numberOfAdult * 2 && prev + 1 + numberOfAdult + numberOfInfant <=  6 ? prev + 1 : prev ) }
+                                                        onClick={() =>
+                                                            setNumberOfChild(
+                                                                (prev) =>
+                                                                    prev <
+                                                                        numberOfAdult *
+                                                                            2 &&
+                                                                    prev +
+                                                                        1 +
+                                                                        numberOfAdult +
+                                                                        numberOfInfant <=
+                                                                        6
+                                                                        ? prev +
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -512,7 +564,16 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() => setNumberOfInfant( (prev) => prev - 1 >=  0 ? prev - 1 : prev ) }
+                                                        onClick={() =>
+                                                            setNumberOfInfant(
+                                                                (prev) =>
+                                                                    prev - 1 >=
+                                                                    0
+                                                                        ? prev -
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -532,7 +593,21 @@ function AdvancedSearchFlight({ setTab }) {
                                                         stroke-width="1.5"
                                                         stroke="currentColor"
                                                         class="w-6 h-6"
-                                                        onClick={() => setNumberOfInfant((prev) => prev + 1 <= numberOfAdult && prev + 1 + numberOfChild + numberOfAdult <= 6 ? prev + 1 : prev ) }
+                                                        onClick={() =>
+                                                            setNumberOfInfant(
+                                                                (prev) =>
+                                                                    prev + 1 <=
+                                                                        numberOfAdult &&
+                                                                    prev +
+                                                                        1 +
+                                                                        numberOfChild +
+                                                                        numberOfAdult <=
+                                                                        6
+                                                                        ? prev +
+                                                                          1
+                                                                        : prev
+                                                            )
+                                                        }
                                                     >
                                                         <path
                                                             stroke-linecap="round"
@@ -544,21 +619,27 @@ function AdvancedSearchFlight({ setTab }) {
                                             </div>
                                         </div>
                                         <div class="flex justify-between grow flex-wrap">
-                                            <div 
+                                            <div
                                                 className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
-                                                onClick={() => setSeatClass("ECONOMY")}
+                                                onClick={() =>
+                                                    setSeatClass("ECONOMY")
+                                                }
                                             >
                                                 Economy
                                             </div>
-                                            <div 
+                                            <div
                                                 className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
-                                                onClick={() => setSeatClass("BUSINESS")}
+                                                onClick={() =>
+                                                    setSeatClass("BUSINESS")
+                                                }
                                             >
                                                 Business
                                             </div>
-                                            <div 
+                                            <div
                                                 className="p-3 bg-gray-200 border rounded-md font-semibold hover:bg-black hover:text-white cursor-pointer duration-300 grow m-2 text-center"
-                                                onClick={() => setSeatClass("FIRST")}
+                                                onClick={() =>
+                                                    setSeatClass("FIRST")
+                                                }
                                             >
                                                 First
                                             </div>
@@ -626,7 +707,7 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
                     <div class="join w-full">
                         <select
                             id="form-selector-1"
-                            class="px-2 select select-bordered join-item w-[125px] pr-2 pl-3 h-[52px]"
+                            class="px-2 select select-bordered join-item w-[125px] pr-2 pl-3 h-[52px] focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                             onchange="toggleSections(this)"
                             onChange={(e) => setTab(e.target.value)}
                         >
@@ -640,7 +721,7 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
                         <div class="w-full">
                             <div>
                                 <input
-                                    class="w-full input input-bordered rounded-l-none h-[52px] bg-white"
+                                    class="w-full input input-bordered rounded-l-none h-[52px] bg-white focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                     placeholder="Search for activities in the location"
                                     value={
                                         autocompletePayload?.districtPathNames
@@ -652,7 +733,9 @@ function QuickSearchExperience({ setTab, setKeyword, keyword }) {
                                 <div class="relative z-40">
                                     <ul class="absolute menu bg-white w-full rounded-b-lg overflow-y-auto max-h-40 flex-nowrap ">
                                         {data.length === 0 ? (
-                                            <li className="p-2 font-semibold">No results found</li>
+                                            <li className="p-2 font-semibold">
+                                                No results found
+                                            </li>
                                         ) : (
                                             data.map((item) => (
                                                 <li
@@ -801,7 +884,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                             <div class="join join-horizontal w-full md:rounded-r-none">
                                 <select
                                     id="form-selector-2"
-                                    class="h-[52px] px-2 select select-bordered join-item w-[82px] pr-2 pl-3"
+                                    class="h-[52px] px-2 select select-bordered join-item w-[82px] pr-2 pl-3 focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                     onChange={(e) => setTab(e.target.value)}
                                 >
                                     <option value="All">All</option>
@@ -816,7 +899,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                 <div class="w-full grow">
                                     <div>
                                         <input
-                                            class="h-[52px] w-full input input-bordered join-item bg-white"
+                                            class="h-[52px] w-full input input-bordered join-item bg-white focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                             placeholder="Where are you going?"
                                             value={
                                                 autocompletePayload?.resultWord
@@ -954,16 +1037,23 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                                 return (
                                                                     <>
                                                                         <li>
-                                                                            <div onClick={() => setAutocompletePayload(element)}>
-                                                                            <i class="fa-solid fa-train"></i>{" "} {element?.resultWord}
+                                                                            <div
+                                                                                onClick={() =>
+                                                                                    setAutocompletePayload(
+                                                                                        element
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                <i class="fa-solid fa-train"></i>{" "}
+                                                                                {
+                                                                                    element?.resultWord
+                                                                                }
                                                                             </div>
                                                                         </li>
                                                                     </>
-                                                                )
-                                                            default:
-                                                                return (
-                                                                    null
                                                                 );
+                                                            default:
+                                                                return null;
                                                         }
                                                     }
                                                 )}
@@ -977,60 +1067,49 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                         <div class="join-item">
                             <div class="flex items-center">
                                 <div class="relative w-1/2">
-                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                        <svg
-                                            class="w-4 h-4 text-gray-500"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
                                     <div>
                                         <input
                                             name="start"
                                             type="date"
-                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-r-none md:rounded-none border-l-"
+                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-4 p-2.5 pt-5 rounded-r-none md:rounded-none border-l- focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                             placeholder="dd/mm/yyyy"
-                                            min={new Date().toISOString().split('T')[0]} // Set min date to today
-                                            max={checkout || ''} // Set max date to endDate if it exists
+                                            min={
+                                                new Date()
+                                                    .toISOString()
+                                                    .split("T")[0]
+                                            } // Set min date to today
+                                            max={checkout || ""} // Set max date to endDate if it exists
                                             onChange={(e) => {
-                                                const newStartDate = e.target.value;
+                                                const newStartDate =
+                                                    e.target.value;
                                                 setCheckin(newStartDate);
                                             }}
                                             value={checkin}
                                         />
                                         <label
                                             for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto focus:ring-0 focus:ring-offset-0"
                                         >
                                             Check-in
                                         </label>
                                     </div>
                                 </div>
                                 <div class="relative w-1/2">
-                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                        <svg
-                                            class="w-4 h-4 text-gray-500"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
                                     <div>
                                         <input
                                             name="end"
                                             type="date"
-                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none"
+                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block w-full ps-4 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none focus:ring-0 focus:ring-offset-0 focus:border-gray-300"
                                             placeholder="dd/mm/yyyy"
-                                            min={checkin || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
+                                            min={
+                                                checkin ||
+                                                new Date()
+                                                    .toISOString()
+                                                    .split("T")[0]
+                                            } // Ensure end date is not before start date
                                             onChange={(e) => {
-                                                const newEndDate = e.target.value;
+                                                const newEndDate =
+                                                    e.target.value;
                                                 if (newEndDate < checkin) {
                                                     setCheckin(newEndDate);
                                                 }
@@ -1040,7 +1119,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                         />
                                         <label
                                             for="floating_filled"
-                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                            class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                         >
                                             Check-out
                                         </label>
@@ -1053,7 +1132,7 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                             <button
                                 id="dropdownDividerButton"
                                 data-dropdown-toggle="dropdownDivider"
-                                class="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 mr-5 pt-5 ps-10 w-full justify-between"
+                                class="text-gray-500 bg-white  font-medium rounded-lg md:rounded-l-none border border-gray-300 text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 mr-5 pt-5 ps-10 w-full justify-between focus:ring-0 focus:ring-offset-0 focus:border-gray-300"
                                 type="button"
                                 onClick={() => setDropdown((prev) => !prev)}
                             >
@@ -1340,15 +1419,20 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                                             type="number"
                                                             id="number-input"
                                                             aria-describedby="helper-text-explanation"
-                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blacl focus:border-black block w-full p-2.5"
                                                             placeholder="Age"
                                                             required
                                                             onChange={(e) => {
                                                                 setChildrenAges(
                                                                     (prev) => {
                                                                         const temp =
-                                                                            [...prev];
-                                                                        temp[ index ] = e.target.value;
+                                                                            [
+                                                                                ...prev,
+                                                                            ];
+                                                                        temp[
+                                                                            index
+                                                                        ] =
+                                                                            e.target.value;
                                                                         return temp;
                                                                     }
                                                                 );
@@ -1397,7 +1481,7 @@ function QuickSearchAll({ setTab }) {
                     <div class="join w-full">
                         <select
                             id="form-selector-1"
-                            class="px-2 select select-bordered join-item w-[70px] pr-2 pl-3 h-[52px]"
+                            class="px-2 select select-bordered join-item w-[70px] pr-2 pl-3 h-[52px] focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                             onChange={(e) => setTab(e.target.value)}
                         >
                             <option value="All" selected="selected">
@@ -1410,7 +1494,7 @@ function QuickSearchAll({ setTab }) {
                         <div class="w-full">
                             <div>
                                 <input
-                                    class="w-full input input-bordered join-item h-[52px] bg-white"
+                                    class="w-full input input-bordered join-item h-[52px] bg-white focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                     placeholder="Search for destinations, activities, experiences..."
                                     onChange={(e) => setKeyword(e.target.value)}
                                 />

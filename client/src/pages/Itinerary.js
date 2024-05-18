@@ -123,7 +123,10 @@ export default function Itinerary() {
                             itinerary
                         </button>
                         <dialog id="create_itinerary_modal" className="modal">
-                            <div className="modal-box px-10" style={{ zIndex: 100 }}>
+                            <div
+                                className="modal-box px-10"
+                                style={{ zIndex: 100 }}
+                            >
                                 <form method="dialog">
                                     {/* if there is a button in form, it will close the modal */}
                                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
@@ -204,10 +207,11 @@ export default function Itinerary() {
                                         <div className="max-w-md mx-auto">
                                             <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 1
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                        activeTab === 1
                                                             ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
                                                             : "text-black font-thin"
-                                                        }`}
+                                                    }`}
                                                     onClick={() =>
                                                         handleTabClick(1)
                                                     }
@@ -215,10 +219,11 @@ export default function Itinerary() {
                                                     Dates
                                                 </button>
                                                 <button
-                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab === 2
+                                                    className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                        activeTab === 2
                                                             ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
                                                             : "text-black font-thin"
-                                                        }`}
+                                                    }`}
                                                     onClick={() =>
                                                         handleTabClick(2)
                                                     }
@@ -240,11 +245,27 @@ export default function Itinerary() {
                                                                             id="from-date"
                                                                             type="date"
                                                                             className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                            min={new Date().toISOString().split('T')[0]} // Set min date to today
-                                                                            max={endDate || ''} // Set max date to endDate if it exists
-                                                                            onChange={(e) => {
-                                                                                const newStartDate = e.target.value;
-                                                                                setStartDate(newStartDate);
+                                                                            min={
+                                                                                new Date()
+                                                                                    .toISOString()
+                                                                                    .split(
+                                                                                        "T"
+                                                                                    )[0]
+                                                                            } // Set min date to today
+                                                                            max={
+                                                                                endDate ||
+                                                                                ""
+                                                                            } // Set max date to endDate if it exists
+                                                                            onChange={(
+                                                                                e
+                                                                            ) => {
+                                                                                const newStartDate =
+                                                                                    e
+                                                                                        .target
+                                                                                        .value;
+                                                                                setStartDate(
+                                                                                    newStartDate
+                                                                                );
                                                                             }}
                                                                         />
                                                                     </span>
@@ -261,19 +282,37 @@ export default function Itinerary() {
                                                             <div class="relative w-full md:w-1/2 h-[60px] justify-end">
                                                                 <div class="flex items-center">
                                                                     <span class="datepicker-toggle">
-                                                                        <span class="datepicker-toggle-button">
-                                                                        </span>
+                                                                        <span class="datepicker-toggle-button"></span>
                                                                         <input
                                                                             id="to-date"
                                                                             type="date"
                                                                             className="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                            min={startDate || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
-                                                                            onChange={(e) => {
-                                                                                const newEndDate = e.target.value;
-                                                                                if (newEndDate < startDate) {
-                                                                                    setStartDate(newEndDate);
+                                                                            min={
+                                                                                startDate ||
+                                                                                new Date()
+                                                                                    .toISOString()
+                                                                                    .split(
+                                                                                        "T"
+                                                                                    )[0]
+                                                                            } // Ensure end date is not before start date
+                                                                            onChange={(
+                                                                                e
+                                                                            ) => {
+                                                                                const newEndDate =
+                                                                                    e
+                                                                                        .target
+                                                                                        .value;
+                                                                                if (
+                                                                                    newEndDate <
+                                                                                    startDate
+                                                                                ) {
+                                                                                    setStartDate(
+                                                                                        newEndDate
+                                                                                    );
                                                                                 }
-                                                                                setEndDate(newEndDate);
+                                                                                setEndDate(
+                                                                                    newEndDate
+                                                                                );
                                                                             }}
                                                                         />
                                                                     </span>
@@ -309,10 +348,10 @@ export default function Itinerary() {
                                                                             prev
                                                                         ) =>
                                                                             prev ===
-                                                                                1
+                                                                            1
                                                                                 ? prev
                                                                                 : prev -
-                                                                                1
+                                                                                  1
                                                                     )
                                                                 }
                                                             >
@@ -368,8 +407,9 @@ export default function Itinerary() {
                             </div>
                         </dialog>
                     </div>
+
                     {getItinerary.isSuccess ? (
-                        getItinerary.data.data.map((item) => {
+                        getItinerary.data.data.length > 0 ? getItinerary.data.data.map((item) => {
                             return (
                                 <Suspense fallback={<ItineraryCardSkeleton />}>
                                     {" "}
@@ -380,6 +420,16 @@ export default function Itinerary() {
                                 </Suspense>
                             );
                         })
+                        : <>
+                            <div className="text-center my-20 py-10">
+                                <p className="text-3xl font-thin py-2">
+                                    You have no itinerary!
+                                </p>
+                                <p className="text-xl">
+                                    Create one and start planning the trips.
+                                </p>
+                            </div>
+                        </>
                     ) : (
                         <CollectionCardSkeleton />
                     )}

@@ -69,7 +69,7 @@ export default function QuickSearch() {
 
     return (
         <>
-            <div className="md:px-10">
+            <div className="md:px-10 bg-[#FAFBFC]">
                 <div className="flex flex-col md:flex-row mx-auto max-w-8xl px-6 py-6">
                     {/* filter section */}
                     <div className="hidden md:block">
