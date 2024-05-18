@@ -42,8 +42,7 @@ function Carousel() {
             {wondersOfVn.map((wonder, index) => (
                 <div 
                     key={index} 
-                    id={`slide${index}`} 
-                    onClick={handleNavigate(`/quick-search/?keyword=${wonder.destination}`)}
+                    onClick={() => handleNavigate(`/quick-search/?keyword=${wonder.destination}`)}
                     className="carousel-item relative overflow-hidden transition ease-out delay-100 hover:translate-x-1 duration-100 hover:border-[#CDEAE1] rounded-xl">
                     <DecorativeCard imgUrl={wonder.imgUrl} destination={wonder.destination} city={wonder.city} />
                 </div>
