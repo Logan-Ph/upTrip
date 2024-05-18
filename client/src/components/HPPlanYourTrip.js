@@ -34,10 +34,10 @@ export default function HPPLanYourTrip(){
 }
 
 function Box({imgSrc, destination}){
-    const handleNavigate = useHandleNavigate(`/quick-search/?keyword=${destination}`);
+    const handleNavigate = useHandleNavigate();
 
     return<>
-        <div onClick={handleNavigate} className="border border-transparent rounded-md shadow-md bg-white transition ease-in-out delay-150 hover:translate-x-0.5 hover:scale-100 duration-300">
+        <div onClick={() => handleNavigate(`/quick-search/?keyword=${destination}`)} className="border border-transparent rounded-md shadow-md bg-white transition ease-in-out delay-150 hover:translate-x-0.5 hover:scale-100 duration-300">
             <div className="flex items-center space-x-4 md:space-x-6">
                 <div className="p-4 md:w-1/3">
                     <div className="w-[105px] h-[70px]">
