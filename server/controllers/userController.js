@@ -881,7 +881,6 @@ exports.advancedSearchFlights = async (req, res) => {
             }
         });
 
-        console.log(response.data.trips[0].bundles)
 
         for (const item of response.data.trips[0].bundles) {
             const flightNo = []
@@ -1622,7 +1621,6 @@ exports.addFlightItinerary = async (req, res) => {
         await itinerary.save()
         return res.status(200).json("Flight added to itinerary")
     } catch (e) {
-        console.log(e)
         return res.status(500).json(e)
     }
 }
