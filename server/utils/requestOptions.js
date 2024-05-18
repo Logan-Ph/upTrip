@@ -379,7 +379,8 @@ const bookingAdvancedSearchHotelQueryParam = (
 		checkout: checkout, // Check-out date (YYYY-MM-DD)
 		group_adults: group_adults, // Number of adults in the group
 		no_rooms: no_rooms, // Number of rooms required
-		group_children: group_children // Number of children in the group
+		group_children: group_children, // Number of children in the group
+		selected_currency: "VND"
 	};
 
 	if (group_children > 0) {
