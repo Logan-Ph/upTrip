@@ -54,7 +54,7 @@ export default function Header() {
                         <input
                             type="search"
                             id="default-search"
-                            className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                            className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                             placeholder="Search all"
                             onChange={(e) => setKeyword(e.target.value)}
                             value={keyword}
@@ -426,22 +426,11 @@ function AdvancedSearchFlight() {
                             )}
                         </div>
                         <div className="relative w-full md:w-auto mb-2 md:mb-0 md:border-r border-gray-300">
-                            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg
-                                    className="w-4 h-4 text-gray-500"
-                                    aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                </svg>
-                            </div>
                             <div>
                                 <input
                                     type="date"
                                     name="start"
-                                    className="block rounded-t-lg  text-gray-900 appearance-none focus:outline-none focus:ring-0 pt-5  h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
+                                    className="block rounded-t-lg  text-gray-900 appearance-none focus:outline-none focus:ring-0 pt-5  h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-4 p-2.5"
                                     placeholder="dd/mm/yyyy"
                                     id="datepickerId3"
                                     min={new Date().toISOString().split('T')[0]} // Set min date to today
@@ -452,7 +441,7 @@ function AdvancedSearchFlight() {
                                 />
                                 <label
                                     for="floating_filled"
-                                    className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                    className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                                 >
                                     Departing
                                 </label>
@@ -863,7 +852,7 @@ function AdvancedSearchHotel() {
                             <i className="fa-solid fa-hotel text-gray-500"></i>
                         </div>
                         <input
-                            className="h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5"
+                            className="h-[52px] w-full input  bg-white border md:border-none border-gray-300 ps-10 p-2.5 focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                             placeholder="Where are you going?"
                             value={autocompletePayload?.resultWord}
                             onChange={(e) => setKeyword(e.target.value)}
@@ -1008,25 +997,14 @@ function AdvancedSearchHotel() {
                         </div>
                     </div>
                     <div className="relative grow md:border-r border-gray-300">
-                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg
-                                className="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
-                        </div>
                         <div>
                             <input
                                 type="date"
                                 name="start"
-                                className="bg-white text-gray-900 text-sm border md:border-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 md:rounded-none border-gray-300"
+                                className="bg-white text-gray-900 text-sm border md:border-none rounded-lg block w-full ps-4 p-2.5 pt-5 md:rounded-none border-gray-300 focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                 placeholder="dd/mm/yyyy"
-                                min={new Date().toISOString().split('T')[0]} // Set min date to today
-                                max={checkout || ''} // Set max date to endDate if it exists
+                                min={new Date().toISOString().split("T")[0]} // Set min date to today
+                                max={checkout || ""} // Set max date to endDate if it exists
                                 onChange={(e) => {
                                     const newStartDate = e.target.value;
                                     setCheckin(newStartDate);
@@ -1035,31 +1013,23 @@ function AdvancedSearchHotel() {
                             />
                             <label
                                 for="floating_filled"
-                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                             >
                                 Check-in
                             </label>
                         </div>
                     </div>
                     <div className="relative grow md:border-r border-gray-300">
-                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg
-                                className="w-4 h-4 text-gray-500"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                            </svg>
-                        </div>
                         <div>
                             <input
                                 name="end"
                                 type="date"
-                                className="bg-white text-gray-900 text-sm border md:border-none rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 md:rounded-none border-gray-300"
+                                className="bg-white text-gray-900 text-sm border md:border-none rounded-lg block w-full ps-4 p-2.5 pt-5 md:rounded-none border-gray-300 focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                                 placeholder="dd/mm/yyyy"
-                                min={checkin || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
+                                min={
+                                    checkin ||
+                                    new Date().toISOString().split("T")[0]
+                                } // Ensure end date is not before start date
                                 onChange={(e) => {
                                     const newEndDate = e.target.value;
                                     if (newEndDate < checkin) {
@@ -1071,7 +1041,7 @@ function AdvancedSearchHotel() {
                             />
                             <label
                                 for="floating_filled"
-                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-10 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-4 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
                             >
                                 Check-out
                             </label>
@@ -1082,7 +1052,7 @@ function AdvancedSearchHotel() {
                         <button
                             id="dropdownDividerButton"
                             data-dropdown-toggle="dropdownDivider"
-                            className="text-gray-500 bg-white  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg md:rounded-l-none border border-gray-300 md:border-none text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between"
+                            className="text-gray-500 bg-white font-medium rounded-lg md:rounded-l-none border border-gray-300 md:border-none text-sm px-5 py-2.5 text-center inline-flex items-center h-[52px] relative p-2.5 pt-5 ps-10 w-full justify-between focus:ring-0 focus:ring-offset-0 focus:border-gray-300 focus:outline-none"
                             type="button"
                             onClick={() => setDropdown((prev) => !prev)}
                         >
@@ -1117,8 +1087,9 @@ function AdvancedSearchHotel() {
                         {/* <!-- Dropdown menu --> */}
                         <div
                             id="dropdownDivider"
-                            class={`z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow ${dropdown ? "" : "hidden"
-                                }`}
+                            class={`z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow ${
+                                dropdown ? "" : "hidden"
+                            }`}
                         >
                             {/* Ask user to input room information */}
                             <div
@@ -1215,7 +1186,7 @@ function AdvancedSearchHotel() {
                                                 onClick={() =>
                                                     setNumberOfAdults((prev) =>
                                                         prev - 1 > 0 &&
-                                                            prev > numberOfRooms
+                                                        prev > numberOfRooms
                                                             ? prev - 1
                                                             : prev
                                                     )
@@ -1285,7 +1256,7 @@ function AdvancedSearchHotel() {
                                                                         prev.slice(
                                                                             0,
                                                                             prev.length -
-                                                                            1
+                                                                                1
                                                                         )
                                                                 );
                                                                 return prev - 1;
@@ -1318,7 +1289,7 @@ function AdvancedSearchHotel() {
                                                     setNumberOfChildren(
                                                         (prev) =>
                                                             prev <
-                                                                numberOfRooms * 6
+                                                            numberOfRooms * 6
                                                                 ? prev + 1
                                                                 : prev
                                                     )
@@ -1342,7 +1313,7 @@ function AdvancedSearchHotel() {
                                     Please enter your children's ages by the
                                     time of check-in
                                 </div>
-                                <div className="flex flex-wrap items-center mx-auto justify-between md:justify-normal md:max-w-72">
+                                <div className="flex flex-wrap items-center mx-auto justify-between md:justify-normal md:max-w-72 px-5">
                                     {Array.from(
                                         { length: numberOfChildren },
                                         (_, index) => {
@@ -1358,7 +1329,7 @@ function AdvancedSearchHotel() {
                                                         type="number"
                                                         id="number-input"
                                                         aria-describedby="helper-text-explanation"
-                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full p-2.5"
                                                         placeholder="Age"
                                                         required
                                                         maxLength={2}
@@ -1388,13 +1359,29 @@ function AdvancedSearchHotel() {
                                                                 );
                                                             }
 
-                                                            const newValue = parseInt(e.target.value, 10);
-                                                            if (newValue >= 0 && newValue <= 17) {
-                                                                setChildrenAges((prev) => {
-                                                                    const temp = [...prev];
-                                                                    temp[index] = newValue;
-                                                                    return temp;
-                                                                });
+                                                            const newValue =
+                                                                parseInt(
+                                                                    e.target
+                                                                        .value,
+                                                                    10
+                                                                );
+                                                            if (
+                                                                newValue >= 0 &&
+                                                                newValue <= 17
+                                                            ) {
+                                                                setChildrenAges(
+                                                                    (prev) => {
+                                                                        const temp =
+                                                                            [
+                                                                                ...prev,
+                                                                            ];
+                                                                        temp[
+                                                                            index
+                                                                        ] =
+                                                                            newValue;
+                                                                        return temp;
+                                                                    }
+                                                                );
                                                             }
                                                         }}
                                                     />

@@ -123,7 +123,7 @@ export default function DetailedItinerary() {
         const sortedExperiences = experiences?.sort((a, b) => {
             const timeA = a.startTime; // Assuming startTime is in a comparable format, e.g., 'HH:MM'
             const timeB = b.startTime;
-            return timeA.localeCompare(timeB);
+            return timeA?.localeCompare(timeB);
         });
     
         // Create a map to store experiences by their start date
