@@ -59,18 +59,18 @@ export function HotelCard({
     const websiteLogo = useMemo(() => [
         {
             imgLogo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Agoda_transparent_logo.png",
-            price: agodaPrice,
+            price: agodaPrice ? agodaPrice : null,
             link: agodaURL
         },
         {
 
             imgLogo: "https://ik.imagekit.io/Uptrip/booking.com?updatedAt=1712829810252",
-            price: bookingPrice,
+            price: bookingPrice ? bookingPrice : null,
             link: bookingURL
         },
         {
             imgLogo: "https://ik.imagekit.io/Uptrip/trip.com?updatedAt=1712830814655",
-            price: price,
+            price: price ? price : null,
             link: tripURL
         },
     ], [agodaPrice, bookingPrice, price, agodaURL, bookingURL, tripURL]);

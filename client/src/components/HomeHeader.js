@@ -93,7 +93,7 @@ function AdvancedSearchFlight({ setTab }) {
     const [toEdit, setToEdit] = useState(true);
     const [debouncedKeywordFrom, setDebouncedKeywordFrom] = useState(null)
     const [debouncedKeywordTo, setDebouncedKeywordTo] = useState(null)
-    const date = useRef();
+    const [startDate, setStartDate] = useState() 
 
     useEffect(() => {
         if (numberOfAdult * 2 < numberOfChild) {
@@ -140,20 +140,6 @@ function AdvancedSearchFlight({ setTab }) {
         enabled: !!keywordTo,
     })
 
-    useEffect(() => {
-        let datePicker;
-
-        if (date.current) {
-            datePicker = new Datepicker(date.current, {
-                autohide: true,
-                minDate: new Date(),
-            });
-        }
-        // Cleanup function to destroy datepickers when component unmounts or rerenders
-        return () => {
-            if (datePicker) datePicker.destroy();
-        };
-    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -168,7 +154,7 @@ function AdvancedSearchFlight({ setTab }) {
             return
         }
 
-        if (!date.current.value){
+        if (!startDate){
             warningNotify("Please select your departure date")
             return
         }
@@ -182,9 +168,9 @@ function AdvancedSearchFlight({ setTab }) {
             adult: numberOfAdult,
             child: numberOfChild,
             infant: numberOfInfant,
-            year: date.current?.value.substring(6, 10),
-            month: date.current?.value.substring(0, 2),
-            day: date.current?.value.substring(3, 5),
+            year: startDate.substring(0, 4),
+            month: startDate.substring(5, 7),
+            day: startDate.substring(8, 10),
         }
 
         navigate(
@@ -345,16 +331,15 @@ function AdvancedSearchFlight({ setTab }) {
                                 </div>
                                 <div>
                                     <input
-                                        ref={date}
-                                        datepicker
-                                        datepicker-autohide
-                                        datepicker-format="dd/mm/yyyy"
                                         name="start"
-                                        type="text"
+                                        type="date"
                                         class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block w-full ps-10 p-2.5 pt-5 md:rounded-none h-[52px]"
                                         placeholder="dd/mm/yyyy"
-                                        value={date.current?.value}
-                                        id="datepickerId4"
+                                        min={new Date().toISOString().split('T')[0]} // Set min date to today
+                                        onChange={(e) => {
+                                            const newStartDate = e.target.value;
+                                            setStartDate(newStartDate);
+                                        }}
                                     />
                                     <label
                                         for="floating_filled"
@@ -709,8 +694,8 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
     const [numberOfRooms, setNumberOfRooms] = useState(1);
     const [childrenAges, setChildrenAges] = useState([]);
     const [autocompletePayload, setAutocompletePayload] = useState();
-    const checkinDate = useRef();
-    const checkoutDate = useRef();
+    const [checkin, setCheckin] = useState()
+    const [checkout, setCheckout] = useState()
 
     const { data, isFetched } = useQuery({
         queryKey: ["advanced-search", "hotels", debouncedKeyword],
@@ -739,35 +724,6 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
         };
     }, [keyword]);
 
-    useEffect(() => {
-        let checkinPicker;
-        let checkoutPicker;
-
-        if (checkinDate.current && checkoutDate.current) {
-            // Initialize the check-in datepicker
-            checkinPicker = new Datepicker(checkinDate.current, {
-                autohide: true,
-                minDate: checkoutDate.current.value
-                    ? new Date(checkoutDate.current.value)
-                    : new Date(),
-            });
-
-            const initialMinDate = new Date();
-            initialMinDate.setDate(initialMinDate.getDate() + 1);
-            checkoutPicker = new Datepicker(checkoutDate.current, {
-                autohide: true,
-                minDate: checkinDate.current.value
-                    ? new Date(initialMinDate)
-                    : new Date(),
-            });
-        }
-
-        // Cleanup function to destroy datepickers when component unmounts or rerenders
-        return () => {
-            if (checkinPicker) checkinPicker.destroy();
-            if (checkoutPicker) checkoutPicker.destroy();
-        };
-    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -777,27 +733,20 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
             return;
         }
 
-        if (!checkinDate.current.value){
+        if (!checkin){
             warningNotify("Please select checkin date")
             return
         }
 
-        if (!checkoutDate.current.value){
+        if (!checkout){
             warningNotify("Please select checkout date")
             return
         }
 
         let payload = {
-            checkin: checkinDate.current.value.replace(
-                /(\d{2})\/(\d{2})\/(\d{4})/,
-                "$3$1$2"
-            ),
-            checkout: checkoutDate.current.value.replace(
-                /(\d{2})\/(\d{2})\/(\d{4})/,
-                "$3$1$2"
-            ),
+            checkin: checkin.replace(/-/g, ''),
+            checkout: checkout.replace(/-/g, ''),
             city: autocompletePayload.city.geoCode,
-
             resultType: autocompletePayload.resultType,
             countryId: autocompletePayload.country.geoCode,
             districtId: 0,
@@ -1041,14 +990,17 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                     </div>
                                     <div>
                                         <input
-                                            ref={checkinDate}
-                                            datepicker
-                                            datepicker-autohide
                                             name="start"
-                                            type="text"
+                                            type="date"
                                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-r-none md:rounded-none border-l-"
                                             placeholder="dd/mm/yyyy"
-                                            value={checkinDate.current?.value}
+                                            min={new Date().toISOString().split('T')[0]} // Set min date to today
+                                            max={checkout || ''} // Set max date to endDate if it exists
+                                            onChange={(e) => {
+                                                const newStartDate = e.target.value;
+                                                setCheckin(newStartDate);
+                                            }}
+                                            value={checkin}
                                         />
                                         <label
                                             for="floating_filled"
@@ -1072,14 +1024,19 @@ function AdvancedSearchStay({ setTab, setKeyword, keyword }) {
                                     </div>
                                     <div>
                                         <input
-                                            ref={checkoutDate}
-                                            datepicker
-                                            datepicker-autohide
                                             name="end"
-                                            type="text"
+                                            type="date"
                                             class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 pt-5 rounded-l-none border-l-0 md:rounded-none"
                                             placeholder="dd/mm/yyyy"
-                                            value={checkoutDate.current?.value}
+                                            min={checkin || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
+                                            onChange={(e) => {
+                                                const newEndDate = e.target.value;
+                                                if (newEndDate < checkin) {
+                                                    setCheckin(newEndDate);
+                                                }
+                                                setCheckout(newEndDate);
+                                            }}
+                                            value={checkout}
                                         />
                                         <label
                                             for="floating_filled"

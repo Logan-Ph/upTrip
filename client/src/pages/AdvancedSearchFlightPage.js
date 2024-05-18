@@ -57,7 +57,7 @@ export default function AdvancedSearchFlightPage() {
     });
 
     useEffect(() => {
-        if (agoda.isSuccess && agoda.data.flights.length == 0) {
+        if (agoda.isSuccess && agoda.data.flights.length === 0) {
             agoda.refetch()
         }
     }, [agoda])

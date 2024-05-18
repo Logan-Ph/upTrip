@@ -836,8 +836,6 @@ exports.advancedSearchHotelBooking = async (req, res) => {
         // Extract the content of the script tag
         const scriptContent = JSON.parse(scriptTag.html());
 
-        console.log(scriptContent["ROOT_QUERY"])
-
         const searchQueriesArray = Object?.values(
             scriptContent["ROOT_QUERY"]["searchQueries"]
         );

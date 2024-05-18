@@ -249,7 +249,7 @@ export default function AdvancedSearchHotelPage() {
                                             const agodaPrice = hotelPriceInfo?.agodaPrice?.price
                                                     ? Math.round(hotelPriceInfo.agodaPrice?.price?.[0]?.price?.perRoomPerNight?.exclusive?.display).toLocaleString("vi-VN")
                                                     : null;
-                                            const bookingPrice = hotelPriceInfo?.bookingPrice
+                                            const bookingPrice = hotelPriceInfo?.bookingPrice?.price    
                                                     ? Math.round(hotelPriceInfo.bookingPrice?.price?.reduce((acc, curr) => acc + Number(curr.finalPrice.amount), 0) /
                                                         (Number(payload.adult) *
                                                         Number(daysBetween(payload.checkin, payload.checkout)))

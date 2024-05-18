@@ -300,7 +300,6 @@ export default function DetailedItinerary() {
                                                                                     <i class="fa-regular fa-calendar"></i>
                                                                                 </span>
                                                                                 <input
-                                                                                    
                                                                                     id="from-date"
                                                                                     type="date"
                                                                                     className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
