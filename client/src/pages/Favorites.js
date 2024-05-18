@@ -24,6 +24,9 @@ export default function Favorites() {
         mutationFn: () => addNewCollection(name, description),
         onSuccess: (data) => {
             successNotify(data.data)
+            document
+                .getElementById("create_collection_modal")
+                .close()
             refetchCollections()
         },
         onError: (error) => {

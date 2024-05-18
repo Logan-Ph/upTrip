@@ -84,6 +84,9 @@ export default function Itinerary() {
             }),
         onSuccess: (data) => {
             successNotify(data.data);
+            document
+                .getElementById("create_itinerary_modal")
+                .close()
             getItinerary.refetch();
         },
         onError: (error) => {
@@ -226,7 +229,6 @@ export default function Itinerary() {
                                             <div className="mt-4">
                                                 {activeTab === 1 && (
                                                     <div className="my-6 mb-10">
-
                                                         <div className="flex flex-col md:flex-row my-2 justify-center">
                                                             <div class="relative w-full md:w-1/2 h-[60px]">
                                                                 <div class="flex items-center">

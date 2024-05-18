@@ -29,6 +29,9 @@ export function ItineraryCard({ itinerary, getItinerary }) {
         mutationFn: () => deleteItinerary({ itineraryId: itinerary._id }),
         onSuccess: (data) => {
             successNotify(data.data)
+            document
+                .getElementById(modalId)
+                .close()
             getItinerary.refetch()
         },
         onError: (error) => {
@@ -2179,9 +2182,10 @@ export function ActivityCard({experience, refetchItinerary}) {
 }
 
 export function BudgetCard({itinerary}) {
-    const stayExpenses = Math.round(1000 * itinerary?.hotels.reduce((total, item) => total + (Number(item.tripPrice) || Number(item.agodaPrice) || Number(item.bookingPrice)), 0))
-    const flightExpenses = itinerary?.flights.reduce((total, item) => total + (Number(item.price)), 0)
-    const experienceExpenses = itinerary?.experiences.reduce((total, item) => total + (item.price ? Number(item.price) : 0), 0)
+    const numericValue = (price) => price ? Number(price.replace(/\./g, '').replace(/,/g, '')) : 0;
+    const stayExpenses = Math.round(itinerary?.hotels.reduce((total, item) => total + (numericValue(item.tripPrice) || numericValue(item.agodaPrice) || numericValue(item.bookingPrice)), 0))
+    const flightExpenses = itinerary?.flights.reduce((total, item) => total + (numericValue(item.price)), 0)
+    const experienceExpenses = itinerary?.experiences.reduce((total, item) => total + (numericValue(item.price)), 0)
     
     return (
         <>
