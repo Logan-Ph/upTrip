@@ -11,7 +11,7 @@ export default function Footer(){
                             <Link>
                                 <img src={Logo} alt="Logo" className="w-52 h-auto"/>
                             </Link>
-                            <p className="mt-4 py-4 font-light text-black">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna.</p>
+                            <p className="mt-4 py-4 font-light text-black"></p>
                         </div> 
 
                         <div>
