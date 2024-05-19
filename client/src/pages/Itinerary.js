@@ -1,4 +1,3 @@
-import CollectionCardSkeleton from "../components/skeletonLoadings/CollectionCardSkeleton";
 import { Suspense, useState, useContext, useEffect, useRef } from "react";
 import AuthContext from "../context/AuthProvider";
 import Datepicker from "flowbite-datepicker/Datepicker";
@@ -431,7 +430,7 @@ export default function Itinerary() {
                             </div>
                         </>
                     ) : (
-                        <CollectionCardSkeleton />
+                        <ItineraryCardSkeleton />
                     )}
                 </div>
             </div>
