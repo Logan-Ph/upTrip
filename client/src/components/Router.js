@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy } from "react";
+import Footer from "../components/Footer"
 import HomeHeader from "./HomeHeader";
 import Header from "./Header";
 import Login from "../pages/Login";
@@ -26,7 +27,7 @@ export default function Router() {
             element: (
                 <PersistAndRequireAuth
                     header={<HomeHeader />}
-                    footer={<footer />}
+                    footer={<Footer />}
                 />
             ),
             children: [
@@ -45,7 +46,7 @@ export default function Router() {
             element: (
                 <PersistAndRequireAuth
                     header={<Header />}
-                    footer={<footer />}
+                    footer={<Footer />}
                 />
             ),
             children: [

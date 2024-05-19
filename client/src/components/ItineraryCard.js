@@ -386,6 +386,7 @@ function OtherPageContent({ handleBackButtonClick, selectedItems, setSelectedIte
 
     const addFlight = useMutation({
         mutationFn: (item) => addFlightItinerary({itineraryId: searchParams.get('itineraryId'), flight: item }),
+        retry:0,
         onSuccess: () => {
             successNotify("Add to itinerary successfully")
             refetchItinerary()
@@ -2193,7 +2194,7 @@ export function ActivityCard({experience, refetchItinerary}) {
 }
 
 export function BudgetCard({itinerary}) {
-    const numericValue = (price) => price ? Number(price.replace(/\./g, '').replace(/,/g, '')) : 0;
+    const numericValue = (price) => price ? Number(price?.replace(/\./g, '')?.replace(/,/g, '')) : 0;
     const stayExpenses = Math.round(itinerary?.hotels.reduce((total, item) => total + (numericValue(item.tripPrice) || numericValue(item.agodaPrice) || numericValue(item.bookingPrice)), 0))
     const flightExpenses = itinerary?.flights.reduce((total, item) => total + (numericValue(item.price)), 0)
     const experienceExpenses = itinerary?.experiences.reduce((total, item) => total + (numericValue(item.price)), 0)
