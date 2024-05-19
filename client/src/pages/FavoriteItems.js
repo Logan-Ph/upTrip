@@ -24,6 +24,7 @@ export default function FavoriteItems() {
     const {
         data: favorite,
         isLoading: isFavoriteLoading,
+        isSuccess: isFavoriteSuccess,
         refetch: refetchFavorite
     } = useQuery({
         queryKey: ['favorite-items', collectionId],
@@ -98,7 +99,40 @@ export default function FavoriteItems() {
                                 Experiences
                             </div>
                         </div>
-                        {!favorite && 
+                        {isFavoriteSuccess && !favorite?.experience?.length && !favorite?.flights?.length && !favorite?.hotels?.length && tab === 'all' &&
+                        <>
+                            <div className="text-center text-xl py-16">
+                                <p>No items in your collection yet.</p>
+                                <a href="/" className="font-semibold text-[18px]">
+                                    Start browsing to add your favorite travel
+                                    items!
+                                </a>
+                            </div>
+                        </>
+                        }
+                        {isFavoriteSuccess && !favorite?.experience?.length && tab === 'experiences' &&
+                        <>
+                            <div className="text-center text-xl py-16">
+                                <p>No items in your collection yet.</p>
+                                <a href="/" className="font-semibold text-[18px]">
+                                    Start browsing to add your favorite travel
+                                    items!
+                                </a>
+                            </div>
+                        </>
+                        }
+                        {isFavoriteSuccess && !favorite?.flights?.length && tab === 'flights' &&
+                        <>
+                            <div className="text-center text-xl py-16">
+                                <p>No items in your collection yet.</p>
+                                <a href="/" className="font-semibold text-[18px]">
+                                    Start browsing to add your favorite travel
+                                    items!
+                                </a>
+                            </div>
+                        </>
+                        }
+                        {isFavoriteSuccess && !favorite?.hotels?.length && tab === 'stays' &&
                         <>
                             <div className="text-center text-xl py-16">
                                 <p>No items in your collection yet.</p>
