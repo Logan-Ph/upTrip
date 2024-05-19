@@ -79,6 +79,11 @@ export default function DetailedItinerary() {
         onSuccess: (data) => {
             successNotify(data.data)
             refetchItinerary()
+            document
+                .getElementById(
+                    "edit_itinerary_modal"
+                )
+                .close()
         },
         onError: (error) => {
             warningNotify(error.response.data);
