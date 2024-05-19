@@ -2197,7 +2197,7 @@ export function BudgetCard({itinerary}) {
     const numericValue = (price) => price ? Number(price?.replace(/\./g, '')?.replace(/,/g, '')) : 0;
     const stayExpenses = Math.round(itinerary?.hotels.reduce((total, item) => total + (numericValue(item.tripPrice) || numericValue(item.agodaPrice) || numericValue(item.bookingPrice)), 0))
     const flightExpenses = itinerary?.flights.reduce((total, item) => total + (item?.price), 0)
-    const experienceExpenses = itinerary?.experiences.reduce((total, item) => total + (numericValue(item.price)), 0)
+    const experienceExpenses = itinerary?.experiences.reduce((total, item) => total + (item.price), 0)
     
     return (
         <>
