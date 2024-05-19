@@ -68,7 +68,11 @@ export default function Header() {
                         <ul className="flex flex-wrap -mb-px text-sm font-medium text-center">
                             <li className="" role="presentation">
                                 <button
-                                    className="inline-block p-4 rounded-tl-lg text-dark active:text-white bg-[#231F20] active:bg-opacity-30 dark:text-white"
+                                    className={`inline-block p-4 rounded-tl-lg ${
+                                        tab === "stay"
+                                            ? "bg-white text-black"
+                                            : "text-white bg-[#231F20]"
+                                    } `}
                                     type="button"
                                     onClick={() => setTab("stay")}
                                 >
@@ -77,7 +81,11 @@ export default function Header() {
                             </li>
                             <li className="" role="presentation">
                                 <button
-                                    className="inline-block p-4 text-dark active:text-white bg-[#231F20] active:bg-opacity-30 dark:text-white"
+                                    className={`inline-block p-4 ${
+                                        tab === "flight"
+                                            ? "bg-white text-black"
+                                            : "text-white bg-[#231F20]"
+                                    } `}
                                     type="button"
                                     onClick={() => setTab("flight")}
                                 >
@@ -86,7 +94,11 @@ export default function Header() {
                             </li>
                             <li className="" role="presentation">
                                 <button
-                                    className="inline-block p-4 rounded-tr-lg text-dark active:text-dark bg-[#231F20] active:bg-opacity-30 dark:text-white"
+                                    className={`inline-block p-4 rounded-tr-lg ${
+                                        tab === "experience"
+                                            ? "bg-white text-black"
+                                            : "text-white bg-[#231F20]"
+                                    } `}
                                     type="button"
                                     onClick={() => setTab("experience")}
                                 >
