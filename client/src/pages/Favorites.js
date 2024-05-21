@@ -86,7 +86,9 @@ export default function Favorites() {
                                             Name
                                         </label>
                                         <input
-                                            onChange={(e) => setName(e.target.value)}
+                                            onChange={(e) =>
+                                                setName(e.target.value)
+                                            }
                                             type="text"
                                             id="name"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-xl w-full p-2.5 focus:ring-black focus:border-black"
@@ -101,7 +103,9 @@ export default function Favorites() {
                                             Description
                                         </label>
                                         <textarea
-                                            onChange={(e) => setDescription(e.target.value)}
+                                            onChange={(e) =>
+                                                setDescription(e.target.value)
+                                            }
                                             type="text"
                                             id="description"
                                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg w-full p-2.5 focus:ring-black focus:border-black"
@@ -112,7 +116,8 @@ export default function Favorites() {
                                 <div className="flex justify-end">
                                     <button
                                         onClick={(e) => handleSubmit(e)}
-                                        className="flex btn btn-outline btn-success justify-end">
+                                        className="flex btn btn-outline btn-success justify-end"
+                                    >
                                         Save
                                     </button>
                                 </div>
@@ -129,11 +134,16 @@ export default function Favorites() {
                             </>
                         )}
 
-                        {   isSuccessCollections && 
+                        {isSuccessCollections &&
                             collections.map((collection) => {
-                                return <CollectionCard key={collection._id} collection={collection} refetchCollections={refetchCollections}/>
-                            })
-                        }
+                                return (
+                                    <CollectionCard
+                                        key={collection._id}
+                                        collection={collection}
+                                        refetchCollections={refetchCollections}
+                                    />
+                                );
+                            })}
                     </div>
                 </div>
             </div>

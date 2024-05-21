@@ -14,26 +14,22 @@ export default function SignUp() {
     const handleNavigate = useHandleNavigate();
 
     const signIn = useGoogleLogin({
-        onSuccess: async (response) => {
-            try {
-                const googleRes = await googleAxios.get("/oauth2/v3/userinfo", {
-                    headers: {
-                        Authorization: `Bearer ${response.access_token}`,
-                    },
-                });
-                const serverRes = await axios.post(
-                    "/google/auth/login",
-                    googleRes.data,
-                    { withCredentials: true }
-                );
-                const { accessToken, roles } = serverRes?.data;
-                setAuth({ roles, accessToken });
-                handleNavigate();
-            } catch (err) {
-                failedNotify(err.response.data);
-            }
-        },
-    });
+		onSuccess: async (response) => {
+			try {
+				const googleRes = await googleAxios.get("/oauth2/v3/userinfo",
+					{
+						headers: {
+							Authorization: `Bearer ${response.access_token}`
+						},
+					})
+				const serverRes = await axios.post('/google/auth/login', googleRes.data, { withCredentials: true })
+				const { accessToken, roles, email, _id } = serverRes?.data;
+				setAuth({ roles, accessToken, email, _id });
+				handleNavigate("/")
+			} catch (err) {
+				failedNotify(err.response.data)
+			}
+	}})
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

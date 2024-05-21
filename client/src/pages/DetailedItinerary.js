@@ -161,6 +161,11 @@ export default function DetailedItinerary() {
         <>
             <div className="md:px-10 bg-[#FAFBFC]">
                 <div className="mx-auto max-w-8xl px-6">
+                    {/* Skeleton loading */}
+                    <div className="p-80 flex justify-center">
+                        <span className="loading loading-spinner loading-lg"></span>
+                    </div>
+                    {/* Details */}
                     <div className="md:flex">
                         <div className="mx-auto max-w-8xl md:px-6 py-4 md:py-10">
                             <div className="flex justify-between mb-2">
@@ -203,7 +208,11 @@ export default function DetailedItinerary() {
                                                         Name
                                                     </label>
                                                     <input
-                                                        onChange={e => setName(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setName(
+                                                                e.target.value
+                                                            )
+                                                        }
                                                         value={name}
                                                         type="text"
                                                         id="name"
@@ -220,7 +229,12 @@ export default function DetailedItinerary() {
                                                     </label>
                                                     <div className="relative">
                                                         <input
-                                                            onChange={e => setDestination(e.target.value)}
+                                                            onChange={(e) =>
+                                                                setDestination(
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
                                                             value={destination}
                                                             type="search"
                                                             id="destination"
@@ -237,7 +251,11 @@ export default function DetailedItinerary() {
                                                         Description
                                                     </label>
                                                     <textarea
-                                                        onChange={e => setDescription(e.target.value)}
+                                                        onChange={(e) =>
+                                                            setDescription(
+                                                                e.target.value
+                                                            )
+                                                        }
                                                         value={description}
                                                         type="text"
                                                         id="description"
@@ -259,11 +277,12 @@ export default function DetailedItinerary() {
                                                     <div className="max-w-md mx-auto">
                                                         <div className="flex border-b border-gray-200 rounded-full bg-gray-300">
                                                             <button
-                                                                className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab ===
+                                                                className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                                    activeTab ===
                                                                     1
-                                                                    ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
-                                                                    : "text-black font-thin"
-                                                                    }`}
+                                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                                        : "text-black font-thin"
+                                                                }`}
                                                                 onClick={() =>
                                                                     handleTabClick(
                                                                         1
@@ -273,11 +292,12 @@ export default function DetailedItinerary() {
                                                                 Dates
                                                             </button>
                                                             <button
-                                                                className={`px-4 py-2 text-base focus:outline-none w-1/2 ${activeTab ===
+                                                                className={`px-4 py-2 text-base focus:outline-none w-1/2 ${
+                                                                    activeTab ===
                                                                     2
-                                                                    ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
-                                                                    : "text-black font-thin"
-                                                                    }`}
+                                                                        ? "text-gray-900 font-semibold bg-white m-[3px] rounded-full"
+                                                                        : "text-black font-thin"
+                                                                }`}
                                                                 onClick={() =>
                                                                     handleTabClick(
                                                                         2
@@ -293,117 +313,164 @@ export default function DetailedItinerary() {
                                                                 <div className="my-6 mb-10">
                                                                     {/* Datepicker */}
                                                                     <div className="flex flex-col md:flex-row my-2 justify-center">
-                                                                    <div class="relative w-full md:w-1/2 h-[60px]">
-                                                                        <div class="flex items-center">
-                                                                            <span class="custom-datepicker-toggle">
-                                                                                <span class="custom-datepicker-toggle-button">
-                                                                                    <i class="fa-regular fa-calendar"></i>
+                                                                        <div class="relative w-full md:w-1/2 h-[60px]">
+                                                                            <div class="flex items-center">
+                                                                                <span class="custom-datepicker-toggle">
+                                                                                    <span class="custom-datepicker-toggle-button">
+                                                                                        <i class="fa-regular fa-calendar"></i>
+                                                                                    </span>
+                                                                                    <input
+                                                                                        id="from-date"
+                                                                                        type="date"
+                                                                                        className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                                        min={
+                                                                                            new Date()
+                                                                                                .toISOString()
+                                                                                                .split(
+                                                                                                    "T"
+                                                                                                )[0]
+                                                                                        } // Set min date to today
+                                                                                        max={
+                                                                                            endDate ||
+                                                                                            ""
+                                                                                        } // Set max date to endDate if it exists
+                                                                                        onChange={(
+                                                                                            e
+                                                                                        ) => {
+                                                                                            const newStartDate =
+                                                                                                e
+                                                                                                    .target
+                                                                                                    .value;
+                                                                                            setStartDate(
+                                                                                                newStartDate
+                                                                                            );
+                                                                                        }}
+                                                                                    />
                                                                                 </span>
-                                                                                <input
-                                                                                    id="from-date"
-                                                                                    type="date"
-                                                                                    className="custom-datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                                    min={new Date().toISOString().split('T')[0]} // Set min date to today
-                                                                                    max={endDate || ''} // Set max date to endDate if it exists
-                                                                                    onChange={(e) => {
-                                                                                        const newStartDate = e.target.value;
-                                                                                        setStartDate(newStartDate);
-                                                                                    }}
-                                                                                />
-                                                                            </span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <label
+                                                                                    for="from-date"
+                                                                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                                >
+                                                                                    From
+                                                                                </label>
+                                                                            </div>
                                                                         </div>
-                                                                        <div>
-                                                                            <label
-                                                                                for="from-date"
-                                                                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                                                            >
-                                                                                From
-                                                                            </label>
+                                                                        <div class="relative w-full md:w-1/2 h-[60px] justify-end">
+                                                                            <div class="flex items-center">
+                                                                                <span class="datepicker-toggle">
+                                                                                    <span class="datepicker-toggle-button"></span>
+                                                                                    <input
+                                                                                        id="to-date"
+                                                                                        type="date"
+                                                                                        className="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
+                                                                                        min={
+                                                                                            startDate ||
+                                                                                            new Date()
+                                                                                                .toISOString()
+                                                                                                .split(
+                                                                                                    "T"
+                                                                                                )[0]
+                                                                                        } // Ensure end date is not before start date
+                                                                                        onChange={(
+                                                                                            e
+                                                                                        ) => {
+                                                                                            const newEndDate =
+                                                                                                e
+                                                                                                    .target
+                                                                                                    .value;
+                                                                                            if (
+                                                                                                newEndDate <
+                                                                                                startDate
+                                                                                            ) {
+                                                                                                setStartDate(
+                                                                                                    newEndDate
+                                                                                                );
+                                                                                            }
+                                                                                            setEndDate(
+                                                                                                newEndDate
+                                                                                            );
+                                                                                        }}
+                                                                                    />
+                                                                                </span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <label
+                                                                                    for="to-date"
+                                                                                    class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+                                                                                >
+                                                                                    To
+                                                                                </label>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="relative w-full md:w-1/2 h-[60px] justify-end">
-                                                                        <div class="flex items-center">
-                                                                            <span class="datepicker-toggle">
-                                                                                <span class="datepicker-toggle-button">
-                                                                                </span>
-                                                                                <input
-                                                                                    id="to-date"
-                                                                                    type="date"
-                                                                                    className="datepicker-input p-2.5 pt-5 rounded-lg w-[260px] md:w-[210px]"
-                                                                                    min={startDate || new Date().toISOString().split('T')[0]} // Ensure end date is not before start date
-                                                                                    onChange={(e) => {
-                                                                                        const newEndDate = e.target.value;
-                                                                                        if (newEndDate < startDate) {
-                                                                                            setStartDate(newEndDate);
-                                                                                        }
-                                                                                        setEndDate(newEndDate);
-                                                                                    }}
-                                                                                />
-                                                                            </span>
-                                                                        </div>
-                                                                        <div>
-                                                                            <label
-                                                                                for="to-date"
-                                                                                class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] start-[11px] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-                                                                            >
-                                                                                To
-                                                                            </label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
                                                                 </div>
                                                             )}
                                                             {activeTab ===
                                                                 2 && (
-                                                                    <div className="flex justify-between my-6 mb-10">
-                                                                        <p className="text-base">
-                                                                            Number of days
-                                                                        </p>
-                                                                        <div className="flex space-x-3 items-center">
-                                                                            <svg
-                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                fill="none"
-                                                                                viewBox="0 0 24 24"
-                                                                                stroke-width="1.5"
-                                                                                stroke="currentColor"
-                                                                                className="w-6 h-6"
-                                                                                onClick={() =>
-                                                                                    setTripLength((prev) =>
-                                                                                        prev === 1
+                                                                <div className="flex justify-between my-6 mb-10">
+                                                                    <p className="text-base">
+                                                                        Number
+                                                                        of days
+                                                                    </p>
+                                                                    <div className="flex space-x-3 items-center">
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            stroke-width="1.5"
+                                                                            stroke="currentColor"
+                                                                            className="w-6 h-6"
+                                                                            onClick={() =>
+                                                                                setTripLength(
+                                                                                    (
+                                                                                        prev
+                                                                                    ) =>
+                                                                                        prev ===
+                                                                                        1
                                                                                             ? prev
-                                                                                            : prev - 1
-                                                                                    )}
-                                                                            >
-                                                                                <path
-                                                                                    stroke-linecap="round"
-                                                                                    stroke-linejoin="round"
-                                                                                    d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                                ></path>
-                                                                            </svg>
-                                                                            <span className="text-lg">
-                                                                                {tripLength || 1}
-                                                                            </span>
-                                                                            <svg
-                                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                                fill="none"
-                                                                                viewBox="0 0 24 24"
-                                                                                stroke-width="1.5"
-                                                                                stroke="currentColor"
-                                                                                className="w-6 h-6"
-                                                                                onClick={() =>
-                                                                                    setTripLength((prev) =>
-                                                                                        prev + 1
-                                                                                    )}
-                                                                            >
-                                                                                <path
-                                                                                    stroke-linecap="round"
-                                                                                    stroke-linejoin="round"
-                                                                                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                                                                ></path>
-                                                                            </svg>
-                                                                        </div>
+                                                                                            : prev -
+                                                                                              1
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <path
+                                                                                stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                            ></path>
+                                                                        </svg>
+                                                                        <span className="text-lg">
+                                                                            {tripLength ||
+                                                                                1}
+                                                                        </span>
+                                                                        <svg
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="none"
+                                                                            viewBox="0 0 24 24"
+                                                                            stroke-width="1.5"
+                                                                            stroke="currentColor"
+                                                                            className="w-6 h-6"
+                                                                            onClick={() =>
+                                                                                setTripLength(
+                                                                                    (
+                                                                                        prev
+                                                                                    ) =>
+                                                                                        prev +
+                                                                                        1
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <path
+                                                                                stroke-linecap="round"
+                                                                                stroke-linejoin="round"
+                                                                                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                                                                            ></path>
+                                                                        </svg>
                                                                     </div>
-                                                                )}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                     {/*  */}
@@ -467,9 +534,12 @@ export default function DetailedItinerary() {
                                                                     <button className="btn rounded-3xl mx-2">
                                                                         Cancel
                                                                     </button>
-                                                                    <button 
-                                                                        onClick={handleDelete}
-                                                                        className="btn bg-black text-white rounded-3xl">
+                                                                    <button
+                                                                        onClick={
+                                                                            handleDelete
+                                                                        }
+                                                                        className="btn bg-black text-white rounded-3xl"
+                                                                    >
                                                                         Delete
                                                                     </button>
                                                                 </form>
@@ -479,9 +549,12 @@ export default function DetailedItinerary() {
                                                 </div>
                                             </div>
                                             <div className="flex justify-end">
-                                                <button 
-                                                    onClick={(e) => handleEdit(e)}
-                                                    className="flex btn btn-outline w-full justify-center">
+                                                <button
+                                                    onClick={(e) =>
+                                                        handleEdit(e)
+                                                    }
+                                                    className="flex btn btn-outline w-full justify-center"
+                                                >
                                                     Save Changes
                                                 </button>
                                             </div>
@@ -508,24 +581,36 @@ export default function DetailedItinerary() {
                                             <div>
                                                 <p class="text-white text-sm md:text-2xl">
                                                     <i class="fa-solid fa-location-dot"></i>
-                                                    &ensp; {itinerary?.destination}
+                                                    &ensp;{" "}
+                                                    {itinerary?.destination}
                                                 </p>
                                             </div>
                                             <div className="divider divider-horizontal"></div>
 
                                             <div>
                                                 <p class="text-white text-sm md:text-2xl mt-4 mb-2">
-                                                    {itinerary?.startDate ?
-                                                        (<span>
-                                                            <i class="fa-regular fa-calendar"></i>&ensp; {convertDate(itinerary?.startDate)}{" "}
-                                                            <i class="fa-solid fa-arrow-right"></i> {convertDate(itinerary?.endDate)}
-                                                        </span>)
-                                                        : (
-                                                            <span>
-                                                                <i class="fa-regular fa-calendar"></i>&ensp; {itinerary?.tripLength} day(s)
-                                                            </span>
-                                                        )
-                                                    }
+                                                    {itinerary?.startDate ? (
+                                                        <span>
+                                                            <i class="fa-regular fa-calendar"></i>
+                                                            &ensp;{" "}
+                                                            {convertDate(
+                                                                itinerary?.startDate
+                                                            )}{" "}
+                                                            <i class="fa-solid fa-arrow-right"></i>{" "}
+                                                            {convertDate(
+                                                                itinerary?.endDate
+                                                            )}
+                                                        </span>
+                                                    ) : (
+                                                        <span>
+                                                            <i class="fa-regular fa-calendar"></i>
+                                                            &ensp;{" "}
+                                                            {
+                                                                itinerary?.tripLength
+                                                            }{" "}
+                                                            day(s)
+                                                        </span>
+                                                    )}
                                                 </p>
                                             </div>
                                         </div>
@@ -540,22 +625,30 @@ export default function DetailedItinerary() {
                                 </p>
 
                                 {/*  Stays List */}
-                                {itineraryLoading
-                                    ? <StayCardSkeleton />
-                                    : itinerary?.hotels?.length === 0
-                                        ?
-                                        <EmptySection refetchItinerary={refetchItinerary} isAddingExperience={false}/>
-                                        :
-                                        <>
-                                            {itinerary?.hotels?.map(stay => 
-                                                (
-                                                    <StayCard key={stay.id} item={stay} refetchItinerary={refetchItinerary}/>)
-                                                )
-                                            }
-                                            <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={false}/>
-                                        </>
-                                }
-
+                                {itineraryLoading ? (
+                                    <StayCardSkeleton />
+                                ) : itinerary?.hotels?.length === 0 ? (
+                                    <EmptySection
+                                        refetchItinerary={refetchItinerary}
+                                        isAddingExperience={false}
+                                    />
+                                ) : (
+                                    <>
+                                        {itinerary?.hotels?.map((stay) => (
+                                            <StayCard
+                                                key={stay.id}
+                                                item={stay}
+                                                refetchItinerary={
+                                                    refetchItinerary
+                                                }
+                                            />
+                                        ))}
+                                        <AddItemButton
+                                            refetchItinerary={refetchItinerary}
+                                            isAddingExperience={false}
+                                        />
+                                    </>
+                                )}
                             </div>
 
                             {/* Flight */}
@@ -565,17 +658,27 @@ export default function DetailedItinerary() {
                                 </p>
 
                                 {/*  Flights List */}
-                                {itineraryLoading
-                                    ? <FlightCardSkeleton />
-                                    : itinerary?.flights?.length === 0
-                                        ?
-                                        <EmptySection />
-                                        :
-                                        <>
-                                            {itinerary?.flights?.map(flight => <FlightCard key={flight.id} item={flight} refetchItinerary={refetchItinerary}/>)}
-                                            <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={false}/>
-                                        </>
-                                }
+                                {itineraryLoading ? (
+                                    <FlightCardSkeleton />
+                                ) : itinerary?.flights?.length === 0 ? (
+                                    <EmptySection />
+                                ) : (
+                                    <>
+                                        {itinerary?.flights?.map((flight) => (
+                                            <FlightCard
+                                                key={flight.id}
+                                                item={flight}
+                                                refetchItinerary={
+                                                    refetchItinerary
+                                                }
+                                            />
+                                        ))}
+                                        <AddItemButton
+                                            refetchItinerary={refetchItinerary}
+                                            isAddingExperience={false}
+                                        />
+                                    </>
+                                )}
                             </div>
 
                             {/* Schedule */}
@@ -591,16 +694,47 @@ export default function DetailedItinerary() {
                                         <div className="flex flex-col">
                                             {schedule.experiences.length > 0 ? (
                                                 <>
-                                                    {schedule.experiences.map((experience, expIndex) => (
-                                                        <div key={expIndex} className="flex items-center">
-                                                            <ActivityCard experience={experience} refetchItinerary={refetchItinerary}/>
-                                                        </div>
-                                                    ))}
-                                                    <AddItemButton refetchItinerary={refetchItinerary} isAddingExperience={true} date={schedule.date} />
+                                                    {schedule.experiences.map(
+                                                        (
+                                                            experience,
+                                                            expIndex
+                                                        ) => (
+                                                            <div
+                                                                key={expIndex}
+                                                                className="flex items-center"
+                                                            >
+                                                                <ActivityCard
+                                                                    experience={
+                                                                        experience
+                                                                    }
+                                                                    refetchItinerary={
+                                                                        refetchItinerary
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        )
+                                                    )}
+                                                    <AddItemButton
+                                                        refetchItinerary={
+                                                            refetchItinerary
+                                                        }
+                                                        isAddingExperience={
+                                                            true
+                                                        }
+                                                        date={schedule.date}
+                                                    />
                                                 </>
                                             ) : (
                                                 <>
-                                                    <EmptySection refetchItinerary={refetchItinerary} isAddingExperience={true} date={schedule.date}/>
+                                                    <EmptySection
+                                                        refetchItinerary={
+                                                            refetchItinerary
+                                                        }
+                                                        isAddingExperience={
+                                                            true
+                                                        }
+                                                        date={schedule.date}
+                                                    />
                                                 </>
                                             )}
                                         </div>
@@ -616,7 +750,7 @@ export default function DetailedItinerary() {
                             </div>
                         </div>
                         <div className="md:w-5/12 mb-10">
-                            <BudgetCard itinerary={itinerary}/>
+                            <BudgetCard itinerary={itinerary} />
                         </div>
                     </div>
                 </div>
