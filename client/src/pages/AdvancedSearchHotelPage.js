@@ -189,7 +189,7 @@ export default function AdvancedSearchHotelPage() {
                                     />
                                 </div>
                             </div>
-                            {specificHotelStatus === "success" &&
+                            {specificHotelStatus === "success" && payload.hotelId &&
                                 (() => {
                                     const priceData =
                                         getSpecificHotelPriceComparison.isSuccess
