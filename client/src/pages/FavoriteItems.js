@@ -151,12 +151,20 @@ export default function FavoriteItems() {
                             <>
                                 {favorite?.hotels?.map((item) => (
                                     <div className="my-4">
-                                        <StayCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
+                                        <StayCard
+                                            key={item.id}
+                                            item={item}
+                                            refetchFavorite={refetchFavorite}
+                                        />
                                     </div>
                                 ))}
                                 {favorite?.flights?.map((item) => (
                                     <div className="my-4">
-                                        <FlightCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
+                                        <FlightCard
+                                            key={item.id}
+                                            item={item}
+                                            refetchFavorite={refetchFavorite}
+                                        />
                                     </div>
                                 ))}
                                 {favorite?.experience?.map((item) => (
@@ -172,19 +180,31 @@ export default function FavoriteItems() {
                         ) : tab === "stays" ? (
                             favorite?.hotels?.map((item) => (
                                 <div className="my-4">
-                                    <StayCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
+                                    <StayCard
+                                        key={item.id}
+                                        item={item}
+                                        refetchFavorite={refetchFavorite}
+                                    />
                                 </div>
                             ))
                         ) : tab === "flights" ? (
                             favorite?.flights?.map((item) => (
                                 <div className="my-4">
-                                    <FlightCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
+                                    <FlightCard
+                                        key={item.id}
+                                        item={item}
+                                        refetchFavorite={refetchFavorite}
+                                    />
                                 </div>
                             ))
                         ) : tab === "experiences" ? (
                             favorite?.experience?.map((item) => (
                                 <div className="my-4">
-                                    <ExperienceCard key={item.id} item={item} refetchFavorite={refetchFavorite}/>
+                                    <ExperienceCard
+                                        key={item.id}
+                                        item={item}
+                                        refetchFavorite={refetchFavorite}
+                                    />
                                 </div>
                             ))
                         ) : null}
