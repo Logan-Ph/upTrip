@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import NavBar from "./Navbar";
 import useHandleNavigate from "../utils/useHandleNavigate";
 import { useQuery } from "@tanstack/react-query";
-import Datepicker from "flowbite-datepicker/Datepicker";
 import { fetchAttractionsAutocomplete, fetchTripAutoComplete, fetchFlightAutocomplete } from "../api/fetch";
 import { useNavigate } from "react-router-dom";
 import warningNotify from "../utils/warningNotify";
@@ -966,6 +965,25 @@ function AdvancedSearchHotel() {
                                                                         }
                                                                     >
                                                                         <i class="fa-solid fa-map-pin"></i>{" "}
+                                                                        {
+                                                                            element?.resultWord
+                                                                        }
+                                                                    </div>
+                                                                </li>
+                                                            </>
+                                                        );
+                                                    case "MT":
+                                                        return (
+                                                            <>
+                                                                <li>
+                                                                    <div
+                                                                        onClick={() =>
+                                                                            setAutocompletePayload(
+                                                                                element
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <i class="fa-solid fa-train"></i>{" "}
                                                                         {
                                                                             element?.resultWord
                                                                         }
