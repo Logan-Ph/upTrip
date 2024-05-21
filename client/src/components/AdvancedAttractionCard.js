@@ -17,6 +17,7 @@ export default function AdvancedAttractionCard({data, payload}){
 
 function AttractionCards({data}){
     const [isIntersecting, setIsIntersecting] = useState(false);
+    const url = data?.card?.detailUrl
     const ref = useRef(null);
 
     useEffect(() => {
@@ -47,7 +48,10 @@ function AttractionCards({data}){
                 </div>
 
                 <div className="px-4 py-6 space-y-2">
-                    <p className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-1">{data.card.poiName}</p>
+                    <p 
+                        onClick={() => window.open(url, "_blank")}
+                        className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-1 hover:underline"
+                    >{data.card.poiName}</p>
                     <div className="flex items-center">
                         <div className="pr-1">
                             <svg

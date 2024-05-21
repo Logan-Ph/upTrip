@@ -18,6 +18,8 @@ export function AdvancedExperienceCard({ data, payload }) {
 function ExperienceCard({data}){
     const [isIntersecting, setIsIntersecting] = useState(false);
     const ref = useRef(null);
+    const url = `https://www.agoda.com/vi-vn/activities/detail?activityId=${data?.masterActivityId}&cityId=${data?.content?.activity?.location?.city?.id}`
+
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -48,7 +50,9 @@ function ExperienceCard({data}){
 
                 <div className="px-2 py-4 space-y-4">
                     {/* tours' name can be long (max 2 rows) */}
-                    <p className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-2">{data?.content?.activity?.title}</p>
+                    <p 
+                    onClick={() => window.open(url, "_blank")}
+                    className="font-extrabold text-sm md:text-lg lg:text-xl line-clamp-2 hover:underline">{data?.content?.activity?.title}</p>
                     <div className="flex items-center">
                         <div className="pr-1">
                             <svg
